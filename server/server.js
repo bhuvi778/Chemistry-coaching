@@ -7,23 +7,12 @@ const Contact = require('./models/Contact');
 
 const app = express();
 
-// CORS configuration for production
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://chemistry-coaching.vercel.app',
-  'https://chemistry-coaching-*.vercel.app'
-];
-
+// CORS configuration for production - Allow all origins
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.some(allowed => origin.includes(allowed.replace('*', '')))) {
-      callback(null, true);
-    } else {
-      callback(null, true); // Allow all in development
-    }
-  },
-  credentials: true
+  origin: true, // Allow all origins
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
