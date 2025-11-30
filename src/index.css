@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-blue: #00f3ff;
+  --neon-pink: #ff00aa;
+  --glass-bg: rgba(17, 24, 39, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark Mode (Default) */
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background-color: #050505;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.08) 0%, transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(255, 0, 170, 0.08) 0%, transparent 25%);
+  color: white;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light Mode */
+.light body {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #fce7f3 100%);
+  background-attachment: fixed;
+  color: #0f172a;
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* Text Colors */
+.light .text-white {
+  color: #0f172a !important;
+}
+
+.light .text-gray-300 {
+  color: #334155 !important;
+}
+
+.light .text-gray-400 {
+  color: #475569 !important;
+}
+
+.light .text-gray-500 {
+  color: #64748b !important;
+}
+
+.light .text-gray-600 {
+  color: #64748b !important;
+}
+
+.light .text-gray-700 {
+  color: #334155 !important;
+}
+
+/* Keep accent colors vibrant */
+.light .text-cyan-400 {
+  color: #0891b2 !important;
+}
+
+.light .text-pink-400,
+.light .text-pink-500 {
+  color: #db2777 !important;
+}
+
+.light .text-purple-400,
+.light .text-purple-500 {
+  color: #9333ea !important;
+}
+
+.light .text-blue-400 {
+  color: #2563eb !important;
+}
+
+.light .text-yellow-400 {
+  color: #ca8a04 !important;
+}
+
+.light .text-orange-500 {
+  color: #ea580c !important;
+}
+
+.light .text-green-400 {
+  color: #16a34a !important;
+}
+
+/* Backgrounds */
+.light .bg-gray-900 {
+  background-color: #ffffff !important;
+}
+
+.light .bg-gray-800 {
+  background-color: #f8fafc !important;
+}
+
+.light .bg-gray-900\/50 {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.light .bg-gray-800\/50 {
+  background-color: rgba(248, 250, 252, 0.8) !important;
+}
+
+.light .bg-gray-900\/80 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.light .bg-black {
+  background-color: #0f172a !important;
+}
+
+/* Borders */
+.light .border-gray-700 {
+  border-color: #cbd5e1 !important;
+}
+
+.light .border-gray-800 {
+  border-color: #e2e8f0 !important;
+}
+
+.light .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Forms */
+.light input,
+.light textarea,
+.light select {
+  color: #0f172a !important;
+  background-color: #f8fafc !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Buttons - Keep vibrant gradients */
+.light .bg-gradient-to-r {
+  opacity: 1 !important;
+}
+
+/* Navbar specific */
+.light nav {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.light .nav-link.text-gray-300 {
+  color: #475569 !important;
+}
+
+.light .nav-link:hover {
+  color: #0891b2 !important;
+}
+
+/* Cards and panels hover effects */
+.light .glass-panel:hover {
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure icons stay visible */
+.light .fa-atom,
+.light .fas,
+.light .far {
+  opacity: 1 !important;
+}
+
+h1, h2, h3, .brand-font {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+@keyframes pulse-badge {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+.badge-pulse {
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.hex-container {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+}

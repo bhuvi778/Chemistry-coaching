@@ -1,0 +1,90 @@
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
+
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const { isDark, toggleTheme } = useTheme();
+
+  const getNavLinkClass = (path) => {
+    const isActive = location.pathname === path;
+    return `nav-link px-3 py-2 transition relative ${
+      isActive ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+    }`;
+  };
+
+  return (
+    <nav className="glass-panel fixed w-full z-50 top-0 border-b border-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          <Link to="/" className="flex items-center gap-3 cursor-pointer">
+            <div className="w-[60px] h-[60px] border-2 border-cyan-400 flex flex-col items-center justify-center font-bold bg-cyan-400/10 rounded text-cyan-400">
+              <span className="text-xs">10</span>
+              <span className="text-xl leading-none">Re</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="brand-font text-2xl tracking-wider text-white leading-none">Reaction<span className="text-cyan-400">Lab</span></span>
+              <span className="text-xs text-gray-400 tracking-widest">THE CHEMISTRY INSTITUTE</span>
+            </div>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-6">
+            <div className="flex items-baseline space-x-8 text-lg">
+              <Link to="/" className={getNavLinkClass('/')}>Home</Link>
+              <Link to="/about" className={getNavLinkClass('/about')}>About Us</Link>
+              <Link to="/courses" className={getNavLinkClass('/courses')}>Courses</Link>
+              <Link to="/contact" className={getNavLinkClass('/contact')}>Contact Us</Link>
+            </div>
+            
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="relative w-16 h-8 rounded-full bg-gradient-to-r from-gray-700 to-gray-600 border-2 border-gray-600 transition-all duration-300 hover:shadow-lg group"
+              aria-label="Toggle theme"
+            >
+              <div className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-lg transform transition-all duration-300 flex items-center justify-center ${isDark ? 'translate-x-8' : 'translate-x-0'}`}>
+                {isDark ? (
+                  <i className="fas fa-moon text-gray-800 text-xs"></i>
+                ) : (
+                  <i className="fas fa-sun text-yellow-500 text-xs"></i>
+                )}
+              </div>
+              <div className="absolute inset-0 flex items-center justify-between px-2">
+                <i className={`fas fa-sun text-xs ${!isDark ? 'text-yellow-400' : 'text-gray-500'}`}></i>
+                <i className={`fas fa-moon text-xs ${isDark ? 'text-cyan-400' : 'text-gray-500'}`}></i>
+              </div>
+            </button>
+          </div>
+
+          <div className="-mr-2 flex md:hidden gap-3 items-center">
+            {/* Mobile Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="text-gray-300 hover:text-white p-2"
+              aria-label="Toggle theme"
+            >
+              <i className={`fas ${isDark ? 'fa-moon' : 'fa-sun'} fa-lg`}></i>
+            </button>
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white p-2">
+              <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-flask'} fa-lg`}></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {isMenuOpen && (
+        <div className="md:hidden glass-panel border-t border-gray-700">
+          <div className="px-2 pt-2 pb-3 space-y-1 text-center">
+            <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Home</Link>
+            <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">About</Link>
+            <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Courses</Link>
+            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Contact</Link>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Navbar;
