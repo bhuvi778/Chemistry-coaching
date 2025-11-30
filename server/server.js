@@ -6,11 +6,32 @@ const Enquiry = require('./models/Enquiry');
 const Contact = require('./models/Contact');
 
 const app = express();
-app.use(cors());
+
+// CORS configuration for production
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://chemistry-coaching.vercel.app',
+  'https://chemistry-coaching-*.vercel.app'
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.some(allowed => origin.includes(allowed.replace('*', '')))) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all in development
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://bhupeshsingh778_db_user:qwerty12345@cluster0.u70wcn8.mongodb.net/?appName=Cluster0', {
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://bhupeshsingh778_db_user:qwerty12345@cluster0.u70wcn8.mongodb.net/?appName=Cluster0';
+
+mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('Connected to MongoDB'))
@@ -258,7 +279,7 @@ app.get('/api/seed', async (req, res) => {
   }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
