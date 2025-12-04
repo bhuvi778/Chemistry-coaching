@@ -22,29 +22,29 @@ body {
 
 /* Light Mode */
 .light body {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #fce7f3 100%);
+  background: linear-gradient(135deg, #e8f0f8 0%, #d4e4f0 50%, #f0e4f0 100%);
   background-attachment: fixed;
-  color: #0f172a;
+  color: #1e293b;
 }
 
 .light .glass-panel {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
 }
 
 /* Text Colors */
 .light .text-white {
-  color: #0f172a !important;
+  color: #1e293b !important;
 }
 
 .light .text-gray-300 {
-  color: #334155 !important;
+  color: #475569 !important;
 }
 
 .light .text-gray-400 {
-  color: #475569 !important;
+  color: #64748b !important;
 }
 
 .light .text-gray-500 {
@@ -52,7 +52,7 @@ body {
 }
 
 .light .text-gray-600 {
-  color: #64748b !important;
+  color: #475569 !important;
 }
 
 .light .text-gray-700 {
@@ -92,27 +92,27 @@ body {
 
 /* Backgrounds */
 .light .bg-gray-900 {
-  background-color: #ffffff !important;
-}
-
-.light .bg-gray-800 {
   background-color: #f8fafc !important;
 }
 
+.light .bg-gray-800 {
+  background-color: #f1f5f9 !important;
+}
+
 .light .bg-gray-900\/50 {
-  background-color: rgba(255, 255, 255, 0.8) !important;
+  background-color: rgba(248, 250, 252, 0.9) !important;
 }
 
 .light .bg-gray-800\/50 {
-  background-color: rgba(248, 250, 252, 0.8) !important;
+  background-color: rgba(241, 245, 249, 0.9) !important;
 }
 
 .light .bg-gray-900\/80 {
-  background-color: rgba(255, 255, 255, 0.9) !important;
+  background-color: rgba(248, 250, 252, 0.95) !important;
 }
 
 .light .bg-black {
-  background-color: #0f172a !important;
+  background-color: #1e293b !important;
 }
 
 /* Borders */
@@ -132,8 +132,9 @@ body {
 .light input,
 .light textarea,
 .light select {
-  color: #0f172a !important;
-  background-color: #f8fafc !important;
+  color: #1e293b !important;
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
 }
 
 .light input::placeholder,
@@ -148,9 +149,10 @@ body {
 
 /* Navbar specific */
 .light nav {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: rgba(255, 255, 255, 0.90) !important;
   backdrop-filter: blur(20px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .light .nav-link.text-gray-300 {
