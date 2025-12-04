@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import CourseCard from '../components/UI/CourseCard';
-import AIAssistant from '../components/UI/AIAssistant';
+import WhyChooseUs from '../components/Home/WhyChooseUs';
+import Resources from '../components/Home/Resources';
+import Testimonials from '../components/Home/Testimonials';
+import AIComparison from '../components/Home/AIComparison';
+import FAQ from '../components/Home/FAQ';
 import { useData } from '../context/DataContext';
 
 const Home = () => {
@@ -19,38 +23,9 @@ const Home = () => {
     alert('Thank you! We will call you back shortly.');
   };
 
-  const testimonials = [
-    {
-      id: 1,
-      name: "Aarav Patel",
-      rank: "AIR 45",
-      exam: "JEE Advanced 2023",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
-      quote: "The visualization techniques changed how I saw Organic Chemistry. It wasn't just memorizing reactions anymore."
-    },
-    {
-      id: 2,
-      name: "Sneha Gupta",
-      rank: "AIR 12",
-      exam: "NEET UG 2023",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-      quote: "Reaction Lab's test series is the closest thing to the actual exam. The analysis helped me improve my speed."
-    },
-    {
-      id: 3,
-      name: "Rohan Kumar",
-      rank: "AIR 108",
-      exam: "JEE Main 2023",
-      image: "https://randomuser.me/api/portraits/men/22.jpg",
-      quote: "Personal mentorship from HODs helped me overcome my weak topics in Physical Chemistry."
-    }
-  ];
-
   return (
     <div className="animate-fadeIn">
-      {/* AI Assistant Section */}
-      <AIAssistant />
-
+      {/* Hero Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 text-left z-10">
           <div className="inline-block px-4 py-1 mb-4 border border-cyan-400 rounded-full text-cyan-400 text-sm tracking-widest uppercase bg-cyan-900/30 backdrop-blur-sm">
@@ -66,6 +41,10 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/courses" className="px-8 py-4 rounded bg-cyan-500 text-black font-bold text-lg hover:shadow-[0_0_20px_#00f3ff] transition transform hover:scale-105 text-center">
               View Featured Batches
+            </Link>
+            <Link to="/ai-assistant" className="px-8 py-4 rounded border-2 border-cyan-400 text-cyan-400 font-bold text-lg hover:bg-cyan-400 hover:text-black transition text-center">
+              <i className="fas fa-robot mr-2"></i>
+              Try AI Assistant
             </Link>
           </div>
         </div>
@@ -83,23 +62,13 @@ const Home = () => {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 -mt-4 mb-16 relative z-20">
-          <div className="glass-panel p-8 rounded-2xl border-l-4 border-pink-500 shadow-lg bg-gradient-to-r from-gray-900/80 to-transparent">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                  <div className="md:w-3/4">
-                      <h2 className="text-3xl font-bold text-white mb-3">Why Choose Reaction Lab?</h2>
-                      <p className="text-gray-300 text-lg leading-relaxed">
-                          Established in 2015, Reaction Lab has redefined chemistry coaching for competitive exams. We don't just teach; we mentor. Our rigorous classroom programs, daily practice papers (DPPs), and All India Test Series (AITS) ensure you are exam-ready.
-                      </p>
-                  </div>
-                  <div className="md:w-1/4 text-center border-t md:border-t-0 md:border-l border-gray-700 pt-4 md:pt-0 md:pl-8">
-                      <div className="text-5xl font-bold text-pink-500 brand-font">150+</div>
-                      <div className="text-sm text-cyan-400 tracking-widest uppercase mt-2">IIT Selections</div>
-                  </div>
-              </div>
-          </div>
-      </div>
+      {/* Why Choose Us Section */}
+      <WhyChooseUs />
 
+      {/* Resources and Notes Section */}
+      <Resources />
+
+      {/* Courses Section */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
@@ -118,43 +87,16 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 py-20 relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-cyan-900/10 to-transparent -z-10 blur-3xl"></div>
-        
-        <div className="text-center mb-20">
-           <h2 className="text-5xl font-bold text-white mb-4">Wall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">Reaction</span></h2>
-           <p className="text-gray-400 text-lg">Celebrating students who catalyzed their potential into success.</p>
-        </div>
+      {/* What Our Students Say Section */}
+      <Testimonials />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-           {testimonials.map((student) => (
-             <div key={student.id} className="relative group">
-                {/* Decorative Elements */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-500"></div>
-                
-                <div className="relative glass-panel p-8 rounded-2xl h-full flex flex-col items-center text-center border-t border-white/10">
-                   <div className="relative mb-6">
-                      <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-r from-cyan-400 to-pink-500">
-                        <img src={student.image} alt={student.name} className="w-full h-full rounded-full object-cover border-4 border-gray-900" />
-                      </div>
-                      <div className="absolute -bottom-3 -right-3 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                        {student.rank}
-                      </div>
-                   </div>
-                   
-                   <h3 className="text-xl font-bold text-white mb-1">{student.name}</h3>
-                   <p className="text-cyan-400 text-sm font-bold mb-4">{student.exam}</p>
-                   
-                   <div className="relative">
-                     <i className="fas fa-quote-left text-4xl text-gray-700 absolute -top-4 -left-2 opacity-50"></i>
-                     <p className="text-gray-300 italic relative z-10 leading-relaxed">"{student.quote}"</p>
-                   </div>
-                </div>
-             </div>
-           ))}
-        </div>
-      </section>
+      {/* AI Comparison Section */}
+      <AIComparison />
 
+      {/* FAQ Section */}
+      <FAQ />
+
+      {/* Contact Form Section */}
       <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="glass-panel rounded-3xl overflow-hidden border border-gray-800 relative">
            <div className="absolute top-0 right-0 w-1/2 h-full bg-cyan-900/20 blur-3xl -z-10"></div>

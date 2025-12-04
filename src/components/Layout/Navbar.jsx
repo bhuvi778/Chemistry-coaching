@@ -30,10 +30,16 @@ const Navbar = () => {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            <div className="flex items-baseline space-x-8 text-lg">
+            <div className="flex items-baseline space-x-6 text-lg">
               <Link to="/" className={getNavLinkClass('/')}>Home</Link>
               <Link to="/about" className={getNavLinkClass('/about')}>About Us</Link>
               <Link to="/courses" className={getNavLinkClass('/courses')}>Courses</Link>
+              <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
+                <span className="flex items-center gap-2">
+                  <i className="fas fa-robot text-cyan-400"></i>
+                  Ask AI
+                </span>
+              </Link>
               <Link to="/contact" className={getNavLinkClass('/contact')}>Contact Us</Link>
             </div>
             
@@ -77,9 +83,12 @@ const Navbar = () => {
         <div className="md:hidden glass-panel border-t border-gray-700">
           <div className="px-2 pt-2 pb-3 space-y-1 text-center">
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Home</Link>
-            <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">About</Link>
+            <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">About Us</Link>
             <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Courses</Link>
-            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Contact</Link>
+            <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+              <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
+            </Link>
+            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Contact Us</Link>
           </div>
         </div>
       )}

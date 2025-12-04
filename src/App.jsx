@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import AllCourses from './pages/AllCourses';
+import AIAssistantPage from './pages/AIAssistantPage';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 
@@ -30,6 +31,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/courses" element={<AllCourses />} />
+          <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route 

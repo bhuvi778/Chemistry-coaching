@@ -46,32 +46,49 @@ const Footer = () => {
                         <li><Link to="/" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> Home</Link></li>
                         <li><Link to="/about" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> About Us</Link></li>
                         <li><Link to="/courses" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> All Courses</Link></li>
-                        <li><Link to="/contact" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> Contact</Link></li>
+                        <li><Link to="/ai-assistant" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-robot text-xs text-cyan-400"></i> Ask AI Assistant</Link></li>
+                        <li><Link to="/contact" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> Contact Us</Link></li>
                     </ul>
                 </div>
 
-                {/* Programs */}
+                {/* Resources & Programs */}
                 <div>
                     <h4 className="text-white font-bold text-lg mb-6 relative inline-block">
-                        Programs
+                        Resources
                         <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-cyan-500 rounded-full"></span>
                     </h4>
                     <ul className="space-y-3 text-gray-400 text-sm">
-                        <li><a href="#" className="hover:text-pink-400 transition">JEE Main & Advanced</a></li>
-                        <li><a href="#" className="hover:text-pink-400 transition">NEET Medical</a></li>
-                        <li><a href="#" className="hover:text-pink-400 transition">Foundation (Class 8-10)</a></li>
-                        <li><a href="#" className="hover:text-pink-400 transition">Olympiad Prep</a></li>
-                        <li><a href="#" className="hover:text-pink-400 transition">Crash Courses</a></li>
+                        <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-file-alt text-xs"></i> Study Notes</a></li>
+                        <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</a></li>
+                        <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-play-circle text-xs"></i> Video Lectures</a></li>
+                        <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-clipboard-check text-xs"></i> Test Series</a></li>
+                        <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-book-open text-xs"></i> Solved Examples</a></li>
                     </ul>
                 </div>
 
-                {/* Newsletter */}
+                {/* Contact & Newsletter */}
                 <div>
                     <h4 className="text-white font-bold text-lg mb-6 relative inline-block">
-                        Stay Updated
+                        Get In Touch
                         <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-purple-500 rounded-full"></span>
                     </h4>
-                    <p className="text-gray-400 text-sm mb-4">Get the latest exam tips and chemistry facts delivered to your inbox.</p>
+                    
+                    <div className="space-y-4 mb-6">
+                        <div className="flex items-start gap-3 text-gray-400 text-sm">
+                            <i className="fas fa-map-marker-alt mt-1 text-cyan-400"></i>
+                            <span>2nd Floor, Kota House, Edu-City, New Delhi - 110001</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-gray-400 text-sm">
+                            <i className="fas fa-phone text-cyan-400"></i>
+                            <a href="tel:+919876543210" className="hover:text-white transition">+91 98765 43210</a>
+                        </div>
+                        <div className="flex items-center gap-3 text-gray-400 text-sm">
+                            <i className="fas fa-envelope text-cyan-400"></i>
+                            <a href="mailto:info@reactionlab.in" className="hover:text-white transition">info@reactionlab.in</a>
+                        </div>
+                    </div>
+
+                    <p className="text-gray-400 text-sm mb-3">Subscribe to our newsletter:</p>
                     <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
                         <div className="relative">
                             <input 
@@ -84,22 +101,24 @@ const Footer = () => {
                             </button>
                         </div>
                     </form>
-                    <div className="mt-6 flex items-start gap-3 text-gray-400 text-sm">
-                        <i className="fas fa-map-marker-alt mt-1 text-cyan-400"></i>
-                        <span>2nd Floor, Kota House, Edu-City, New Delhi - 110001</span>
-                    </div>
                 </div>
             </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 bg-black/60">
-            <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                <p>&copy; 2024 Reaction Institute. All rights reserved.</p>
-                <div className="flex gap-6">
-                    <a href="#" className="hover:text-white transition">Privacy Policy</a>
-                    <a href="#" className="hover:text-white transition">Terms of Service</a>
-                    <a href="#" className="hover:text-white transition">Sitemap</a>
+            <div className="max-w-7xl mx-auto px-4 py-6">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                    <p>&copy; 2024 Reaction Lab Chemistry Institute. All rights reserved.</p>
+                    <div className="flex gap-6">
+                        <a href="#" className="hover:text-white transition">Privacy Policy</a>
+                        <a href="#" className="hover:text-white transition">Terms of Service</a>
+                        <a href="#" className="hover:text-white transition">Refund Policy</a>
+                        <Link to="/admin" className="hover:text-cyan-400 transition">Admin Login</Link>
+                    </div>
+                </div>
+                <div className="text-center mt-4 text-xs text-gray-600">
+                    <p>Made with <i className="fas fa-heart text-red-500 mx-1"></i> for aspiring chemists | Catalyzing dreams since 2015</p>
                 </div>
             </div>
         </div>
