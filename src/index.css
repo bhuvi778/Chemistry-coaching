@@ -225,6 +225,18 @@ body {
   backdrop-filter: blur(10px);
 }
 
+/* Why Choose Us cards - Simple white in light mode */
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.light .glass-panel:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
 h1, h2, h3, .brand-font {
   font-family: 'Orbitron', sans-serif;
 }
