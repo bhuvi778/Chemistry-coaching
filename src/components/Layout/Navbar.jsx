@@ -31,6 +31,12 @@ const Navbar = () => {
               <Link to="/" className={getNavLinkClass('/')}>Home</Link>
               <Link to="/about" className={getNavLinkClass('/about')}>About Us</Link>
               <Link to="/courses" className={getNavLinkClass('/courses')}>Courses</Link>
+              <Link to="/lectures" className={getNavLinkClass('/lectures')}>
+                <span className="flex items-center gap-2">
+                  <i className="fab fa-youtube text-red-500"></i>
+                  Lectures
+                </span>
+              </Link>
               <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
                 <span className="flex items-center gap-2">
                   <i className="fas fa-robot text-cyan-400"></i>
@@ -82,6 +88,9 @@ const Navbar = () => {
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Home</Link>
             <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">About Us</Link>
             <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Courses</Link>
+            <Link to="/lectures" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+              <i className="fab fa-youtube text-red-500 mr-2"></i>Lectures
+            </Link>
             <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
             </Link>

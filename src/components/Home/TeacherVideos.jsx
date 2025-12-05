@@ -1,4 +1,5 @@
 import { useData } from '../../context/DataContext';
+import { Link } from 'react-router-dom';
 
 const TeacherVideos = () => {
   const { videos } = useData();
@@ -90,15 +91,13 @@ const TeacherVideos = () => {
 
           {/* View All Button */}
           <div className="text-center mt-12">
-            <a 
-              href="https://www.youtube.com/@YourChannelName" 
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link 
+              to="/lectures"
               className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-[0_0_20px_rgba(255,0,0,0.4)] transition-all transform hover:scale-105"
             >
               <i className="fab fa-youtube text-2xl"></i>
-              View All Videos on YouTube
-            </a>
+              View All Video Lectures
+            </Link>
           </div>
         </>
       )}

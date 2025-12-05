@@ -31,7 +31,7 @@ const Home = () => {
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 text-left z-10">
           <div className="inline-block px-4 py-1 mb-4 border border-cyan-400 rounded-full text-cyan-400 text-sm tracking-widest uppercase bg-cyan-900/30 backdrop-blur-sm">
-            Admissions Open
+            #1 Educator
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
             Master Chemistry for <br />
