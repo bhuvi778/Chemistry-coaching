@@ -14,7 +14,8 @@ const ManageCourses = () => {
     color: 'cyan',
     icon: 'fa-flask',
     badge: '',
-    categories: []
+    category: 'JEE', // Exam category
+    categories: [] // Program type categories
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -25,6 +26,7 @@ const ManageCourses = () => {
     setFormData({
       ...course,
       features: course.features.join(', '),
+      category: course.category || 'JEE',
       categories: course.categories || []
     });
   };
@@ -103,6 +105,16 @@ const ManageCourses = () => {
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <select
+              value={formData.category}
+              onChange={e => setFormData({...formData, category: e.target.value})}
+              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+            >
+              <option value="">Select Exam Category</option>
+              <option value="JEE">JEE</option>
+              <option value="NEET">NEET</option>
+              <option value="Foundation">Foundation</option>
+            </select>
+            <select
               value={formData.color}
               onChange={e => setFormData({...formData, color: e.target.value})}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
@@ -123,18 +135,33 @@ const ManageCourses = () => {
               onChange={e => setFormData({...formData, icon: e.target.value})}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             />
-            <input
-              type="text"
-              placeholder="Badge Text (Optional)"
-              value={formData.badge}
-              onChange={e => setFormData({...formData, badge: e.target.value})}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            />
           </div>
+          <input
+            type="text"
+            placeholder="Badge Text (Optional)"
+            value={formData.badge}
+            onChange={e => setFormData({...formData, badge: e.target.value})}
+            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+          />
           
           <div>
-            <label className="block text-gray-400 mb-2">Categories:</label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <label className="block text-gray-400 mb-2 font-semibold">
+              <i className="fas fa-graduation-cap mr-2 text-cyan-400"></i>
+              Exam Category:
+            </label>
+            <div className="bg-gray-800/50 rounded-lg p-3 mb-4">
+              <span className="text-white font-semibold">
+                {formData.category || 'Not Selected'}
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-gray-400 mb-2 font-semibold">
+              <i className="fas fa-filter mr-2 text-cyan-400"></i>
+              Program Type Categories (Select all that apply):
+            </label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {['live-batch', 'recorded', '1-1-tutoring', 'mentorship', 'doubt-solver', 'test-series'].map(cat => (
                 <label key={cat} className="flex items-center gap-2 text-white cursor-pointer hover:text-cyan-400 transition">
                   <input
@@ -164,12 +191,25 @@ const ManageCourses = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setIsEditing(false);
-                  setCurrentCourse(null);
-                  setFormData(initialFormState);
-                }}
-                className="bg-gray-700 text-white font-bold py-2 px-6 rounded hover:bg-gray-600 transition"
-              >
+          <div key={course._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-white">{course.title}</h3>
+              <p className="text-sm text-gray-400">{course.subtitle}</p>
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {course.category && (
+                  <span className="px-3 py-1 bg-pink-900/50 border border-pink-500 text-pink-400 rounded-full text-xs font-semibold">
+                    <i className="fas fa-graduation-cap mr-1"></i>
+                    {course.category}
+                  </span>
+                )}
+                {course.categories && course.categories.map(cat => (
+                  <span key={cat} className="px-3 py-1 bg-cyan-900/50 border border-cyan-500 text-cyan-400 rounded-full text-xs font-semibold">
+                    {cat}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-2">
                 Cancel
               </button>
             )}

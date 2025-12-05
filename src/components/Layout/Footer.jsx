@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 
 const Footer = () => {
+  const { isDark } = useTheme();
+  
   return (
     <footer className="relative mt-auto border-t border-gray-800 bg-black/40 backdrop-blur-xl">
         {/* Decorative Top Border */}
@@ -13,9 +16,9 @@ const Footer = () => {
                 <div className="space-y-6">
                     <div className="flex items-center">
                         <img 
-                            src="/logo.png" 
+                            src={isDark ? "/logo-dark.png" : "/logo-light.png"}
                             alt="Ace2Examz - Your Path To Success" 
-                            className="h-12 w-auto object-contain"
+                            className="h-12 w-auto object-contain transition-opacity duration-300"
                         />
                     </div>
                     <p className="text-gray-400 text-sm leading-relaxed">

@@ -72,7 +72,7 @@ const AllCourses = () => {
                     <div className="glass-panel rounded-2xl p-4 sticky top-24">
                         <h3 className="text-lg font-bold text-white mb-4 px-2">
                             <i className="fas fa-filter mr-2 text-cyan-400"></i>
-                            Filter by Type
+                            Courses Category
                         </h3>
                         <div className="space-y-2">
                             <button 

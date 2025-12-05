@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 const AppDownload = () => {
   const [countryCode, setCountryCode] = useState('+91');
   const [mobileNumber, setMobileNumber] = useState('');
   const [message, setMessage] = useState('');
+  const { isDark } = useTheme();
 
   const handleGetLink = (e) => {
     e.preventDefault();
@@ -100,7 +102,7 @@ const AppDownload = () => {
                 <div className="w-full h-full bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 p-6 flex flex-col items-center justify-center">
                   <div className="text-center mb-8">
                     <img 
-                      src="/logo.png" 
+                      src={isDark ? "/logo-dark.png" : "/logo-light.png"}
                       alt="Ace2Examz" 
                       className="h-20 w-auto mx-auto mb-4"
                     />
