@@ -6,7 +6,7 @@ const AIAssistantPage = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Ask <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Reaction Lab AI</span>
+            Ask <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Ace2examz AI</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Your 24/7 Chemistry Learning Assistant - Specialized in JEE & NEET Preparation

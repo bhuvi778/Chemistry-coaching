@@ -16,7 +16,7 @@ const Testimonials = () => {
       rank: "AIR 12",
       exam: "NEET UG 2023",
       image: "https://randomuser.me/api/portraits/women/44.jpg",
-      quote: "Reaction Lab's test series is the closest thing to the actual exam. The analysis helped me improve my speed."
+      quote: "Ace2examz's test series is the closest thing to the actual exam. The analysis helped me improve my speed."
     },
     {
       id: 3,

@@ -23,7 +23,7 @@ const AIComparison = () => {
     <section className="max-w-7xl mx-auto px-4 py-20">
       <div className="text-center mb-16">
         <h2 className="text-5xl font-bold text-white mb-4">
-          Reaction Lab AI vs <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-500">Other AI Chatbots</span>
+          Ace2examz AI vs <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-500">Other AI Chatbots</span>
         </h2>
         <p className="text-gray-400 text-lg max-w-3xl mx-auto">
           See why our AI assistant is the best choice for JEE & NEET Chemistry preparation
@@ -31,7 +31,7 @@ const AIComparison = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Reaction Lab AI */}
+        {/* Ace2examz AI */}
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
           
@@ -41,7 +41,7 @@ const AIComparison = () => {
                 <i className="fas fa-robot text-3xl text-cyan-400"></i>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white">Reaction Lab AI</h3>
+                <h3 className="text-2xl font-bold text-white">Ace2examz AI</h3>
                 <p className="text-cyan-400 text-sm">Chemistry-Specialized Assistant</p>
               </div>
             </div>
@@ -111,7 +111,7 @@ const AIComparison = () => {
         <Link to="/ai-assistant">
           <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-lg hover:shadow-[0_0_30px_rgba(0,243,255,0.5)] transition transform hover:scale-105">
             <i className="fas fa-robot mr-2"></i>
-            Ask Reaction Lab AI Now
+            Ask Ace2examz AI Now
           </button>
         </Link>
       </div>

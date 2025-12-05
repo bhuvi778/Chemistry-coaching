@@ -18,15 +18,12 @@ const Navbar = () => {
     <nav className="glass-panel fixed w-full z-50 top-0 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center gap-3 cursor-pointer">
-            <div className="w-[60px] h-[60px] border-2 border-cyan-400 flex flex-col items-center justify-center font-bold bg-cyan-400/10 rounded text-cyan-400">
-              <span className="text-xs">10</span>
-              <span className="text-xl leading-none">Re</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="brand-font text-2xl tracking-wider text-white leading-none">Reaction<span className="text-cyan-400">Lab</span></span>
-              <span className="text-xs text-gray-400 tracking-widest">THE CHEMISTRY INSTITUTE</span>
-            </div>
+          <Link to="/" className="flex items-center cursor-pointer">
+            <img 
+              src="/logo.png" 
+              alt="Ace2Examz - Your Path To Success" 
+              className="h-12 md:h-16 w-auto object-contain"
+            />
           </Link>
 
           <div className="hidden md:flex items-center gap-6">

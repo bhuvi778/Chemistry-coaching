@@ -36,7 +36,7 @@ const AIAssistant = () => {
         <div className="text-center mb-4">
           <h2 className="text-4xl md:text-5xl font-bold mb-3">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500">
-              Ask Reaction Lab AI
+              Ask Ace2examz AI
             </span>
           </h2>
           <p className="text-gray-400 text-sm">Your Personal Chemistry Learning Assistant</p>

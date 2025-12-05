@@ -5,7 +5,7 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "What is the batch size at Reaction Lab?",
+      question: "What is the batch size at Ace2examz?",
       answer: "We maintain a maximum batch size of 25 students to ensure personalized attention and effective doubt clearing. This allows our faculty to focus on each student's individual learning needs."
     },
     {
@@ -17,8 +17,8 @@ const FAQ = () => {
       answer: "Our fees vary based on the course and batch type. For Class 11-12 programs, fees range from ₹40,000 to ₹55,000 per year. We also offer flexible payment plans and scholarship opportunities for deserving students."
     },
     {
-      question: "Is Reaction Lab AI free to use?",
-      answer: "Basic access to Reaction Lab AI is free for all visitors. Enrolled students get premium access with unlimited questions, advanced explanations, and personalized study plans."
+      question: "Is Ace2examz AI free to use?",
+      answer: "Basic access to Ace2examz AI is free for all visitors. Enrolled students get premium access with unlimited questions, advanced explanations, and personalized study plans."
     },
     {
       question: "Do you offer online classes?",
@@ -49,7 +49,7 @@ const FAQ = () => {
           Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Questions</span>
         </h2>
         <p className="text-gray-400 text-lg">
-          Got questions? We've got answers! Find everything you need to know about Reaction Lab.
+          Got questions? We've got answers! Find everything you need to know about Ace2examz.
         </p>
       </div>
 

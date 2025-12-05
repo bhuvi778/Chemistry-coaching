@@ -42,7 +42,7 @@ const WhyChooseUs = () => {
     <section className="max-w-7xl mx-auto px-4 py-20">
       <div className="text-center mb-16">
         <h2 className="text-5xl font-bold text-white mb-4">
-          Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Reaction Lab</span>?
+          Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Ace2examz</span>?
         </h2>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto">
           Join India's most trusted Chemistry coaching institute for JEE & NEET preparation

@@ -109,7 +109,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 bg-black/60">
             <div className="max-w-7xl mx-auto px-4 py-6">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                    <p>&copy; 2024 Reaction Lab Chemistry Institute. All rights reserved.</p>
+                    <p>&copy; 2024 Ace2examz Chemistry Institute. All rights reserved.</p>
                     <div className="flex gap-6">
                         <a href="#" className="hover:text-white transition">Privacy Policy</a>
                         <a href="#" className="hover:text-white transition">Terms of Service</a>

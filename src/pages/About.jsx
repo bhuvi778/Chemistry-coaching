@@ -21,7 +21,7 @@ const About = () => {
       exam: "NEET UG 2023",
       college: "AIIMS Delhi",
       image: "https://randomuser.me/api/portraits/women/44.jpg",
-      quote: "Reaction Lab's test series is the closest thing to the actual exam. The analysis helped me improve my speed.",
+      quote: "Ace2examz's test series is the closest thing to the actual exam. The analysis helped me improve my speed.",
       year: "2023"
     },
     {
@@ -51,7 +51,7 @@ const About = () => {
       exam: "JEE Advanced 2022",
       college: "IIT Kharagpur - Chemical",
       image: "https://randomuser.me/api/portraits/men/45.jpg",
-      quote: "Coming from a small town, I thought cracking IIT was impossible. Reaction Lab proved me wrong.",
+      quote: "Coming from a small town, I thought cracking IIT was impossible. Ace2examz proved me wrong.",
       year: "2022"
     },
     {
@@ -81,7 +81,7 @@ const About = () => {
       exam: "NEET UG 2021",
       college: "CMC Vellore",
       image: "https://randomuser.me/api/portraits/women/55.jpg",
-      quote: "Reaction Lab's NCERT mastery sessions are gold. Every single line from NCERT was covered in detail.",
+      quote: "Ace2examz's NCERT mastery sessions are gold. Every single line from NCERT was covered in detail.",
       year: "2021"
     },
     {
@@ -121,7 +121,7 @@ const About = () => {
       exam: "NEET UG 2020",
       college: "GMC Mumbai",
       image: "https://randomuser.me/api/portraits/women/78.jpg",
-      quote: "Chemistry was my weakest subject. Now it's my strongest, all thanks to Reaction Lab!",
+      quote: "Chemistry was my weakest subject. Now it's my strongest, all thanks to Ace2examz!",
       year: "2020"
     }
   ];
@@ -136,7 +136,7 @@ const About = () => {
                 <div className="md:w-1/2">
                     <h1 className="text-5xl font-bold mb-6 text-white">Forging <span className="text-cyan-400">Futures</span> Since 2015</h1>
                     <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                        Reaction Lab started as a small doubt-clearing cell in a garage. Today, it stands as a beacon of excellence in chemistry education. Our journey began with a simple observation: students were memorizing reactions without understanding the underlying mechanisms.
+                        Ace2examz started as a small doubt-clearing cell in a garage. Today, it stands as a beacon of excellence in chemistry education. Our journey began with a simple observation: students were memorizing reactions without understanding the underlying mechanisms.
                     </p>
                     <p className="text-gray-300 text-lg leading-relaxed">
                         We set out to change that. By combining traditional teaching with modern visualization tools, we've helped over 5,000 students crack JEE and NEET with top ranks. We don't just prepare you for exams; we prepare you to think like a scientist.
