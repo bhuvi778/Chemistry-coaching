@@ -75,9 +75,6 @@ const Home = () => {
       {/* Why Choose Us Section */}
       <WhyChooseUs />
 
-      {/* Teacher Videos Section */}
-      <TeacherVideos />
-
       {/* Resources and Notes Section */}
       <Resources />
 
@@ -102,6 +99,9 @@ const Home = () => {
 
       {/* What Our Students Say Section */}
       <Testimonials />
+
+      {/* Teacher Videos Section */}
+      <TeacherVideos />
 
       {/* AI Comparison Section */}
       <AIComparison />
