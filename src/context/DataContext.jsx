@@ -14,6 +14,9 @@ export const DataProvider = ({ children }) => {
   // Contacts State (from Contact Us page)
   const [contacts, setContacts] = useState([]);
 
+  // Videos State
+  const [videos, setVideos] = useState([]);
+
   // Auth State
   const [isAdmin, setIsAdmin] = useState(() => {
     return localStorage.getItem('reaction_isAdmin') === 'true';
@@ -31,6 +34,10 @@ export const DataProvider = ({ children }) => {
         const coursesRes = await fetch(`${API_URL}/courses`);
         const coursesData = await coursesRes.json();
         setCourses(coursesData);
+
+        const videosRes = await fetch(`${API_URL}/videos`);
+        const videosData = await videosRes.json();
+        setVideos(videosData);
 
         if (isAdmin) {
           const enquiriesRes = await fetch(`${API_URL}/enquiries`);
@@ -120,6 +127,45 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const addVideo = async (video) => {
+    try {
+      const res = await fetch(`${API_URL}/videos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(video)
+      });
+      const newVideo = await res.json();
+      setVideos([newVideo, ...videos]);
+    } catch (error) {
+      console.error("Error adding video:", error);
+    }
+  };
+
+  const updateVideo = async (id, updatedVideo) => {
+    try {
+      const res = await fetch(`${API_URL}/videos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedVideo)
+      });
+      const data = await res.json();
+      setVideos(videos.map(v => v._id === id ? data : v));
+    } catch (error) {
+      console.error("Error updating video:", error);
+    }
+  };
+
+  const deleteVideo = async (id) => {
+    try {
+      await fetch(`${API_URL}/videos/${id}`, {
+        method: 'DELETE'
+      });
+      setVideos(videos.filter(v => v._id !== id));
+    } catch (error) {
+      console.error("Error deleting video:", error);
+    }
+  };
+
   const login = (username, password) => {
     if (username === 'admin' && password === 'admin123') {
       setIsAdmin(true);
@@ -137,12 +183,16 @@ export const DataProvider = ({ children }) => {
       courses,
       enquiries,
       contacts,
+      videos,
       isAdmin,
       addEnquiry,
       addContact,
       addCourse,
       updateCourse,
       deleteCourse,
+      addVideo,
+      updateVideo,
+      deleteVideo,
       login,
       logout
     }}>

@@ -4,6 +4,7 @@ const cors = require('cors');
 const Course = require('./models/Course');
 const Enquiry = require('./models/Enquiry');
 const Contact = require('./models/Contact');
+const Video = require('./models/Video');
 
 const app = express();
 
@@ -101,6 +102,44 @@ app.post('/api/contacts', async (req, res) => {
     const contact = new Contact(req.body);
     await contact.save();
     res.json(contact);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Videos
+app.get('/api/videos', async (req, res) => {
+  try {
+    const videos = await Video.find({ isActive: true }).sort({ createdAt: -1 });
+    res.json(videos);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/videos', async (req, res) => {
+  try {
+    const video = new Video(req.body);
+    await video.save();
+    res.json(video);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/videos/:id', async (req, res) => {
+  try {
+    const video = await Video.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(video);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/videos/:id', async (req, res) => {
+  try {
+    await Video.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Video deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

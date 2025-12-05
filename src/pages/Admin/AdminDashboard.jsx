@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { useNavigate } from 'react-router-dom';
 import ManageCourses from './ManageCourses';
+import ManageVideos from './ManageVideos';
 import Enquiries from './Enquiries';
 
 const AdminDashboard = () => {
@@ -34,6 +35,12 @@ const AdminDashboard = () => {
               <i className="fas fa-book mr-2"></i> Manage Courses
             </button>
             <button
+              onClick={() => setActiveTab('videos')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'videos' ? 'bg-red-600 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fab fa-youtube mr-2"></i> Manage Videos
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -45,6 +52,7 @@ const AdminDashboard = () => {
         {/* Content */}
         <div className="flex-grow">
           {activeTab === 'courses' && <ManageCourses />}
+          {activeTab === 'videos' && <ManageVideos />}
           {activeTab === 'enquiries' && <Enquiries />}
         </div>
       </div>

@@ -134,16 +134,23 @@ const ManageCourses = () => {
           
           <div>
             <label className="block text-gray-400 mb-2">Categories:</label>
-            <div className="flex gap-4">
-              {['jee', 'neet', 'foundation'].map(cat => (
-                <label key={cat} className="flex items-center gap-2 text-white cursor-pointer">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {['live-batch', 'recorded', '1-1-tutoring', 'mentorship', 'doubt-solver', 'test-series'].map(cat => (
+                <label key={cat} className="flex items-center gap-2 text-white cursor-pointer hover:text-cyan-400 transition">
                   <input
                     type="checkbox"
                     checked={(formData.categories || []).includes(cat)}
                     onChange={() => toggleCategory(cat)}
-                    className="form-checkbox text-cyan-500"
+                    className="w-4 h-4 rounded border-gray-700 bg-gray-900 text-cyan-500 focus:ring-cyan-400"
                   />
-                  <span className="uppercase">{cat}</span>
+                  <span className="text-sm">
+                    {cat === 'live-batch' && 'Live Batch'}
+                    {cat === 'recorded' && 'Recorded'}
+                    {cat === '1-1-tutoring' && '1-1 Tutoring'}
+                    {cat === 'mentorship' && 'Mentorship'}
+                    {cat === 'doubt-solver' && 'Doubt Solver'}
+                    {cat === 'test-series' && 'Test Series'}
+                  </span>
                 </label>
               ))}
             </div>
