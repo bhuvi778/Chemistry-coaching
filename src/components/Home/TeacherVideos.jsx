@@ -60,7 +60,7 @@ const TeacherVideos = () => {
                 <div className="p-5">
                   <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">{video.title}</h3>
                   <p className="text-gray-400 text-sm mb-3 line-clamp-2">{video.description}</p>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2 text-cyan-400 text-xs">
                       <i className="fas fa-chalkboard-teacher"></i>
                       <span>{video.instructor}</span>
@@ -72,6 +72,17 @@ const TeacherVideos = () => {
                       </div>
                     )}
                   </div>
+
+                  {/* Learn & Check Button */}
+                  <a
+                    href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full text-center bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                  >
+                    <i className="fab fa-youtube mr-2"></i>
+                    Learn & Check
+                  </a>
                 </div>
               </div>
             ))}
