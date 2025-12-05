@@ -14,18 +14,13 @@ const AllCourses = () => {
         if (course.categories && course.categories.length > 0) {
           return course.categories.includes(activeTab);
         }
-        // Fallback to grade field for backward compatibility
-        const grade = (course.grade || '').toLowerCase();
-        if (activeTab === 'jee' && (grade.includes('jee') || grade.includes('11'))) return true;
-        if (activeTab === 'neet' && (grade.includes('neet') || grade.includes('12'))) return true;
-        if (activeTab === 'foundation' && (grade.includes('9') || grade.includes('10') || grade.includes('foundation'))) return true;
         return false;
       });
 
-  const getTabClass = (tab) => `px-6 py-2 rounded-full border text-sm font-bold transition ${
+  const getTabClass = (tab) => `px-6 py-3 rounded-lg border text-sm font-bold transition ${
     activeTab === tab 
-      ? 'bg-cyan-900/50 border-cyan-500 text-white shadow-[0_0_15px_rgba(0,243,255,0.3)]' 
-      : 'bg-glass-panel border-gray-700 text-gray-400 hover:text-white hover:border-gray-500'
+      ? 'bg-cyan-500 border-cyan-500 text-black shadow-[0_0_15px_rgba(0,243,255,0.3)]' 
+      : 'bg-gray-900/50 border-gray-700 text-gray-400 hover:text-white hover:border-cyan-400'
   }`;
 
   return (
@@ -37,15 +32,39 @@ const AllCourses = () => {
                 </Link>
             </div>
             <div className="text-center mb-16">
-                <h2 className="text-5xl font-bold mb-4">All Classroom Programs</h2>
-                <p className="text-xl text-gray-400 max-w-2xl mx-auto">Comprehensive chemistry solutions for every stage of your academic journey. From foundation to research level.</p>
+                <h2 className="text-5xl font-bold mb-4">All Programs & Services</h2>
+                <p className="text-xl text-gray-400 max-w-2xl mx-auto">Choose from our comprehensive range of learning solutions tailored to your needs - from live classes to personalized mentorship.</p>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
-                <button onClick={() => setActiveTab('all')} className={getTabClass('all')}>All Programs</button>
-                <button onClick={() => setActiveTab('jee')} className={getTabClass('jee')}>JEE Mains/Adv</button>
-                <button onClick={() => setActiveTab('neet')} className={getTabClass('neet')}>NEET Medical</button>
-                <button onClick={() => setActiveTab('foundation')} className={getTabClass('foundation')}>Foundation (8-10)</button>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 mb-12">
+                <button onClick={() => setActiveTab('all')} className={getTabClass('all')}>
+                    <i className="fas fa-th-large block mb-1"></i>
+                    All Programs
+                </button>
+                <button onClick={() => setActiveTab('live-batch')} className={getTabClass('live-batch')}>
+                    <i className="fas fa-video block mb-1"></i>
+                    Live Batch
+                </button>
+                <button onClick={() => setActiveTab('recorded')} className={getTabClass('recorded')}>
+                    <i className="fas fa-play-circle block mb-1"></i>
+                    Recorded Courses
+                </button>
+                <button onClick={() => setActiveTab('1-1-tutoring')} className={getTabClass('1-1-tutoring')}>
+                    <i className="fas fa-user-friends block mb-1"></i>
+                    1-1 Tutoring
+                </button>
+                <button onClick={() => setActiveTab('mentorship')} className={getTabClass('mentorship')}>
+                    <i className="fas fa-chalkboard-teacher block mb-1"></i>
+                    Mentorship
+                </button>
+                <button onClick={() => setActiveTab('doubt-solver')} className={getTabClass('doubt-solver')}>
+                    <i className="fas fa-question-circle block mb-1"></i>
+                    Doubt Solver
+                </button>
+                <button onClick={() => setActiveTab('test-series')} className={getTabClass('test-series')}>
+                    <i className="fas fa-clipboard-check block mb-1"></i>
+                    Test Series
+                </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">

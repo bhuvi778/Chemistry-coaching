@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import CourseCard from '../components/UI/CourseCard';
 import WhyChooseUs from '../components/Home/WhyChooseUs';
+import TeacherVideos from '../components/Home/TeacherVideos';
 import Resources from '../components/Home/Resources';
 import Testimonials from '../components/Home/Testimonials';
 import AIComparison from '../components/Home/AIComparison';
@@ -32,11 +33,14 @@ const Home = () => {
             Admissions Open
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Targeting <span className="text-pink-500">JEE</span> & <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">NEET Medical?</span>
+            Master Chemistry for <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">All Competitive Exams</span>
           </h1>
-          <p className="text-xl text-gray-300 mb-8 max-w-lg">
-            Join the #1 Chemistry Coaching Institute. We turn average students into Toppers with our unique "Reaction Visualization" technique.
+          <p className="text-xl text-gray-300 mb-4 max-w-lg">
+            Specialized coaching for NEET, JEE, IAT, NEST, CSIR NET, GATE, IIT JAM & TIFR
+          </p>
+          <p className="text-lg text-gray-400 mb-8 max-w-lg">
+            Join the #1 Chemistry Coaching Institute with our unique "Reaction Visualization" technique.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/courses" className="px-8 py-4 rounded bg-cyan-500 text-black font-bold text-lg hover:shadow-[0_0_20px_#00f3ff] transition transform hover:scale-105 text-center">
@@ -53,17 +57,26 @@ const Home = () => {
           <div className="relative w-64 h-64 glass-panel rounded-full flex items-center justify-center animate-pulse border-2 border-cyan-400 shadow-[0_0_50px_rgba(0,243,255,0.3)]">
             <i className="fas fa-atom text-9xl text-cyan-400 opacity-80"></i>
           </div>
-          <div className="absolute top-0 right-10 p-4 glass-panel rounded-lg animate-bounce" style={{animationDuration: '3s'}}>
-             <span className="text-pink-500 font-bold">IIT-B</span>
+          <div className="absolute top-0 right-10 p-3 glass-panel rounded-lg animate-bounce" style={{animationDuration: '3s'}}>
+             <span className="text-pink-500 font-bold text-sm">JEE</span>
           </div>
-          <div className="absolute bottom-0 left-10 p-4 glass-panel rounded-lg animate-bounce" style={{animationDuration: '4s'}}>
-              <span className="text-cyan-400 font-bold">AIIMS</span>
+          <div className="absolute bottom-0 left-10 p-3 glass-panel rounded-lg animate-bounce" style={{animationDuration: '4s'}}>
+              <span className="text-cyan-400 font-bold text-sm">NEET</span>
+          </div>
+          <div className="absolute top-20 left-0 p-3 glass-panel rounded-lg animate-bounce" style={{animationDuration: '3.5s'}}>
+              <span className="text-purple-400 font-bold text-sm">GATE</span>
+          </div>
+          <div className="absolute bottom-20 right-0 p-3 glass-panel rounded-lg animate-bounce" style={{animationDuration: '4.5s'}}>
+              <span className="text-yellow-400 font-bold text-sm">CSIR NET</span>
           </div>
         </div>
       </section>
 
       {/* Why Choose Us Section */}
       <WhyChooseUs />
+
+      {/* Teacher Videos Section */}
+      <TeacherVideos />
 
       {/* Resources and Notes Section */}
       <Resources />
@@ -72,7 +85,7 @@ const Home = () => {
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
-            <h2 className="text-4xl font-bold text-white mb-2">Featured Classroom Batches</h2>
+            <h2 className="text-4xl font-bold text-white mb-2">Featured Batches</h2>
             <p className="text-gray-400">Most popular programs for the upcoming academic session.</p>
           </div>
           <Link to="/courses" className="mt-4 md:mt-0 px-6 py-2 border border-cyan-400 text-cyan-400 rounded-full hover:bg-cyan-400 hover:text-black transition font-bold flex items-center gap-2">
