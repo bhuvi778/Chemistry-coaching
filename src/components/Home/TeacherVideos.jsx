@@ -82,7 +82,7 @@ const TeacherVideos = () => {
                     className="block w-full text-center bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                   >
                     <i className="fab fa-youtube mr-2"></i>
-                    Learn & Check
+                    Learn & Crack
                   </a>
                 </div>
               </div>

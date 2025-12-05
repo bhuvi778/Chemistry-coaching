@@ -73,15 +73,15 @@ const WhyChooseUs = () => {
       <div className="mt-20 glass-panel p-12 rounded-3xl border-l-4 border-cyan-400">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
-            <div className="text-5xl font-bold text-pink-500 mb-2">150+</div>
+            <div className="text-5xl font-bold text-pink-500 mb-2">140+</div>
             <div className="text-gray-400 uppercase text-sm tracking-wider">IIT Selections</div>
           </div>
           <div>
-            <div className="text-5xl font-bold text-cyan-400 mb-2">200+</div>
-            <div className="text-gray-400 uppercase text-sm tracking-wider">AIIMS Admissions</div>
+            <div className="text-5xl font-bold text-cyan-400 mb-2">240+</div>
+            <div className="text-gray-400 uppercase text-sm tracking-wider">AIIS/NEET Admissions</div>
           </div>
           <div>
-            <div className="text-5xl font-bold text-yellow-400 mb-2">10+</div>
+            <div className="text-5xl font-bold text-yellow-400 mb-2">15+</div>
             <div className="text-gray-400 uppercase text-sm tracking-wider">Years Experience</div>
           </div>
           <div>
