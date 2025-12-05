@@ -191,6 +191,21 @@ const ManageCourses = () => {
               <button
                 type="button"
                 onClick={() => {
+                  setIsEditing(false);
+                  setCurrentCourse(null);
+                  setFormData(initialFormState);
+                }}
+                className="bg-gray-700 text-white font-bold py-2 px-6 rounded hover:bg-gray-600 transition"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4">
+        {courses.map(course => (
           <div key={course._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
             <div className="flex-1">
               <h3 className="text-lg font-bold text-white">{course.title}</h3>
@@ -208,21 +223,6 @@ const ManageCourses = () => {
                   </span>
                 ))}
               </div>
-            </div>
-            <div className="flex gap-2">
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4">
-        {courses.map(course => (
-          <div key={course._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
-            <div>
-              <h3 className="text-lg font-bold text-white">{course.title}</h3>
-              <p className="text-sm text-gray-400">{course.subtitle}</p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => handleEdit(course)} className="p-2 text-cyan-400 hover:bg-gray-800 rounded">
