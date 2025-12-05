@@ -94,6 +94,5 @@ const TeacherVideos = () => {
     </section>
   );
 };
-};
 
 export default TeacherVideos;

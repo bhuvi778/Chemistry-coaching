@@ -30,9 +30,9 @@ const ParticleCanvas = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
-        this.size = Math.random() * 3 + 2;
+        this.vx = (Math.random() - 0.5) * 0.2; // Reduced from 0.5 to 0.2
+        this.vy = (Math.random() - 0.5) * 0.2; // Reduced from 0.5 to 0.2
+        this.size = Math.random() * 2 + 1.5; // Reduced from 3+2 to 2+1.5
         const colors = isDark 
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
           : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
@@ -45,7 +45,7 @@ const ParticleCanvas = () => {
         
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
         this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.015;
+        this.spin = (Math.random() - 0.5) * 0.005; // Reduced from 0.015 to 0.005
       }
       update() {
         this.x += this.vx;
@@ -62,7 +62,7 @@ const ParticleCanvas = () => {
         ctx.strokeStyle = this.color;
         
         // Adjust opacity based on theme
-        const baseOpacity = isDark ? 0.6 : 0.8;
+        const baseOpacity = isDark ? 0.4 : 0.5; // Reduced from 0.6/0.8 to 0.4/0.5
         ctx.globalAlpha = baseOpacity;
 
         if (this.type === 0) {
@@ -132,8 +132,8 @@ const ParticleCanvas = () => {
 
     const initParticles = () => {
       particles = [];
-      // Increase particle count for more bulk effect
-      const particleCount = Math.min(window.innerWidth / 8, 150);
+      // Reduced particle count for less visual clutter
+      const particleCount = Math.min(window.innerWidth / 12, 100); // Reduced from /8, 150
       for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle());
       }
@@ -149,15 +149,15 @@ const ParticleCanvas = () => {
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 200) {
-            const opacity = (200 - distance) / 200 * 0.15;
+          if (distance < 150) { // Reduced from 200
+            const opacity = (150 - distance) / 150 * 0.08; // Reduced from 0.15
             ctx.beginPath();
             if (isDark) {
               ctx.strokeStyle = `rgba(100, 200, 255, ${opacity})`;
             } else {
-              ctx.strokeStyle = `rgba(8, 145, 178, ${opacity * 1.5})`;
+              ctx.strokeStyle = `rgba(8, 145, 178, ${opacity * 1.2})`; // Reduced multiplier from 1.5
             }
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 1; // Reduced from 1.5
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
