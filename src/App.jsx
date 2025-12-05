@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { DataProvider, useData } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
+import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import ParticleCanvas from './components/UI/ParticleCanvas';
@@ -24,6 +25,7 @@ const ProtectedRoute = ({ children }) => {
 function AppContent() {
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <ParticleCanvas />
       <Navbar />
       
