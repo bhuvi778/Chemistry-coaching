@@ -1,0 +1,139 @@
+import { useState } from 'react';
+
+const AppDownload = () => {
+  const [countryCode, setCountryCode] = useState('+91');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleGetLink = (e) => {
+    e.preventDefault();
+    if (mobileNumber.length >= 10) {
+      setMessage('App download link sent to your mobile!');
+      setTimeout(() => setMessage(''), 3000);
+      setMobileNumber('');
+    } else {
+      setMessage('Please enter a valid mobile number');
+      setTimeout(() => setMessage(''), 3000);
+    }
+  };
+
+  return (
+    <section className="max-w-7xl mx-auto px-4 py-20">
+      <div className="glass-panel rounded-3xl p-8 md:p-12 border border-gray-800">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Side - Text Content */}
+          <div>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Get link in SMS to download the app
+            </h2>
+            <p className="text-gray-400 text-lg mb-8">
+              Download the Ace2Examz app and start learning on the go. Access all courses, live classes, and study materials from your mobile device.
+            </p>
+
+            {/* Mobile Number Input Form */}
+            <form onSubmit={handleGetLink} className="mb-6">
+              <div className="flex flex-col sm:flex-row gap-3">
+                {/* Country Code Dropdown */}
+                <div className="relative">
+                  <select 
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-full sm:w-28 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 appearance-none cursor-pointer"
+                  >
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+971">🇦🇪 +971</option>
+                  </select>
+                  <i className="fas fa-chevron-down absolute right-3 top-4 text-gray-500 pointer-events-none text-xs"></i>
+                </div>
+
+                {/* Mobile Number Input */}
+                <input 
+                  type="tel"
+                  value={mobileNumber}
+                  onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, ''))}
+                  placeholder="Enter mobile number"
+                  maxLength="10"
+                  className="flex-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  required
+                />
+
+                {/* Get Link Button */}
+                <button 
+                  type="submit"
+                  className="bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 text-white font-bold px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg whitespace-nowrap"
+                >
+                  Get the link
+                </button>
+              </div>
+              
+              {/* Success/Error Message */}
+              {message && (
+                <div className={`mt-3 text-sm ${message.includes('sent') ? 'text-green-400' : 'text-red-400'}`}>
+                  <i className={`fas ${message.includes('sent') ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2`}></i>
+                  {message}
+                </div>
+              )}
+            </form>
+
+            {/* Play Store Button */}
+            <a 
+              href="https://play.google.com/store" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block hover:scale-105 transition-transform duration-300"
+            >
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                alt="Get it on Google Play" 
+                className="h-14 w-auto"
+              />
+            </a>
+          </div>
+
+          {/* Right Side - App Mockup/Image */}
+          <div className="flex justify-center lg:justify-end">
+            <div className="relative">
+              <div className="w-72 h-[500px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-[3rem] border-8 border-gray-700 shadow-2xl overflow-hidden">
+                {/* Phone Screen */}
+                <div className="w-full h-full bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 p-6 flex flex-col items-center justify-center">
+                  <div className="text-center mb-8">
+                    <img 
+                      src="/logo.png" 
+                      alt="Ace2Examz" 
+                      className="h-20 w-auto mx-auto mb-4"
+                    />
+                    <h3 className="text-white text-2xl font-bold mb-2">Ace2Examz</h3>
+                    <p className="text-gray-300 text-sm">Your Path To Success</p>
+                  </div>
+                  
+                  <div className="space-y-4 w-full">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                      <i className="fas fa-video text-cyan-400 text-xl mb-2"></i>
+                      <p className="text-white text-sm font-semibold">Live Classes</p>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                      <i className="fas fa-book-open text-pink-400 text-xl mb-2"></i>
+                      <p className="text-white text-sm font-semibold">Study Materials</p>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                      <i className="fas fa-clipboard-check text-purple-400 text-xl mb-2"></i>
+                      <p className="text-white text-sm font-semibold">Mock Tests</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Decorative Elements */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-cyan-500/20 rounded-full blur-2xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default AppDownload;

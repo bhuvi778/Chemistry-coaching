@@ -6,6 +6,7 @@ import Resources from '../components/Home/Resources';
 import Testimonials from '../components/Home/Testimonials';
 import AIComparison from '../components/Home/AIComparison';
 import FAQ from '../components/Home/FAQ';
+import AppDownload from '../components/Home/AppDownload';
 import { useData } from '../context/DataContext';
 
 const Home = () => {
@@ -108,6 +109,9 @@ const Home = () => {
 
       {/* FAQ Section */}
       <FAQ />
+
+      {/* App Download Section */}
+      <AppDownload />
 
       {/* Contact Form Section */}
       <section className="max-w-7xl mx-auto px-4 py-20">

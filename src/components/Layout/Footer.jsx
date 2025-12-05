@@ -11,11 +11,12 @@ const Footer = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                 {/* Brand Column */}
                 <div className="space-y-6">
-                    <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 border border-cyan-400 flex items-center justify-center rounded text-cyan-400">
-                            <i className="fas fa-flask"></i>
-                        </div>
-                        <span className="brand-font text-2xl text-white">Reaction<span className="text-cyan-400">Lab</span></span>
+                    <div className="flex items-center">
+                        <img 
+                            src="/logo.png" 
+                            alt="Ace2Examz - Your Path To Success" 
+                            className="h-12 w-auto object-contain"
+                        />
                     </div>
                     <p className="text-gray-400 text-sm leading-relaxed">
                         Catalyzing potential into success. The premier institute for chemistry coaching, dedicated to crafting the next generation of scientists and engineers.
@@ -84,7 +85,7 @@ const Footer = () => {
                         </div>
                         <div className="flex items-center gap-3 text-gray-400 text-sm">
                             <i className="fas fa-envelope text-cyan-400"></i>
-                            <a href="mailto:info@reactionlab.in" className="hover:text-white transition">info@reactionlab.in</a>
+                            <a href="mailto:info@ace2examz.com" className="hover:text-white transition">info@ace2examz.com</a>
                         </div>
                     </div>
 

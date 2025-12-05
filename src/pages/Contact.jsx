@@ -39,7 +39,7 @@ const Contact = () => {
               </div>
               <div>
                   <h4 className="font-bold text-lg">Admissions Email</h4>
-                  <p className="text-gray-400">admissions@reactionlab.edu</p>
+                  <p className="text-gray-400">admissions@ace2examz.com</p>
               </div>
           </div>
           <div className="glass-panel p-6 rounded-xl flex items-center">
