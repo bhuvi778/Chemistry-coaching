@@ -20,7 +20,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center cursor-pointer">
             <img 
-              src={isDark ? "/logo-dark.png" : "/logo-light.png"}
+              src={isDark ? "/logo-light.png" : "/logo-dark.png"}
               alt="Ace2Examz - Your Path To Success" 
               className="h-12 md:h-16 w-auto object-contain transition-opacity duration-300"
             />
