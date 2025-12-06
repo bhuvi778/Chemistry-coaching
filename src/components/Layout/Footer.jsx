@@ -81,15 +81,15 @@ const Footer = () => {
                     <div className="space-y-4 mb-6">
                         <div className="flex items-start gap-3 text-gray-400 text-sm">
                             <i className="fas fa-map-marker-alt mt-1 text-cyan-400"></i>
-                            <span>2nd Floor, Kota House, Edu-City, New Delhi - 110001</span>
+                            <span> Chhota Tiwana Rd, Jalalabad West, Distt - Fazilka (PB), 152024</span>
                         </div>
                         <div className="flex items-center gap-3 text-gray-400 text-sm">
                             <i className="fas fa-phone text-cyan-400"></i>
-                            <a href="tel:+919876543210" className="hover:text-white transition">+91 98765 43210</a>
+                            <a href="tel:+919876543210" className="hover:text-white transition">+91 9115179935</a>
                         </div>
                         <div className="flex items-center gap-3 text-gray-400 text-sm">
                             <i className="fas fa-envelope text-cyan-400"></i>
-                            <a href="mailto:info@ace2examz.com" className="hover:text-white transition">info@ace2examz.com</a>
+                            <a href="mailto:info@ace2examz.com" className="hover:text-white transition">crack@ace2examz.in</a>
                         </div>
                     </div>
 
@@ -114,11 +114,11 @@ const Footer = () => {
         <div className="border-t border-gray-800 bg-black/60">
             <div className="max-w-7xl mx-auto px-4 py-6">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                    <p>&copy; 2024 Ace2examz Chemistry Institute. All rights reserved.</p>
+                    <p>&copy; 2025 Ace2Examz (Keystone Academy Connect (OPC) Pvt Ltd)</p>
                     <div className="flex gap-6">
-                        <a href="#" className="hover:text-white transition">Privacy Policy</a>
-                        <a href="#" className="hover:text-white transition">Terms of Service</a>
-                        <a href="#" className="hover:text-white transition">Refund Policy</a>
+                        <Link to="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link>
+                        <Link to="/terms-and-conditions" className="hover:text-white transition">Terms of Service</Link>
+                        <Link to="/refund-policy" className="hover:text-white transition">Refund Policy</Link>
                         <Link to="/admin" className="hover:text-cyan-400 transition">Admin Login</Link>
                     </div>
                 </div>

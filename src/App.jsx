@@ -11,6 +11,9 @@ import About from './pages/About';
 import AllCourses from './pages/AllCourses';
 import Lectures from './pages/Lectures';
 import AIAssistantPage from './pages/AIAssistantPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
+import RefundPolicy from './pages/RefundPolicy';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 
@@ -37,6 +40,9 @@ function AppContent() {
           <Route path="/lectures" element={<Lectures />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route 
             path="/admin/dashboard" 
