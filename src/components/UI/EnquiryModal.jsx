@@ -22,30 +22,36 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
       email: formData.email,
       course: course.title,
       message: formData.message,
-      date: new Date()
+      date: new Date().toISOString()
     };
 
-    await addEnquiry(enquiryData);
-    
-    setShowSuccess(true);
-    setFormData({ name: '', phone: '', email: '', message: '' });
-    setIsSubmitting(false);
-
-    setTimeout(() => {
-      setShowSuccess(false);
-      onClose();
-    }, 2000);
+    try {
+      await addEnquiry(enquiryData);
+      
+      setShowSuccess(true);
+      setFormData({ name: '', phone: '', email: '', message: '' });
+      
+      setTimeout(() => {
+        setShowSuccess(false);
+        onClose();
+      }, 2000);
+    } catch (error) {
+      console.error('Error submitting enquiry:', error);
+      alert('Failed to submit enquiry. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-      <div className="glass-panel rounded-2xl max-w-md w-full p-8 relative border border-cyan-500/30">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
+      <div className="glass-panel rounded-2xl max-w-3xl w-full p-8 relative border border-cyan-500/30 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {/* Close Button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition z-10"
         >
           <i className="fas fa-times text-2xl"></i>
         </button>
@@ -66,41 +72,44 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
             <p className="text-gray-400">We'll contact you soon</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
-                <i className="fas fa-user mr-2 text-cyan-400"></i>
-                Full Name *
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400 transition"
-                placeholder="Enter your name"
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Two Column Layout for Name and Phone */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Name */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                  <i className="fas fa-user mr-2 text-cyan-400"></i>
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400 transition"
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                  <i className="fas fa-phone mr-2 text-cyan-400"></i>
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400 transition"
+                  placeholder="Enter your phone number"
+                  pattern="[0-9]{10}"
+                  required
+                />
+              </div>
             </div>
 
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
-                <i className="fas fa-phone mr-2 text-cyan-400"></i>
-                Phone Number *
-              </label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400 transition"
-                placeholder="Enter your phone number"
-                pattern="[0-9]{10}"
-                required
-              />
-            </div>
-
-            {/* Email */}
+            {/* Email - Full Width */}
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2">
                 <i className="fas fa-envelope mr-2 text-cyan-400"></i>
@@ -115,7 +124,7 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
               />
             </div>
 
-            {/* Message */}
+            {/* Message - Full Width */}
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2">
                 <i className="fas fa-comment mr-2 text-cyan-400"></i>
@@ -126,7 +135,7 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400 transition resize-none"
                 placeholder="Any specific questions? (optional)"
-                rows="3"
+                rows="4"
               ></textarea>
             </div>
 

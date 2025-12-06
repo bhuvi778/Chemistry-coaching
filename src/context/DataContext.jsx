@@ -67,10 +67,18 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
       const newEnquiry = await res.json();
       setEnquiries([newEnquiry, ...enquiries]);
+      console.log('Enquiry saved successfully:', newEnquiry);
+      return newEnquiry;
     } catch (error) {
       console.error("Error adding enquiry:", error);
+      throw error;
     }
   };
 
@@ -169,9 +177,25 @@ export const DataProvider = ({ children }) => {
   const login = (username, password) => {
     if (username === 'admin' && password === 'admin123') {
       setIsAdmin(true);
+      // Fetch enquiries and contacts immediately after login
+      fetchEnquiriesAndContacts();
       return true;
     }
     return false;
+  };
+
+  const fetchEnquiriesAndContacts = async () => {
+    try {
+      const enquiriesRes = await fetch(`${API_URL}/enquiries`);
+      const enquiriesData = await enquiriesRes.json();
+      setEnquiries(enquiriesData);
+
+      const contactsRes = await fetch(`${API_URL}/contacts`);
+      const contactsData = await contactsRes.json();
+      setContacts(contactsData);
+    } catch (error) {
+      console.error("Error fetching enquiries and contacts:", error);
+    }
   };
 
   const logout = () => {
