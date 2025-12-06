@@ -46,28 +46,46 @@ const AllCourses = () => {
             </div>
 
             {/* Horizontal Exam Tabs (Old Categories) */}
-            <div className="flex flex-wrap gap-3 mb-8 justify-center">
-                <button onClick={() => setActiveExam('all')} className={getExamClass('all')}>
-                    <i className="fas fa-th-large mr-2"></i>
-                    All Exams
-                </button>
-                <button onClick={() => setActiveExam('jee')} className={getExamClass('jee')}>
-                    <i className="fas fa-atom mr-2"></i>
-                    JEE
-                </button>
-                <button onClick={() => setActiveExam('neet')} className={getExamClass('neet')}>
-                    <i className="fas fa-heartbeat mr-2"></i>
-                    NEET
-                </button>
-                <button onClick={() => setActiveExam('foundation')} className={getExamClass('foundation')}>
-                    <i className="fas fa-book mr-2"></i>
-                    Foundation
-                </button>
+            <div className="mb-8 overflow-x-auto pb-2 scrollbar-hide">
+                <div className="flex gap-3 min-w-max lg:min-w-0 lg:flex-wrap lg:justify-center">
+                    <button onClick={() => setActiveExam('all')} className={getExamClass('all')}>
+                        <i className="fas fa-th-large mr-2"></i>
+                        All Exams
+                    </button>
+                    <button onClick={() => setActiveExam('jee')} className={getExamClass('jee')}>
+                        <i className="fas fa-atom mr-2"></i>
+                        JEE
+                    </button>
+                    <button onClick={() => setActiveExam('neet')} className={getExamClass('neet')}>
+                        <i className="fas fa-heartbeat mr-2"></i>
+                        NEET
+                    </button>
+                    <button onClick={() => setActiveExam('foundation')} className={getExamClass('foundation')}>
+                        <i className="fas fa-book mr-2"></i>
+                        Foundation
+                    </button>
+                </div>
+            </div>
+
+            {/* Mobile Category Filter */}
+            <div className="lg:hidden w-full mb-6">
+                <select 
+                    value={activeCategory}
+                    onChange={(e) => setActiveCategory(e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400"
+                >
+                    <option value="all">All Programs</option>
+                    <option value="live-batch">Live Batch</option>
+                    <option value="recorded">Recorded Courses</option>
+                    <option value="1-1-tutoring">1-1 Tutoring</option>
+                    <option value="mentorship">Mentorship</option>
+                    <option value="doubt-solver">Doubt Solver</option>
+                    <option value="test-series">Test Series</option>
+                </select>
             </div>
 
             {/* Main Content: Sidebar + Courses Grid */}
-            <div className="flex gap-6">
-                {/* Left Sidebar - Vertical Category Tabs */}
+            <div className="flex gap-6">\n                {/* Left Sidebar - Vertical Category Tabs */}
                 <div className="w-64 flex-shrink-0 hidden lg:block">
                     <div className="glass-panel rounded-2xl p-4 sticky top-24">
                         <h3 className="text-lg font-bold text-white mb-4 px-2">
@@ -128,25 +146,8 @@ const AllCourses = () => {
                     </div>
                 </div>
 
-                {/* Mobile Category Filter */}
-                <div className="lg:hidden w-full mb-6">
-                    <select 
-                        value={activeCategory}
-                        onChange={(e) => setActiveCategory(e.target.value)}
-                        className="w-full bg-gray-800 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400"
-                    >
-                        <option value="all">All Programs</option>
-                        <option value="live-batch">Live Batch</option>
-                        <option value="recorded">Recorded Courses</option>
-                        <option value="1-1-tutoring">1-1 Tutoring</option>
-                        <option value="mentorship">Mentorship</option>
-                        <option value="doubt-solver">Doubt Solver</option>
-                        <option value="test-series">Test Series</option>
-                    </select>
-                </div>
-
                 {/* Right Side - Courses Grid */}
-                <div className="flex-1">
+                <div className="flex-1 w-full lg:w-auto">
                     {filteredCourses.length === 0 ? (
                         <div className="text-center py-20 glass-panel rounded-2xl">
                             <i className="fas fa-inbox text-6xl text-gray-600 mb-4"></i>
