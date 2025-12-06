@@ -17,13 +17,15 @@ const Enquiries = () => {
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Phone</th>
-                <th className="px-4 py-3">Interest</th>
+                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Course</th>
+                <th className="px-4 py-3">Message</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
               {enquiries.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-4 py-4 text-center text-gray-500">No enquiries yet</td>
+                  <td colSpan="6" className="px-4 py-4 text-center text-gray-500">No enquiries yet</td>
                 </tr>
               ) : (
                 enquiries.map(enq => (
@@ -31,7 +33,9 @@ const Enquiries = () => {
                     <td className="px-4 py-3 text-sm">{new Date(enq.date).toLocaleString()}</td>
                     <td className="px-4 py-3 font-bold text-white">{enq.name}</td>
                     <td className="px-4 py-3 text-cyan-400">{enq.phone}</td>
+                    <td className="px-4 py-3 text-sm">{enq.email || '-'}</td>
                     <td className="px-4 py-3 text-sm">{enq.course}</td>
+                    <td className="px-4 py-3 text-sm text-gray-400 max-w-xs truncate">{enq.message || '-'}</td>
                   </tr>
                 ))
               )}

@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import EnquiryModal from './EnquiryModal';
 
 const CourseCard = ({ course }) => {
+  const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
+  
   const colorMap = {
     pink: 'text-pink-500 border-pink-500',
     cyan: 'text-cyan-400 border-cyan-400',
@@ -39,13 +42,22 @@ const CourseCard = ({ course }) => {
       </ul>
 
       <div className="mt-auto flex gap-3">
-        <button className={`flex-1 py-2 rounded border ${borderColor} ${textColor} hover:bg-white hover:text-black transition font-bold text-sm`}>
+        <button 
+          onClick={() => setIsEnquiryOpen(true)}
+          className={`flex-1 py-2 rounded border ${borderColor} ${textColor} hover:bg-white hover:text-black transition font-bold text-sm`}
+        >
           Enquire
         </button>
         <button className={`flex-1 py-2 rounded border ${borderColor} ${textColor} hover:bg-white hover:text-black transition font-bold text-sm`}>
           Buy Now
         </button>
       </div>
+
+      <EnquiryModal 
+        isOpen={isEnquiryOpen}
+        onClose={() => setIsEnquiryOpen(false)}
+        course={course}
+      />
     </div>
   );
 };

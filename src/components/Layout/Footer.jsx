@@ -22,19 +22,19 @@ const Footer = () => {
                         />
                     </div>
                     <p className="text-gray-400 text-sm leading-relaxed">
-                        Catalyzing potential into success. The premier institute for chemistry coaching, dedicated to crafting the next generation of scientists and engineers.
+                        Ace2Examz is a dedicatedChemistry platformoffering conceptmastery,problemsolving, and smart practice through videos and MCQs -designed by an expert gfor serious exam aspirants to succeed confidently.
                     </p>
                     <div className="flex gap-4">
-                        <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-cyan-500 hover:text-black transition-all duration-300">
+                        <a href="https://www.facebook.com/ace2examz" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-cyan-500 hover:text-black transition-all duration-300">
                             <i className="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-pink-500 hover:text-white transition-all duration-300">
+                        <a href="https://www.instagram.com/ace2examz/" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-pink-500 hover:text-white transition-all duration-300">
                             <i className="fab fa-instagram"></i>
                         </a>
-                        <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300">
+                        <a href="https://www.youtube.com/@ace2examz" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300">
                             <i className="fab fa-youtube"></i>
                         </a>
-                        <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-400 hover:text-black transition-all duration-300">
+                        <a href="https://x.com/ace2examz" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-400 hover:text-black transition-all duration-300">
                             <i className="fab fa-twitter"></i>
                         </a>
                     </div>
