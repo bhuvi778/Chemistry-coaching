@@ -4,7 +4,7 @@ import { FiArrowLeft, FiMail, FiClock, FiCheckCircle } from 'react-icons/fi';
 
 const RefundPolicy = () => {
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4 bg-gradient-to-br from-cyan-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen pt-24 pb-16 px-4 bg-gradient-to-br from-gray-900 via-black to-gray-900">
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
         <Link 

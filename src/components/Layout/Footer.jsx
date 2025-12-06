@@ -16,7 +16,7 @@ const Footer = () => {
                 <div className="space-y-6">
                     <div className="flex items-center">
                         <img 
-                            src={isDark ? "/logo-dark.png" : "/logo-light.png"}
+                            src={isDark ? "/logo-light.png" : "/logo-dark.png"}
                             alt="Ace2Examz - Your Path To Success" 
                             className="h-12 w-auto object-contain transition-opacity duration-300"
                         />

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 const TermsAndConditions = () => {
   return (
-    <div className="min-h-screen py-20 animate-fadeIn">
+    <div className="min-h-screen py-20 animate-fadeIn bg-gradient-to-br from-gray-900 via-black to-gray-900">
       <div className="max-w-5xl mx-auto px-4">
         {/* Back Button */}
         <div className="mb-8">

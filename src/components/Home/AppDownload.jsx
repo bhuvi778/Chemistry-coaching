@@ -94,37 +94,25 @@ const AppDownload = () => {
             </a>
           </div>
 
-          {/* Right Side - App Mockup/Image */}
+          {/* Right Side - Overlapping Images */}
           <div className="flex justify-center lg:justify-end">
-            <div className="relative">
-              <div className="w-72 h-[500px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-[3rem] border-8 border-gray-700 shadow-2xl overflow-hidden">
-                {/* Phone Screen */}
-                <div className="w-full h-full bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 p-6 flex flex-col items-center justify-center">
-                  <div className="text-center mb-8">
-                    <img 
-                      src={isDark ? "/logo-dark.png" : "/logo-light.png"}
-                      alt="Ace2Examz" 
-                      className="h-20 w-auto mx-auto mb-4"
-                    />
-                    <h3 className="text-white text-2xl font-bold mb-2">Ace2Examz</h3>
-                    <p className="text-gray-300 text-sm">Your Path To Success</p>
-                  </div>
-                  
-                  <div className="space-y-4 w-full">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                      <i className="fas fa-video text-cyan-400 text-xl mb-2"></i>
-                      <p className="text-white text-sm font-semibold">Live Classes</p>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                      <i className="fas fa-book-open text-pink-400 text-xl mb-2"></i>
-                      <p className="text-white text-sm font-semibold">Study Materials</p>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                      <i className="fas fa-clipboard-check text-purple-400 text-xl mb-2"></i>
-                      <p className="text-white text-sm font-semibold">Mock Tests</p>
-                    </div>
-                  </div>
-                </div>
+            <div className="relative w-full max-w-md h-[500px]">
+              {/* Image 07 - Background Layer */}
+              <div className="absolute left-0 top-0 w-3/5 h-full">
+                <img 
+                  src="/07.png" 
+                  alt="App Download" 
+                  className="w-full h-full object-contain drop-shadow-2xl"
+                />
+              </div>
+              
+              {/* Image 09 - Foreground Layer (Overlapping on the right) */}
+              <div className="absolute right-0 top-0 w-3/5 h-full">
+                <img 
+                  src="/09.png" 
+                  alt="App Features" 
+                  className="w-full h-full object-contain drop-shadow-2xl"
+                />
               </div>
               
               {/* Decorative Elements */}
