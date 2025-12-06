@@ -46,8 +46,8 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 animate-fadeIn overflow-y-auto" onClick={onClose}>
-      <div className="glass-panel rounded-2xl max-w-3xl w-full p-8 relative border border-cyan-500/30 my-8" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fadeIn overflow-y-auto" onClick={onClose}>
+      <div className="glass-panel rounded-2xl max-w-3xl w-full p-8 relative border border-cyan-500/30 my-8 z-[10000]" onClick={(e) => e.stopPropagation()}>
         {/* Close Button */}
         <button 
           onClick={onClose}
