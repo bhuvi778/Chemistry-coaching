@@ -1,4 +1,7 @@
+import { useTheme } from '../../context/ThemeContext';
+
 const WhyChooseUs = () => {
+  const { isDark } = useTheme();
   const features = [
     {
       icon: "fa-chalkboard-teacher",
@@ -41,10 +44,10 @@ const WhyChooseUs = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 py-20">
       <div className="text-center mb-16">
-        <h2 className="text-5xl font-bold text-white mb-4">
-          Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Ace2Examz</span>?
+        <h2 className={`text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>
+          Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Ace2Examz</span>?
         </h2>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+        <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-lg max-w-2xl mx-auto`}>
           Join India's most trusted Chemistry coaching institute for JEE & NEET preparation
         </p>
       </div>
@@ -53,40 +56,40 @@ const WhyChooseUs = () => {
         {features.map((feature, index) => (
           <div 
             key={index} 
-            className="group relative glass-panel p-8 rounded-2xl hover:border-cyan-400 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,243,255,0.2)] cursor-pointer"
+            className={`group relative ${isDark ? 'glass-panel' : 'bg-white border-gray-200 shadow-md'} p-8 rounded-2xl border hover:border-cyan-500 transition-all duration-300 ${isDark ? 'hover:shadow-[0_0_30px_rgba(0,243,255,0.2)]' : 'hover:shadow-xl'} cursor-pointer`}
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
             
             <div className="relative">
               <div className={`w-16 h-16 rounded-full bg-${feature.color}-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                <i className={`fas ${feature.icon} text-3xl text-${feature.color}-400`}></i>
+                <i className={`fas ${feature.icon} text-3xl text-${feature.color}-${isDark ? '400' : '500'}`}></i>
               </div>
               
-              <h3 className="text-2xl font-bold text-white mb-3">{feature.title}</h3>
-              <p className="text-gray-300 leading-relaxed">{feature.description}</p>
+              <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>{feature.title}</h3>
+              <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>{feature.description}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Stats Section */}
-      <div className="mt-20 glass-panel p-12 rounded-3xl border-l-4 border-cyan-400">
+      <div className={`mt-20 ${isDark ? 'glass-panel' : 'bg-white border border-gray-200 shadow-md'} p-12 rounded-3xl border-l-4 border-cyan-500`}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
             <div className="text-5xl font-bold text-pink-500 mb-2">140+</div>
-            <div className="text-gray-400 uppercase text-sm tracking-wider">IIT Selections</div>
+            <div className={`${isDark ? 'text-gray-400' : 'text-gray-600'} uppercase text-sm tracking-wider`}>IIT Selections</div>
           </div>
           <div>
-            <div className="text-5xl font-bold text-cyan-400 mb-2">240+</div>
-            <div className="text-gray-400 uppercase text-sm tracking-wider">NEET Selections</div>
+            <div className="text-5xl font-bold text-cyan-500 mb-2">240+</div>
+            <div className={`${isDark ? 'text-gray-400' : 'text-gray-600'} uppercase text-sm tracking-wider`}>NEET Selections</div>
           </div>
           <div>
-            <div className="text-5xl font-bold text-yellow-400 mb-2">15+</div>
-            <div className="text-gray-400 uppercase text-sm tracking-wider">Years Experience</div>
+            <div className="text-5xl font-bold text-yellow-500 mb-2">15+</div>
+            <div className={`${isDark ? 'text-gray-400' : 'text-gray-600'} uppercase text-sm tracking-wider`}>Years Experience</div>
           </div>
           <div>
-            <div className="text-5xl font-bold text-green-400 mb-2">5000+</div>
-            <div className="text-gray-400 uppercase text-sm tracking-wider">Happy Students</div>
+            <div className="text-5xl font-bold text-green-500 mb-2">5000+</div>
+            <div className={`${isDark ? 'text-gray-400' : 'text-gray-600'} uppercase text-sm tracking-wider`}>Happy Students</div>
           </div>
         </div>
       </div>
