@@ -58,10 +58,9 @@ const WhyChooseUs = () => {
             key={index} 
             className={`group relative p-8 rounded-2xl border transition-all duration-300 cursor-pointer ${
               isDark 
-                ? 'glass-panel hover:border-cyan-500 hover:shadow-[0_0_30px_rgba(0,243,255,0.2)]' 
-                : 'border-gray-200 hover:border-cyan-500 hover:shadow-xl'
-            }`}
-            style={!isDark ? { backgroundColor: 'white' } : {}}
+                ? 'glass-panel hover:shadow-[0_0_30px_rgba(0,243,255,0.2)]' 
+                : 'bg-white border-gray-200 hover:shadow-xl shadow-md'
+            } hover:border-cyan-500`}
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
             
@@ -82,9 +81,8 @@ const WhyChooseUs = () => {
         className={`mt-20 p-12 rounded-3xl border-l-4 border-cyan-500 ${
           isDark 
             ? 'glass-panel' 
-            : 'border border-gray-200'
+            : 'bg-white border border-gray-200 shadow-md'
         }`}
-        style={!isDark ? { backgroundColor: 'white' } : {}}
       >
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
