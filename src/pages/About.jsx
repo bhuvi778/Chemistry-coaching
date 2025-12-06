@@ -151,16 +151,16 @@ const About = () => {
                                 <div className="text-xs text-gray-400 uppercase tracking-wider">Alumni</div>
                             </div>
                             <div className="p-4 bg-gray-900/50 rounded-xl">
-                                <div className="text-3xl font-bold text-cyan-400 mb-1">150+</div>
+                                <div className="text-3xl font-bold text-cyan-400 mb-1">140+</div>
                                 <div className="text-xs text-gray-400 uppercase tracking-wider">IITians</div>
                             </div>
                             <div className="p-4 bg-gray-900/50 rounded-xl">
-                                <div className="text-3xl font-bold text-yellow-400 mb-1">50+</div>
+                                <div className="text-3xl font-bold text-yellow-400 mb-1">240+</div>
                                 <div className="text-xs text-gray-400 uppercase tracking-wider">Doctors</div>
                             </div>
                             <div className="p-4 bg-gray-900/50 rounded-xl">
-                                <div className="text-3xl font-bold text-green-400 mb-1">98%</div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wider">Success Rate</div>
+                                <div className="text-3xl font-bold text-green-400 mb-1">4.8 (460)</div>
+                                <div className="text-xs text-gray-400 uppercase tracking-wider">Ratings, garage replace rooms</div>
                             </div>
                         </div>
                     </div>

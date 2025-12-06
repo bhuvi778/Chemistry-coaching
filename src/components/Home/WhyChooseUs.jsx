@@ -2,8 +2,8 @@ const WhyChooseUs = () => {
   const features = [
     {
       icon: "fa-chalkboard-teacher",
-      title: "Expert Faculty",
-      description: "Learn from IIT & AIIMS alumni with 10+ years of teaching experience",
+      title: "Real NTA Interface",
+      description: "Experience the authentic NEET & JEE exam environment",
       color: "cyan"
     },
     {
@@ -15,19 +15,19 @@ const WhyChooseUs = () => {
     {
       icon: "fa-trophy",
       title: "Proven Results",
-      description: "150+ IIT selections and 200+ AIIMS admissions since 2015",
+      description: "140+ IIT selections and 240+ NEET selections since 2010",
       color: "yellow"
     },
     {
       icon: "fa-users",
-      title: "Small Batch Size",
-      description: "Maximum 25 students per batch for personalized attention",
+      title: "Live Mentorship",
+      description: "One-on-one mentor session every month",
       color: "green"
     },
     {
       icon: "fa-clock",
       title: "Flexible Timings",
-      description: "Weekend & weekday batches available for working students",
+      description: "Weekend & weekday batches available for dropper students",
       color: "purple"
     },
     {
@@ -78,7 +78,7 @@ const WhyChooseUs = () => {
           </div>
           <div>
             <div className="text-5xl font-bold text-cyan-400 mb-2">240+</div>
-            <div className="text-gray-400 uppercase text-sm tracking-wider">AIIS/NEET Admissions</div>
+            <div className="text-gray-400 uppercase text-sm tracking-wider">NEET Selections</div>
           </div>
           <div>
             <div className="text-5xl font-bold text-yellow-400 mb-2">15+</div>

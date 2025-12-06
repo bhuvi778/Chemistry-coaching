@@ -160,7 +160,12 @@ const Home = () => {
                           <option className="bg-gray-900">Class 11 (JEE/NEET)</option>
                           <option className="bg-gray-900">Class 12 (JEE/NEET)</option>
                           <option className="bg-gray-900">Dropper Batch</option>
-                          <option className="bg-gray-900">Foundation (8-10)</option>
+                          <option className="bg-gray-900">IAT</option>
+                          <option className="bg-gray-900">NEST</option>
+                          <option className="bg-gray-900">CSIR NET</option>
+                          <option className="bg-gray-900">GATE</option>
+                          <option className="bg-gray-900">IIT JAM</option>
+                          <option className="bg-gray-900">TIFR</option>
                        </select>
                        <i className="fas fa-chevron-down absolute right-4 top-4 text-gray-500 pointer-events-none"></i>
                     </div>
