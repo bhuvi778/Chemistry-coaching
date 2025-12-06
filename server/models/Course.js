@@ -8,7 +8,7 @@ const courseSchema = new mongoose.Schema({
   grade: String, // Old field - kept for backward compatibility
   category: { 
     type: String, 
-    enum: ['JEE', 'NEET', 'Foundation', 'jee', 'neet', 'foundation'], 
+    enum: ['JEE', 'NEET', 'IAT', 'NEST', 'CSIR NET', 'GATE', 'IIT JAM', 'TIFR', 'jee', 'neet', 'iat', 'nest', 'csir-net', 'gate', 'iit-jam', 'tifr'], 
     default: 'JEE' 
   }, // Exam category (old categories)
   description: { 

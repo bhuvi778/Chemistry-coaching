@@ -13,8 +13,10 @@ const AllCourses = () => {
     const categoryMatch = activeCategory === 'all' || 
       (course.categories && course.categories.includes(activeCategory));
     
+    // Handle exam match with normalization for hyphenated values (e.g., 'csir-net' matches 'CSIR NET')
+    const normalizeExam = (exam) => exam.toLowerCase().replace(/\s+/g, '-');
     const examMatch = activeExam === 'all' || 
-      (course.category && course.category.toLowerCase() === activeExam.toLowerCase());
+      (course.category && normalizeExam(course.category) === normalizeExam(activeExam));
     
     return categoryMatch && examMatch;
   });
@@ -60,9 +62,29 @@ const AllCourses = () => {
                         <i className="fas fa-heartbeat mr-2"></i>
                         NEET
                     </button>
-                    <button onClick={() => setActiveExam('foundation')} className={getExamClass('foundation')}>
-                        <i className="fas fa-book mr-2"></i>
-                        Foundation
+                    <button onClick={() => setActiveExam('iat')} className={getExamClass('iat')}>
+                        <i className="fas fa-flask mr-2"></i>
+                        IAT
+                    </button>
+                    <button onClick={() => setActiveExam('nest')} className={getExamClass('nest')}>
+                        <i className="fas fa-microscope mr-2"></i>
+                        NEST
+                    </button>
+                    <button onClick={() => setActiveExam('csir-net')} className={getExamClass('csir-net')}>
+                        <i className="fas fa-graduation-cap mr-2"></i>
+                        CSIR NET
+                    </button>
+                    <button onClick={() => setActiveExam('gate')} className={getExamClass('gate')}>
+                        <i className="fas fa-door-open mr-2"></i>
+                        GATE
+                    </button>
+                    <button onClick={() => setActiveExam('iit-jam')} className={getExamClass('iit-jam')}>
+                        <i className="fas fa-university mr-2"></i>
+                        IIT JAM
+                    </button>
+                    <button onClick={() => setActiveExam('tifr')} className={getExamClass('tifr')}>
+                        <i className="fas fa-atom mr-2"></i>
+                        TIFR
                     </button>
                 </div>
             </div>

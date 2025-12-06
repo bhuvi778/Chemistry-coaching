@@ -112,7 +112,12 @@ const ManageCourses = () => {
               <option value="">Select Exam Category</option>
               <option value="JEE">JEE</option>
               <option value="NEET">NEET</option>
-              <option value="Foundation">Foundation</option>
+              <option value="IAT">IAT</option>
+              <option value="NEST">NEST</option>
+              <option value="CSIR NET">CSIR NET</option>
+              <option value="GATE">GATE</option>
+              <option value="IIT JAM">IIT JAM</option>
+              <option value="TIFR">TIFR</option>
             </select>
             <select
               value={formData.color}
