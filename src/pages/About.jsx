@@ -134,7 +134,7 @@ const About = () => {
             {/* Our Story Section */}
             <div className="mb-24 flex flex-col md:flex-row items-center gap-12">
                 <div className="md:w-1/2">
-                    <h1 className="text-5xl font-bold mb-6 text-white">Forging <span className="text-cyan-400">Futures</span> Since 2015</h1>
+                    <h1 className="text-5xl font-bold mb-6 text-white">Forging <span className="text-cyan-400">Futures</span> Since 2010</h1>
                     <p className="text-gray-300 text-lg leading-relaxed mb-6">
                         Ace2examz started as a small doubt-clearing cell in a garage. Today, it stands as a beacon of excellence in chemistry education. Our journey began with a simple observation: students were memorizing reactions without understanding the underlying mechanisms.
                     </p>
