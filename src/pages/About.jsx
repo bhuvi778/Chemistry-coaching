@@ -382,7 +382,46 @@ const About = () => {
           </div>
         </div>
 
-        {/* Faculty Section */}
+        {/* Hall of Fame Section */}
+        <div className="mb-24">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-white mb-4">
+              Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">Fame</span>
+            </h2>
+            <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+              Our students don't just crack exams - they dominate them. Read their inspiring journeys from aspiring students to top rankers.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {successStories.slice(0, 6).map((story) => (
+              <div key={story.id} className="glass-panel rounded-2xl border border-cyan-500/20 p-6 hover:border-cyan-500/50 transition-all duration-300 group">
+                <div className="flex items-start gap-4 mb-4">
+                  <img src={story.image} alt={story.name} className="w-16 h-16 rounded-full object-cover border-2 border-cyan-500/50" />
+                  <div className="flex-grow">
+                    <h3 className="text-xl font-bold text-white mb-1">{story.name}</h3>
+                    <p className="text-cyan-400 text-sm font-semibold">{story.rank}</p>
+                    <p className="text-gray-400 text-xs">{story.exam}</p>
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <p className="text-gray-300 text-sm italic">"{story.quote}"</p>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+                  <span className="text-xs text-gray-400">
+                    <i className="fas fa-graduation-cap text-pink-500 mr-1"></i>
+                    {story.college.split('-')[0].trim()}
+                  </span>
+                  <span className="text-xs text-cyan-400 font-semibold">Batch {story.year}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Teaching Methodology Section */}
         <div className="mb-24">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold mb-6">The Teaching Methodology</h2>
@@ -415,7 +454,7 @@ const About = () => {
           </div>
 
           {/* Infrastructure Section */}
-          <div className="mb-24">
+          <div>
             <h3 className="text-3xl font-bold text-center mb-12">State-of-the-Art Infrastructure</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
@@ -441,7 +480,10 @@ const About = () => {
               </div>
             </div>
           </div>
+        </div>
 
+        {/* Meet Your Mentors Section with the new design */}
+        <div className="mb-24">
           <h3 className="text-3xl font-bold text-center mb-10">Meet Your Mentors (HODs)</h3>
           <div className="flex flex-wrap justify-center gap-8 mb-24">
             <div className="text-center group">
@@ -467,105 +509,6 @@ const About = () => {
               <h4 className="text-xl font-bold">Ms. Elena Ray</h4>
               <p className="text-cyan-400 text-sm">HOD Inorganic Chemistry</p>
               <p className="text-gray-500 text-xs mt-1">M.Sc Chemistry, Gold Medalist</p>
-            </div>
-          </div>
-
-          {/* Success Stories Section */}
-          <div className="mb-24">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl font-bold text-white mb-4">
-                Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">Fame</span>
-              </h2>
-              <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-                Our students don't just crack exams - they dominate them. Read their inspiring journeys from aspiring students to top rankers.
-              </p>
-            </div>
-
-            <div className="space-y-20">
-              {successStories.slice(0, 4).map((story, index) => (
-                <div key={story.id} className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 items-center`}>
-                  {/* Image Side */}
-                  <div className="w-full md:w-1/2 relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition duration-500"></div>
-
-                    <div className="relative">
-                      <div className="relative rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl group-hover:border-pink-500/50 transition-all duration-300">
-                        <img src={story.image} alt={story.name} className="w-full h-[400px] object-cover" />
-
-                        {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-60"></div>
-
-                        {/* Rank Badge */}
-                        <div className="absolute top-6 right-6 glass-panel px-6 py-3 rounded-2xl border border-cyan-500/50 shadow-xl backdrop-blur-md">
-                          <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">{story.rank}</div>
-                          <div className="text-xs uppercase tracking-wider text-gray-300">Rank</div>
-                        </div>
-
-                        {/* Year Badge */}
-                        <div className="absolute bottom-6 left-6 glass-panel px-4 py-2 rounded-xl border border-pink-500/30 backdrop-blur-md">
-                          <div className="flex items-center gap-2">
-                            <i className="fas fa-calendar-alt text-cyan-400"></i>
-                            <span className="text-white font-semibold text-sm">Batch {story.year}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content Side */}
-                  <div className="w-full md:w-1/2">
-                    <div className="relative group">
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
-
-                      <div className="relative glass-panel p-8 rounded-3xl border border-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300">
-                        {/* Header */}
-                        <div className="mb-6">
-                          <div className="flex items-start gap-4 mb-4">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg">
-                              <i className="fas fa-trophy text-white text-2xl"></i>
-                            </div>
-                            <div className="flex-grow">
-                              <h3 className="text-3xl font-bold text-white mb-1">{story.name}</h3>
-                              <p className="text-cyan-400 font-semibold text-lg">{story.exam}</p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2 text-gray-400 pl-[72px]">
-                            <i className="fas fa-graduation-cap text-pink-500"></i>
-                            <span className="text-sm">{story.college}</span>
-                          </div>
-                        </div>
-
-                        {/* Divider */}
-                        <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent mb-6"></div>
-
-                        {/* Quote */}
-                        <div className="relative mb-6">
-                          <i className="fas fa-quote-left text-3xl text-cyan-500/30 absolute -top-1 -left-1"></i>
-                          <p className="text-gray-300 text-base leading-relaxed pl-10 pr-6 italic">
-                            "{story.quote}"
-                          </p>
-                          <i className="fas fa-quote-right text-3xl text-pink-500/30 absolute -bottom-1 -right-1"></i>
-                        </div>
-
-                        {/* Stats */}
-                        <div className="flex items-center justify-between pt-6 border-t border-gray-700/50">
-                          <div className="flex gap-1">
-                            {[...Array(5)].map((_, i) => (
-                              <i key={i} className="fas fa-star text-cyan-400 text-sm"></i>
-                            ))}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded-full text-xs font-semibold border border-cyan-500/30">
-                              <i className="fas fa-medal mr-1"></i> Top Ranker
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
