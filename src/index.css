@@ -219,12 +219,6 @@ body {
   border-color: #cbd5e1 !important;
 }
 
-/* Add subtle fade to all sections */
-.light section {
-  background: rgba(255, 255, 255, 0.50);
-  backdrop-filter: blur(10px);
-}
-
 /* Why Choose Us cards - Simple white in light mode */
 .light .glass-panel {
   background: rgba(255, 255, 255, 0.95) !important;

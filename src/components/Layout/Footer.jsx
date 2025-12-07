@@ -123,7 +123,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="text-center mt-4 text-xs text-gray-600">
-                    <p>Made with <i className="fas fa-heart text-red-500 mx-1"></i> for aspiring chemists | Catalyzing dreams since 2015</p>
+                    <p>Made with <i className="fas fa-heart text-red-500 mx-1"></i> for aspiring chemistry aspirants | Catalyzing dreams since 2010</p>
                 </div>
             </div>
         </div>

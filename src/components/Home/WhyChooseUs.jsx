@@ -54,21 +54,21 @@ const WhyChooseUs = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {features.map((feature, index) => (
-          <div 
-            key={index} 
-            className={`group relative p-8 rounded-2xl border transition-all duration-300 cursor-pointer ${
-              isDark 
-                ? 'glass-panel hover:shadow-[0_0_30px_rgba(0,243,255,0.2)]' 
-                : 'bg-white border-gray-200 hover:shadow-xl shadow-md'
-            } hover:border-cyan-500`}
+          <div
+            key={index}
+            className={`group relative p-8 rounded-2xl border transition-all duration-300 cursor-pointer ${isDark
+                ? 'glass-panel hover:shadow-[0_0_30px_rgba(0,243,255,0.2)]'
+                : 'bg-white/95 border-gray-300 hover:shadow-xl shadow-lg'
+              } hover:border-cyan-500`}
+            style={!isDark ? { backgroundColor: 'rgba(255, 255, 255, 0.98)' } : {}}
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
-            
+
             <div className="relative">
               <div className={`w-16 h-16 rounded-full bg-${feature.color}-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                 <i className={`fas ${feature.icon} text-3xl text-${feature.color}-${isDark ? '400' : '500'}`}></i>
               </div>
-              
+
               <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>{feature.title}</h3>
               <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>{feature.description}</p>
             </div>
@@ -77,12 +77,11 @@ const WhyChooseUs = () => {
       </div>
 
       {/* Stats Section */}
-      <div 
-        className={`mt-20 p-12 rounded-3xl border-l-4 border-cyan-500 ${
-          isDark 
-            ? 'glass-panel' 
+      <div
+        className={`mt-20 p-12 rounded-3xl border-l-4 border-cyan-500 ${isDark
+            ? 'glass-panel'
             : 'bg-white border border-gray-200 shadow-md'
-        }`}
+          }`}
       >
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
