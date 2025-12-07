@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const About = () => {
-  const [showAllStories, setShowAllStories] = useState(false);
 
   const successStories = [
     {
@@ -126,211 +125,429 @@ const About = () => {
     }
   ];
 
-  const displayedStories = showAllStories ? successStories : successStories.slice(0, 6);
+
 
   return (
     <div className="animate-fadeIn">
-       <div className="max-w-5xl mx-auto px-4 py-20">
-            {/* Our Story Section */}
-            <div className="mb-24 flex flex-col md:flex-row items-center gap-12">
-                <div className="md:w-1/2">
-                    <h1 className="text-5xl font-bold mb-6 text-white">Forging <span className="text-cyan-400">Futures</span> Since 2010</h1>
-                    <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                        Ace2examz started as a small doubt-clearing cell in a garage. Today, it stands as a beacon of excellence in chemistry education. Our journey began with a simple observation: students were memorizing reactions without understanding the underlying mechanisms.
-                    </p>
-                    <p className="text-gray-300 text-lg leading-relaxed">
-                        We set out to change that. By combining traditional teaching with modern visualization tools, we've helped over 5,000 students crack JEE and NEET with top ranks. We don't just prepare you for exams; we prepare you to think like a scientist.
-                    </p>
+      <div className="max-w-5xl mx-auto px-4 py-20">
+        {/* Our Story Section */}
+        <div className="mb-24 flex flex-col md:flex-row items-center gap-12">
+          <div className="md:w-1/2">
+            <h1 className="text-5xl font-bold mb-6 text-white">Forging <span className="text-cyan-400">Futures</span> Since 2010</h1>
+            <p className="text-gray-300 text-lg leading-relaxed mb-6">
+              Ace2examz started as a small doubt-clearing cell in a garage. Today, it stands as a beacon of excellence in chemistry education. Our journey began with a simple observation: students were memorizing reactions without understanding the underlying mechanisms.
+            </p>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              We set out to change that. By combining traditional teaching with modern visualization tools, we've helped over 5,000 students crack JEE and NEET with top ranks. We don't just prepare you for exams; we prepare you to think like a scientist.
+            </p>
+          </div>
+          <div className="md:w-1/2 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl blur-xl opacity-30"></div>
+            <div className="relative glass-panel p-8 rounded-2xl border border-gray-700">
+              <div className="grid grid-cols-2 gap-6 text-center">
+                <div className="p-4 bg-gray-900/50 rounded-xl">
+                  <div className="text-3xl font-bold text-pink-500 mb-1">5k+</div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wider">Alumni</div>
                 </div>
-                <div className="md:w-1/2 relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl blur-xl opacity-30"></div>
-                    <div className="relative glass-panel p-8 rounded-2xl border border-gray-700">
-                        <div className="grid grid-cols-2 gap-6 text-center">
-                            <div className="p-4 bg-gray-900/50 rounded-xl">
-                                <div className="text-3xl font-bold text-pink-500 mb-1">5k+</div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wider">Alumni</div>
-                            </div>
-                            <div className="p-4 bg-gray-900/50 rounded-xl">
-                                <div className="text-3xl font-bold text-cyan-400 mb-1">140+</div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wider">IITians</div>
-                            </div>
-                            <div className="p-4 bg-gray-900/50 rounded-xl">
-                                <div className="text-3xl font-bold text-yellow-400 mb-1">240+</div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wider">Doctors</div>
-                            </div>
-                            <div className="p-4 bg-gray-900/50 rounded-xl">
-                                <div className="text-3xl font-bold text-green-400 mb-1">4.8 (460)</div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wider">Ratings, garage replace rooms</div>
-                            </div>
-                        </div>
-                    </div>
+                <div className="p-4 bg-gray-900/50 rounded-xl">
+                  <div className="text-3xl font-bold text-cyan-400 mb-1">140+</div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wider">IITians</div>
                 </div>
-            </div>
-
-            <div className="text-center mb-16">
-                <h2 className="text-5xl font-bold mb-6">The Teaching Methodology</h2>
-                <p className="text-xl text-gray-400 max-w-2xl mx-auto">We believe chemistry isn't just memorization. It's understanding the building blocks of the universe through logic and visualization.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
-                <div className="glass-panel p-8 rounded-3xl border border-cyan-500/30">
-                    <h3 className="text-2xl font-bold mb-4 text-cyan-400">Why We Produce Toppers</h3>
-                    <ul className="space-y-4 text-gray-300">
-                        <li className="flex items-start">
-                            <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
-                            <span><strong>Hybrid Learning:</strong> Missed a class? Watch the recording on our app.</span>
-                        </li>
-                        <li className="flex items-start">
-                            <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
-                            <span><strong>Rigorous Testing:</strong> Weekly Mains and Advanced pattern tests.</span>
-                        </li>
-                        <li className="flex items-start">
-                            <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
-                            <span><strong>Small Batch Size:</strong> Max 30 students per batch for personal attention.</span>
-                        </li>
-                    </ul>
+                <div className="p-4 bg-gray-900/50 rounded-xl">
+                  <div className="text-3xl font-bold text-yellow-400 mb-1">240+</div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wider">Doctors</div>
                 </div>
-                <div className="relative h-80 rounded-2xl overflow-hidden border border-gray-700 shadow-2xl">
-                     <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
-                         <i className="fas fa-chalkboard-teacher text-9xl text-gray-700 opacity-50"></i>
-                     </div>
+                <div className="p-4 bg-gray-900/50 rounded-xl">
+                  <div className="text-3xl font-bold text-green-400 mb-1">4.8 (460)</div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wider">Ratings, garage replace rooms</div>
                 </div>
-            </div>
-
-            {/* Infrastructure Section */}
-            <div className="mb-24">
-                <h3 className="text-3xl font-bold text-center mb-12">State-of-the-Art Infrastructure</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
-                        <div className="w-16 h-16 mx-auto bg-cyan-900/30 rounded-full flex items-center justify-center text-cyan-400 mb-4 text-2xl">
-                            <i className="fas fa-book-reader"></i>
-                        </div>
-                        <h4 className="text-xl font-bold mb-2">Smart Library</h4>
-                        <p className="text-gray-400 text-sm">24/7 access to thousands of reference books and quiet study zones.</p>
-                    </div>
-                    <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
-                        <div className="w-16 h-16 mx-auto bg-pink-900/30 rounded-full flex items-center justify-center text-pink-400 mb-4 text-2xl">
-                            <i className="fas fa-flask"></i>
-                        </div>
-                        <h4 className="text-xl font-bold mb-2">Practical Labs</h4>
-                        <p className="text-gray-400 text-sm">Real chemical labs for practical demonstration of theoretical concepts.</p>
-                    </div>
-                    <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
-                        <div className="w-16 h-16 mx-auto bg-purple-900/30 rounded-full flex items-center justify-center text-purple-400 mb-4 text-2xl">
-                            <i className="fas fa-laptop-code"></i>
-                        </div>
-                        <h4 className="text-xl font-bold mb-2">CBT Center</h4>
-                        <p className="text-gray-400 text-sm">Computer Based Test center to simulate the actual JEE/NEET exam environment.</p>
-                    </div>
-                </div>
-            </div>
-
-            <h3 className="text-3xl font-bold text-center mb-10">Meet Your Mentors (HODs)</h3>
-            <div className="flex flex-wrap justify-center gap-8 mb-24">
-                <div className="text-center group">
-                    <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition duration-300">
-                        <span className="text-4xl font-bold text-black">SB</span>
-                    </div>
-                    <h4 className="text-xl font-bold">Dr. Sarah Bond</h4>
-                    <p className="text-cyan-400 text-sm">HOD Organic Chemistry</p>
-                    <p className="text-gray-500 text-xs mt-1">Ex-IIT Faculty, 15 Yrs Exp</p>
-                </div>
-                <div className="text-center group">
-                     <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 bg-gradient-to-bl group-hover:scale-110 transition duration-300">
-                        <span className="text-4xl font-bold text-black">JI</span>
-                    </div>
-                    <h4 className="text-xl font-bold">Mr. James Ion</h4>
-                    <p className="text-cyan-400 text-sm">HOD Physical Chemistry</p>
-                     <p className="text-gray-500 text-xs mt-1">B.Tech IIT Delhi, 12 Yrs Exp</p>
-                </div>
-                 <div className="text-center group">
-                     <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition duration-300">
-                        <span className="text-4xl font-bold text-black">ER</span>
-                    </div>
-                    <h4 className="text-xl font-bold">Ms. Elena Ray</h4>
-                    <p className="text-cyan-400 text-sm">HOD Inorganic Chemistry</p>
-                     <p className="text-gray-500 text-xs mt-1">M.Sc Chemistry, Gold Medalist</p>
-                </div>
-            </div>
-
-            {/* Success Stories Section */}
-            <div className="mb-24">
-              <div className="text-center mb-16">
-                <h2 className="text-5xl font-bold text-white mb-4">
-                  Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">Fame</span>
-                </h2>
-                <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-                  Our students don't just crack exams - they dominate them. Read their inspiring journeys from aspiring students to top rankers.
-                </p>
               </div>
+            </div>
+          </div>
+        </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {displayedStories.map((story) => (
-                  <div key={story.id} className="relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-500"></div>
-                    
-                    <div className="relative glass-panel p-6 rounded-2xl h-full flex flex-col border-t border-white/10">
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="relative flex-shrink-0">
-                          <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-r from-cyan-400 to-pink-500">
-                            <img src={story.image} alt={story.name} className="w-full h-full rounded-full object-cover border-2 border-gray-900" />
-                          </div>
-                          <div className="absolute -bottom-2 -right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
-                            {story.rank}
-                          </div>
-                        </div>
-                        
-                        <div className="flex-grow">
-                          <h3 className="text-lg font-bold text-white">{story.name}</h3>
-                          <p className="text-cyan-400 text-sm font-semibold">{story.exam}</p>
-                          <p className="text-gray-400 text-xs mt-1">{story.college}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="relative flex-grow">
-                        <i className="fas fa-quote-left text-2xl text-gray-700 absolute -top-2 -left-1 opacity-50"></i>
-                        <p className="text-gray-300 text-sm italic relative z-10 leading-relaxed pl-6">
-                          "{story.quote}"
-                        </p>
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold mb-6">The Teaching Methodology</h2>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">We believe chemistry isn't just memorization. It's understanding the building blocks of the universe through logic and visualization.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
+          <div className="glass-panel p-8 rounded-3xl border border-cyan-500/30">
+            <h3 className="text-2xl font-bold mb-4 text-cyan-400">Why We Produce Toppers</h3>
+            <ul className="space-y-4 text-gray-300">
+              <li className="flex items-start">
+                <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
+                <span><strong>Hybrid Learning:</strong> Missed a class? Watch the recording on our app.</span>
+              </li>
+              <li className="flex items-start">
+                <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
+                <span><strong>Rigorous Testing:</strong> Weekly Mains and Advanced pattern tests.</span>
+              </li>
+              <li className="flex items-start">
+                <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
+                <span><strong>Small Batch Size:</strong> Max 30 students per batch for personal attention.</span>
+              </li>
+            </ul>
+          </div>
+          <div className="relative h-80 rounded-2xl overflow-hidden border border-gray-700 shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
+              <i className="fas fa-chalkboard-teacher text-9xl text-gray-700 opacity-50"></i>
+            </div>
+          </div>
+        </div>
+
+        {/* Infrastructure Section */}
+        <div className="mb-24">
+          <h3 className="text-3xl font-bold text-center mb-12">State-of-the-Art Infrastructure</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
+              <div className="w-16 h-16 mx-auto bg-cyan-900/30 rounded-full flex items-center justify-center text-cyan-400 mb-4 text-2xl">
+                <i className="fas fa-book-reader"></i>
+              </div>
+              <h4 className="text-xl font-bold mb-2">Smart Library</h4>
+              <p className="text-gray-400 text-sm">24/7 access to thousands of reference books and quiet study zones.</p>
+            </div>
+            <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
+              <div className="w-16 h-16 mx-auto bg-pink-900/30 rounded-full flex items-center justify-center text-pink-400 mb-4 text-2xl">
+                <i className="fas fa-flask"></i>
+              </div>
+              <h4 className="text-xl font-bold mb-2">Practical Labs</h4>
+              <p className="text-gray-400 text-sm">Real chemical labs for practical demonstration of theoretical concepts.</p>
+            </div>
+            <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
+              <div className="w-16 h-16 mx-auto bg-purple-900/30 rounded-full flex items-center justify-center text-purple-400 mb-4 text-2xl">
+                <i className="fas fa-laptop-code"></i>
+              </div>
+              <h4 className="text-xl font-bold mb-2">CBT Center</h4>
+              <p className="text-gray-400 text-sm">Computer Based Test center to simulate the actual JEE/NEET exam environment.</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 className="text-3xl font-bold text-center mb-10">Meet Your Mentors (HODs)</h3>
+        <div className="flex flex-wrap justify-center gap-8 mb-24">
+          <div className="text-center group">
+            <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition duration-300">
+              <span className="text-4xl font-bold text-black">SB</span>
+            </div>
+            <h4 className="text-xl font-bold">Dr. Sarah Bond</h4>
+            <p className="text-cyan-400 text-sm">HOD Organic Chemistry</p>
+            <p className="text-gray-500 text-xs mt-1">Ex-IIT Faculty, 15 Yrs Exp</p>
+          </div>
+          <div className="text-center group">
+            <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 bg-gradient-to-bl group-hover:scale-110 transition duration-300">
+              <span className="text-4xl font-bold text-black">JI</span>
+            </div>
+            <h4 className="text-xl font-bold">Mr. James Ion</h4>
+            <p className="text-cyan-400 text-sm">HOD Physical Chemistry</p>
+            <p className="text-gray-500 text-xs mt-1">B.Tech IIT Delhi, 12 Yrs Exp</p>
+          </div>
+          <div className="text-center group">
+            <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition duration-300">
+              <span className="text-4xl font-bold text-black">ER</span>
+            </div>
+            <h4 className="text-xl font-bold">Ms. Elena Ray</h4>
+            <p className="text-cyan-400 text-sm">HOD Inorganic Chemistry</p>
+            <p className="text-gray-500 text-xs mt-1">M.Sc Chemistry, Gold Medalist</p>
+          </div>
+        </div>
+
+        {/* Success Stories Section */}
+        <div className="mb-24">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-white mb-4">
+              Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">Fame</span>
+            </h2>
+            <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+              Our students don't just crack exams - they dominate them. Read their inspiring journeys from aspiring students to top rankers.
+            </p>
+          </div>
+
+          <div className="space-y-20">
+            {successStories.slice(0, 4).map((story, index) => (
+              <div key={story.id} className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 items-center`}>
+                {/* Image Side */}
+                <div className="w-full md:w-1/2 relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition duration-500"></div>
+
+                  <div className="relative">
+                    <div className="relative rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl group-hover:border-pink-500/50 transition-all duration-300">
+                      <img src={story.image} alt={story.name} className="w-full h-[400px] object-cover" />
+
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-60"></div>
+
+                      {/* Rank Badge */}
+                      <div className="absolute top-6 right-6 glass-panel px-6 py-3 rounded-2xl border border-cyan-500/50 shadow-xl backdrop-blur-md">
+                        <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">{story.rank}</div>
+                        <div className="text-xs uppercase tracking-wider text-gray-300">Rank</div>
                       </div>
 
-                      <div className="mt-4 pt-4 border-t border-gray-700 flex items-center justify-between">
-                        <span className="text-xs text-gray-500">Batch of {story.year}</span>
-                        <div className="flex gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <i key={i} className="fas fa-star text-yellow-400 text-xs"></i>
-                          ))}
+                      {/* Year Badge */}
+                      <div className="absolute bottom-6 left-6 glass-panel px-4 py-2 rounded-xl border border-pink-500/30 backdrop-blur-md">
+                        <div className="flex items-center gap-2">
+                          <i className="fas fa-calendar-alt text-cyan-400"></i>
+                          <span className="text-white font-semibold text-sm">Batch {story.year}</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {successStories.length > 6 && (
-                <div className="text-center mt-12">
-                  <button
-                    onClick={() => setShowAllStories(!showAllStories)}
-                    className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-lg hover:shadow-[0_0_30px_rgba(0,243,255,0.5)] transition transform hover:scale-105"
-                  >
-                    {showAllStories ? (
-                      <>
-                        <i className="fas fa-chevron-up mr-2"></i>
-                        Show Less
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-chevron-down mr-2"></i>
-                        View All {successStories.length} Success Stories
-                      </>
-                    )}
-                  </button>
                 </div>
-              )}
-            </div>
+
+                {/* Content Side */}
+                <div className="w-full md:w-1/2">
+                  <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
+
+                    <div className="relative glass-panel p-8 rounded-3xl border border-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300">
+                      {/* Header */}
+                      <div className="mb-6">
+                        <div className="flex items-start gap-4 mb-4">
+                          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                            <i className="fas fa-trophy text-white text-2xl"></i>
+                          </div>
+                          <div className="flex-grow">
+                            <h3 className="text-3xl font-bold text-white mb-1">{story.name}</h3>
+                            <p className="text-cyan-400 font-semibold text-lg">{story.exam}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-gray-400 pl-[72px]">
+                          <i className="fas fa-graduation-cap text-pink-500"></i>
+                          <span className="text-sm">{story.college}</span>
+                        </div>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent mb-6"></div>
+
+                      {/* Quote */}
+                      <div className="relative mb-6">
+                        <i className="fas fa-quote-left text-3xl text-cyan-500/30 absolute -top-1 -left-1"></i>
+                        <p className="text-gray-300 text-base leading-relaxed pl-10 pr-6 italic">
+                          "{story.quote}"
+                        </p>
+                        <i className="fas fa-quote-right text-3xl text-pink-500/30 absolute -bottom-1 -right-1"></i>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="flex items-center justify-between pt-6 border-t border-gray-700/50">
+                        <div className="flex gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <i key={i} className="fas fa-star text-cyan-400 text-sm"></i>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded-full text-xs font-semibold border border-cyan-500/30">
+                            <i className="fas fa-medal mr-1"></i> Top Ranker
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-gray-900/50 rounded-xl">
+                      <div className="text-3xl font-bold text-cyan-400 mb-1">140+</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wider">IITians</div>
+                    </div>
+                    <div className="p-4 bg-gray-900/50 rounded-xl">
+                      <div className="text-3xl font-bold text-yellow-400 mb-1">240+</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wider">Doctors</div>
+                    </div>
+                    <div className="p-4 bg-gray-900/50 rounded-xl">
+                      <div className="text-3xl font-bold text-green-400 mb-1">4.8 (460)</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wider">Ratings, garage replace rooms</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </div>
-    </div>
-  );
+
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold mb-6">The Teaching Methodology</h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">We believe chemistry isn't just memorization. It's understanding the building blocks of the universe through logic and visualization.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
+            <div className="glass-panel p-8 rounded-3xl border border-cyan-500/30">
+              <h3 className="text-2xl font-bold mb-4 text-cyan-400">Why We Produce Toppers</h3>
+              <ul className="space-y-4 text-gray-300">
+                <li className="flex items-start">
+                  <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
+                  <span><strong>Hybrid Learning:</strong> Missed a class? Watch the recording on our app.</span>
+                </li>
+                <li className="flex items-start">
+                  <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
+                  <span><strong>Rigorous Testing:</strong> Weekly Mains and Advanced pattern tests.</span>
+                </li>
+                <li className="flex items-start">
+                  <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
+                  <span><strong>Small Batch Size:</strong> Max 30 students per batch for personal attention.</span>
+                </li>
+              </ul>
+            </div>
+            <div className="relative h-80 rounded-2xl overflow-hidden border border-gray-700 shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
+                <i className="fas fa-chalkboard-teacher text-9xl text-gray-700 opacity-50"></i>
+              </div>
+            </div>
+          </div>
+
+          {/* Infrastructure Section */}
+          <div className="mb-24">
+            <h3 className="text-3xl font-bold text-center mb-12">State-of-the-Art Infrastructure</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
+                <div className="w-16 h-16 mx-auto bg-cyan-900/30 rounded-full flex items-center justify-center text-cyan-400 mb-4 text-2xl">
+                  <i className="fas fa-book-reader"></i>
+                </div>
+                <h4 className="text-xl font-bold mb-2">Smart Library</h4>
+                <p className="text-gray-400 text-sm">24/7 access to thousands of reference books and quiet study zones.</p>
+              </div>
+              <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
+                <div className="w-16 h-16 mx-auto bg-pink-900/30 rounded-full flex items-center justify-center text-pink-400 mb-4 text-2xl">
+                  <i className="fas fa-flask"></i>
+                </div>
+                <h4 className="text-xl font-bold mb-2">Practical Labs</h4>
+                <p className="text-gray-400 text-sm">Real chemical labs for practical demonstration of theoretical concepts.</p>
+              </div>
+              <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
+                <div className="w-16 h-16 mx-auto bg-purple-900/30 rounded-full flex items-center justify-center text-purple-400 mb-4 text-2xl">
+                  <i className="fas fa-laptop-code"></i>
+                </div>
+                <h4 className="text-xl font-bold mb-2">CBT Center</h4>
+                <p className="text-gray-400 text-sm">Computer Based Test center to simulate the actual JEE/NEET exam environment.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3 className="text-3xl font-bold text-center mb-10">Meet Your Mentors (HODs)</h3>
+          <div className="flex flex-wrap justify-center gap-8 mb-24">
+            <div className="text-center group">
+              <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition duration-300">
+                <span className="text-4xl font-bold text-black">SB</span>
+              </div>
+              <h4 className="text-xl font-bold">Dr. Sarah Bond</h4>
+              <p className="text-cyan-400 text-sm">HOD Organic Chemistry</p>
+              <p className="text-gray-500 text-xs mt-1">Ex-IIT Faculty, 15 Yrs Exp</p>
+            </div>
+            <div className="text-center group">
+              <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 bg-gradient-to-bl group-hover:scale-110 transition duration-300">
+                <span className="text-4xl font-bold text-black">JI</span>
+              </div>
+              <h4 className="text-xl font-bold">Mr. James Ion</h4>
+              <p className="text-cyan-400 text-sm">HOD Physical Chemistry</p>
+              <p className="text-gray-500 text-xs mt-1">B.Tech IIT Delhi, 12 Yrs Exp</p>
+            </div>
+            <div className="text-center group">
+              <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition duration-300">
+                <span className="text-4xl font-bold text-black">ER</span>
+              </div>
+              <h4 className="text-xl font-bold">Ms. Elena Ray</h4>
+              <p className="text-cyan-400 text-sm">HOD Inorganic Chemistry</p>
+              <p className="text-gray-500 text-xs mt-1">M.Sc Chemistry, Gold Medalist</p>
+            </div>
+          </div>
+
+          {/* Success Stories Section */}
+          <div className="mb-24">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl font-bold text-white mb-4">
+                Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">Fame</span>
+              </h2>
+              <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+                Our students don't just crack exams - they dominate them. Read their inspiring journeys from aspiring students to top rankers.
+              </p>
+            </div>
+
+            <div className="space-y-20">
+              {successStories.slice(0, 4).map((story, index) => (
+                <div key={story.id} className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 items-center`}>
+                  {/* Image Side */}
+                  <div className="w-full md:w-1/2 relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition duration-500"></div>
+
+                    <div className="relative">
+                      <div className="relative rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl group-hover:border-pink-500/50 transition-all duration-300">
+                        <img src={story.image} alt={story.name} className="w-full h-[400px] object-cover" />
+
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-60"></div>
+
+                        {/* Rank Badge */}
+                        <div className="absolute top-6 right-6 glass-panel px-6 py-3 rounded-2xl border border-cyan-500/50 shadow-xl backdrop-blur-md">
+                          <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">{story.rank}</div>
+                          <div className="text-xs uppercase tracking-wider text-gray-300">Rank</div>
+                        </div>
+
+                        {/* Year Badge */}
+                        <div className="absolute bottom-6 left-6 glass-panel px-4 py-2 rounded-xl border border-pink-500/30 backdrop-blur-md">
+                          <div className="flex items-center gap-2">
+                            <i className="fas fa-calendar-alt text-cyan-400"></i>
+                            <span className="text-white font-semibold text-sm">Batch {story.year}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Content Side */}
+                  <div className="w-full md:w-1/2">
+                    <div className="relative group">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
+
+                      <div className="relative glass-panel p-8 rounded-3xl border border-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300">
+                        {/* Header */}
+                        <div className="mb-6">
+                          <div className="flex items-start gap-4 mb-4">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                              <i className="fas fa-trophy text-white text-2xl"></i>
+                            </div>
+                            <div className="flex-grow">
+                              <h3 className="text-3xl font-bold text-white mb-1">{story.name}</h3>
+                              <p className="text-cyan-400 font-semibold text-lg">{story.exam}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-gray-400 pl-[72px]">
+                            <i className="fas fa-graduation-cap text-pink-500"></i>
+                            <span className="text-sm">{story.college}</span>
+                          </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent mb-6"></div>
+
+                        {/* Quote */}
+                        <div className="relative mb-6">
+                          <i className="fas fa-quote-left text-3xl text-cyan-500/30 absolute -top-1 -left-1"></i>
+                          <p className="text-gray-300 text-base leading-relaxed pl-10 pr-6 italic">
+                            "{story.quote}"
+                          </p>
+                          <i className="fas fa-quote-right text-3xl text-pink-500/30 absolute -bottom-1 -right-1"></i>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="flex items-center justify-between pt-6 border-t border-gray-700/50">
+                          <div className="flex gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <i key={i} className="fas fa-star text-cyan-400 text-sm"></i>
+                            ))}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded-full text-xs font-semibold border border-cyan-500/30">
+                              <i className="fas fa-medal mr-1"></i> Top Ranker
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      );
 };
 
-export default About;
+      export default About;
