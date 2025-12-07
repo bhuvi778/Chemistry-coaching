@@ -13,7 +13,7 @@
 body {
   font-family: 'Rajdhani', sans-serif;
   background-color: #050505;
-  background-image: 
+  background-image:
     radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.08) 0%, transparent 25%),
     radial-gradient(circle at 85% 30%, rgba(255, 0, 170, 0.08) 0%, transparent 25%);
   color: white;
@@ -231,7 +231,10 @@ body {
   border-color: rgba(0, 0, 0, 0.15) !important;
 }
 
-h1, h2, h3, .brand-font {
+h1,
+h2,
+h3,
+.brand-font {
   font-family: 'Orbitron', sans-serif;
 }
 
@@ -243,33 +246,62 @@ h1, h2, h3, .brand-font {
 }
 
 @keyframes pulse-badge {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
+
 .badge-pulse {
   animation: pulse-badge 2s infinite;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
+
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
 .hex-container {
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
 }
 
 /* Hide scrollbar for mobile horizontal scroll */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none;
+  /* Chrome, Safari and Opera */
+}
+
+/* Force white background for Why Choose Us cards in light mode */
+.light .why-choose-card {
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+.light div.glass-panel {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-image: none !important;
 }

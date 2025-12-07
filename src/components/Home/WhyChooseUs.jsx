@@ -56,11 +56,14 @@ const WhyChooseUs = () => {
         {features.map((feature, index) => (
           <div
             key={index}
-            className={`group relative p-8 rounded-2xl border transition-all duration-300 cursor-pointer ${isDark
-                ? 'glass-panel hover:shadow-[0_0_30px_rgba(0,243,255,0.2)]'
-                : 'bg-white/95 border-gray-300 hover:shadow-xl shadow-lg'
+            className={`why-choose-card group relative p-8 rounded-2xl border transition-all duration-300 cursor-pointer ${isDark
+              ? 'glass-panel hover:shadow-[0_0_30px_rgba(0,243,255,0.2)]'
+              : 'border-gray-300 hover:shadow-xl shadow-lg'
               } hover:border-cyan-500`}
-            style={!isDark ? { backgroundColor: 'rgba(255, 255, 255, 0.98)' } : {}}
+            style={!isDark ? {
+              backgroundColor: '#ffffff',
+              backgroundImage: 'none'
+            } : {}}
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
 
@@ -79,8 +82,8 @@ const WhyChooseUs = () => {
       {/* Stats Section */}
       <div
         className={`mt-20 p-12 rounded-3xl border-l-4 border-cyan-500 ${isDark
-            ? 'glass-panel'
-            : 'bg-white border border-gray-200 shadow-md'
+          ? 'glass-panel'
+          : 'bg-white border border-gray-200 shadow-md'
           }`}
       >
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
