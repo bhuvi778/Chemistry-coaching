@@ -381,8 +381,6 @@ const About = () => {
             ))}
           </div>
         </div>
-          </div>
-        </div>
 
         {/* Faculty Section */}
         <div className="mb-24">
@@ -572,7 +570,8 @@ const About = () => {
           </div>
         </div>
       </div>
-      );
+    </div>
+  );
 };
 
-      export default About;
+export default About;
