@@ -2,6 +2,39 @@ import React from 'react';
 
 const About = () => {
 
+  const mentors = [
+    {
+      id: 1,
+      name: "Dr. Sarah Bond",
+      rank: "HOD Organic Chemistry",
+      exam: "Ex-IIT Faculty",
+      college: "PhD in Organic Chemistry - IIT Delhi",
+      image: "https://randomuser.me/api/portraits/women/44.jpg",
+      quote: "I believe in making chemistry visual and tangible. Every reaction tells a story, and my goal is to help students see that story unfold.",
+      year: "15 Yrs Exp"
+    },
+    {
+      id: 2,
+      name: "Mr. James Ion",
+      rank: "HOD Physical Chemistry",
+      exam: "B.Tech IIT Delhi",
+      college: "M.Tech Chemical Engineering - IIT Bombay",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
+      quote: "Physical Chemistry is not about formulas - it's about understanding the 'why' behind every concept. Once you get that, everything clicks.",
+      year: "12 Yrs Exp"
+    },
+    {
+      id: 3,
+      name: "Ms. Elena Ray",
+      rank: "HOD Inorganic Chemistry",
+      exam: "M.Sc Chemistry, Gold Medalist",
+      college: "Specialization in Coordination Chemistry",
+      image: "https://randomuser.me/api/portraits/women/68.jpg",
+      quote: "Inorganic chemistry is like solving a puzzle. Every element has its personality, and learning to predict their behavior is the key to mastery.",
+      year: "10 Yrs Exp"
+    }
+  ];
+
   const successStories = [
     {
       id: 1,
@@ -403,31 +436,41 @@ const About = () => {
             </div>
           </div>
 
-          <h3 className="text-3xl font-bold text-center mb-10">Meet Your Mentors (HODs)</h3>
-          <div className="flex flex-wrap justify-center gap-8 mb-24">
-            <div className="text-center group">
-              <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition duration-300">
-                <span className="text-4xl font-bold text-black">SB</span>
-              </div>
-              <h4 className="text-xl font-bold">Dr. Sarah Bond</h4>
-              <p className="text-cyan-400 text-sm">HOD Organic Chemistry</p>
-              <p className="text-gray-500 text-xs mt-1">Ex-IIT Faculty, 15 Yrs Exp</p>
+          <div className="mb-24">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl font-bold text-white mb-4">
+                Meet Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">Mentors</span>
+              </h2>
+              <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+                Learn from the best. Our HODs are not just teachers - they're mentors who've dedicated their lives to chemistry education.
+              </p>
             </div>
-            <div className="text-center group">
-              <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 bg-gradient-to-bl group-hover:scale-110 transition duration-300">
-                <span className="text-4xl font-bold text-black">JI</span>
-              </div>
-              <h4 className="text-xl font-bold">Mr. James Ion</h4>
-              <p className="text-cyan-400 text-sm">HOD Physical Chemistry</p>
-              <p className="text-gray-500 text-xs mt-1">B.Tech IIT Delhi, 12 Yrs Exp</p>
-            </div>
-            <div className="text-center group">
-              <div className="hex-container w-32 h-32 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition duration-300">
-                <span className="text-4xl font-bold text-black">ER</span>
-              </div>
-              <h4 className="text-xl font-bold">Ms. Elena Ray</h4>
-              <p className="text-cyan-400 text-sm">HOD Inorganic Chemistry</p>
-              <p className="text-gray-500 text-xs mt-1">M.Sc Chemistry, Gold Medalist</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {mentors.map((mentor) => (
+                <div key={mentor.id} className="glass-panel rounded-2xl border border-cyan-500/20 p-6 hover:border-cyan-500/50 transition-all duration-300 group">
+                  <div className="flex items-start gap-4 mb-4">
+                    <img src={mentor.image} alt={mentor.name} className="w-16 h-16 rounded-full object-cover border-2 border-cyan-500/50" />
+                    <div className="flex-grow">
+                      <h3 className="text-xl font-bold text-white mb-1">{mentor.name}</h3>
+                      <p className="text-cyan-400 text-sm font-semibold">{mentor.rank}</p>
+                      <p className="text-gray-400 text-xs">{mentor.exam}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <p className="text-gray-300 text-sm italic">"{mentor.quote}"</p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+                    <span className="text-xs text-gray-400">
+                      <i className="fas fa-graduation-cap text-pink-500 mr-1"></i>
+                      {mentor.college.split('-')[0].trim()}
+                    </span>
+                    <span className="text-xs text-cyan-400 font-semibold">{mentor.year}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
