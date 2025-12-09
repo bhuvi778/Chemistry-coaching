@@ -343,47 +343,6 @@ const About = () => {
           </div>
         </div>
 
-        {/* Hall of Fame Section */}
-        <div className="mb-24">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-white mb-4">
-              Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">Fame</span>
-            </h2>
-            <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-              Our students don't just crack exams - they dominate them. Read their inspiring journeys from aspiring students to top rankers.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {successStories.slice(0, 6).map((story) => (
-              <div key={story.id} className="glass-panel rounded-2xl border border-cyan-500/20 p-6 hover:border-cyan-500/50 transition-all duration-300 group">
-                <div className="flex items-start gap-4 mb-4">
-                  <img src={story.image} alt={story.name} className="w-16 h-16 rounded-full object-cover border-2 border-cyan-500/50" />
-                  <div className="flex-grow">
-                    <h3 className="text-xl font-bold text-white mb-1">{story.name}</h3>
-                    <p className="text-cyan-400 text-sm font-semibold">{story.rank}</p>
-                    <p className="text-gray-400 text-xs">{story.exam}</p>
-                  </div>
-                </div>
-                
-                <div className="mb-4">
-                  <p className="text-gray-300 text-sm italic">"{story.quote}"</p>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
-                  <span className="text-xs text-gray-400">
-                    <i className="fas fa-graduation-cap text-pink-500 mr-1"></i>
-                    {story.college.split('-')[0].trim()}
-                  </span>
-                  <span className="text-xs text-cyan-400 font-semibold">Batch {story.year}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-          </div>
-        </div>
-
         {/* Faculty Section */}
         <div className="mb-24">
           <div className="text-center mb-16">
@@ -572,7 +531,8 @@ const About = () => {
           </div>
         </div>
       </div>
-      );
+    </div>
+  );
 };
 
-      export default About;
+export default About;
