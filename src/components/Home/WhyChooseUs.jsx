@@ -57,15 +57,13 @@ const WhyChooseUs = () => {
           <div
             key={index}
             className={`why-choose-card group relative p-8 rounded-2xl border transition-all duration-300 cursor-pointer ${isDark
-              ? 'glass-panel hover:shadow-[0_0_30px_rgba(0,243,255,0.2)]'
-              : 'border-gray-300 hover:shadow-xl shadow-lg'
-              } hover:border-cyan-500`}
-            style={!isDark ? {
-              backgroundColor: '#ffffff',
-              backgroundImage: 'none'
-            } : {}}
+              ? 'glass-panel hover:shadow-[0_0_30px_rgba(0,243,255,0.2)] hover:border-cyan-500'
+              : 'bg-white border-gray-300 hover:shadow-xl shadow-lg hover:border-gray-400'
+              }`}
           >
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
+            {isDark && (
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
+            )}
 
             <div className="relative">
               <div className={`w-16 h-16 rounded-full bg-${feature.color}-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
