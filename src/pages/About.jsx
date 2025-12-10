@@ -378,63 +378,6 @@ const About = () => {
 
         {/* Faculty Section */}
         <div className="mb-24">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold mb-6">The Teaching Methodology</h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">We believe chemistry isn't just memorization. It's understanding the building blocks of the universe through logic and visualization.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
-            <div className="glass-panel p-8 rounded-3xl border border-cyan-500/30">
-              <h3 className="text-2xl font-bold mb-4 text-cyan-400">Why We Produce Toppers</h3>
-              <ul className="space-y-4 text-gray-300">
-                <li className="flex items-start">
-                  <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
-                  <span><strong>Hybrid Learning:</strong> Missed a class? Watch the recording on our app.</span>
-                </li>
-                <li className="flex items-start">
-                  <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
-                  <span><strong>Rigorous Testing:</strong> Weekly Mains and Advanced pattern tests.</span>
-                </li>
-                <li className="flex items-start">
-                  <i className="fas fa-check-circle text-pink-500 mt-1 mr-3"></i>
-                  <span><strong>Small Batch Size:</strong> Max 30 students per batch for personal attention.</span>
-                </li>
-              </ul>
-            </div>
-            <div className="relative h-80 rounded-2xl overflow-hidden border border-gray-700 shadow-2xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
-                <i className="fas fa-chalkboard-teacher text-9xl text-gray-700 opacity-50"></i>
-              </div>
-            </div>
-          </div>
-
-          {/* Infrastructure Section */}
-          <div className="mb-24">
-            <h3 className="text-3xl font-bold text-center mb-12">State-of-the-Art Infrastructure</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
-                <div className="w-16 h-16 mx-auto bg-cyan-900/30 rounded-full flex items-center justify-center text-cyan-400 mb-4 text-2xl">
-                  <i className="fas fa-book-reader"></i>
-                </div>
-                <h4 className="text-xl font-bold mb-2">Smart Library</h4>
-                <p className="text-gray-400 text-sm">24/7 access to thousands of reference books and quiet study zones.</p>
-              </div>
-              <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
-                <div className="w-16 h-16 mx-auto bg-pink-900/30 rounded-full flex items-center justify-center text-pink-400 mb-4 text-2xl">
-                  <i className="fas fa-flask"></i>
-                </div>
-                <h4 className="text-xl font-bold mb-2">Practical Labs</h4>
-                <p className="text-gray-400 text-sm">Real chemical labs for practical demonstration of theoretical concepts.</p>
-              </div>
-              <div className="glass-panel p-6 rounded-xl text-center hover:bg-gray-800/50 transition duration-300">
-                <div className="w-16 h-16 mx-auto bg-purple-900/30 rounded-full flex items-center justify-center text-purple-400 mb-4 text-2xl">
-                  <i className="fas fa-laptop-code"></i>
-                </div>
-                <h4 className="text-xl font-bold mb-2">CBT Center</h4>
-                <p className="text-gray-400 text-sm">Computer Based Test center to simulate the actual JEE/NEET exam environment.</p>
-              </div>
-            </div>
-          </div>
 
           <div className="mb-24">
             <div className="text-center mb-16">
