@@ -42,16 +42,15 @@ const AIAssistant = () => {
 
         {/* Frillbot Chatbot Iframe */}
         <div className="flex justify-center max-w-4xl mx-auto">
-          <div className="relative group">
+          <div className="relative group w-full">
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-            <div className="relative">
+            <div className="relative w-full">
               <iframe
                 allow="microphone"
                 src="https://bot.frillbot.com/chatbot-iframe/09ab53ae7eec4078b03364a594c688af"
                 id="chatbot-iframe"
-                className="rounded-2xl shadow-2xl"
-                style={{ border: '1px solid #374151' }}
-                width="100%"
+                className="rounded-2xl shadow-2xl w-full min-w-[320px]"
+                style={{ border: '1px solid #374151', minHeight: '600px' }}
                 height="600px"
                 frameBorder="0"
                 title="Ace2examz AI Assistant"

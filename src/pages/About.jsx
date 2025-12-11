@@ -336,9 +336,10 @@ const About = () => {
                   {/* Image Container */}
                   <div className="relative rounded-3xl overflow-hidden border-4 border-cyan-500/30 shadow-2xl">
                     <img 
-                      src="/navein-kumar-educator.jpg" 
+                      src="/navein-kumar-educator.png" 
                       alt="Navein Kumar - Chemistry Educator" 
-                      className="w-full h-[500px] object-cover"
+                      className="w-full h-[500px] object-cover object-center"
+                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&h=500&fit=crop'; }}
                     />
                     
                     {/* Top Badge */}
