@@ -307,22 +307,22 @@ const About = () => {
                     <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-cyan-500/10 flex items-center justify-center">
                       <i className="fas fa-users text-cyan-400 text-xl"></i>
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">200K+</div>
-                    <div className="text-gray-400 text-xs uppercase tracking-wider">Families Helped</div>
+                    <div className="text-3xl font-bold text-white mb-1">100K+</div>
+                    <div className="text-gray-400 text-xs uppercase tracking-wider">Alumini</div>
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-pink-500/10 flex items-center justify-center">
                       <i className="fas fa-flask text-pink-400 text-xl"></i>
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">500+</div>
-                    <div className="text-gray-400 text-xs uppercase tracking-wider">Kid-Approved Recipes</div>
+                    <div className="text-3xl font-bold text-white mb-1">5000+</div>
+                    <div className="text-gray-400 text-xs uppercase tracking-wider">Students</div>
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-yellow-500/10 flex items-center justify-center">
                       <i className="fas fa-star text-yellow-400 text-xl"></i>
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">5+</div>
-                    <div className="text-gray-400 text-xs uppercase tracking-wider">Years Supporting Parents</div>
+                    <div className="text-3xl font-bold text-white mb-1">15+</div>
+                    <div className="text-gray-400 text-xs uppercase tracking-wider">Years of Experience</div>
                   </div>
                 </div>
               </div>
@@ -336,8 +336,8 @@ const About = () => {
                   {/* Image Container */}
                   <div className="relative rounded-3xl overflow-hidden border-4 border-cyan-500/30 shadow-2xl">
                     <img 
-                      src="https://randomuser.me/api/portraits/women/68.jpg" 
-                      alt="Chemistry Mentor" 
+                      src="/navein-kumar-educator.jpg" 
+                      alt="Navein Kumar - Chemistry Educator" 
                       className="w-full h-[500px] object-cover"
                     />
                     
@@ -356,8 +356,8 @@ const About = () => {
                           <i className="fas fa-user text-white"></i>
                         </div>
                         <div>
-                          <div className="text-white font-bold">Certified Professional</div>
-                          <div className="text-cyan-400 text-sm">Chemistry Expert</div>
+                          <div className="text-white font-bold">Navein Kumaar</div>
+                          <div className="text-cyan-400 text-sm">EDUCATOR</div>
                         </div>
                       </div>
                     </div>
@@ -378,104 +378,6 @@ const About = () => {
 
         {/* Faculty Section */}
         <div className="mb-24">
-
-          <div className="mb-24">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl font-bold text-white mb-4">
-                Meet Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">Mentors</span>
-              </h2>
-              <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-                Learn from the best. Our HODs are not just teachers - they're mentors who've dedicated their lives to chemistry education.
-              </p>
-            </div>
-
-            <div className="space-y-20">
-              {mentors.map((mentor, index) => (
-                <div key={mentor.id} className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 items-center`}>
-                  {/* Image Side */}
-                  <div className="w-full md:w-1/2 relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition duration-500"></div>
-
-                    <div className="relative">
-                      <div className="relative rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl group-hover:border-pink-500/50 transition-all duration-300">
-                        <img src={mentor.image} alt={mentor.name} className="w-full h-[400px] object-cover" />
-
-                        {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-60"></div>
-
-                        {/* Title Badge */}
-                        <div className="absolute top-6 right-6 glass-panel px-6 py-3 rounded-2xl border border-cyan-500/50 shadow-xl backdrop-blur-md">
-                          <div className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">HOD</div>
-                          <div className="text-xs uppercase tracking-wider text-gray-300">Chemistry</div>
-                        </div>
-
-                        {/* Experience Badge */}
-                        <div className="absolute bottom-6 left-6 glass-panel px-4 py-2 rounded-xl border border-pink-500/30 backdrop-blur-md">
-                          <div className="flex items-center gap-2">
-                            <i className="fas fa-award text-cyan-400"></i>
-                            <span className="text-white font-semibold text-sm">{mentor.year}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content Side */}
-                  <div className="w-full md:w-1/2">
-                    <div className="relative group">
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
-
-                      <div className="relative glass-panel p-8 rounded-3xl border border-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300">
-                        {/* Header */}
-                        <div className="mb-6">
-                          <div className="flex items-start gap-4 mb-4">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg">
-                              <i className="fas fa-chalkboard-teacher text-white text-2xl"></i>
-                            </div>
-                            <div className="flex-grow">
-                              <h3 className="text-3xl font-bold text-white mb-1">{mentor.name}</h3>
-                              <p className="text-cyan-400 font-semibold text-lg">{mentor.rank}</p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2 text-gray-400 pl-[72px]">
-                            <i className="fas fa-graduation-cap text-pink-500"></i>
-                            <span className="text-sm">{mentor.college}</span>
-                          </div>
-                        </div>
-
-                        {/* Divider */}
-                        <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent mb-6"></div>
-
-                        {/* Quote */}
-                        <div className="relative mb-6">
-                          <i className="fas fa-quote-left text-3xl text-cyan-500/30 absolute -top-1 -left-1"></i>
-                          <p className="text-gray-300 text-base leading-relaxed pl-10 pr-6 italic">
-                            "{mentor.quote}"
-                          </p>
-                          <i className="fas fa-quote-right text-3xl text-pink-500/30 absolute -bottom-1 -right-1"></i>
-                        </div>
-
-                        {/* Stats */}
-                        <div className="flex items-center justify-between pt-6 border-t border-gray-700/50">
-                          <div className="flex gap-1">
-                            {[...Array(5)].map((_, i) => (
-                              <i key={i} className="fas fa-star text-cyan-400 text-sm"></i>
-                            ))}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded-full text-xs font-semibold border border-cyan-500/30">
-                              <i className="fas fa-user-graduate mr-1"></i> Expert Mentor
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* Success Stories Section */}
           <div className="mb-24">

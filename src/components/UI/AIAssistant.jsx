@@ -1,22 +1,6 @@
 import { useState } from 'react';
 
 const AIAssistant = () => {
-  const [question, setQuestion] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleAsk = async (e) => {
-    e.preventDefault();
-    if (!question.trim()) return;
-    
-    setIsLoading(true);
-    // Simulate AI response (you can integrate actual AI API here)
-    setTimeout(() => {
-      alert('AI Assistant feature coming soon! Your question: ' + question);
-      setIsLoading(false);
-      setQuestion('');
-    }, 1500);
-  };
-
   return (
     <section className="max-w-7xl mx-auto px-4 py-16">
       <div className="glass-panel rounded-3xl p-8 md:p-12 border border-cyan-400/20 relative overflow-hidden">
@@ -56,47 +40,25 @@ const AIAssistant = () => {
           </p>
         </div>
 
-        {/* Search Form */}
-        <form onSubmit={handleAsk} className="max-w-4xl mx-auto">
+        {/* Frillbot Chatbot Iframe */}
+        <div className="flex justify-center max-w-4xl mx-auto">
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-            
-            <div className="relative bg-gray-900/80 backdrop-blur-xl rounded-2xl border border-gray-700 p-2 flex items-center gap-3 shadow-2xl">
-              {/* Search Icon */}
-              <div className="pl-4">
-                <i className="fas fa-search text-gray-500 text-xl"></i>
-              </div>
-              
-              {/* Input Field */}
-              <input
-                type="text"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Ask about our courses, batches, fee structure, chemistry doubts..."
-                className="flex-1 bg-transparent text-white placeholder-gray-500 text-lg py-4 px-2 focus:outline-none"
+            <div className="relative">
+              <iframe
+                allow="microphone"
+                src="https://bot.frillbot.com/chatbot-iframe/09ab53ae7eec4078b03364a594c688af"
+                id="chatbot-iframe"
+                className="rounded-2xl shadow-2xl"
+                style={{ border: '1px solid #374151' }}
+                width="100%"
+                height="600px"
+                frameBorder="0"
+                title="Ace2examz AI Assistant"
               />
-              
-              {/* Ask Button */}
-              <button
-                type="submit"
-                disabled={isLoading || !question.trim()}
-                className="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-lg hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin"></i>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    Ask
-                    <i className="fas fa-arrow-right"></i>
-                  </>
-                )}
-              </button>
             </div>
           </div>
-        </form>
+        </div>
 
         {/* Features Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 max-w-4xl mx-auto">
@@ -118,22 +80,6 @@ const AIAssistant = () => {
           <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-900/30 to-transparent border border-yellow-400/20 backdrop-blur-sm hover:border-yellow-400/40 transition group">
             <i className="fas fa-info-circle text-yellow-400 text-2xl mb-2 group-hover:scale-110 transition"></i>
             <p className="text-gray-300 text-sm font-medium">Admission Help</p>
-          </div>
-        </div>
-
-        {/* Quick Topics */}
-        <div className="mt-8 text-center">
-          <p className="text-gray-500 text-sm mb-3">Quick Questions:</p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {['Course Fee Structure', 'Batch Timings', 'JEE Preparation', 'NEET Coaching', 'Dropper Batch', 'Admission Process'].map((topic) => (
-              <button
-                key={topic}
-                onClick={() => setQuestion(`Tell me about ${topic}`)}
-                className="px-4 py-2 rounded-full bg-gray-800/50 border border-gray-700 text-gray-300 text-sm hover:border-purple-500 hover:text-purple-400 transition"
-              >
-                {topic}
-              </button>
-            ))}
           </div>
         </div>
       </div>
