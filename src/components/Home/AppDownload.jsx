@@ -10,11 +10,37 @@ const AppDownload = () => {
   const handleGetLink = (e) => {
     e.preventDefault();
     if (mobileNumber.length >= 10) {
-      setMessage('App download link sent to your mobile!');
-      setTimeout(() => setMessage(''), 3000);
-      setMobileNumber('');
+      // Format phone number with country code (remove + sign for WhatsApp)
+      const phoneNumber = countryCode.replace('+', '') + mobileNumber;
+      
+      // Play Store link for your app
+      const appLink = 'https://play.google.com/store/apps/details?id=com.ace2examzapp.android&hl=en_IN';
+      
+      // Message to send via WhatsApp
+      const whatsappMessage = `Hi! Download the Ace2Examz App from Play Store:\n${appLink}`;
+      
+      // Create WhatsApp URL (using api.whatsapp.com for better compatibility)
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(whatsappMessage)}`;
+      
+      // Debug: Log the URL
+      console.log('WhatsApp URL:', whatsappUrl);
+      console.log('Phone Number:', phoneNumber);
+      
+      // Open WhatsApp in new window
+      const newWindow = window.open(whatsappUrl, '_blank');
+      
+      if (newWindow) {
+        setMessage('✓ Opening WhatsApp... Check if popup blocker is enabled');
+      } else {
+        setMessage('⚠ Please allow popups to send WhatsApp message');
+      }
+      
+      setTimeout(() => {
+        setMessage('');
+        setMobileNumber('');
+      }, 4000);
     } else {
-      setMessage('Please enter a valid mobile number');
+      setMessage('Please enter a valid 10-digit mobile number');
       setTimeout(() => setMessage(''), 3000);
     }
   };
