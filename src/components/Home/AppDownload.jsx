@@ -81,7 +81,7 @@ const AppDownload = () => {
 
             {/* Play Store Button */}
             <a 
-              href="https://play.google.com/store" 
+              href="https://play.google.com/store/apps/details?id=com.ace2examzapp.android&hl=en_IN" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-block hover:scale-105 transition-transform duration-300"

@@ -168,7 +168,7 @@ const About = () => {
           <div className="md:w-1/2">
             <h1 className="text-5xl font-bold mb-6 text-white">Forging <span className="text-cyan-400">Futures</span> Since 2010</h1>
             <p className="text-gray-300 text-lg leading-relaxed mb-6">
-              Ace2examz started as a small doubt-clearing cell in a garage. Today, it stands as a beacon of excellence in chemistry education. Our journey began with a simple observation: students were memorizing reactions without understanding the underlying mechanisms.
+              Ace2examz started as a small doubt-clearing cell in a room. Today, it stands as a beacon of excellence in chemistry education. Our journey began with a simple observation: students were memorizing reactions without understanding the underlying mechanisms.
             </p>
             <p className="text-gray-300 text-lg leading-relaxed">
               We set out to change that. By combining traditional teaching with modern visualization tools, we've helped over 5,000 students crack JEE and NEET with top ranks. We don't just prepare you for exams; we prepare you to think like a scientist.
@@ -192,7 +192,7 @@ const About = () => {
                 </div>
                 <div className="p-4 bg-gray-900/50 rounded-xl">
                   <div className="text-3xl font-bold text-green-400 mb-1">4.8 (460)</div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wider">Ratings, garage replace rooms</div>
+                  <div className="text-xs text-gray-400 uppercase tracking-wider">Ratings</div>
                 </div>
               </div>
             </div>
@@ -291,14 +291,23 @@ const About = () => {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-wrap gap-4">
-                  <button className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold rounded-xl transition transform hover:scale-105 shadow-lg">
-                    <i className="fas fa-user-graduate mr-2"></i>
+                  <a 
+                    href="#" 
+                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold rounded-xl transition transform hover:scale-105 shadow-lg inline-flex items-center"
+                    title="Contact us on WhatsApp"
+                  >
+                    <i className="fab fa-whatsapp mr-2"></i>
                     Ask a Chemistry Expert
-                  </button>
-                  <button className="px-6 py-3 bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 font-bold rounded-xl border border-pink-500/30 transition">
+                  </a>
+                  <a 
+                    href="https://www.instagram.com/ace2examz/" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 py-3 bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 font-bold rounded-xl border border-pink-500/30 transition inline-flex items-center"
+                  >
                     <i className="fab fa-instagram mr-2"></i>
                     Follow @ace2examz
-                  </button>
+                  </a>
                 </div>
 
                 {/* Stats */}
