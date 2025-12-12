@@ -329,6 +329,58 @@ app.get('/api/seed', async (req, res) => {
   }
 });
 
+// Send App Link via WhatsApp/SMS
+app.post('/api/send-app-link', async (req, res) => {
+  try {
+    const { countryCode, mobileNumber } = req.body;
+    
+    if (!mobileNumber || mobileNumber.length < 10) {
+      return res.status(400).json({ message: 'Invalid mobile number' });
+    }
+
+    const fullNumber = countryCode + mobileNumber;
+    const appLink = 'https://play.google.com/store/apps/details?id=com.ace2examzapp.android&hl=en_IN';
+
+    // Send to WhatsApp webhook
+    const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+    const webhookUrl = 'https://dash.botbiz.io/webhook/whatsapp-workflow/37938.234726.277083.1765173100';
+    const payload = {
+      phone: fullNumber,
+      message: `Download Ace2Examz App: ${appLink}`
+    };
+    let webhookResult = null;
+    try {
+      const webhookRes = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      webhookResult = await webhookRes.text();
+    } catch (err) {
+      console.error('Error calling WhatsApp webhook:', err);
+    }
+
+    // Store the request in database (optional)
+    const contact = new Contact({
+      name: 'App Link Request',
+      email: `${mobileNumber}@sms.request`,
+      phone: fullNumber,
+      message: `Requested app download link`
+    });
+    await contact.save();
+
+    res.json({ 
+      success: true, 
+      message: 'App link will be sent to your mobile number shortly',
+      phone: fullNumber,
+      webhookResult
+    });
+  } catch (error) {
+    console.error('Error sending app link:', error);
+    res.status(500).json({ message: 'Failed to send app link. Please try again.' });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
