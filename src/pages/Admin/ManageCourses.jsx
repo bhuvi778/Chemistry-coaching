@@ -10,6 +10,9 @@ const ManageCourses = () => {
     title: '',
     subtitle: '',
     desc: '',
+    price: '',
+    duration: '',
+    schedule: '',
     features: '',
     color: 'cyan',
     icon: 'fa-flask',
@@ -27,7 +30,10 @@ const ManageCourses = () => {
       ...course,
       features: course.features.join(', '),
       category: course.category || 'JEE',
-      categories: course.categories || []
+      categories: course.categories || [],
+      price: course.price || '',
+      duration: course.duration || '',
+      schedule: course.schedule || ''
     });
   };
 
@@ -101,6 +107,30 @@ const ManageCourses = () => {
             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full h-24"
             required
           />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input
+              type="text"
+              placeholder="Price (e.g., ₹45,000)"
+              value={formData.price}
+              onChange={e => setFormData({...formData, price: e.target.value})}
+              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Duration (e.g., 1 Year)"
+              value={formData.duration}
+              onChange={e => setFormData({...formData, duration: e.target.value})}
+              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+            />
+            <input
+              type="text"
+              placeholder="Schedule (e.g., Mon-Fri)"
+              value={formData.schedule}
+              onChange={e => setFormData({...formData, schedule: e.target.value})}
+              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+            />
+          </div>
           <input
             type="text"
             placeholder="Features (comma separated)"
