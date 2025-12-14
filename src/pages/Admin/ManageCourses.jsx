@@ -37,7 +37,7 @@ const ManageCourses = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const courseData = {
       ...formData,
@@ -45,15 +45,21 @@ const ManageCourses = () => {
       categories: Array.isArray(formData.categories) ? formData.categories : []
     };
 
-    if (isEditing) {
-      updateCourse(currentCourse._id, courseData);
-    } else {
-      addCourse(courseData);
-    }
+    try {
+      if (isEditing) {
+        await updateCourse(currentCourse._id, courseData);
+        alert('Course updated successfully!');
+      } else {
+        await addCourse(courseData);
+        alert('Course added successfully!');
+      }
 
-    setIsEditing(false);
-    setCurrentCourse(null);
-    setFormData(initialFormState);
+      setIsEditing(false);
+      setCurrentCourse(null);
+      setFormData(initialFormState);
+    } catch (error) {
+      console.error('Error submitting course:', error);
+    }
   };
 
   const toggleCategory = (cat) => {

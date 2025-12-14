@@ -19,7 +19,8 @@ const AppDownload = () => {
     try {
       setMessage('Sending link...');
       
-      const response = await fetch('https://chemistry-coaching.onrender.com/api/send-app-link', {
+      // Use Vercel API route
+      const response = await fetch('/api/send-app-link', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

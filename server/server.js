@@ -8,9 +8,23 @@ const Video = require('./models/Video');
 
 const app = express();
 
-// CORS configuration for production - Allow all origins
+// CORS configuration for production - Allow specific origins
 app.use(cors({
-  origin: true, // Allow all origins
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://localhost:5000',
+      'https://chemistry-coaching.vercel.app',
+      'https://www.chemistry-coaching.vercel.app'
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -41,10 +55,13 @@ app.get('/api/courses', async (req, res) => {
 
 app.post('/api/courses', async (req, res) => {
   try {
+    console.log('Received course data:', req.body);
     const course = new Course(req.body);
     await course.save();
+    console.log('Course saved successfully:', course);
     res.json(course);
   } catch (error) {
+    console.error('Error adding course:', error);
     res.status(500).json({ message: error.message });
   }
 });

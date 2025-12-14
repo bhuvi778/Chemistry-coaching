@@ -98,15 +98,26 @@ export const DataProvider = ({ children }) => {
 
   const addCourse = async (course) => {
     try {
+      console.log('Sending course data:', course);
       const res = await fetch(`${API_URL}/courses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(course)
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+      
       const newCourse = await res.json();
+      console.log('Course added successfully:', newCourse);
       setCourses([...courses, newCourse]);
+      return newCourse;
     } catch (error) {
       console.error("Error adding course:", error);
+      alert(`Failed to add course: ${error.message}`);
+      throw error;
     }
   };
 
