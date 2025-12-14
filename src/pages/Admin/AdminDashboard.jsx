@@ -3,6 +3,9 @@ import { useData } from '../../context/DataContext';
 import { useNavigate } from 'react-router-dom';
 import ManageCourses from './ManageCourses';
 import ManageVideos from './ManageVideos';
+import ManageAudioBooks from './ManageAudioBooks';
+import ManageStudyMaterials from './ManageStudyMaterials';
+import ManageMagazines from './ManageMagazines';
 import Enquiries from './Enquiries';
 
 const AdminDashboard = () => {
@@ -41,6 +44,24 @@ const AdminDashboard = () => {
               <i className="fab fa-youtube mr-2"></i> Manage Videos
             </button>
             <button
+              onClick={() => setActiveTab('audiobooks')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'audiobooks' ? 'bg-purple-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-headphones mr-2"></i> Manage Audio Books
+            </button>
+            <button
+              onClick={() => setActiveTab('materials')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'materials' ? 'bg-green-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-file-pdf mr-2"></i> Manage Study Materials
+            </button>
+            <button
+              onClick={() => setActiveTab('magazines')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'magazines' ? 'bg-pink-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-book-open mr-2"></i> Manage Magazines
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -53,6 +74,9 @@ const AdminDashboard = () => {
         <div className="flex-grow">
           {activeTab === 'courses' && <ManageCourses />}
           {activeTab === 'videos' && <ManageVideos />}
+          {activeTab === 'audiobooks' && <ManageAudioBooks />}
+          {activeTab === 'materials' && <ManageStudyMaterials />}
+          {activeTab === 'magazines' && <ManageMagazines />}
           {activeTab === 'enquiries' && <Enquiries />}
         </div>
       </div>
