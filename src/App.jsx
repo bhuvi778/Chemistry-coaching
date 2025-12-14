@@ -10,6 +10,9 @@ import Contact from './pages/Contact';
 import About from './pages/About';
 import AllCourses from './pages/AllCourses';
 import Lectures from './pages/Lectures';
+import AudioBooks from './pages/AudioBooks';
+import StudyMaterials from './pages/StudyMaterials';
+import Magazines from './pages/Magazines';
 import AIAssistantPage from './pages/AIAssistantPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
@@ -38,6 +41,9 @@ function AppContent() {
           <Route path="/about" element={<About />} />
           <Route path="/courses" element={<AllCourses />} />
           <Route path="/lectures" element={<Lectures />} />
+          <Route path="/audiobooks" element={<AudioBooks />} />
+          <Route path="/study-materials" element={<StudyMaterials />} />
+          <Route path="/magazines" element={<Magazines />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />

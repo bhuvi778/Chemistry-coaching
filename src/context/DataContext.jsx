@@ -17,6 +17,15 @@ export const DataProvider = ({ children }) => {
   // Videos State
   const [videos, setVideos] = useState([]);
 
+  // Audio Books State
+  const [audioBooks, setAudioBooks] = useState([]);
+
+  // Study Materials State
+  const [studyMaterials, setStudyMaterials] = useState([]);
+
+  // Magazines State
+  const [magazines, setMagazines] = useState([]);
+
   // Auth State
   const [isAdmin, setIsAdmin] = useState(() => {
     return localStorage.getItem('reaction_isAdmin') === 'true';
@@ -38,6 +47,18 @@ export const DataProvider = ({ children }) => {
         const videosRes = await fetch(`${API_URL}/videos`);
         const videosData = await videosRes.json();
         setVideos(videosData);
+
+        const audioBooksRes = await fetch(`${API_URL}/audiobooks`);
+        const audioBooksData = await audioBooksRes.json();
+        setAudioBooks(audioBooksData);
+
+        const studyMaterialsRes = await fetch(`${API_URL}/study-materials`);
+        const studyMaterialsData = await studyMaterialsRes.json();
+        setStudyMaterials(studyMaterialsData);
+
+        const magazinesRes = await fetch(`${API_URL}/magazines`);
+        const magazinesData = await magazinesRes.json();
+        setMagazines(magazinesData);
 
         if (isAdmin) {
           const enquiriesRes = await fetch(`${API_URL}/enquiries`);
@@ -185,6 +206,126 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // Audio Books CRUD
+  const addAudioBook = async (audioBook) => {
+    try {
+      const res = await fetch(`${API_URL}/audiobooks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(audioBook)
+      });
+      const newAudioBook = await res.json();
+      setAudioBooks([newAudioBook, ...audioBooks]);
+    } catch (error) {
+      console.error("Error adding audio book:", error);
+    }
+  };
+
+  const updateAudioBook = async (id, updatedAudioBook) => {
+    try {
+      const res = await fetch(`${API_URL}/audiobooks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedAudioBook)
+      });
+      const data = await res.json();
+      setAudioBooks(audioBooks.map(a => a._id === id ? data : a));
+    } catch (error) {
+      console.error("Error updating audio book:", error);
+    }
+  };
+
+  const deleteAudioBook = async (id) => {
+    try {
+      await fetch(`${API_URL}/audiobooks/${id}`, {
+        method: 'DELETE'
+      });
+      setAudioBooks(audioBooks.filter(a => a._id !== id));
+    } catch (error) {
+      console.error("Error deleting audio book:", error);
+    }
+  };
+
+  // Study Materials CRUD
+  const addStudyMaterial = async (material) => {
+    try {
+      const res = await fetch(`${API_URL}/study-materials`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(material)
+      });
+      const newMaterial = await res.json();
+      setStudyMaterials([newMaterial, ...studyMaterials]);
+    } catch (error) {
+      console.error("Error adding study material:", error);
+    }
+  };
+
+  const updateStudyMaterial = async (id, updatedMaterial) => {
+    try {
+      const res = await fetch(`${API_URL}/study-materials/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedMaterial)
+      });
+      const data = await res.json();
+      setStudyMaterials(studyMaterials.map(m => m._id === id ? data : m));
+    } catch (error) {
+      console.error("Error updating study material:", error);
+    }
+  };
+
+  const deleteStudyMaterial = async (id) => {
+    try {
+      await fetch(`${API_URL}/study-materials/${id}`, {
+        method: 'DELETE'
+      });
+      setStudyMaterials(studyMaterials.filter(m => m._id !== id));
+    } catch (error) {
+      console.error("Error deleting study material:", error);
+    }
+  };
+
+  // Magazines CRUD
+  const addMagazine = async (magazine) => {
+    try {
+      const res = await fetch(`${API_URL}/magazines`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(magazine)
+      });
+      const newMagazine = await res.json();
+      setMagazines([newMagazine, ...magazines]);
+    } catch (error) {
+      console.error("Error adding magazine:", error);
+    }
+  };
+
+  const updateMagazine = async (id, updatedMagazine) => {
+    try {
+      const res = await fetch(`${API_URL}/magazines/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedMagazine)
+      });
+      const data = await res.json();
+      setMagazines(magazines.map(m => m._id === id ? data : m));
+    } catch (error) {
+      console.error("Error updating magazine:", error);
+    }
+  };
+
+  const deleteMagazine = async (id) => {
+    try {
+      await fetch(`${API_URL}/magazines/${id}`, {
+        method: 'DELETE'
+      });
+      setMagazines(magazines.filter(m => m._id !== id));
+    } catch (error) {
+      console.error("Error deleting magazine:", error);
+    }
+  };
+
   const login = (username, password) => {
     if (username === 'admin' && password === 'admin123') {
       setIsAdmin(true);
@@ -219,6 +360,9 @@ export const DataProvider = ({ children }) => {
       enquiries,
       contacts,
       videos,
+      audioBooks,
+      studyMaterials,
+      magazines,
       isAdmin,
       addEnquiry,
       addContact,
@@ -228,6 +372,15 @@ export const DataProvider = ({ children }) => {
       addVideo,
       updateVideo,
       deleteVideo,
+      addAudioBook,
+      updateAudioBook,
+      deleteAudioBook,
+      addStudyMaterial,
+      updateStudyMaterial,
+      deleteStudyMaterial,
+      addMagazine,
+      updateMagazine,
+      deleteMagazine,
       login,
       logout
     }}>

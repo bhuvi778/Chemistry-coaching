@@ -5,6 +5,9 @@ const Course = require('./models/Course');
 const Enquiry = require('./models/Enquiry');
 const Contact = require('./models/Contact');
 const Video = require('./models/Video');
+const AudioBook = require('./models/AudioBook');
+const StudyMaterial = require('./models/StudyMaterial');
+const Magazine = require('./models/Magazine');
 
 const app = express();
 
@@ -157,6 +160,120 @@ app.delete('/api/videos/:id', async (req, res) => {
   try {
     await Video.findByIdAndDelete(req.params.id);
     res.json({ message: 'Video deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Audio Books Routes
+app.get('/api/audiobooks', async (req, res) => {
+  try {
+    const audioBooks = await AudioBook.find({ isActive: true }).sort({ createdAt: -1 });
+    res.json(audioBooks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/audiobooks', async (req, res) => {
+  try {
+    const audioBook = new AudioBook(req.body);
+    await audioBook.save();
+    res.json(audioBook);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/audiobooks/:id', async (req, res) => {
+  try {
+    const audioBook = await AudioBook.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(audioBook);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/audiobooks/:id', async (req, res) => {
+  try {
+    await AudioBook.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Audio book deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Study Materials Routes
+app.get('/api/study-materials', async (req, res) => {
+  try {
+    const materials = await StudyMaterial.find({ isActive: true }).sort({ createdAt: -1 });
+    res.json(materials);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/study-materials', async (req, res) => {
+  try {
+    const material = new StudyMaterial(req.body);
+    await material.save();
+    res.json(material);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/study-materials/:id', async (req, res) => {
+  try {
+    const material = await StudyMaterial.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(material);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/study-materials/:id', async (req, res) => {
+  try {
+    await StudyMaterial.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Study material deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Magazines Routes
+app.get('/api/magazines', async (req, res) => {
+  try {
+    const magazines = await Magazine.find({ isActive: true }).sort({ createdAt: -1 });
+    res.json(magazines);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/magazines', async (req, res) => {
+  try {
+    const magazine = new Magazine(req.body);
+    await magazine.save();
+    res.json(magazine);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/magazines/:id', async (req, res) => {
+  try {
+    const magazine = await Magazine.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(magazine);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/magazines/:id', async (req, res) => {
+  try {
+    await Magazine.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Magazine deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
