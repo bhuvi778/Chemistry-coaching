@@ -21,8 +21,8 @@ const Footer = () => {
                             className="h-12 w-auto object-contain transition-opacity duration-300"
                         />
                     </div>
-                    <p className="text-gray-400 text-sm leading-relaxed">
-                        Ace2Examz is a dedicatedChemistry platformoffering conceptmastery,problemsolving, and smart practice through videos and MCQs -designed by an expert gfor serious exam aspirants to succeed confidently.
+                    <p className="text-gray-400 text-sm leading-relaxed justify-center">
+                        Ace2Examz is a dedicated Chemistry platform offering concept mastery, problem solving, and smart practice through videos and MCQs -designed by an expert for serious exam aspirants to succeed confidently.
                     </p>
                     <div className="flex gap-4">
                         <a href="https://www.facebook.com/ace2examz" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-cyan-500 hover:text-black transition-all duration-300">
@@ -35,7 +35,7 @@ const Footer = () => {
                             <i className="fab fa-youtube"></i>
                         </a>
                         <a href="https://x.com/ace2examz" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-400 hover:text-black transition-all duration-300">
-                            <i className="fab fa-twitter"></i>
+                           <i class="fa-brands fa-x-twitter"></i>
                         </a>
                     </div>
                 </div>
