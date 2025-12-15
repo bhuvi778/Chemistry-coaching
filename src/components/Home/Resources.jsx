@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 const Resources = () => {
   const [showAllResources, setShowAllResources] = useState(false);
-  
+  const { isDark } = useTheme();
+
   const handleDownload = (resourceType) => {
     alert(`Downloading ${resourceType} sample... This feature will be implemented with real PDF downloads.`);
   };
@@ -57,50 +59,57 @@ const Resources = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 py-20 relative">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-purple-900/10 to-transparent -z-10 blur-3xl"></div>
-      
+
       <div className="text-center mb-16">
-        <h2 className="text-5xl font-bold text-white mb-4">
+        <h2 className={`text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           Study <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Resources & Notes</span>
         </h2>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+        <p className={`text-lg max-w-2xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
           Comprehensive study materials designed by expert faculty to help you ace JEE & NEET
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {resources.map((resource, index) => (
-          <div 
+          <div
             key={index}
-            className="group relative rounded-2xl glass-panel hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all duration-300 overflow-hidden"
+            className={`group relative rounded-2xl transition-all duration-300 overflow-hidden ${isDark
+              ? 'glass-panel hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]'
+              : 'bg-white shadow-lg hover:shadow-2xl border border-gray-200'
+              }`}
           >
             {/* Background Image */}
             <div className="absolute inset-0 -z-10">
-              <img 
-                src={resource.image} 
+              <img
+                src={resource.image}
                 alt={resource.title}
-                className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity"
+                className={`w-full h-full object-cover transition-opacity ${isDark ? 'opacity-20 group-hover:opacity-30' : 'opacity-10 group-hover:opacity-15'
+                  }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-black/95"></div>
+              <div className={`absolute inset-0 ${isDark
+                ? 'bg-gradient-to-b from-black/60 via-black/80 to-black/95'
+                : 'bg-gradient-to-b from-white/80 via-white/90 to-white/95'
+                }`}></div>
             </div>
-            
+
             {/* Content */}
             <div className="relative p-8 min-h-[420px] flex flex-col">
               <div className={`w-14 h-14 rounded-full bg-${resource.color}-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                 <i className={`fas ${resource.icon} text-2xl text-${resource.color}-400`}></i>
               </div>
-              
-              <h3 className="text-2xl font-bold text-white mb-6">{resource.title}</h3>
-              
+
+              <h3 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>{resource.title}</h3>
+
               <ul className="space-y-3 flex-grow">
                 {resource.items.map((item, idx) => (
-                  <li key={idx} className="flex items-start text-gray-200">
+                  <li key={idx} className={`flex items-start ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
                     <i className={`fas fa-check-circle text-${resource.color}-400 mr-3 mt-1 flex-shrink-0`}></i>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
 
-              <button 
+              <button
                 onClick={() => handleDownload(resource.title)}
                 className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full`}
               >
@@ -114,7 +123,7 @@ const Resources = () => {
       {!showAllResources && (
         <div className="mt-12 text-center">
           <p className="text-gray-400 mb-4">Access all premium study materials with course enrollment</p>
-          <button 
+          <button
             onClick={() => setShowAllResources(true)}
             className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-lg hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition transform hover:scale-105"
           >
@@ -126,7 +135,7 @@ const Resources = () => {
 
       {showAllResources && (
         <div className="mt-12 text-center">
-          <button 
+          <button
             onClick={() => setShowAllResources(false)}
             className="px-8 py-4 border-2 border-purple-400 text-purple-400 font-bold rounded-lg hover:bg-purple-400 hover:text-black transition"
           >
