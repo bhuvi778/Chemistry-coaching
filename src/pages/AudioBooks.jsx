@@ -6,8 +6,8 @@ const AudioBooks = () => {
   const { audioBooks } = useData();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const filteredAudioBooks = selectedCategory === 'all' 
-    ? audioBooks 
+  const filteredAudioBooks = selectedCategory === 'all'
+    ? audioBooks
     : audioBooks.filter(book => book.category === selectedCategory);
 
   return (
@@ -31,43 +31,39 @@ const AudioBooks = () => {
 
         {/* Category Filter */}
         <div className="flex gap-3 mb-8 flex-wrap justify-center">
-          <button 
+          <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-6 py-2 rounded-full transition ${
-              selectedCategory === 'all' 
-                ? 'bg-purple-500 text-white' 
+            className={`px-6 py-2 rounded-full transition ${selectedCategory === 'all'
+                ? 'bg-purple-500 text-white'
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
+              }`}
           >
             All
           </button>
-          <button 
+          <button
             onClick={() => setSelectedCategory('Physical Chemistry')}
-            className={`px-6 py-2 rounded-full transition ${
-              selectedCategory === 'Physical Chemistry' 
-                ? 'bg-purple-500 text-white' 
+            className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Physical Chemistry'
+                ? 'bg-purple-500 text-white'
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
+              }`}
           >
             Physical Chemistry
           </button>
-          <button 
+          <button
             onClick={() => setSelectedCategory('Organic Chemistry')}
-            className={`px-6 py-2 rounded-full transition ${
-              selectedCategory === 'Organic Chemistry' 
-                ? 'bg-purple-500 text-white' 
+            className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Organic Chemistry'
+                ? 'bg-purple-500 text-white'
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
+              }`}
           >
             Organic Chemistry
           </button>
-          <button 
+          <button
             onClick={() => setSelectedCategory('Inorganic Chemistry')}
-            className={`px-6 py-2 rounded-full transition ${
-              selectedCategory === 'Inorganic Chemistry' 
-                ? 'bg-purple-500 text-white' 
+            className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Inorganic Chemistry'
+                ? 'bg-purple-500 text-white'
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
+              }`}
           >
             Inorganic Chemistry
           </button>
@@ -85,8 +81,8 @@ const AudioBooks = () => {
             {filteredAudioBooks.map((book) => (
               <div key={book._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all duration-300">
                 {book.thumbnailUrl && (
-                  <img 
-                    src={book.thumbnailUrl} 
+                  <img
+                    src={book.thumbnailUrl}
                     alt={book.title}
                     className="w-full h-48 object-cover rounded-lg mb-4"
                   />
@@ -110,15 +106,13 @@ const AudioBooks = () => {
                     {book.duration}
                   </p>
                 )}
-                <a 
-                  href={book.audioUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                <Link
+                  to={`/audiobooks/${book._id}`}
                   className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition font-semibold"
                 >
-                  <i className="fas fa-play"></i>
-                  Listen Now
-                </a>
+                  <i className="fas fa-book-open"></i>
+                  View Chapters
+                </Link>
               </div>
             ))}
           </div>

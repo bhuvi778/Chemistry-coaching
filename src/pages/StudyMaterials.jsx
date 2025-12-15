@@ -37,7 +37,7 @@ const StudyMaterials = () => {
           <div>
             <h3 className="text-white font-semibold mb-3">Filter by Exam:</h3>
             <div className="flex gap-3 flex-wrap">
-              {['all', 'JEE', 'NEET', 'GATE', 'CSIR NET', 'IIT JAM'].map(exam => (
+              {['all', 'JEE', 'NEET','IAT','NEST','CSIR NEET','IIT JAM','TIFR','BITSAT', 'GATE','CUET UG'].map(exam => (
                 <button 
                   key={exam}
                   onClick={() => setSelectedExam(exam)}
@@ -56,7 +56,7 @@ const StudyMaterials = () => {
           <div>
             <h3 className="text-white font-semibold mb-3">Filter by Type:</h3>
             <div className="flex gap-3 flex-wrap">
-              {['all', 'Notes', 'Question Banks', 'Previous Year Papers', 'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry'].map(cat => (
+              {['all','NCERT Books','NCERT Solutions','Syllabus','Sample Papers', 'Notes', 'Important Question', 'Previous Year Questions','Formulas','Practice papers','Concept Wise Notes','Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry','Spectroscopy'].map(cat => (
                 <button 
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}

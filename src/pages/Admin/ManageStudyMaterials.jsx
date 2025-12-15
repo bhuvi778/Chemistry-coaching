@@ -5,7 +5,42 @@ const ManageStudyMaterials = () => {
   const { studyMaterials, addStudyMaterial, updateStudyMaterial, deleteStudyMaterial } = useData();
   const [isEditing, setIsEditing] = useState(false);
   const [currentMaterial, setCurrentMaterial] = useState(null);
-  
+
+  // Updated exam types to match frontend
+  const examTypes = [
+    'All',
+    'JEE',
+    'NEET',
+    'IAT',
+    'NEST',
+    'CSIR NEET',
+    'IIT JAM',
+    'TIFR',
+    'BITSAT',
+    'GATE',
+    'CUET UG'
+  ];
+
+  // Updated categories to match frontend
+  const categories = [
+    'NCERT Books',
+    'NCERT Solutions',
+    'Syllabus',
+    'Sample Papers',
+    'Notes',
+    'Important Question',
+    'Previous Year Questions',
+    'Formulas',
+    'Practice papers',
+    'Concept Wise Notes',
+    'Physical Chemistry',
+    'Organic Chemistry',
+    'Inorganic Chemistry',
+    'Spectroscopy'
+  ];
+
+  const fileTypes = ['PDF', 'DOC', 'PPT', 'ZIP', 'DOCX', 'PPTX'];
+
   const initialFormState = {
     title: '',
     description: '',
@@ -46,94 +81,156 @@ const ManageStudyMaterials = () => {
       setFormData(initialFormState);
     } catch (error) {
       console.error('Error submitting study material:', error);
+      alert('Error saving study material. Please try again.');
     }
   };
 
+  // Group materials by category
+  const materialsByCategory = studyMaterials.reduce((acc, material) => {
+    const category = material.category || 'Other';
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(material);
+    return acc;
+  }, {});
+
   return (
     <div className="space-y-8">
+      {/* Add/Edit Form */}
       <div className="glass-panel p-6 rounded-xl">
         <h2 className="text-xl font-bold text-white mb-4">
           {isEditing ? 'Edit Study Material' : 'Add New Study Material'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Title"
-            value={formData.title}
-            onChange={e => setFormData({...formData, title: e.target.value})}
-            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            required
-          />
-          <textarea
-            placeholder="Description"
-            value={formData.description}
-            onChange={e => setFormData({...formData, description: e.target.value})}
-            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full h-24"
-            required
-          />
-          <input
-            type="url"
-            placeholder="File URL (e.g., Google Drive link)"
-            value={formData.fileUrl}
-            onChange={e => setFormData({...formData, fileUrl: e.target.value})}
-            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            required
-          />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <select
-              value={formData.fileType}
-              onChange={e => setFormData({...formData, fileType: e.target.value})}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            >
-              <option value="PDF">PDF</option>
-              <option value="DOC">DOC</option>
-              <option value="PPT">PPT</option>
-              <option value="ZIP">ZIP</option>
-            </select>
-            <select
-              value={formData.category}
-              onChange={e => setFormData({...formData, category: e.target.value})}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            >
-              <option value="Notes">Notes</option>
-              <option value="Question Banks">Question Banks</option>
-              <option value="Previous Year Papers">Previous Year Papers</option>
-              <option value="Physical Chemistry">Physical Chemistry</option>
-              <option value="Organic Chemistry">Organic Chemistry</option>
-              <option value="Inorganic Chemistry">Inorganic Chemistry</option>
-            </select>
-            <select
-              value={formData.examType}
-              onChange={e => setFormData({...formData, examType: e.target.value})}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            >
-              <option value="All">All</option>
-              <option value="JEE">JEE</option>
-              <option value="NEET">NEET</option>
-              <option value="GATE">GATE</option>
-              <option value="CSIR NET">CSIR NET</option>
-              <option value="IIT JAM">IIT JAM</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="url"
-              placeholder="Thumbnail URL (optional)"
-              value={formData.thumbnailUrl}
-              onChange={e => setFormData({...formData, thumbnailUrl: e.target.value})}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            />
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-semibold text-cyan-400 mb-2">
+              Material Title *
+            </label>
             <input
               type="text"
-              placeholder="File Size (e.g., 2.5 MB)"
-              value={formData.fileSize}
-              onChange={e => setFormData({...formData, fileSize: e.target.value})}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+              placeholder="e.g., NCERT Chemistry Class 12 - Chapter 1"
+              value={formData.title}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
+              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
+              required
             />
           </div>
 
-          <div className="flex gap-4">
-            <button type="submit" className="bg-green-500 text-white font-bold py-2 px-6 rounded hover:bg-green-400 transition">
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-semibold text-cyan-400 mb-2">
+              Description *
+            </label>
+            <textarea
+              placeholder="Brief description of the study material"
+              value={formData.description}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
+              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full h-24 focus:border-cyan-400 focus:outline-none"
+              required
+            />
+          </div>
+
+          {/* File URL */}
+          <div>
+            <label className="block text-sm font-semibold text-cyan-400 mb-2">
+              File URL *
+            </label>
+            <input
+              type="url"
+              placeholder="https://drive.google.com/file/d/xyz or direct PDF link"
+              value={formData.fileUrl}
+              onChange={e => setFormData({ ...formData, fileUrl: e.target.value })}
+              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Upload file to cloud storage and paste the URL here
+            </p>
+          </div>
+
+          {/* File Type, Category, Exam Type */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-cyan-400 mb-2">
+                File Type *
+              </label>
+              <select
+                value={formData.fileType}
+                onChange={e => setFormData({ ...formData, fileType: e.target.value })}
+                className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
+              >
+                {fileTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-cyan-400 mb-2">
+                Category/Type *
+              </label>
+              <select
+                value={formData.category}
+                onChange={e => setFormData({ ...formData, category: e.target.value })}
+                className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
+              >
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-cyan-400 mb-2">
+                Exam Type *
+              </label>
+              <select
+                value={formData.examType}
+                onChange={e => setFormData({ ...formData, examType: e.target.value })}
+                className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
+              >
+                {examTypes.map(exam => (
+                  <option key={exam} value={exam}>{exam}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Thumbnail and File Size */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-cyan-400 mb-2">
+                Thumbnail URL (Optional)
+              </label>
+              <input
+                type="url"
+                placeholder="https://example.com/thumbnail.jpg"
+                value={formData.thumbnailUrl}
+                onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })}
+                className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-cyan-400 mb-2">
+                File Size (Optional)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g., 2.5 MB"
+                value={formData.fileSize}
+                onChange={e => setFormData({ ...formData, fileSize: e.target.value })}
+                className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-4 pt-4">
+            <button
+              type="submit"
+              className="bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold py-3 px-8 rounded-lg hover:from-green-600 hover:to-emerald-600 transition shadow-lg"
+            >
+              <i className={`fas fa-${isEditing ? 'save' : 'plus'} mr-2`}></i>
               {isEditing ? 'Update Material' : 'Add Material'}
             </button>
             {isEditing && (
@@ -144,8 +241,9 @@ const ManageStudyMaterials = () => {
                   setCurrentMaterial(null);
                   setFormData(initialFormState);
                 }}
-                className="bg-gray-700 text-white font-bold py-2 px-6 rounded hover:bg-gray-600 transition"
+                className="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition"
               >
+                <i className="fas fa-times mr-2"></i>
                 Cancel
               </button>
             )}
@@ -153,35 +251,128 @@ const ManageStudyMaterials = () => {
         </form>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
-        {studyMaterials.map(material => (
-          <div key={material._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-white">{material.title}</h3>
-              <p className="text-sm text-gray-400">{material.description}</p>
-              <div className="flex gap-2 mt-2 flex-wrap">
-                <span className="px-3 py-1 bg-green-900/50 border border-green-500 text-green-400 rounded-full text-xs">
-                  {material.fileType}
+      {/* Existing Materials - Grouped by Category */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-white">
+          <i className="fas fa-file-alt mr-2 text-green-500"></i>
+          Existing Study Materials
+        </h2>
+
+        {Object.keys(materialsByCategory).length === 0 ? (
+          <div className="glass-panel p-8 rounded-xl text-center">
+            <i className="fas fa-inbox text-4xl text-gray-600 mb-3"></i>
+            <p className="text-gray-400">No study materials added yet</p>
+          </div>
+        ) : (
+          Object.keys(materialsByCategory).sort().map(category => (
+            <div key={category} className="glass-panel p-6 rounded-xl">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i className="fas fa-folder text-green-500"></i>
+                {category}
+                <span className="text-sm font-normal text-gray-400">
+                  ({materialsByCategory[category].length} item{materialsByCategory[category].length !== 1 ? 's' : ''})
                 </span>
-                <span className="px-3 py-1 bg-blue-900/50 border border-blue-500 text-blue-400 rounded-full text-xs">
-                  {material.category}
-                </span>
-                <span className="px-3 py-1 bg-purple-900/50 border border-purple-500 text-purple-400 rounded-full text-xs">
-                  {material.examType}
-                </span>
+              </h3>
+
+              <div className="grid grid-cols-1 gap-4">
+                {materialsByCategory[category].map(material => (
+                  <div
+                    key={material._id}
+                    className="bg-gray-800/50 p-4 rounded-lg flex flex-col md:flex-row gap-4 items-start hover:bg-gray-800 transition"
+                  >
+                    {/* Thumbnail */}
+                    {material.thumbnailUrl && (
+                      <img
+                        src={material.thumbnailUrl}
+                        alt={material.title}
+                        className="w-full md:w-20 h-20 object-cover rounded"
+                      />
+                    )}
+
+                    {/* Info */}
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-white mb-1">{material.title}</h4>
+                      <p className="text-sm text-gray-400 mb-2">{material.description}</p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-3 py-1 bg-green-900/50 border border-green-500 text-green-400 rounded-full text-xs">
+                          {material.fileType}
+                        </span>
+                        <span className="px-3 py-1 bg-purple-900/50 border border-purple-500 text-purple-400 rounded-full text-xs">
+                          {material.examType}
+                        </span>
+                        {material.fileSize && (
+                          <span className="px-3 py-1 bg-gray-700 text-gray-400 rounded-full text-xs">
+                            {material.fileSize}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(material)}
+                        className="p-2 text-cyan-400 hover:bg-gray-700 rounded transition"
+                        title="Edit"
+                      >
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <a
+                        href={material.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 text-blue-400 hover:bg-gray-700 rounded transition"
+                        title="View File"
+                      >
+                        <i className="fas fa-external-link-alt"></i>
+                      </a>
+                      <button
+                        onClick={() => handleDelete(material._id)}
+                        className="p-2 text-red-400 hover:bg-gray-700 rounded transition"
+                        title="Delete"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => handleEdit(material)} className="p-2 text-cyan-400 hover:bg-gray-800 rounded">
-                <i className="fas fa-edit"></i>
-              </button>
-              <button onClick={() => handleDelete(material._id)} className="p-2 text-red-400 hover:bg-gray-800 rounded">
-                <i className="fas fa-trash"></i>
-              </button>
+          ))
+        )}
+      </div>
+
+      {/* Quick Stats */}
+      {studyMaterials.length > 0 && (
+        <div className="glass-panel p-6 rounded-xl">
+          <h3 className="text-lg font-bold text-white mb-4">
+            <i className="fas fa-chart-bar mr-2 text-green-500"></i>
+            Statistics
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <p className="text-3xl font-bold text-green-400">{studyMaterials.length}</p>
+              <p className="text-sm text-gray-400">Total Materials</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-cyan-400">{Object.keys(materialsByCategory).length}</p>
+              <p className="text-sm text-gray-400">Categories</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-purple-400">
+                {studyMaterials.filter(m => m.fileType === 'PDF').length}
+              </p>
+              <p className="text-sm text-gray-400">PDF Files</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-pink-400">
+                {new Set(studyMaterials.map(m => m.examType)).size}
+              </p>
+              <p className="text-sm text-gray-400">Exam Types</p>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
