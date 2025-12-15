@@ -5,6 +5,8 @@ const ManageMagazines = () => {
   const { magazines, addMagazine, updateMagazine, deleteMagazine } = useData();
   const [isEditing, setIsEditing] = useState(false);
   const [currentMagazine, setCurrentMagazine] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const currentYear = new Date().getFullYear();
   const months = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -30,6 +32,7 @@ const ManageMagazines = () => {
       ...magazine,
       topics: magazine.topics ? magazine.topics.join(', ') : ''
     });
+    setImagePreview(magazine.coverImageUrl || null);
   };
 
   const handleDelete = (id) => {
@@ -38,8 +41,70 @@ const ManageMagazines = () => {
     }
   };
 
+  // Handle image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      processImageFile(file);
+    }
+  };
+
+  // Process image file and convert to base64
+  const processImageFile = (file) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      setImagePreview(base64String);
+      setFormData({ ...formData, coverImageUrl: base64String });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle drag and drop
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      processImageFile(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setFormData({ ...formData, coverImageUrl: '' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.coverImageUrl) {
+      alert('Please upload a cover image');
+      return;
+    }
+
     try {
       const magazineData = {
         ...formData,
@@ -57,6 +122,7 @@ const ManageMagazines = () => {
       setIsEditing(false);
       setCurrentMagazine(null);
       setFormData(initialFormState);
+      setImagePreview(null);
     } catch (error) {
       console.error('Error submitting magazine:', error);
       alert('Error saving magazine. Please try again.');
@@ -157,22 +223,69 @@ const ManageMagazines = () => {
             </div>
           </div>
 
-          {/* Cover Image URL */}
+          {/* Cover Image Upload */}
           <div>
             <label className="block text-sm font-semibold text-cyan-400 mb-2">
-              Cover Image URL *
+              Cover Image *
             </label>
-            <input
-              type="url"
-              placeholder="https://example.com/cover-image.jpg"
-              value={formData.coverImageUrl}
-              onChange={e => setFormData({ ...formData, coverImageUrl: e.target.value })}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Upload image to a hosting service and paste the URL here
-            </p>
+
+            {!imagePreview ? (
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition ${isDragging
+                    ? 'border-cyan-400 bg-cyan-900/20'
+                    : 'border-gray-700 hover:border-gray-600'
+                  }`}
+              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                  id="coverImage"
+                />
+                <label htmlFor="coverImage" className="cursor-pointer">
+                  <i className="fas fa-cloud-upload-alt text-4xl text-gray-500 mb-3 block"></i>
+                  <p className="text-white mb-2">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PNG, JPG, WebP up to 5MB
+                  </p>
+                </label>
+              </div>
+            ) : (
+              <div className="relative">
+                <img
+                  src={imagePreview}
+                  alt="Cover preview"
+                  className="w-full max-w-md h-96 object-cover rounded-lg mx-auto"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition"
+                  title="Remove image"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+                <div className="mt-2 text-center">
+                  <label htmlFor="coverImage" className="text-cyan-400 hover:text-cyan-300 cursor-pointer text-sm">
+                    <i className="fas fa-sync-alt mr-1"></i>
+                    Change Image
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="coverImage"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* PDF URL */}
@@ -226,6 +339,7 @@ const ManageMagazines = () => {
                   setIsEditing(false);
                   setCurrentMagazine(null);
                   setFormData(initialFormState);
+                  setImagePreview(null);
                 }}
                 className="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition"
               >
