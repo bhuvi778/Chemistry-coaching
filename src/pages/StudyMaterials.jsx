@@ -37,15 +37,14 @@ const StudyMaterials = () => {
           <div>
             <h3 className="text-white font-semibold mb-3">Filter by Exam:</h3>
             <div className="flex gap-3 flex-wrap">
-              {['all', 'JEE', 'NEET','IAT','NEST','CSIR NEET','IIT JAM','TIFR','BITSAT', 'GATE','CUET UG'].map(exam => (
-                <button 
+              {['all', 'JEE', 'NEET', 'IAT', 'NEST', 'CSIR NEET', 'IIT JAM', 'TIFR', 'BITSAT', 'GATE', 'CUET UG'].map(exam => (
+                <button
                   key={exam}
                   onClick={() => setSelectedExam(exam)}
-                  className={`px-6 py-2 rounded-full transition ${
-                    selectedExam === exam 
-                      ? 'bg-green-500 text-white' 
+                  className={`px-6 py-2 rounded-full transition ${selectedExam === exam
+                      ? 'bg-green-500 text-white'
                       : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
+                    }`}
                 >
                   {exam === 'all' ? 'All Exams' : exam}
                 </button>
@@ -56,15 +55,14 @@ const StudyMaterials = () => {
           <div>
             <h3 className="text-white font-semibold mb-3">Filter by Type:</h3>
             <div className="flex gap-3 flex-wrap">
-              {['all','NCERT Books','NCERT Solutions','Syllabus','Sample Papers', 'Notes', 'Important Question', 'Previous Year Questions','Formulas','Practice papers','Concept Wise Notes','Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry','Spectroscopy'].map(cat => (
-                <button 
+              {['all', 'NCERT Books', 'NCERT Solutions', 'Syllabus', 'Sample Papers', 'Notes', 'Important Question', 'Previous Year Questions', 'Formulas', 'Practice papers', 'Concept Wise Notes', 'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry', 'Spectroscopy'].map(cat => (
+                <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-6 py-2 rounded-full transition ${
-                    selectedCategory === cat 
-                      ? 'bg-blue-500 text-white' 
+                  className={`px-6 py-2 rounded-full transition ${selectedCategory === cat
+                      ? 'bg-blue-500 text-white'
                       : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
+                    }`}
                 >
                   {cat === 'all' ? 'All Types' : cat}
                 </button>
@@ -85,8 +83,8 @@ const StudyMaterials = () => {
             {filteredMaterials.map((material) => (
               <div key={material._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] transition-all duration-300">
                 {material.thumbnailUrl && (
-                  <img 
-                    src={material.thumbnailUrl} 
+                  <img
+                    src={material.thumbnailUrl}
                     alt={material.title}
                     className="w-full h-48 object-cover rounded-lg mb-4"
                   />
@@ -112,11 +110,9 @@ const StudyMaterials = () => {
                     Size: {material.fileSize}
                   </p>
                 )}
-                <a 
-                  href={material.fileUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  download
+                <a
+                  href={material.fileUrl}
+                  download={`${material.title.replace(/[^a-z0-9]/gi, '_')}.${material.fileType.toLowerCase()}`}
                   className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:from-green-600 hover:to-blue-600 transition font-semibold"
                 >
                   <i className="fas fa-download"></i>
