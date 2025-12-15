@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useTheme } from '../context/ThemeContext';
 
 const AudioBooks = () => {
   const { audioBooks } = useData();
+  const { isDark } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const filteredAudioBooks = selectedCategory === 'all'
@@ -11,20 +13,24 @@ const AudioBooks = () => {
     : audioBooks.filter(book => book.category === selectedCategory);
 
   return (
-    <div className="animate-fadeIn min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 py-20">
+    <div className={`animate-fadeIn min-h-screen py-20 px-4 ${isDark ? 'bg-gray-900' : 'bg-gray-50'
+      }`}>
+      <div className="max-w-7xl mx-auto">
         <div className="flex items-center mb-8">
-          <Link to="/" className="text-gray-400 hover:text-white flex items-center gap-2 transition">
+          <Link to="/" className={`flex items-center gap-2 transition ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+            }`}>
             <i className="fas fa-arrow-left"></i> Back to Home
           </Link>
         </div>
 
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+          <h1 className={`text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'
+            }`}>
             <i className="fas fa-headphones mr-3"></i>
             Chemistry Audio Books
           </h1>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'
+            }`}>
             Learn chemistry on the go with our comprehensive audio book collection
           </p>
         </div>
@@ -34,8 +40,8 @@ const AudioBooks = () => {
           <button
             onClick={() => setSelectedCategory('all')}
             className={`px-6 py-2 rounded-full transition ${selectedCategory === 'all'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              ? 'bg-purple-500 text-white'
+              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
               }`}
           >
             All
@@ -43,8 +49,8 @@ const AudioBooks = () => {
           <button
             onClick={() => setSelectedCategory('Physical Chemistry')}
             className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Physical Chemistry'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              ? 'bg-purple-500 text-white'
+              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
               }`}
           >
             Physical Chemistry
@@ -52,8 +58,8 @@ const AudioBooks = () => {
           <button
             onClick={() => setSelectedCategory('Organic Chemistry')}
             className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Organic Chemistry'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              ? 'bg-purple-500 text-white'
+              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
               }`}
           >
             Organic Chemistry
@@ -61,8 +67,8 @@ const AudioBooks = () => {
           <button
             onClick={() => setSelectedCategory('Inorganic Chemistry')}
             className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Inorganic Chemistry'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              ? 'bg-purple-500 text-white'
+              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
               }`}
           >
             Inorganic Chemistry
