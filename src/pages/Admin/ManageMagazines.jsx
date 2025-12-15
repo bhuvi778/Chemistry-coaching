@@ -6,7 +6,9 @@ const ManageMagazines = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentMagazine, setCurrentMagazine] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [pdfPreview, setPdfPreview] = useState(null);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [isDraggingPdf, setIsDraggingPdf] = useState(false);
 
   const currentYear = new Date().getFullYear();
   const months = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -33,6 +35,7 @@ const ManageMagazines = () => {
       topics: magazine.topics ? magazine.topics.join(', ') : ''
     });
     setImagePreview(magazine.coverImageUrl || null);
+    setPdfPreview(magazine.pdfUrl ? 'PDF Uploaded' : null);
   };
 
   const handleDelete = (id) => {
@@ -56,7 +59,6 @@ const ManageMagazines = () => {
       return;
     }
 
-    // Check file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('Image size should be less than 5MB');
       return;
@@ -71,24 +73,74 @@ const ManageMagazines = () => {
     reader.readAsDataURL(file);
   };
 
-  // Handle drag and drop
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
+  // Handle PDF file selection
+  const handlePdfChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      processPdfFile(file);
+    }
   };
 
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
+  // Process PDF file and convert to base64
+  const processPdfFile = (file) => {
+    if (file.type !== 'application/pdf') {
+      alert('Please select a PDF file');
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      alert('PDF size should be less than 50MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      setPdfPreview(file.name);
+      setFormData({ ...formData, pdfUrl: base64String });
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleDrop = (e) => {
+  // Handle drag and drop for images
+  const handleImageDragOver = (e) => {
     e.preventDefault();
-    setIsDragging(false);
+    setIsDraggingImage(true);
+  };
+
+  const handleImageDragLeave = (e) => {
+    e.preventDefault();
+    setIsDraggingImage(false);
+  };
+
+  const handleImageDrop = (e) => {
+    e.preventDefault();
+    setIsDraggingImage(false);
 
     const file = e.dataTransfer.files[0];
     if (file) {
       processImageFile(file);
+    }
+  };
+
+  // Handle drag and drop for PDFs
+  const handlePdfDragOver = (e) => {
+    e.preventDefault();
+    setIsDraggingPdf(true);
+  };
+
+  const handlePdfDragLeave = (e) => {
+    e.preventDefault();
+    setIsDraggingPdf(false);
+  };
+
+  const handlePdfDrop = (e) => {
+    e.preventDefault();
+    setIsDraggingPdf(false);
+
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      processPdfFile(file);
     }
   };
 
@@ -97,11 +149,21 @@ const ManageMagazines = () => {
     setFormData({ ...formData, coverImageUrl: '' });
   };
 
+  const removePdf = () => {
+    setPdfPreview(null);
+    setFormData({ ...formData, pdfUrl: '' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.coverImageUrl) {
       alert('Please upload a cover image');
+      return;
+    }
+
+    if (!formData.pdfUrl) {
+      alert('Please upload a PDF file');
       return;
     }
 
@@ -123,6 +185,7 @@ const ManageMagazines = () => {
       setCurrentMagazine(null);
       setFormData(initialFormState);
       setImagePreview(null);
+      setPdfPreview(null);
     } catch (error) {
       console.error('Error submitting magazine:', error);
       alert('Error saving magazine. Please try again.');
@@ -231,10 +294,10 @@ const ManageMagazines = () => {
 
             {!imagePreview ? (
               <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition ${isDragging
+                onDragOver={handleImageDragOver}
+                onDragLeave={handleImageDragLeave}
+                onDrop={handleImageDrop}
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition ${isDraggingImage
                     ? 'border-cyan-400 bg-cyan-900/20'
                     : 'border-gray-700 hover:border-gray-600'
                   }`}
@@ -288,22 +351,71 @@ const ManageMagazines = () => {
             )}
           </div>
 
-          {/* PDF URL */}
+          {/* PDF Upload */}
           <div>
             <label className="block text-sm font-semibold text-cyan-400 mb-2">
-              PDF Download URL *
+              Magazine PDF *
             </label>
-            <input
-              type="url"
-              placeholder="https://example.com/magazine.pdf"
-              value={formData.pdfUrl}
-              onChange={e => setFormData({ ...formData, pdfUrl: e.target.value })}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Upload PDF to a hosting service and paste the URL here
-            </p>
+
+            {!pdfPreview ? (
+              <div
+                onDragOver={handlePdfDragOver}
+                onDragLeave={handlePdfDragLeave}
+                onDrop={handlePdfDrop}
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition ${isDraggingPdf
+                    ? 'border-pink-400 bg-pink-900/20'
+                    : 'border-gray-700 hover:border-gray-600'
+                  }`}
+              >
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handlePdfChange}
+                  className="hidden"
+                  id="magazinePdf"
+                />
+                <label htmlFor="magazinePdf" className="cursor-pointer">
+                  <i className="fas fa-file-pdf text-4xl text-gray-500 mb-3 block"></i>
+                  <p className="text-white mb-2">
+                    Click to upload or drag and drop PDF
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PDF up to 50MB
+                  </p>
+                </label>
+              </div>
+            ) : (
+              <div className="bg-gray-800 p-4 rounded-lg flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <i className="fas fa-file-pdf text-3xl text-red-500"></i>
+                  <div>
+                    <p className="text-white font-semibold">{pdfPreview}</p>
+                    <p className="text-xs text-gray-400">PDF uploaded successfully</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <label htmlFor="magazinePdf" className="text-cyan-400 hover:text-cyan-300 cursor-pointer">
+                    <i className="fas fa-sync-alt mr-1"></i>
+                    Change
+                  </label>
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handlePdfChange}
+                    className="hidden"
+                    id="magazinePdf"
+                  />
+                  <button
+                    type="button"
+                    onClick={removePdf}
+                    className="text-red-400 hover:text-red-300 ml-3"
+                  >
+                    <i className="fas fa-times mr-1"></i>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Topics */}
@@ -340,6 +452,7 @@ const ManageMagazines = () => {
                   setCurrentMagazine(null);
                   setFormData(initialFormState);
                   setImagePreview(null);
+                  setPdfPreview(null);
                 }}
                 className="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition"
               >
@@ -427,15 +540,6 @@ const ManageMagazines = () => {
                         >
                           <i className="fas fa-edit"></i>
                         </button>
-                        <a
-                          href={magazine.pdfUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 text-green-400 hover:bg-gray-700 rounded transition"
-                          title="Preview PDF"
-                        >
-                          <i className="fas fa-eye"></i>
-                        </a>
                         <button
                           onClick={() => handleDelete(magazine._id)}
                           className="p-2 text-red-400 hover:bg-gray-700 rounded transition"

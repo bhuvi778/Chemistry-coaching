@@ -66,6 +66,35 @@ const ManageStudyMaterials = () => {
     }
   };
 
+  // Handle file upload
+  const handleFileUpload = (file) => {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'application/zip'
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please select a valid file type (PDF, DOC, DOCX, PPT, PPTX, ZIP)');
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      alert('File size should be less than 50MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      setFormData({ ...formData, fileUrl: base64String });
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -130,23 +159,90 @@ const ManageStudyMaterials = () => {
             />
           </div>
 
-          {/* File URL */}
+          {/* File Upload */}
           <div>
             <label className="block text-sm font-semibold text-cyan-400 mb-2">
-              File URL *
+              Study Material File *
             </label>
-            <input
-              type="url"
-              placeholder="https://drive.google.com/file/d/xyz or direct PDF link"
-              value={formData.fileUrl}
-              onChange={e => setFormData({ ...formData, fileUrl: e.target.value })}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:border-cyan-400 focus:outline-none"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Upload file to cloud storage and paste the URL here
-            </p>
+
+            {!formData.fileUrl ? (
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.add('border-green-400', 'bg-green-900/20');
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.remove('border-green-400', 'bg-green-900/20');
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.remove('border-green-400', 'bg-green-900/20');
+                  const file = e.dataTransfer.files[0];
+                  if (file) {
+                    handleFileUpload(file);
+                  }
+                }}
+                className="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center transition hover:border-gray-600"
+              >
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.ppt,.pptx,.zip"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) handleFileUpload(file);
+                  }}
+                  className="hidden"
+                  id="studyFile"
+                />
+                <label htmlFor="studyFile" className="cursor-pointer">
+                  <i className="fas fa-cloud-upload-alt text-4xl text-gray-500 mb-3 block"></i>
+                  <p className="text-white mb-2">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PDF, DOC, DOCX, PPT, PPTX, ZIP up to 50MB
+                  </p>
+                </label>
+              </div>
+            ) : (
+              <div className="bg-gray-800 p-4 rounded-lg flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <i className={`fas fa-file-${formData.fileType.toLowerCase()} text-3xl text-green-500`}></i>
+                  <div>
+                    <p className="text-white font-semibold">File uploaded successfully</p>
+                    <p className="text-xs text-gray-400">Ready to save</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <label htmlFor="studyFile" className="text-cyan-400 hover:text-cyan-300 cursor-pointer">
+                    <i className="fas fa-sync-alt mr-1"></i>
+                    Change
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.zip"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) handleFileUpload(file);
+                    }}
+                    className="hidden"
+                    id="studyFile"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, fileUrl: '' })}
+                    className="text-red-400 hover:text-red-300 ml-3"
+                  >
+                    <i className="fas fa-times mr-1"></i>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+
+
 
           {/* File Type, Category, Exam Type */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -6,6 +6,8 @@ const ManageAudioBooks = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentAudioBook, setCurrentAudioBook] = useState(null);
   const [showChapterForm, setShowChapterForm] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const initialFormState = {
     title: '',
@@ -43,12 +45,39 @@ const ManageAudioBooks = () => {
       ...audioBook,
       chapters: audioBook.chapters || []
     });
+    setImagePreview(audioBook.thumbnailUrl || null);
   };
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this audio book?')) {
       deleteAudioBook(id);
     }
+  };
+
+  // Handle image upload
+  const handleImageUpload = (file) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      setImagePreview(base64String);
+      setFormData({ ...formData, thumbnailUrl: base64String });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setFormData({ ...formData, thumbnailUrl: '' });
   };
 
   const handleSubmit = async (e) => {
@@ -65,6 +94,7 @@ const ManageAudioBooks = () => {
       setCurrentAudioBook(null);
       setFormData(initialFormState);
       setShowChapterForm(false);
+      setImagePreview(null);
     } catch (error) {
       console.error('Error submitting audio book:', error);
     }
@@ -185,13 +215,87 @@ const ManageAudioBooks = () => {
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             />
           </div>
-          <input
-            type="url"
-            placeholder="Thumbnail URL (optional)"
-            value={formData.thumbnailUrl}
-            onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })}
-            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-          />
+          {/* Cover Image Upload */}
+          <div>
+            <label className="block text-sm font-semibold text-purple-400 mb-2">
+              Cover Image (Optional)
+            </label>
+
+            {!imagePreview ? (
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  const file = e.dataTransfer.files[0];
+                  if (file) handleImageUpload(file);
+                }}
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition ${isDragging
+                    ? 'border-purple-400 bg-purple-900/20'
+                    : 'border-gray-700 hover:border-gray-600'
+                  }`}
+              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) handleImageUpload(file);
+                  }}
+                  className="hidden"
+                  id="audiobookCover"
+                />
+                <label htmlFor="audiobookCover" className="cursor-pointer">
+                  <i className="fas fa-image text-3xl text-gray-500 mb-2 block"></i>
+                  <p className="text-white text-sm mb-1">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PNG, JPG, WebP up to 5MB
+                  </p>
+                </label>
+              </div>
+            ) : (
+              <div className="relative">
+                <img
+                  src={imagePreview}
+                  alt="Cover preview"
+                  className="w-full max-w-xs h-48 object-cover rounded-lg mx-auto"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition text-sm"
+                  title="Remove image"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+                <div className="mt-2 text-center">
+                  <label htmlFor="audiobookCover" className="text-purple-400 hover:text-purple-300 cursor-pointer text-sm">
+                    <i className="fas fa-sync-alt mr-1"></i>
+                    Change Image
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) handleImageUpload(file);
+                    }}
+                    className="hidden"
+                    id="audiobookCover"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
           <select
             value={formData.category}
             onChange={e => setFormData({ ...formData, category: e.target.value })}

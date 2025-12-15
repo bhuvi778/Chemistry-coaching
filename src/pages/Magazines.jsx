@@ -78,10 +78,10 @@ const Magazines = () => {
                 <button
                   onClick={() => setSelectedYear('all')}
                   className={`px-6 py-3 rounded-lg font-semibold transition ${selectedYear === 'all'
-                      ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white shadow-lg'
-                      : isDark
-                        ? 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white shadow-lg'
+                    : isDark
+                      ? 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                 >
                   All Years
@@ -91,10 +91,10 @@ const Magazines = () => {
                     key={year}
                     onClick={() => setSelectedYear(year)}
                     className={`px-6 py-3 rounded-lg font-semibold transition ${selectedYear === year
-                        ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white shadow-lg'
-                        : isDark
-                          ? 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white shadow-lg'
+                      : isDark
+                        ? 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                   >
                     {year}
@@ -128,8 +128,8 @@ const Magazines = () => {
               <div
                 key={magazine._id}
                 className={`rounded-xl overflow-hidden transition-all duration-300 flex flex-col ${isDark
-                    ? 'glass-panel hover:shadow-[0_0_30px_rgba(236,72,153,0.3)]'
-                    : 'bg-white shadow-lg hover:shadow-2xl border border-gray-200'
+                  ? 'glass-panel hover:shadow-[0_0_30px_rgba(236,72,153,0.3)]'
+                  : 'bg-white shadow-lg hover:shadow-2xl border border-gray-200'
                   }`}
               >
                 {/* Title at Top */}
@@ -142,8 +142,8 @@ const Magazines = () => {
                   <div className="flex items-center justify-center gap-3 mt-2">
                     {magazine.edition && (
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${isDark
-                          ? 'bg-pink-500/20 text-pink-400'
-                          : 'bg-pink-100 text-pink-700'
+                        ? 'bg-pink-500/20 text-pink-400'
+                        : 'bg-pink-100 text-pink-700'
                         }`}>
                         {magazine.edition}
                       </span>
@@ -187,8 +187,8 @@ const Magazines = () => {
                           <span
                             key={idx}
                             className={`px-2 py-1 rounded text-xs ${isDark
-                                ? 'bg-gray-800 text-gray-400'
-                                : 'bg-gray-100 text-gray-700'
+                              ? 'bg-gray-800 text-gray-400'
+                              : 'bg-gray-100 text-gray-700'
                               }`}
                           >
                             {topic}
@@ -207,9 +207,7 @@ const Magazines = () => {
                   {/* Download Button */}
                   <a
                     href={magazine.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download
+                    download={`${magazine.title.replace(/[^a-z0-9]/gi, '_')}.pdf`}
                     className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg hover:from-pink-600 hover:to-orange-600 transition font-semibold shadow-lg hover:shadow-xl"
                   >
                     <i className="fas fa-download"></i>
