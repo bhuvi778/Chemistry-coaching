@@ -35,7 +35,8 @@ const Resources = () => {
       icon: "fa-clipboard-check",
       items: ["Chapter-wise Tests", "Full Syllabus Tests", "All India Test Series", "Previous Year Papers"],
       color: "yellow",
-      image: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=500"
+      image: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=500",
+      appLink: "https://play.google.com/store/apps/details?id=com.ace2examz.app" // App link for test series
     },
     {
       title: "Solved Examples",

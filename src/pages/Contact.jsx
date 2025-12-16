@@ -97,10 +97,6 @@ const Contact = () => {
                 <option>CSIR NET</option>
                 <option>IIT JAM</option>
               </optgroup>
-              <optgroup label="School Level">
-                <option>Board Exams (11th/12th)</option>
-                <option>Foundation (8th-10th)</option>
-              </optgroup>
             </select>
           </div>
 
