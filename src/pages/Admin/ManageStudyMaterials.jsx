@@ -405,11 +405,6 @@ const ManageStudyMaterials = () => {
                 <option value="Analytical Chemistry">Analytical Chemistry</option>
                 <option value="Biochemistry">Biochemistry</option>
               </optgroup>
-              <optgroup label="Other Subjects">
-                <option value="Physics">Physics</option>
-                <option value="Mathematics">Mathematics</option>
-                <option value="Biology">Biology</option>
-              </optgroup>
             </select>
             <select
               value={formData.examType}
