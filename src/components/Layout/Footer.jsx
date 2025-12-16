@@ -69,10 +69,10 @@ const Footer = () => {
                         </h4>
                         <ul className="space-y-3 text-gray-400 text-sm">
                             <li><Link to="/study-materials" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-file-alt text-xs"></i> Study Notes</Link></li>
-                            <li><a href="https://play.google.com/store/apps/details?id=com.ace2examz.app" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</a></li>
+                            <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</Link></li>
                             <li><Link to="/lectures" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-play-circle text-xs"></i> Video Lectures</Link></li>
-                            <li><a href="https://play.google.com/store/apps/details?id=com.ace2examz.app" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-clipboard-check text-xs"></i> Test Series</a></li>
-                            <li><Link to="/study-materials" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-book-open text-xs"></i> Solved Examples</Link></li>
+                            <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-clipboard-check text-xs"></i> Test Series</Link></li>
+                            <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-book-open text-xs"></i> Solved Examples</Link></li>
                         </ul>
                     </div>
 
