@@ -32,15 +32,21 @@ const AllCourses = () => {
         return categoryMatch && examMatch;
     });
 
-    const getCategoryClass = (category) => `flex items - center gap - 3 px - 5 py - 4 rounded - lg transition - all cursor - pointer ${activeCategory === category
-            ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg scale-105'
-            : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700 hover:text-white'
-        } `;
+    const getCategoryClass = (category) => {
+        const isActive = activeCategory === category;
+        return `group flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 cursor-pointer ${isActive
+            ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white shadow-[0_8px_30px_rgba(6,182,212,0.4)] scale-[1.02] border border-cyan-400/50'
+            : 'bg-gray-800/40 text-gray-400 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-white hover:shadow-lg hover:scale-[1.01] border border-transparent hover:border-gray-600'
+            }`;
+    };
 
-    const getExamClass = (exam) => `px - 6 py - 3 rounded - lg border text - sm font - bold transition ${activeExam === exam
-            ? 'bg-gradient-to-r from-pink-500 to-purple-600 border-pink-500 text-white shadow-[0_0_15px_rgba(236,72,153,0.3)]'
-            : 'bg-gray-900/50 border-gray-700 text-gray-400 hover:text-white hover:border-pink-400'
-        } `;
+    const getExamClass = (exam) => {
+        const isActive = activeExam === exam;
+        return `group px-6 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 cursor-pointer ${isActive
+            ? 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white shadow-[0_8px_30px_rgba(236,72,153,0.5)] scale-105 border-2 border-pink-400/50'
+            : 'bg-gray-800/50 text-gray-400 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-white hover:shadow-lg hover:scale-[1.02] border-2 border-gray-700 hover:border-pink-400/30'
+            }`;
+    };
 
     return (
         <div className="animate-fadeIn">
@@ -51,80 +57,106 @@ const AllCourses = () => {
                     </Link>
                 </div>
 
-                <div className="text-center mb-16">
-                    <h2 className="text-5xl font-bold mb-4">All Programs & Services</h2>
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto">Choose from our comprehensive range of learning solutions tailored to your needs - from live classes to personalized mentorship.</p>
+                <div className="text-center mb-12">
+                    <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        All Programs & Services
+                    </h2>
+                    <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                        Choose from our comprehensive range of learning solutions tailored to your needs - from live classes to personalized mentorship.
+                    </p>
                 </div>
 
-                {/* Horizontal Exam Tabs (Old Categories) */}
-                <div className="mb-8 overflow-x-auto pb-2 scrollbar-hide">
-                    <div className="flex gap-3 min-w-max lg:min-w-0 lg:flex-wrap lg:justify-center">
-                        <button onClick={() => setActiveExam('all')} className={getExamClass('all')}>
-                            <i className="fas fa-th-large mr-2"></i>
-                            All Exams
-                        </button>
-                        <button onClick={() => setActiveExam('jee')} className={getExamClass('jee')}>
-                            <i className="fas fa-atom mr-2"></i>
-                            JEE
-                        </button>
-                        <button onClick={() => setActiveExam('neet')} className={getExamClass('neet')}>
-                            <i className="fas fa-heartbeat mr-2"></i>
-                            NEET
-                        </button>
-                        <button onClick={() => setActiveExam('iat')} className={getExamClass('iat')}>
-                            <i className="fas fa-flask mr-2"></i>
-                            IAT
-                        </button>
-                        <button onClick={() => setActiveExam('nest')} className={getExamClass('nest')}>
-                            <i className="fas fa-microscope mr-2"></i>
-                            NEST
-                        </button>
-                        <button onClick={() => setActiveExam('csir-net')} className={getExamClass('csir-net')}>
-                            <i className="fas fa-graduation-cap mr-2"></i>
-                            CSIR NET
-                        </button>
-                        <button onClick={() => setActiveExam('gate')} className={getExamClass('gate')}>
-                            <i className="fas fa-door-open mr-2"></i>
-                            GATE
-                        </button>
-                        <button onClick={() => setActiveExam('iit-jam')} className={getExamClass('iit-jam')}>
-                            <i className="fas fa-university mr-2"></i>
-                            IIT JAM
-                        </button>
-                        <button onClick={() => setActiveExam('tifr')} className={getExamClass('tifr')}>
-                            <i className="fas fa-atom mr-2"></i>
-                            TIFR
-                        </button>
+                {/* Horizontal Exam Tabs */}
+                <div className="mb-10">
+                    <div className="glass-panel rounded-2xl p-6 mb-8">
+                        <div className="flex items-center justify-between mb-5">
+                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                <i className="fas fa-graduation-cap text-pink-400"></i>
+                                Select Your Exam
+                            </h3>
+                            <span className="text-sm text-gray-400 hidden sm:block">
+                                {activeExam === 'all' ? 'All Exams' : activeExam.toUpperCase()}
+                            </span>
+                        </div>
+                        <div className="overflow-x-auto pb-2 scrollbar-hide">
+                            <div className="flex gap-3 min-w-max lg:min-w-0 lg:flex-wrap lg:justify-start">
+                                <button onClick={() => setActiveExam('all')} className={getExamClass('all')}>
+                                    <i className="fas fa-th-large mr-2"></i>
+                                    All Exams
+                                </button>
+                                <button onClick={() => setActiveExam('jee')} className={getExamClass('jee')}>
+                                    <i className="fas fa-atom mr-2"></i>
+                                    JEE
+                                </button>
+                                <button onClick={() => setActiveExam('neet')} className={getExamClass('neet')}>
+                                    <i className="fas fa-heartbeat mr-2"></i>
+                                    NEET
+                                </button>
+                                <button onClick={() => setActiveExam('iat')} className={getExamClass('iat')}>
+                                    <i className="fas fa-flask mr-2"></i>
+                                    IAT
+                                </button>
+                                <button onClick={() => setActiveExam('nest')} className={getExamClass('nest')}>
+                                    <i className="fas fa-microscope mr-2"></i>
+                                    NEST
+                                </button>
+                                <button onClick={() => setActiveExam('csir-net')} className={getExamClass('csir-net')}>
+                                    <i className="fas fa-graduation-cap mr-2"></i>
+                                    CSIR NET
+                                </button>
+                                <button onClick={() => setActiveExam('gate')} className={getExamClass('gate')}>
+                                    <i className="fas fa-door-open mr-2"></i>
+                                    GATE
+                                </button>
+                                <button onClick={() => setActiveExam('iit-jam')} className={getExamClass('iit-jam')}>
+                                    <i className="fas fa-university mr-2"></i>
+                                    IIT JAM
+                                </button>
+                                <button onClick={() => setActiveExam('tifr')} className={getExamClass('tifr')}>
+                                    <i className="fas fa-atom mr-2"></i>
+                                    TIFR
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 {/* Mobile Category Filter */}
-                <div className="lg:hidden w-full mb-6">
-                    <select
-                        value={activeCategory}
-                        onChange={(e) => setActiveCategory(e.target.value)}
-                        className="w-full bg-gray-800 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400"
-                    >
-                        <option value="all">All Programs</option>
-                        <option value="live-batch">Live Batch</option>
-                        <option value="recorded">Recorded Courses</option>
-                        <option value="1-1-tutoring">1-1 Tutoring</option>
-                        <option value="mentorship">Mentorship</option>
-                        <option value="doubt-solver">Doubt Solver</option>
-                        <option value="test-series">Test Series</option>
-                        <option value="focus-test-series">Focus Test Series</option>
-                    </select>
+                <div className="lg:hidden w-full mb-8">
+                    <div className="glass-panel rounded-xl p-4 border border-gray-700/50">
+                        <label className="block text-sm font-semibold text-gray-400 mb-3 flex items-center gap-2">
+                            <i className="fas fa-filter text-cyan-400"></i>
+                            Filter by Program Type
+                        </label>
+                        <select
+                            value={activeCategory}
+                            onChange={(e) => setActiveCategory(e.target.value)}
+                            className="w-full bg-gray-800 border-2 border-gray-700 text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all font-medium"
+                        >
+                            <option value="all">📚 All Programs</option>
+                            <option value="live-batch">🎥 Live Batch</option>
+                            <option value="recorded">▶️ Recorded Courses</option>
+                            <option value="1-1-tutoring">👥 1-1 Tutoring</option>
+                            <option value="mentorship">👨‍🏫 Mentorship</option>
+                            <option value="doubt-solver">❓ Doubt Solver</option>
+                            <option value="test-series">📝 Test Series</option>
+                            <option value="focus-test-series">🎯 Focus Test Series</option>
+                        </select>
+                    </div>
                 </div>
 
                 {/* Main Content: Sidebar + Courses Grid */}
                 <div className="flex gap-6">\n                {/* Left Sidebar - Vertical Category Tabs */}
-                    <div className="w-64 flex-shrink-0 hidden lg:block">
-                        <div className="glass-panel rounded-2xl p-4 sticky top-24">
-                            <h3 className="text-lg font-bold text-white mb-4 px-2">
-                                <i className="fas fa-filter mr-2 text-cyan-400"></i>
-                                Courses Category
-                            </h3>
-                            <div className="space-y-2">
+                    <div className="w-72 flex-shrink-0 hidden lg:block">
+                        <div className="glass-panel rounded-2xl p-6 sticky top-24 border border-gray-700/50">
+                            <div className="mb-6">
+                                <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-2">
+                                    <i className="fas fa-filter text-cyan-400"></i>
+                                    Program Type
+                                </h3>
+                                <p className="text-xs text-gray-500">Filter courses by category</p>
+                            </div>
+                            <div className="space-y-2.5">
                                 <button
                                     onClick={() => setActiveCategory('all')}
                                     className={getCategoryClass('all')}
