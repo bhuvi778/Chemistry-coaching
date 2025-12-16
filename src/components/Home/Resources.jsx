@@ -1,13 +1,10 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 
 const Resources = () => {
   const [showAllResources, setShowAllResources] = useState(false);
   const { isDark } = useTheme();
-
-  const handleDownload = (resourceType) => {
-    alert(`Downloading ${resourceType} sample... This feature will be implemented with real PDF downloads.`);
-  };
 
   const allResources = [
     {
@@ -22,14 +19,16 @@ const Resources = () => {
       icon: "fa-pen",
       items: ["Daily Practice Papers", "Previous Year Questions", "Mock Tests", "Topic-wise Tests"],
       color: "pink",
-      image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500"
+      image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500",
+      appLink: "https://play.google.com/store/apps/details?id=com.ace2examz.app" // Add your actual app link here
     },
     {
       title: "Video Lectures",
       icon: "fa-play-circle",
       items: ["Concept Videos", "Problem Solving", "Revision Sessions", "Doubt Clearing"],
       color: "purple",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500"
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500",
+      lecturesLink: "/lectures" // Internal link to lectures page
     },
     {
       title: "Test Series",
@@ -109,12 +108,33 @@ const Resources = () => {
                 ))}
               </ul>
 
-              <button
-                onClick={() => handleDownload(resource.title)}
-                className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full`}
-              >
-                Download Free Sample
-              </button>
+              {resource.appLink ? (
+                <a
+                  href={resource.appLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
+                >
+                  <i className="fas fa-mobile-alt mr-2"></i>
+                  Download App
+                </a>
+              ) : resource.lecturesLink ? (
+                <Link
+                  to={resource.lecturesLink}
+                  className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
+                >
+                  <i className="fab fa-youtube mr-2"></i>
+                  Watch Lectures
+                </Link>
+              ) : (
+                <Link
+                  to="/study-materials"
+                  className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
+                >
+                  <i className="fas fa-download mr-2"></i>
+                  Download Free Sample
+                </Link>
+              )}
             </div>
           </div>
         ))}

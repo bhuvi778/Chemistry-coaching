@@ -3,7 +3,7 @@ import EnquiryModal from './EnquiryModal';
 
 const CourseCard = ({ course }) => {
   const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
-  
+
   const colorMap = {
     pink: 'text-pink-500 border-pink-500',
     cyan: 'text-cyan-400 border-cyan-400',
@@ -27,7 +27,7 @@ const CourseCard = ({ course }) => {
             {course.badge}
           </span>
         )}
-        
+
         <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition`}>
           <i className={`fas ${course.icon} text-9xl ${textColor}`}></i>
         </div>
@@ -35,7 +35,7 @@ const CourseCard = ({ course }) => {
         <h3 className="text-2xl font-bold mb-1 text-white">{course.title}</h3>
         <p className={`${textColor} font-bold text-sm mb-4`}>{course.subtitle}</p>
         <p className="text-gray-400 mb-6 text-sm flex-grow">{course.desc}</p>
-        
+
         <ul className="text-sm text-gray-400 mb-6 space-y-2">
           {course.features.map((f, idx) => (
             <li key={idx}><i className="fas fa-check text-green-500 mr-2"></i> {f}</li>
@@ -43,19 +43,24 @@ const CourseCard = ({ course }) => {
         </ul>
 
         <div className="mt-auto flex gap-3">
-          <button 
+          <button
             onClick={() => setIsEnquiryOpen(true)}
             className={`flex-1 py-2 rounded border ${borderColor} ${textColor} hover:bg-white hover:text-black transition font-bold text-sm`}
           >
             Enquire
           </button>
-          <button className={`flex-1 py-2 rounded border ${borderColor} ${textColor} hover:bg-white hover:text-black transition font-bold text-sm`}>
+          <a
+            href="https://www.ace2examz.in/courses"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex-1 py-2 rounded border ${borderColor} ${textColor} hover:bg-white hover:text-black transition font-bold text-sm text-center flex items-center justify-center`}
+          >
             Buy Now
-          </button>
+          </a>
         </div>
       </div>
 
-      <EnquiryModal 
+      <EnquiryModal
         isOpen={isEnquiryOpen}
         onClose={() => setIsEnquiryOpen(false)}
         course={course}

@@ -81,10 +81,26 @@ const Contact = () => {
           <div className="mb-6">
             <label className="block text-sm font-bold mb-2 text-cyan-400">Target Exam</label>
             <select name="exam" className="w-full bg-gray-900 border border-gray-700 text-white rounded p-3 focus:outline-none focus:border-cyan-400 transition">
-              <option>JEE (Main + Advanced)</option>
-              <option>NEET (Medical)</option>
-              <option>Board Exams (11th/12th)</option>
-              <option>Foundation (8th-10th)</option>
+              <optgroup label="Engineering Entrance">
+                <option>JEE (Main + Advanced)</option>
+                <option>GATE</option>
+              </optgroup>
+              <optgroup label="Medical Entrance">
+                <option>NEET (Medical)</option>
+              </optgroup>
+              <optgroup label="Science Entrance">
+                <option>IAT (IISER Aptitude Test)</option>
+                <option>NEST (National Entrance Screening Test)</option>
+                <option>TIFR (Tata Institute)</option>
+              </optgroup>
+              <optgroup label="Post Graduate">
+                <option>CSIR NET</option>
+                <option>IIT JAM</option>
+              </optgroup>
+              <optgroup label="School Level">
+                <option>Board Exams (11th/12th)</option>
+                <option>Foundation (8th-10th)</option>
+              </optgroup>
             </select>
           </div>
 
