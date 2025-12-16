@@ -5,14 +5,14 @@ import { useTheme } from '../../context/ThemeContext';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isStudyMaterialOpen, setIsStudyMaterialOpen] = useState(false);
+  const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
 
   const getNavLinkClass = (path) => {
     const isActive = location.pathname === path;
-    return `nav-link px-3 py-2 transition relative ${
-      isActive ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
-    }`;
+    return `nav-link px-3 py-2 transition relative ${isActive ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+      }`;
   };
 
   return (
@@ -20,9 +20,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center cursor-pointer">
-            <img 
+            <img
               src={isDark ? "/logo-light.png" : "/logo-dark.png"}
-              alt="Ace2Examz - Your Path To Success" 
+              alt="Ace2Examz - Your Path To Success"
               className="h-12 md:h-16 w-auto object-contain transition-opacity duration-300"
             />
           </Link>
@@ -31,56 +31,132 @@ const Navbar = () => {
             <div className="flex items-baseline space-x-6 text-lg">
               <Link to="/" className={getNavLinkClass('/')}>Home</Link>
               <Link to="/about" className={getNavLinkClass('/about')}>About Us</Link>
-              <Link to="/courses" className={getNavLinkClass('/courses')}>Courses</Link>
-              
+
+              {/* Courses Dropdown */}
+              <div
+                className="relative group"
+                onMouseEnter={() => setIsCoursesOpen(true)}
+                onMouseLeave={() => setIsCoursesOpen(false)}
+              >
+                <Link to="/courses" className={`px-3 py-2 transition relative ${location.pathname.includes('/courses')
+                  ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+                  }`}>
+                  <span className="flex items-center gap-2">
+                    <i className="fas fa-graduation-cap"></i>
+                    Courses
+                    <i className={`fas fa-chevron-down text-xs transition-transform ${isCoursesOpen ? 'rotate-180' : ''}`}></i>
+                  </span>
+                </Link>
+
+                {/* Dropdown Menu */}
+                <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isCoursesOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                  }`}>
+                  <Link
+                    to="/courses"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsCoursesOpen(false)}
+                  >
+                    <i className="fas fa-th-large text-cyan-500"></i>
+                    <span>All Programs</span>
+                  </Link>
+                  <Link
+                    to="/courses?category=live-batch"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsCoursesOpen(false)}
+                  >
+                    <i className="fas fa-video text-blue-500"></i>
+                    <span>Live Batch</span>
+                  </Link>
+                  <Link
+                    to="/courses?category=recorded"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsCoursesOpen(false)}
+                  >
+                    <i className="fas fa-play-circle text-purple-500"></i>
+                    <span>Recorded Courses</span>
+                  </Link>
+                  <Link
+                    to="/courses?category=test-series"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsCoursesOpen(false)}
+                  >
+                    <i className="fas fa-clipboard-check text-green-500"></i>
+                    <span>Test Series</span>
+                  </Link>
+                  <Link
+                    to="/courses?category=focus-test-series"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsCoursesOpen(false)}
+                  >
+                    <i className="fas fa-bullseye text-pink-500"></i>
+                    <span>Focus Test Series</span>
+                  </Link>
+                  <Link
+                    to="/courses?category=1-1-tutoring"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsCoursesOpen(false)}
+                  >
+                    <i className="fas fa-user-friends text-yellow-500"></i>
+                    <span>1-1 Tutoring</span>
+                  </Link>
+                  <Link
+                    to="/courses?category=mentorship"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsCoursesOpen(false)}
+                  >
+                    <i className="fas fa-chalkboard-teacher text-indigo-500"></i>
+                    <span>Mentorship</span>
+                  </Link>
+                </div>
+              </div>
+
+
               {/* Study Material Dropdown */}
-              <div 
+              <div
                 className="relative group"
                 onMouseEnter={() => setIsStudyMaterialOpen(true)}
                 onMouseLeave={() => setIsStudyMaterialOpen(false)}
               >
-                <button className={`px-3 py-2 transition relative ${
-                  location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') || 
+                <button className={`px-3 py-2 transition relative ${location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') ||
                   location.pathname.includes('/study-materials') || location.pathname.includes('/magazines')
-                    ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
-                }`}>
+                  ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+                  }`}>
                   <span className="flex items-center gap-2">
                     <i className="fas fa-book"></i>
                     Study Material
                     <i className={`fas fa-chevron-down text-xs transition-transform ${isStudyMaterialOpen ? 'rotate-180' : ''}`}></i>
                   </span>
                 </button>
-                
+
                 {/* Dropdown Menu */}
-                <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${
-                  isStudyMaterialOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
-                }`}>
-                  <Link 
-                    to="/lectures" 
+                <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isStudyMaterialOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                  }`}>
+                  <Link
+                    to="/lectures"
                     className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                     onClick={() => setIsStudyMaterialOpen(false)}
                   >
                     <i className="fab fa-youtube text-red-500"></i>
                     <span>Video Lectures</span>
                   </Link>
-                  <Link 
-                    to="/audiobooks" 
+                  <Link
+                    to="/audiobooks"
                     className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                     onClick={() => setIsStudyMaterialOpen(false)}
                   >
                     <i className="fas fa-headphones text-purple-500"></i>
                     <span>Audio Books</span>
                   </Link>
-                  <Link 
-                    to="/study-materials" 
+                  <Link
+                    to="/study-materials"
                     className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                     onClick={() => setIsStudyMaterialOpen(false)}
                   >
                     <i className="fas fa-file-pdf text-green-500"></i>
                     <span>Free Study Materials</span>
                   </Link>
-                  <Link 
-                    to="/magazines" 
+                  <Link
+                    to="/magazines"
                     className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                     onClick={() => setIsStudyMaterialOpen(false)}
                   >
@@ -89,7 +165,7 @@ const Navbar = () => {
                   </Link>
                 </div>
               </div>
-              
+
               <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
                 <span className="flex items-center gap-2">
                   <i className="fas fa-robot text-cyan-400"></i>
@@ -98,7 +174,7 @@ const Navbar = () => {
               </Link>
               <Link to="/contact" className={getNavLinkClass('/contact')}>Contact Us</Link>
             </div>
-            
+
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
@@ -140,23 +216,51 @@ const Navbar = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 text-center">
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Home</Link>
             <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">About Us</Link>
-            <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Courses</Link>
-            <Link to="/lectures" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-              <i className="fab fa-youtube text-red-500 mr-2"></i>Video Lectures
-            </Link>
-            <Link to="/audiobooks" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-              <i className="fas fa-headphones text-purple-500 mr-2"></i>Audio Books
-            </Link>
-            <Link to="/study-materials" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-              <i className="fas fa-file-pdf text-green-500 mr-2"></i>Free Study Materials
-            </Link>
-            <Link to="/magazines" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-              <i className="fas fa-book-open text-pink-500 mr-2"></i>Chemistry Magazine
-            </Link>
-            <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-              <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
-            </Link>
-            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Contact Us</Link>
+
+            {/* Courses Section */}
+            <div className="border-t border-gray-700 pt-2 mt-2">
+              <div className="px-3 py-2 text-cyan-400 font-semibold text-sm">
+                <i className="fas fa-graduation-cap mr-2"></i>COURSES
+              </div>
+              <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-th-large text-cyan-500 mr-2"></i>All Programs
+              </Link>
+              <Link to="/courses?category=live-batch" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-video text-blue-500 mr-2"></i>Live Batch
+              </Link>
+              <Link to="/courses?category=recorded" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-play-circle text-purple-500 mr-2"></i>Recorded Courses
+              </Link>
+              <Link to="/courses?category=test-series" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-clipboard-check text-green-500 mr-2"></i>Test Series
+              </Link>
+              <Link to="/courses?category=focus-test-series" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-bullseye text-pink-500 mr-2"></i>Focus Test Series
+              </Link>
+            </div>
+
+            {/* Study Materials Section */}
+            <div className="border-t border-gray-700 pt-2 mt-2">
+              <div className="px-3 py-2 text-cyan-400 font-semibold text-sm">
+                <i className="fas fa-book mr-2"></i>STUDY MATERIALS
+              </div>
+              <Link to="/lectures" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fab fa-youtube text-red-500 mr-2"></i>Video Lectures
+              </Link>
+              <Link to="/audiobooks" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-headphones text-purple-500 mr-2"></i>Audio Books
+              </Link>
+              <Link to="/study-materials" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-file-pdf text-green-500 mr-2"></i>Free Study Materials
+              </Link>
+              <Link to="/magazines" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-book-open text-pink-500 mr-2"></i>Chemistry Magazine
+              </Link>
+              <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
+              </Link>
+              <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Contact Us</Link>
+            </div>
           </div>
         </div>
       )}

@@ -66,10 +66,6 @@ const Contact = () => {
               <span>Mon - Sat</span>
               <span>09:00 AM - 07:00 PM</span>
             </div>
-            <div className="flex justify-between text-sm text-gray-400">
-              <span>Sunday</span>
-              <span>10:00 AM - 02:00 PM</span>
-            </div>
           </div>
         </div>
 

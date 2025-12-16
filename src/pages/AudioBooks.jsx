@@ -1,75 +1,73 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { useTheme } from '../context/ThemeContext';
 
 const AudioBooks = () => {
   const { audioBooks } = useData();
-  const { isDark } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const filteredAudioBooks = selectedCategory === 'all'
-    ? audioBooks
+  const filteredAudioBooks = selectedCategory === 'all' 
+    ? audioBooks 
     : audioBooks.filter(book => book.category === selectedCategory);
 
   return (
-    <div className={`animate-fadeIn min-h-screen py-20 px-4 ${isDark ? 'bg-gray-900' : 'bg-gray-50'
-      }`}>
-      <div className="max-w-7xl mx-auto">
+    <div className="animate-fadeIn min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 py-20">
         <div className="flex items-center mb-8">
-          <Link to="/" className={`flex items-center gap-2 transition ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-            }`}>
+          <Link to="/" className="text-gray-400 hover:text-white flex items-center gap-2 transition">
             <i className="fas fa-arrow-left"></i> Back to Home
           </Link>
         </div>
 
         <div className="text-center mb-12">
-          <h1 className={`text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'
-            }`}>
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
             <i className="fas fa-headphones mr-3"></i>
             Chemistry Audio Books
           </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'
-            }`}>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Learn chemistry on the go with our comprehensive audio book collection
           </p>
         </div>
 
         {/* Category Filter */}
         <div className="flex gap-3 mb-8 flex-wrap justify-center">
-          <button
+          <button 
             onClick={() => setSelectedCategory('all')}
-            className={`px-6 py-2 rounded-full transition ${selectedCategory === 'all'
-              ? 'bg-purple-500 text-white'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
+            className={`px-6 py-2 rounded-full transition ${
+              selectedCategory === 'all' 
+                ? 'bg-purple-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
           >
             All
           </button>
-          <button
+          <button 
             onClick={() => setSelectedCategory('Physical Chemistry')}
-            className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Physical Chemistry'
-              ? 'bg-purple-500 text-white'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
+            className={`px-6 py-2 rounded-full transition ${
+              selectedCategory === 'Physical Chemistry' 
+                ? 'bg-purple-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
           >
             Physical Chemistry
           </button>
-          <button
+          <button 
             onClick={() => setSelectedCategory('Organic Chemistry')}
-            className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Organic Chemistry'
-              ? 'bg-purple-500 text-white'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
+            className={`px-6 py-2 rounded-full transition ${
+              selectedCategory === 'Organic Chemistry' 
+                ? 'bg-purple-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
           >
             Organic Chemistry
           </button>
-          <button
+          <button 
             onClick={() => setSelectedCategory('Inorganic Chemistry')}
-            className={`px-6 py-2 rounded-full transition ${selectedCategory === 'Inorganic Chemistry'
-              ? 'bg-purple-500 text-white'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
+            className={`px-6 py-2 rounded-full transition ${
+              selectedCategory === 'Inorganic Chemistry' 
+                ? 'bg-purple-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
           >
             Inorganic Chemistry
           </button>
@@ -87,8 +85,8 @@ const AudioBooks = () => {
             {filteredAudioBooks.map((book) => (
               <div key={book._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all duration-300">
                 {book.thumbnailUrl && (
-                  <img
-                    src={book.thumbnailUrl}
+                  <img 
+                    src={book.thumbnailUrl} 
                     alt={book.title}
                     className="w-full h-48 object-cover rounded-lg mb-4"
                   />
@@ -112,13 +110,15 @@ const AudioBooks = () => {
                     {book.duration}
                   </p>
                 )}
-                <Link
-                  to={`/audiobooks/${book._id}`}
+                <a 
+                  href={book.audioUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition font-semibold"
                 >
-                  <i className="fas fa-book-open"></i>
-                  View Chapters
-                </Link>
+                  <i className="fas fa-play"></i>
+                  Listen Now
+                </a>
               </div>
             ))}
           </div>

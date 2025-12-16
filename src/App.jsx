@@ -11,7 +11,6 @@ import About from './pages/About';
 import AllCourses from './pages/AllCourses';
 import Lectures from './pages/Lectures';
 import AudioBooks from './pages/AudioBooks';
-import AudioBookDetail from './pages/AudioBookDetail';
 import StudyMaterials from './pages/StudyMaterials';
 import Magazines from './pages/Magazines';
 import AIAssistantPage from './pages/AIAssistantPage';
@@ -35,7 +34,7 @@ function AppContent() {
       <ScrollToTop />
       <ParticleCanvas />
       <Navbar />
-
+      
       <div className="pt-20 flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -43,22 +42,21 @@ function AppContent() {
           <Route path="/courses" element={<AllCourses />} />
           <Route path="/lectures" element={<Lectures />} />
           <Route path="/audiobooks" element={<AudioBooks />} />
-          <Route path="/audiobooks/:id" element={<AudioBookDetail />} />
           <Route path="/study-materials" element={<StudyMaterials />} />
           <Route path="/magazines" element={<Magazines />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-          <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/admin" element={<AdminLogin />} />
-          <Route
-            path="/admin/dashboard"
+          <Route 
+            path="/admin/dashboard" 
             element={
               <ProtectedRoute>
                 <AdminDashboard />
               </ProtectedRoute>
-            }
+            } 
           />
         </Routes>
       </div>

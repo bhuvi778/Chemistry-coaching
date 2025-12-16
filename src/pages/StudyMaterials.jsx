@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { useTheme } from '../context/ThemeContext';
 
 const StudyMaterials = () => {
   const { studyMaterials } = useData();
-  const { isDark } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedExam, setSelectedExam] = useState('all');
 
@@ -16,24 +14,20 @@ const StudyMaterials = () => {
   });
 
   return (
-    <div className={`animate-fadeIn min-h-screen py-20 px-4 ${isDark ? 'bg-gray-900' : 'bg-gray-50'
-      }`}>
-      <div className="max-w-7xl mx-auto">
+    <div className="animate-fadeIn min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 py-20">
         <div className="flex items-center mb-8">
-          <Link to="/" className={`flex items-center gap-2 transition ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-            }`}>
+          <Link to="/" className="text-gray-400 hover:text-white flex items-center gap-2 transition">
             <i className="fas fa-arrow-left"></i> Back to Home
           </Link>
         </div>
 
         <div className="text-center mb-12">
-          <h1 className={`text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'
-            }`}>
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             <i className="fas fa-file-pdf mr-3"></i>
             Free Study Materials
           </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'
-            }`}>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Download free notes, question banks, and previous year papers
           </p>
         </div>
@@ -41,17 +35,17 @@ const StudyMaterials = () => {
         {/* Filters */}
         <div className="mb-8 space-y-4">
           <div>
-            <h3 className={`font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-900'
-              }`}>Filter by Exam:</h3>
+            <h3 className="text-white font-semibold mb-3">Filter by Exam:</h3>
             <div className="flex gap-3 flex-wrap">
-              {['all', 'JEE', 'NEET', 'IAT', 'NEST', 'CSIR NEET', 'IIT JAM', 'TIFR', 'BITSAT', 'GATE', 'CUET UG'].map(exam => (
-                <button
+              {['all', 'JEE', 'NEET', 'GATE', 'CSIR NET', 'IIT JAM'].map(exam => (
+                <button 
                   key={exam}
                   onClick={() => setSelectedExam(exam)}
-                  className={`px-6 py-2 rounded-full transition ${selectedExam === exam
-                    ? 'bg-green-500 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                    }`}
+                  className={`px-6 py-2 rounded-full transition ${
+                    selectedExam === exam 
+                      ? 'bg-green-500 text-white' 
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
                 >
                   {exam === 'all' ? 'All Exams' : exam}
                 </button>
@@ -60,17 +54,17 @@ const StudyMaterials = () => {
           </div>
 
           <div>
-            <h3 className={`font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-900'
-              }`}>Filter by Type:</h3>
+            <h3 className="text-white font-semibold mb-3">Filter by Type:</h3>
             <div className="flex gap-3 flex-wrap">
-              {['all', 'NCERT Books', 'NCERT Solutions', 'Syllabus', 'Sample Papers', 'Notes', 'Important Question', 'Previous Year Questions', 'Formulas', 'Practice papers', 'Concept Wise Notes', 'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry', 'Spectroscopy'].map(cat => (
-                <button
+              {['all', 'Notes', 'Question Banks', 'Previous Year Papers', 'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry'].map(cat => (
+                <button 
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-6 py-2 rounded-full transition ${selectedCategory === cat
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                    }`}
+                  className={`px-6 py-2 rounded-full transition ${
+                    selectedCategory === cat 
+                      ? 'bg-blue-500 text-white' 
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
                 >
                   {cat === 'all' ? 'All Types' : cat}
                 </button>
@@ -91,8 +85,8 @@ const StudyMaterials = () => {
             {filteredMaterials.map((material) => (
               <div key={material._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] transition-all duration-300">
                 {material.thumbnailUrl && (
-                  <img
-                    src={material.thumbnailUrl}
+                  <img 
+                    src={material.thumbnailUrl} 
                     alt={material.title}
                     className="w-full h-48 object-cover rounded-lg mb-4"
                   />
@@ -118,9 +112,11 @@ const StudyMaterials = () => {
                     Size: {material.fileSize}
                   </p>
                 )}
-                <a
-                  href={material.fileUrl}
-                  download={`${material.title.replace(/[^a-z0-9]/gi, '_')}.${material.fileType.toLowerCase()}`}
+                <a 
+                  href={material.fileUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  download
                   className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:from-green-600 hover:to-blue-600 transition font-semibold"
                 >
                   <i className="fas fa-download"></i>
