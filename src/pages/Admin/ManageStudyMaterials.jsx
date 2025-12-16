@@ -378,42 +378,74 @@ const ManageStudyMaterials = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <select
-              value={formData.fileType}
-              onChange={e => setFormData({ ...formData, fileType: e.target.value })}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            >
-              <option value="PDF">PDF</option>
-              <option value="DOC">DOC</option>
-              <option value="PPT">PPT</option>
-              <option value="ZIP">ZIP</option>
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <select
               value={formData.category}
               onChange={e => setFormData({ ...formData, category: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             >
-              <option value="Notes">Notes</option>
-              <option value="Question Banks">Question Banks</option>
-              <option value="Previous Year Papers">Previous Year Papers</option>
-              <option value="Physical Chemistry">Physical Chemistry</option>
-              <option value="Organic Chemistry">Organic Chemistry</option>
-              <option value="Inorganic Chemistry">Inorganic Chemistry</option>
+              <optgroup label="General Categories">
+                <option value="Notes">Notes</option>
+                <option value="Handwritten Notes">Handwritten Notes</option>
+                <option value="Formula Sheets">Formula Sheets</option>
+                <option value="Revision Notes">Revision Notes</option>
+                <option value="Question Banks">Question Banks</option>
+                <option value="Practice Problems">Practice Problems</option>
+                <option value="Solutions">Solutions</option>
+                <option value="Previous Year Papers">Previous Year Papers</option>
+                <option value="Sample Papers">Sample Papers</option>
+                <option value="Mock Tests">Mock Tests</option>
+                <option value="Study Guides">Study Guides</option>
+                <option value="Reference Materials">Reference Materials</option>
+              </optgroup>
+              <optgroup label="Chemistry Topics">
+                <option value="Physical Chemistry">Physical Chemistry</option>
+                <option value="Organic Chemistry">Organic Chemistry</option>
+                <option value="Inorganic Chemistry">Inorganic Chemistry</option>
+                <option value="Analytical Chemistry">Analytical Chemistry</option>
+                <option value="Biochemistry">Biochemistry</option>
+              </optgroup>
+              <optgroup label="Other Subjects">
+                <option value="Physics">Physics</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Biology">Biology</option>
+              </optgroup>
             </select>
             <select
               value={formData.examType}
               onChange={e => setFormData({ ...formData, examType: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             >
-              <option value="All">All</option>
-              <option value="JEE">JEE</option>
+              <option value="All">All Exams</option>
+              <option value="JEE">JEE (Main & Advanced)</option>
               <option value="NEET">NEET</option>
               <option value="GATE">GATE</option>
               <option value="CSIR NET">CSIR NET</option>
               <option value="IIT JAM">IIT JAM</option>
+              <option value="KVPY">KVPY</option>
+              <option value="OLYMPIAD">Olympiad</option>
+              <option value="BOARDS">Board Exams (11th/12th)</option>
+              <option value="CUET">CUET</option>
+              <option value="AIIMS">AIIMS</option>
             </select>
           </div>
+
+          {/* File Type Display (Auto-detected) */}
+          {formData.fileType && (
+            <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+              <div className="flex items-center gap-2">
+                <i className="fas fa-info-circle text-cyan-400"></i>
+                <span className="text-gray-400 text-sm">
+                  File Type: <span className="text-white font-semibold">{formData.fileType}</span>
+                  {formData.fileSize && (
+                    <span className="ml-3">
+                      Size: <span className="text-white font-semibold">{formData.fileSize}</span>
+                    </span>
+                  )}
+                </span>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-4">
             <button type="submit" className="bg-green-500 text-white font-bold py-2 px-6 rounded hover:bg-green-400 transition">

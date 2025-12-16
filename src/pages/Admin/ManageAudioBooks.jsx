@@ -5,28 +5,34 @@ const ManageAudioBooks = () => {
   const { audioBooks, addAudioBook, updateAudioBook, deleteAudioBook } = useData();
   const [isEditing, setIsEditing] = useState(false);
   const [currentAudioBook, setCurrentAudioBook] = useState(null);
-  const [audioFileName, setAudioFileName] = useState('');
-  const [thumbnailFileName, setThumbnailFileName] = useState('');
-  const [isDraggingAudio, setIsDraggingAudio] = useState(false);
-  const [isDraggingThumbnail, setIsDraggingThumbnail] = useState(false);
 
   const initialFormState = {
     title: '',
     description: '',
     author: '',
-    duration: '',
-    audioUrl: '',
     thumbnailUrl: '',
-    category: 'General'
+    category: 'General',
+    chapters: []
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  const [thumbnailFileName, setThumbnailFileName] = useState('');
+  const [isDraggingThumbnail, setIsDraggingThumbnail] = useState(false);
+
+  // Chapter management
+  const [currentChapter, setCurrentChapter] = useState({ title: '', topics: [] });
+  const [editingChapterIndex, setEditingChapterIndex] = useState(null);
+
+  // Topic management
+  const [currentTopic, setCurrentTopic] = useState({ title: '', description: '', duration: '', audioUrl: '' });
+  const [editingTopicIndex, setEditingTopicIndex] = useState(null);
+  const [audioFileName, setAudioFileName] = useState('');
+  const [isDraggingAudio, setIsDraggingAudio] = useState(false);
 
   const handleEdit = (audioBook) => {
     setIsEditing(true);
     setCurrentAudioBook(audioBook);
     setFormData(audioBook);
-    setAudioFileName(audioBook.audioUrl ? 'Current audio file' : '');
     setThumbnailFileName(audioBook.thumbnailUrl ? 'Current thumbnail' : '');
   };
 
@@ -46,33 +52,7 @@ const ManageAudioBooks = () => {
     });
   };
 
-  // Handle audio file upload
-  const handleAudioFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (!file.type.startsWith('audio/')) {
-        alert('Please upload a valid audio file (MP3, WAV, etc.)');
-        return;
-      }
-
-      // Check file size (limit to 50MB)
-      if (file.size > 50 * 1024 * 1024) {
-        alert('Audio file size should be less than 50MB');
-        return;
-      }
-
-      try {
-        const base64 = await convertToBase64(file);
-        setFormData({ ...formData, audioUrl: base64 });
-        setAudioFileName(file.name);
-      } catch (error) {
-        console.error('Error converting audio file:', error);
-        alert('Error uploading audio file');
-      }
-    }
-  };
-
-  // Handle thumbnail file upload
+  // Handle thumbnail upload
   const handleThumbnailFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -80,13 +60,10 @@ const ManageAudioBooks = () => {
         alert('Please upload a valid image file');
         return;
       }
-
-      // Check file size (limit to 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('Image file size should be less than 5MB');
         return;
       }
-
       try {
         const base64 = await convertToBase64(file);
         setFormData({ ...formData, thumbnailUrl: base64 });
@@ -98,41 +75,6 @@ const ManageAudioBooks = () => {
     }
   };
 
-  // Drag and drop handlers for audio
-  const handleAudioDragOver = (e) => {
-    e.preventDefault();
-    setIsDraggingAudio(true);
-  };
-
-  const handleAudioDragLeave = () => {
-    setIsDraggingAudio(false);
-  };
-
-  const handleAudioDrop = async (e) => {
-    e.preventDefault();
-    setIsDraggingAudio(false);
-
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('audio/')) {
-      if (file.size > 50 * 1024 * 1024) {
-        alert('Audio file size should be less than 50MB');
-        return;
-      }
-
-      try {
-        const base64 = await convertToBase64(file);
-        setFormData({ ...formData, audioUrl: base64 });
-        setAudioFileName(file.name);
-      } catch (error) {
-        console.error('Error converting audio file:', error);
-        alert('Error uploading audio file');
-      }
-    } else {
-      alert('Please drop a valid audio file');
-    }
-  };
-
-  // Drag and drop handlers for thumbnail
   const handleThumbnailDragOver = (e) => {
     e.preventDefault();
     setIsDraggingThumbnail(true);
@@ -145,14 +87,12 @@ const ManageAudioBooks = () => {
   const handleThumbnailDrop = async (e) => {
     e.preventDefault();
     setIsDraggingThumbnail(false);
-
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
       if (file.size > 5 * 1024 * 1024) {
         alert('Image file size should be less than 5MB');
         return;
       }
-
       try {
         const base64 = await convertToBase64(file);
         setFormData({ ...formData, thumbnailUrl: base64 });
@@ -166,11 +106,127 @@ const ManageAudioBooks = () => {
     }
   };
 
+  // Handle audio file upload for topics
+  const handleAudioFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('audio/')) {
+        alert('Please upload a valid audio file (MP3, WAV, etc.)');
+        return;
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        alert('Audio file size should be less than 50MB');
+        return;
+      }
+      try {
+        const base64 = await convertToBase64(file);
+        setCurrentTopic({ ...currentTopic, audioUrl: base64 });
+        setAudioFileName(file.name);
+      } catch (error) {
+        console.error('Error converting audio file:', error);
+        alert('Error uploading audio file');
+      }
+    }
+  };
+
+  const handleAudioDragOver = (e) => {
+    e.preventDefault();
+    setIsDraggingAudio(true);
+  };
+
+  const handleAudioDragLeave = () => {
+    setIsDraggingAudio(false);
+  };
+
+  const handleAudioDrop = async (e) => {
+    e.preventDefault();
+    setIsDraggingAudio(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      if (file.size > 50 * 1024 * 1024) {
+        alert('Audio file size should be less than 50MB');
+        return;
+      }
+      try {
+        const base64 = await convertToBase64(file);
+        setCurrentTopic({ ...currentTopic, audioUrl: base64 });
+        setAudioFileName(file.name);
+      } catch (error) {
+        console.error('Error converting audio file:', error);
+        alert('Error uploading audio file');
+      }
+    } else {
+      alert('Please drop a valid audio file');
+    }
+  };
+
+  // Topic management functions
+  const handleAddTopic = () => {
+    if (!currentTopic.title || !currentTopic.audioUrl) {
+      alert('Please provide topic title and audio file');
+      return;
+    }
+
+    const updatedTopics = [...currentChapter.topics];
+    if (editingTopicIndex !== null) {
+      updatedTopics[editingTopicIndex] = { ...currentTopic, _id: Date.now().toString() };
+      setEditingTopicIndex(null);
+    } else {
+      updatedTopics.push({ ...currentTopic, _id: Date.now().toString() });
+    }
+
+    setCurrentChapter({ ...currentChapter, topics: updatedTopics });
+    setCurrentTopic({ title: '', description: '', duration: '', audioUrl: '' });
+    setAudioFileName('');
+  };
+
+  const handleEditTopic = (index) => {
+    setCurrentTopic(currentChapter.topics[index]);
+    setEditingTopicIndex(index);
+    setAudioFileName('Current audio file');
+  };
+
+  const handleDeleteTopic = (index) => {
+    const updatedTopics = currentChapter.topics.filter((_, i) => i !== index);
+    setCurrentChapter({ ...currentChapter, topics: updatedTopics });
+  };
+
+  // Chapter management functions
+  const handleAddChapter = () => {
+    if (!currentChapter.title || currentChapter.topics.length === 0) {
+      alert('Please provide chapter title and at least one topic');
+      return;
+    }
+
+    const updatedChapters = [...formData.chapters];
+    if (editingChapterIndex !== null) {
+      updatedChapters[editingChapterIndex] = { ...currentChapter, _id: Date.now().toString() };
+      setEditingChapterIndex(null);
+    } else {
+      updatedChapters.push({ ...currentChapter, _id: Date.now().toString() });
+    }
+
+    setFormData({ ...formData, chapters: updatedChapters });
+    setCurrentChapter({ title: '', topics: [] });
+    setCurrentTopic({ title: '', description: '', duration: '', audioUrl: '' });
+    setAudioFileName('');
+  };
+
+  const handleEditChapter = (index) => {
+    setCurrentChapter(formData.chapters[index]);
+    setEditingChapterIndex(index);
+  };
+
+  const handleDeleteChapter = (index) => {
+    const updatedChapters = formData.chapters.filter((_, i) => i !== index);
+    setFormData({ ...formData, chapters: updatedChapters });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.audioUrl) {
-      alert('Please upload an audio file');
+    if (formData.chapters.length === 0) {
+      alert('Please add at least one chapter with topics');
       return;
     }
 
@@ -185,8 +241,9 @@ const ManageAudioBooks = () => {
       setIsEditing(false);
       setCurrentAudioBook(null);
       setFormData(initialFormState);
-      setAudioFileName('');
       setThumbnailFileName('');
+      setCurrentChapter({ title: '', topics: [] });
+      setCurrentTopic({ title: '', description: '', duration: '', audioUrl: '' });
     } catch (error) {
       console.error('Error submitting audio book:', error);
       alert('Error submitting audio book. Please try again.');
@@ -196,152 +253,294 @@ const ManageAudioBooks = () => {
   return (
     <div className="space-y-8">
       <div className="glass-panel p-6 rounded-xl">
-        <h2 className="text-xl font-bold text-white mb-4">
+        <h2 className="text-2xl font-bold text-white mb-6">
           {isEditing ? 'Edit Audio Book' : 'Add New Audio Book'}
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Title"
-            value={formData.title}
-            onChange={e => setFormData({ ...formData, title: e.target.value })}
-            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-            required
-          />
-          <textarea
-            placeholder="Description"
-            value={formData.description}
-            onChange={e => setFormData({ ...formData, description: e.target.value })}
-            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full h-24"
-            required
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Book Basic Info */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-cyan-400 flex items-center gap-2">
+              <i className="fas fa-book"></i>
+              Book Information
+            </h3>
+
             <input
               type="text"
-              placeholder="Author"
-              value={formData.author}
-              onChange={e => setFormData({ ...formData, author: e.target.value })}
+              placeholder="Book Title"
+              value={formData.title}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+              required
             />
-            <input
-              type="text"
-              placeholder="Duration (e.g., 2h 30m)"
-              value={formData.duration}
-              onChange={e => setFormData({ ...formData, duration: e.target.value })}
-              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+
+            <textarea
+              placeholder="Book Description"
+              value={formData.description}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
+              className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full h-24"
+              required
             />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="text"
+                placeholder="Author"
+                value={formData.author}
+                onChange={e => setFormData({ ...formData, author: e.target.value })}
+                className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+              />
+
+              <select
+                value={formData.category}
+                onChange={e => setFormData({ ...formData, category: e.target.value })}
+                className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+              >
+                <option value="General">General</option>
+                <option value="JEE">JEE</option>
+                <option value="NEET">NEET</option>
+                <option value="Physical Chemistry">Physical Chemistry</option>
+                <option value="Organic Chemistry">Organic Chemistry</option>
+                <option value="Inorganic Chemistry">Inorganic Chemistry</option>
+              </select>
+            </div>
+
+            {/* Thumbnail Upload */}
+            <div>
+              <label className="block text-gray-400 mb-2 font-semibold">
+                <i className="fas fa-image mr-2 text-pink-400"></i>
+                Book Cover/Thumbnail (Optional)
+              </label>
+              <div
+                onDragOver={handleThumbnailDragOver}
+                onDragLeave={handleThumbnailDragLeave}
+                onDrop={handleThumbnailDrop}
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-all ${isDraggingThumbnail
+                    ? 'border-pink-400 bg-pink-500/10'
+                    : 'border-gray-700 hover:border-pink-500'
+                  }`}
+              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailFileChange}
+                  className="hidden"
+                  id="thumbnailInput"
+                />
+                <label htmlFor="thumbnailInput" className="cursor-pointer">
+                  <i className="fas fa-image text-4xl text-pink-400 mb-3 block"></i>
+                  <p className="text-white mb-2">
+                    {thumbnailFileName || 'Click to upload or drag and drop'}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    PNG, JPG, WEBP (Max 5MB)
+                  </p>
+                </label>
+              </div>
+              {formData.thumbnailUrl && (
+                <div className="mt-3 p-3 bg-pink-900/30 border border-pink-500/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={formData.thumbnailUrl}
+                      alt="Thumbnail preview"
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                    <div className="flex items-center gap-2">
+                      <i className="fas fa-check-circle text-green-400"></i>
+                      <span className="text-sm text-gray-300">Thumbnail uploaded</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Audio File Upload */}
-          <div>
-            <label className="block text-gray-400 mb-2 font-semibold">
-              <i className="fas fa-music mr-2 text-purple-400"></i>
-              Audio File (MP3, WAV, etc.) *
-            </label>
-            <div
-              onDragOver={handleAudioDragOver}
-              onDragLeave={handleAudioDragLeave}
-              onDrop={handleAudioDrop}
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-all ${isDraggingAudio
-                  ? 'border-purple-400 bg-purple-500/10'
-                  : 'border-gray-700 hover:border-purple-500'
-                }`}
-            >
+          {/* Chapter & Topic Management */}
+          <div className="border-t border-gray-700 pt-6 space-y-6">
+            <h3 className="text-lg font-semibold text-purple-400 flex items-center gap-2">
+              <i className="fas fa-list"></i>
+              Chapters & Topics
+            </h3>
+
+            {/* Current Chapter Form */}
+            <div className="bg-gray-800/50 p-4 rounded-lg space-y-4">
+              <h4 className="text-md font-semibold text-white flex items-center gap-2">
+                <i className="fas fa-bookmark"></i>
+                {editingChapterIndex !== null ? 'Edit Chapter' : 'Add New Chapter'}
+              </h4>
+
               <input
-                type="file"
-                accept="audio/*"
-                onChange={handleAudioFileChange}
-                className="hidden"
-                id="audioFileInput"
+                type="text"
+                placeholder="Chapter Title"
+                value={currentChapter.title}
+                onChange={e => setCurrentChapter({ ...currentChapter, title: e.target.value })}
+                className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
               />
-              <label htmlFor="audioFileInput" className="cursor-pointer">
-                <i className="fas fa-cloud-upload-alt text-4xl text-purple-400 mb-3 block"></i>
-                <p className="text-white mb-2">
-                  {audioFileName || 'Click to upload or drag and drop'}
-                </p>
-                <p className="text-gray-500 text-sm">
-                  MP3, WAV, OGG (Max 50MB)
-                </p>
-              </label>
-            </div>
-            {formData.audioUrl && (
-              <div className="mt-3 p-3 bg-purple-900/30 border border-purple-500/50 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <i className="fas fa-check-circle text-green-400"></i>
-                    <span className="text-sm text-gray-300">Audio file uploaded</span>
+
+              {/* Topic Form */}
+              <div className="bg-gray-900/50 p-4 rounded-lg space-y-3">
+                <h5 className="text-sm font-semibold text-cyan-400 flex items-center gap-2">
+                  <i className="fas fa-headphones"></i>
+                  {editingTopicIndex !== null ? 'Edit Topic' : 'Add Topic to Chapter'}
+                </h5>
+
+                <input
+                  type="text"
+                  placeholder="Topic Title"
+                  value={currentTopic.title}
+                  onChange={e => setCurrentTopic({ ...currentTopic, title: e.target.value })}
+                  className="bg-gray-800 border border-gray-700 rounded p-2 text-white w-full text-sm"
+                />
+
+                <textarea
+                  placeholder="Topic Description (Optional)"
+                  value={currentTopic.description}
+                  onChange={e => setCurrentTopic({ ...currentTopic, description: e.target.value })}
+                  className="bg-gray-800 border border-gray-700 rounded p-2 text-white w-full h-16 text-sm"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Duration (e.g., 5:30)"
+                  value={currentTopic.duration}
+                  onChange={e => setCurrentTopic({ ...currentTopic, duration: e.target.value })}
+                  className="bg-gray-800 border border-gray-700 rounded p-2 text-white w-full text-sm"
+                />
+
+                {/* Audio Upload for Topic */}
+                <div>
+                  <label className="block text-gray-400 mb-2 text-sm font-semibold">
+                    <i className="fas fa-music mr-2 text-purple-400"></i>
+                    Topic Audio File *
+                  </label>
+                  <div
+                    onDragOver={handleAudioDragOver}
+                    onDragLeave={handleAudioDragLeave}
+                    onDrop={handleAudioDrop}
+                    className={`border-2 border-dashed rounded-lg p-4 text-center transition-all ${isDraggingAudio
+                        ? 'border-purple-400 bg-purple-500/10'
+                        : 'border-gray-700 hover:border-purple-500'
+                      }`}
+                  >
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={handleAudioFileChange}
+                      className="hidden"
+                      id="audioInput"
+                    />
+                    <label htmlFor="audioInput" className="cursor-pointer">
+                      <i className="fas fa-cloud-upload-alt text-3xl text-purple-400 mb-2 block"></i>
+                      <p className="text-white mb-1 text-sm">
+                        {audioFileName || 'Click to upload or drag and drop'}
+                      </p>
+                      <p className="text-gray-500 text-xs">
+                        MP3, WAV, OGG (Max 50MB)
+                      </p>
+                    </label>
                   </div>
-                  <audio controls className="h-8">
-                    <source src={formData.audioUrl} type="audio/mpeg" />
-                  </audio>
+                  {currentTopic.audioUrl && (
+                    <div className="mt-2 p-2 bg-purple-900/30 border border-purple-500/50 rounded">
+                      <div className="flex items-center gap-2">
+                        <i className="fas fa-check-circle text-green-400 text-sm"></i>
+                        <span className="text-xs text-gray-300">Audio uploaded</span>
+                        <audio controls className="ml-auto h-8">
+                          <source src={currentTopic.audioUrl} />
+                        </audio>
+                      </div>
+                    </div>
+                  )}
                 </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddTopic}
+                  className="w-full bg-cyan-500 text-white font-semibold py-2 px-4 rounded hover:bg-cyan-400 transition text-sm"
+                >
+                  <i className="fas fa-plus mr-2"></i>
+                  {editingTopicIndex !== null ? 'Update Topic' : 'Add Topic'}
+                </button>
+              </div>
+
+              {/* Topics List */}
+              {currentChapter.topics.length > 0 && (
+                <div className="space-y-2">
+                  <h5 className="text-sm font-semibold text-white">Topics in this Chapter:</h5>
+                  {currentChapter.topics.map((topic, index) => (
+                    <div key={index} className="flex items-center justify-between bg-gray-900 p-3 rounded">
+                      <div className="flex-1">
+                        <p className="text-white font-semibold text-sm">{topic.title}</p>
+                        {topic.duration && <p className="text-gray-400 text-xs">{topic.duration}</p>}
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleEditTopic(index)}
+                          className="p-2 text-cyan-400 hover:bg-gray-800 rounded text-sm"
+                        >
+                          <i className="fas fa-edit"></i>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTopic(index)}
+                          className="p-2 text-red-400 hover:bg-gray-800 rounded text-sm"
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleAddChapter}
+                className="w-full bg-purple-500 text-white font-bold py-2 px-4 rounded hover:bg-purple-400 transition"
+              >
+                <i className="fas fa-plus mr-2"></i>
+                {editingChapterIndex !== null ? 'Update Chapter' : 'Add Chapter to Book'}
+              </button>
+            </div>
+
+            {/* Chapters List */}
+            {formData.chapters.length > 0 && (
+              <div className="space-y-3">
+                <h4 className="text-md font-semibold text-white">Book Chapters ({formData.chapters.length}):</h4>
+                {formData.chapters.map((chapter, index) => (
+                  <div key={index} className="bg-gray-800 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <h5 className="text-white font-bold">{chapter.title}</h5>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleEditChapter(index)}
+                          className="p-2 text-cyan-400 hover:bg-gray-700 rounded"
+                        >
+                          <i className="fas fa-edit"></i>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteChapter(index)}
+                          className="p-2 text-red-400 hover:bg-gray-700 rounded"
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-gray-400 text-sm">{chapter.topics.length} topics</p>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
-          {/* Thumbnail Upload */}
-          <div>
-            <label className="block text-gray-400 mb-2 font-semibold">
-              <i className="fas fa-image mr-2 text-pink-400"></i>
-              Thumbnail Image (Optional)
-            </label>
-            <div
-              onDragOver={handleThumbnailDragOver}
-              onDragLeave={handleThumbnailDragLeave}
-              onDrop={handleThumbnailDrop}
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-all ${isDraggingThumbnail
-                  ? 'border-pink-400 bg-pink-500/10'
-                  : 'border-gray-700 hover:border-pink-500'
-                }`}
+          <div className="flex gap-4 pt-4">
+            <button
+              type="submit"
+              className="bg-green-500 text-white font-bold py-3 px-8 rounded hover:bg-green-400 transition"
             >
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleThumbnailFileChange}
-                className="hidden"
-                id="thumbnailFileInput"
-              />
-              <label htmlFor="thumbnailFileInput" className="cursor-pointer">
-                <i className="fas fa-image text-4xl text-pink-400 mb-3 block"></i>
-                <p className="text-white mb-2">
-                  {thumbnailFileName || 'Click to upload or drag and drop'}
-                </p>
-                <p className="text-gray-500 text-sm">
-                  PNG, JPG, WEBP (Max 5MB)
-                </p>
-              </label>
-            </div>
-            {formData.thumbnailUrl && (
-              <div className="mt-3 p-3 bg-pink-900/30 border border-pink-500/50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={formData.thumbnailUrl}
-                    alt="Thumbnail preview"
-                    className="w-20 h-20 object-cover rounded"
-                  />
-                  <div className="flex items-center gap-2">
-                    <i className="fas fa-check-circle text-green-400"></i>
-                    <span className="text-sm text-gray-300">Thumbnail uploaded</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <select
-            value={formData.category}
-            onChange={e => setFormData({ ...formData, category: e.target.value })}
-            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-          >
-            <option value="General">General</option>
-            <option value="Physical Chemistry">Physical Chemistry</option>
-            <option value="Organic Chemistry">Organic Chemistry</option>
-            <option value="Inorganic Chemistry">Inorganic Chemistry</option>
-          </select>
-
-          <div className="flex gap-4">
-            <button type="submit" className="bg-purple-500 text-white font-bold py-2 px-6 rounded hover:bg-purple-400 transition">
-              {isEditing ? 'Update Audio Book' : 'Add Audio Book'}
+              {isEditing ? 'Update Audio Book' : 'Create Audio Book'}
             </button>
             {isEditing && (
               <button
@@ -350,8 +549,11 @@ const ManageAudioBooks = () => {
                   setIsEditing(false);
                   setCurrentAudioBook(null);
                   setFormData(initialFormState);
+                  setThumbnailFileName('');
+                  setCurrentChapter({ title: '', topics: [] });
+                  setCurrentTopic({ title: '', description: '', duration: '', audioUrl: '' });
                 }}
-                className="bg-gray-700 text-white font-bold py-2 px-6 rounded hover:bg-gray-600 transition"
+                className="bg-gray-700 text-white font-bold py-3 px-8 rounded hover:bg-gray-600 transition"
               >
                 Cancel
               </button>
@@ -360,30 +562,44 @@ const ManageAudioBooks = () => {
         </form>
       </div>
 
+      {/* Audio Books List */}
       <div className="grid grid-cols-1 gap-4">
-        {audioBooks.map(audioBook => (
-          <div key={audioBook._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-white">{audioBook.title}</h3>
-              <p className="text-sm text-gray-400">{audioBook.description}</p>
-              <div className="flex gap-2 mt-2">
-                <span className="px-3 py-1 bg-purple-900/50 border border-purple-500 text-purple-400 rounded-full text-xs">
-                  {audioBook.category}
-                </span>
-                {audioBook.duration && (
-                  <span className="px-3 py-1 bg-gray-800 text-gray-400 rounded-full text-xs">
-                    {audioBook.duration}
+        {audioBooks.map(book => (
+          <div key={book._id} className="glass-panel p-4 rounded-xl">
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-white">{book.title}</h3>
+                <p className="text-sm text-gray-400">{book.description}</p>
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  <span className="px-3 py-1 bg-purple-900/50 border border-purple-500 text-purple-400 rounded-full text-xs">
+                    {book.category}
                   </span>
-                )}
+                  {book.chapters && (
+                    <span className="px-3 py-1 bg-cyan-900/50 border border-cyan-500 text-cyan-400 rounded-full text-xs">
+                      {book.chapters.length} Chapters
+                    </span>
+                  )}
+                  {book.author && (
+                    <span className="px-3 py-1 bg-gray-800 text-gray-400 rounded-full text-xs">
+                      {book.author}
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => handleEdit(audioBook)} className="p-2 text-cyan-400 hover:bg-gray-800 rounded">
-                <i className="fas fa-edit"></i>
-              </button>
-              <button onClick={() => handleDelete(audioBook._id)} className="p-2 text-red-400 hover:bg-gray-800 rounded">
-                <i className="fas fa-trash"></i>
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(book)}
+                  className="p-2 text-cyan-400 hover:bg-gray-800 rounded"
+                >
+                  <i className="fas fa-edit"></i>
+                </button>
+                <button
+                  onClick={() => handleDelete(book._id)}
+                  className="p-2 text-red-400 hover:bg-gray-800 rounded"
+                >
+                  <i className="fas fa-trash"></i>
+                </button>
+              </div>
             </div>
           </div>
         ))}
