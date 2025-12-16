@@ -39,6 +39,9 @@ const Footer = () => {
                                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                                 </svg>
                             </a>
+                            <a href="https://t.me/ace2examz" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-500 hover:text-white transition-all duration-300">
+                                <i className="fab fa-telegram"></i>
+                            </a>
                         </div>
                     </div>
 
@@ -65,11 +68,11 @@ const Footer = () => {
                             <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-cyan-500 rounded-full"></span>
                         </h4>
                         <ul className="space-y-3 text-gray-400 text-sm">
-                            <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-file-alt text-xs"></i> Study Notes</a></li>
-                            <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</a></li>
-                            <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-play-circle text-xs"></i> Video Lectures</a></li>
-                            <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-clipboard-check text-xs"></i> Test Series</a></li>
-                            <li><a href="#" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-book-open text-xs"></i> Solved Examples</a></li>
+                            <li><Link to="/study-materials" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-file-alt text-xs"></i> Study Notes</Link></li>
+                            <li><a href="https://play.google.com/store/apps/details?id=com.ace2examz.app" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</a></li>
+                            <li><Link to="/lectures" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-play-circle text-xs"></i> Video Lectures</Link></li>
+                            <li><a href="https://play.google.com/store/apps/details?id=com.ace2examz.app" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-clipboard-check text-xs"></i> Test Series</a></li>
+                            <li><Link to="/study-materials" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-book-open text-xs"></i> Solved Examples</Link></li>
                         </ul>
                     </div>
 
@@ -203,7 +206,7 @@ const Footer = () => {
                                                     id="EMBED_FORM_EMAIL_LABEL"
                                                 />
                                                 <input
-                                                    type="button"
+                                                    type="submit"
                                                     style={{
                                                         textAlign: 'center',
                                                         width: '90px',
