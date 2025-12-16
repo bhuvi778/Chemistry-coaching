@@ -417,16 +417,31 @@ const ManageStudyMaterials = () => {
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             >
               <option value="All">All Exams</option>
-              <option value="JEE">JEE (Main & Advanced)</option>
-              <option value="NEET">NEET</option>
-              <option value="GATE">GATE</option>
-              <option value="CSIR NET">CSIR NET</option>
-              <option value="IIT JAM">IIT JAM</option>
-              <option value="KVPY">KVPY</option>
-              <option value="OLYMPIAD">Olympiad</option>
-              <option value="BOARDS">Board Exams (11th/12th)</option>
-              <option value="CUET">CUET</option>
-              <option value="AIIMS">AIIMS</option>
+              <optgroup label="Engineering Entrance">
+                <option value="JEE">JEE (Main & Advanced)</option>
+                <option value="GATE">GATE</option>
+              </optgroup>
+              <optgroup label="Medical Entrance">
+                <option value="NEET">NEET</option>
+                <option value="AIIMS">AIIMS</option>
+              </optgroup>
+              <optgroup label="Science Entrance">
+                <option value="IAT">IAT (IISER Aptitude Test)</option>
+                <option value="NEST">NEST (National Entrance Screening Test)</option>
+                <option value="KVPY">KVPY (Kishore Vaigyanik Protsahan Yojana)</option>
+                <option value="TIFR">TIFR (Tata Institute)</option>
+              </optgroup>
+              <optgroup label="Post Graduate">
+                <option value="CSIR NET">CSIR NET</option>
+                <option value="IIT JAM">IIT JAM</option>
+              </optgroup>
+              <optgroup label="Other Competitive">
+                <option value="OLYMPIAD">Olympiad (Chemistry/Physics/Math)</option>
+                <option value="CUET">CUET (Common University Entrance Test)</option>
+              </optgroup>
+              <optgroup label="School Level">
+                <option value="BOARDS">Board Exams (CBSE/State - 11th/12th)</option>
+              </optgroup>
             </select>
           </div>
 
