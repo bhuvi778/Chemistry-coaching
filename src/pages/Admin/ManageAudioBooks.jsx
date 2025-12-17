@@ -35,6 +35,12 @@ const ManageAudioBooks = () => {
   // Loading state for submit button
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const toggleChapter = (chapterIndex) => {
+    setExpandedChapters(prev => ({
+      ...prev,
+      [chapterIndex]: !prev[chapterIndex]
+    }));
+  };
 
   const handleEdit = (audioBook) => {
     setIsEditing(true);
@@ -560,8 +566,8 @@ const ManageAudioBooks = () => {
               type="submit"
               disabled={isSubmitting}
               className={`font-bold py-3 px-8 rounded transition ${isSubmitting
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-green-500 hover:bg-green-400'
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-400'
                 } text-white`}
             >
               {isSubmitting ? (
@@ -595,111 +601,100 @@ const ManageAudioBooks = () => {
 
       {/* Audio Books List */}
       <div className="grid grid-cols-1 gap-4">
-        {audioBooks.map(book => {
-          const [expandedChapters, setExpandedChapters] = React.useState({});
-
-          const toggleChapter = (chapterIndex) => {
-            setExpandedChapters(prev => ({
-              ...prev,
-              [chapterIndex]: !prev[chapterIndex]
-            }));
-          };
-
-          return (
-            <div key={book._id} className="glass-panel p-4 rounded-xl">
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white">{book.title}</h3>
-                  <p className="text-sm text-gray-400">{book.description}</p>
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    <span className="px-3 py-1 bg-purple-900/50 border border-purple-500 text-purple-400 rounded-full text-xs">
-                      {book.category}
+        {audioBooks.map(book => (
+          <div key={book._id} className="glass-panel p-4 rounded-xl">
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-white">{book.title}</h3>
+                <p className="text-sm text-gray-400">{book.description}</p>
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  <span className="px-3 py-1 bg-purple-900/50 border border-purple-500 text-purple-400 rounded-full text-xs">
+                    {book.category}
+                  </span>
+                  {book.chapters && (
+                    <span className="px-3 py-1 bg-cyan-900/50 border border-cyan-500 text-cyan-400 rounded-full text-xs">
+                      {book.chapters.length} Chapters
                     </span>
-                    {book.chapters && (
-                      <span className="px-3 py-1 bg-cyan-900/50 border border-cyan-500 text-cyan-400 rounded-full text-xs">
-                        {book.chapters.length} Chapters
-                      </span>
-                    )}
-                    {book.author && (
-                      <span className="px-3 py-1 bg-gray-800 text-gray-400 rounded-full text-xs">
-                        {book.author}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(book)}
-                    className="p-2 text-cyan-400 hover:bg-gray-800 rounded"
-                  >
-                    <i className="fas fa-edit"></i>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(book._id)}
-                    className="p-2 text-red-400 hover:bg-gray-800 rounded"
-                  >
-                    <i className="fas fa-trash"></i>
-                  </button>
+                  )}
+                  {book.author && (
+                    <span className="px-3 py-1 bg-gray-800 text-gray-400 rounded-full text-xs">
+                      {book.author}
+                    </span>
+                  )}
                 </div>
               </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(book)}
+                  className="p-2 text-cyan-400 hover:bg-gray-800 rounded"
+                >
+                  <i className="fas fa-edit"></i>
+                </button>
+                <button
+                  onClick={() => handleDelete(book._id)}
+                  className="p-2 text-red-400 hover:bg-gray-800 rounded"
+                >
+                  <i className="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
 
-              {/* Chapters List */}
-              {book.chapters && book.chapters.length > 0 && (
-                <div className="mt-4 space-y-2 border-t border-gray-700 pt-3">
-                  <h4 className="text-sm font-semibold text-gray-400 mb-2">Chapters:</h4>
-                  {book.chapters.map((chapter, chapterIndex) => (
-                    <div key={chapterIndex} className="bg-gray-800/50 rounded-lg overflow-hidden">
-                      <button
-                        onClick={() => toggleChapter(chapterIndex)}
-                        className="w-full flex items-center justify-between p-3 hover:bg-gray-700/50 transition"
-                      >
-                        <div className="flex items-center gap-3">
-                          <i className={`fas fa-chevron-${expandedChapters[chapterIndex] ? 'down' : 'right'} text-cyan-400 text-xs`}></i>
-                          <span className="text-white font-semibold text-sm">{chapter.title}</span>
-                        </div>
-                        <span className="text-xs text-gray-400">
-                          {chapter.topics?.length || 0} topics
-                        </span>
-                      </button>
+            {/* Chapters List */}
+            {book.chapters && book.chapters.length > 0 && (
+              <div className="mt-4 space-y-2 border-t border-gray-700 pt-3">
+                <h4 className="text-sm font-semibold text-gray-400 mb-2">Chapters:</h4>
+                {book.chapters.map((chapter, chapterIndex) => (
+                  <div key={chapterIndex} className="bg-gray-800/50 rounded-lg overflow-hidden">
+                    <button
+                      onClick={() => toggleChapter(chapterIndex)}
+                      className="w-full flex items-center justify-between p-3 hover:bg-gray-700/50 transition"
+                    >
+                      <div className="flex items-center gap-3">
+                        <i className={`fas fa-chevron-${expandedChapters[chapterIndex] ? 'down' : 'right'} text-cyan-400 text-xs`}></i>
+                        <span className="text-white font-semibold text-sm">{chapter.title}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">
+                        {chapter.topics?.length || 0} topics
+                      </span>
+                    </button>
 
-                      {/* Topics List */}
-                      {expandedChapters[chapterIndex] && chapter.topics && (
-                        <div className="bg-gray-900/50 p-3 space-y-2">
-                          {chapter.topics.map((topic, topicIndex) => (
-                            <div key={topicIndex} className="flex items-center justify-between p-2 bg-gray-800 rounded">
-                              <div className="flex items-center gap-3 flex-1">
-                                <i className="fas fa-headphones text-purple-400 text-xs"></i>
-                                <div>
-                                  <p className="text-white text-sm font-medium">{topic.title}</p>
-                                  {topic.description && (
-                                    <p className="text-gray-500 text-xs">{topic.description}</p>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                {topic.duration && (
-                                  <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded">
-                                    <i className="fas fa-clock mr-1"></i>
-                                    {topic.duration}
-                                  </span>
-                                )}
-                                {topic.audioUrl && (
-                                  <span className="text-xs text-green-400">
-                                    <i className="fas fa-check-circle"></i>
-                                  </span>
+                    {/* Topics List */}
+                    {expandedChapters[chapterIndex] && chapter.topics && (
+                      <div className="bg-gray-900/50 p-3 space-y-2">
+                        {chapter.topics.map((topic, topicIndex) => (
+                          <div key={topicIndex} className="flex items-center justify-between p-2 bg-gray-800 rounded">
+                            <div className="flex items-center gap-3 flex-1">
+                              <i className="fas fa-headphones text-purple-400 text-xs"></i>
+                              <div>
+                                <p className="text-white text-sm font-medium">{topic.title}</p>
+                                {topic.description && (
+                                  <p className="text-gray-500 text-xs">{topic.description}</p>
                                 )}
                               </div>
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+                            <div className="flex items-center gap-3">
+                              {topic.duration && (
+                                <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded">
+                                  <i className="fas fa-clock mr-1"></i>
+                                  {topic.duration}
+                                </span>
+                              )}
+                              {topic.audioUrl && (
+                                <span className="text-xs text-green-400">
+                                  <i className="fas fa-check-circle"></i>
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
