@@ -4,11 +4,12 @@ services:
     env: node
     region: singapore
     plan: free
+    rootDir: server
     buildCommand: npm install
     startCommand: node server.js
-    rootDir: server
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
         sync: false
+
