@@ -22,6 +22,15 @@ const CourseCard = ({ course }) => {
   return (
     <>
       <div className={`glass-panel rounded-2xl p-6 relative overflow-hidden group border-t-4 ${borderColor} flex flex-col h-full transition transform hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(0,243,255,0.2)]`}>
+        {/* Exam Tag Badge - Top Left */}
+        {course.category && (
+          <span className="absolute top-2 left-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
+            <i className="fas fa-graduation-cap mr-1"></i>
+            {course.category}
+          </span>
+        )}
+
+        {/* Hot/New Badge - Top Right */}
         {course.badge && (
           <span className="absolute top-2 right-2 bg-gradient-to-r from-red-600 to-orange-500 text-white px-2 py-0.5 rounded text-xs font-bold badge-pulse">
             {course.badge}

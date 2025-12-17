@@ -123,20 +123,6 @@ const PopularQuestions = () => {
     },
     {
       id: 3,
-      icon: '🔬',
-      title: 'Biology (Board + NEET Focus)',
-      count: 8,
-      color: 'from-green-500 to-emerald-500',
-      borderColor: 'border-green-400/30',
-      questions: [
-        'NEET Biology preparation strategy',
-        'How to prepare Human Physiology for NEET?',
-        'Important diagrams for NEET Biology',
-        'Plant Kingdom vs Animal Kingdom - which to focus on?'
-      ]
-    },
-    {
-      id: 4,
       icon: '💪',
       title: 'Motivation, Focus & Productivity',
       count: 7,
@@ -150,7 +136,7 @@ const PopularQuestions = () => {
       ]
     },
     {
-      id: 5,
+      id: 4,
       icon: '🎯',
       title: 'Career Guidance & Future Planning',
       count: 11,
