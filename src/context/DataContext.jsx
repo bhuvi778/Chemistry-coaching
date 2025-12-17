@@ -88,11 +88,11 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      
+
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      
+
       const newEnquiry = await res.json();
       setEnquiries([newEnquiry, ...enquiries]);
       console.log('Enquiry saved successfully:', newEnquiry);
@@ -125,12 +125,12 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(course)
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
       }
-      
+
       const newCourse = await res.json();
       console.log('Course added successfully:', newCourse);
       setCourses([...courses, newCourse]);
@@ -209,15 +209,25 @@ export const DataProvider = ({ children }) => {
   // Audio Books CRUD
   const addAudioBook = async (audioBook) => {
     try {
+      console.log('Sending audio book data:', audioBook);
       const res = await fetch(`${API_URL}/audiobooks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(audioBook)
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+
       const newAudioBook = await res.json();
+      console.log('Audio book added successfully:', newAudioBook);
       setAudioBooks([newAudioBook, ...audioBooks]);
+      return newAudioBook;
     } catch (error) {
       console.error("Error adding audio book:", error);
+      throw error;
     }
   };
 
@@ -249,15 +259,25 @@ export const DataProvider = ({ children }) => {
   // Study Materials CRUD
   const addStudyMaterial = async (material) => {
     try {
+      console.log('Sending study material data:', material);
       const res = await fetch(`${API_URL}/study-materials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(material)
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+
       const newMaterial = await res.json();
+      console.log('Study material added successfully:', newMaterial);
       setStudyMaterials([newMaterial, ...studyMaterials]);
+      return newMaterial;
     } catch (error) {
       console.error("Error adding study material:", error);
+      throw error;
     }
   };
 
@@ -289,15 +309,25 @@ export const DataProvider = ({ children }) => {
   // Magazines CRUD
   const addMagazine = async (magazine) => {
     try {
+      console.log('Sending magazine data:', magazine);
       const res = await fetch(`${API_URL}/magazines`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(magazine)
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+
       const newMagazine = await res.json();
+      console.log('Magazine added successfully:', newMagazine);
       setMagazines([newMagazine, ...magazines]);
+      return newMagazine;
     } catch (error) {
       console.error("Error adding magazine:", error);
+      throw error;
     }
   };
 
