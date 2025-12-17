@@ -32,6 +32,9 @@ const ManageAudioBooks = () => {
   // For expandable chapters in list view
   const [expandedChapters, setExpandedChapters] = useState({});
 
+  // Loading state for submit button
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const handleEdit = (audioBook) => {
     setIsEditing(true);
@@ -173,10 +176,10 @@ const ManageAudioBooks = () => {
 
     const updatedTopics = [...currentChapter.topics];
     if (editingTopicIndex !== null) {
-      updatedTopics[editingTopicIndex] = { ...currentTopic, _id: Date.now().toString() };
+      updatedTopics[editingTopicIndex] = { ...currentTopic };
       setEditingTopicIndex(null);
     } else {
-      updatedTopics.push({ ...currentTopic, _id: Date.now().toString() });
+      updatedTopics.push({ ...currentTopic });
     }
 
     setCurrentChapter({ ...currentChapter, topics: updatedTopics });
@@ -204,10 +207,10 @@ const ManageAudioBooks = () => {
 
     const updatedChapters = [...formData.chapters];
     if (editingChapterIndex !== null) {
-      updatedChapters[editingChapterIndex] = { ...currentChapter, _id: Date.now().toString() };
+      updatedChapters[editingChapterIndex] = { ...currentChapter };
       setEditingChapterIndex(null);
     } else {
-      updatedChapters.push({ ...currentChapter, _id: Date.now().toString() });
+      updatedChapters.push({ ...currentChapter });
     }
 
     setFormData({ ...formData, chapters: updatedChapters });
@@ -234,6 +237,7 @@ const ManageAudioBooks = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       if (isEditing) {
         await updateAudioBook(currentAudioBook._id, formData);
@@ -251,6 +255,8 @@ const ManageAudioBooks = () => {
     } catch (error) {
       console.error('Error submitting audio book:', error);
       alert('Error submitting audio book. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -552,9 +558,20 @@ const ManageAudioBooks = () => {
           <div className="flex gap-4 pt-4">
             <button
               type="submit"
-              className="bg-green-500 text-white font-bold py-3 px-8 rounded hover:bg-green-400 transition"
+              disabled={isSubmitting}
+              className={`font-bold py-3 px-8 rounded transition ${isSubmitting
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-green-500 hover:bg-green-400'
+                } text-white`}
             >
-              {isEditing ? 'Update Audio Book' : 'Create Audio Book'}
+              {isSubmitting ? (
+                <>
+                  <i className="fas fa-spinner fa-spin mr-2"></i>
+                  {isEditing ? 'Updating...' : 'Creating...'}
+                </>
+              ) : (
+                isEditing ? 'Update Audio Book' : 'Create Audio Book'
+              )}
             </button>
             {isEditing && (
               <button

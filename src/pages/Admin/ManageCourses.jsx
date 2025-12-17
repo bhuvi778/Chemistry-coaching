@@ -22,6 +22,7 @@ const ManageCourses = () => {
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleEdit = (course) => {
     setIsEditing(true);
@@ -51,6 +52,7 @@ const ManageCourses = () => {
       categories: Array.isArray(formData.categories) ? formData.categories : []
     };
 
+    setIsSubmitting(true);
     try {
       if (isEditing) {
         await updateCourse(currentCourse._id, courseData);
@@ -65,6 +67,8 @@ const ManageCourses = () => {
       setFormData(initialFormState);
     } catch (error) {
       console.error('Error submitting course:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -226,8 +230,20 @@ const ManageCourses = () => {
           </div>
 
           <div className="flex gap-4">
-            <button type="submit" className="bg-cyan-500 text-black font-bold py-2 px-6 rounded hover:bg-cyan-400 transition">
-              {isEditing ? 'Update Course' : 'Add Course'}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`font-bold py-2 px-6 rounded transition ${isSubmitting ? 'bg-gray-500 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'
+                } text-black`}
+            >
+              {isSubmitting ? (
+                <>
+                  <i className="fas fa-spinner fa-spin mr-2"></i>
+                  {isEditing ? 'Updating...' : 'Adding...'}
+                </>
+              ) : (
+                isEditing ? 'Update Course' : 'Add Course'
+              )}
             </button>
             {isEditing && (
               <button
