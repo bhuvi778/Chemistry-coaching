@@ -133,6 +133,9 @@ const AudioBooks = () => {
                             >
                               <div className="flex items-center gap-3">
                                 <i className={`fas fa-chevron-${expandedChapters[chapterId] ? 'down' : 'right'} text-cyan-400`}></i>
+                                <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-xs font-bold mr-2">
+                                  Ch {chapterIndex + 1}
+                                </span>
                                 <span className="text-white font-semibold">{chapter.title}</span>
                               </div>
                               <span className="text-xs text-gray-400">
@@ -146,6 +149,9 @@ const AudioBooks = () => {
                                 {chapter.topics.map((topic, topicIndex) => (
                                   <div key={topicIndex} className="bg-gray-800 rounded-lg p-4">
                                     <div className="flex items-start gap-3 mb-3">
+                                      <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs font-bold mt-1">
+                                        {topicIndex + 1}
+                                      </span>
                                       <i className="fas fa-headphones text-purple-400 mt-1"></i>
                                       <div className="flex-1">
                                         <h5 className="text-white font-semibold mb-1">{topic.title}</h5>
