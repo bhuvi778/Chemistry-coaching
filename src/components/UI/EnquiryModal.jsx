@@ -27,10 +27,10 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
 
     try {
       await addEnquiry(enquiryData);
-      
+
       setShowSuccess(true);
       setFormData({ name: '', phone: '', email: '', message: '' });
-      
+
       setTimeout(() => {
         setShowSuccess(false);
         onClose();
@@ -49,7 +49,7 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-start justify-center p-4 animate-fadeIn overflow-y-auto pt-28" style={{ zIndex: 40 }} onClick={onClose}>
       <div className="glass-panel rounded-2xl max-w-3xl w-full p-8 relative border border-cyan-500/30 mt-4" onClick={(e) => e.stopPropagation()}>
         {/* Close Button */}
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition z-10"
         >
@@ -137,6 +137,21 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
                 placeholder="Any specific questions? (optional)"
                 rows="4"
               ></textarea>
+            </div>
+
+            {/* Consent Checkbox - Mandatory */}
+            <div>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="consent"
+                  required
+                  className="mt-1 w-4 h-4 text-cyan-500 bg-gray-900 border-gray-700 rounded focus:ring-cyan-500 focus:ring-2"
+                />
+                <span className="text-sm text-gray-300 leading-relaxed">
+                  I would like to receive communication via <strong className="text-white">SMS, Email, OBD, Google RCS, and WhatsApp</strong> regarding my services, offers, and updates. <span className="text-red-400">*</span>
+                </span>
+              </label>
             </div>
 
             {/* Submit Button */}

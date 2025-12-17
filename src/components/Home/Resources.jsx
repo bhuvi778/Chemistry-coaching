@@ -50,7 +50,8 @@ const Resources = () => {
       icon: "fa-bolt",
       items: ["Mind Maps", "One-liners", "Important Reactions", "Error Log Templates"],
       color: "orange",
-      image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500"
+      image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500",
+      magazinesLink: "/magazines" // Link to magazines page
     }
   ];
 
@@ -117,7 +118,7 @@ const Resources = () => {
                   className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
                 >
                   <i className="fas fa-mobile-alt mr-2"></i>
-                  Download App
+                  Test Now
                 </a>
               ) : resource.lecturesLink ? (
                 <Link
@@ -125,7 +126,15 @@ const Resources = () => {
                   className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
                 >
                   <i className="fab fa-youtube mr-2"></i>
-                  Watch Lectures
+                  Watch Videos Now
+                </Link>
+              ) : resource.magazinesLink ? (
+                <Link
+                  to={resource.magazinesLink}
+                  className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
+                >
+                  <i className="fas fa-book-reader mr-2"></i>
+                  View Magazines
                 </Link>
               ) : (
                 <Link

@@ -29,6 +29,10 @@ const ManageAudioBooks = () => {
   const [audioFileName, setAudioFileName] = useState('');
   const [isDraggingAudio, setIsDraggingAudio] = useState(false);
 
+  // For expandable chapters in list view
+  const [expandedChapters, setExpandedChapters] = useState({});
+
+
   const handleEdit = (audioBook) => {
     setIsEditing(true);
     setCurrentAudioBook(audioBook);
@@ -297,11 +301,21 @@ const ManageAudioBooks = () => {
                 className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
               >
                 <option value="General">General</option>
-                <option value="JEE">JEE</option>
-                <option value="NEET">NEET</option>
-                <option value="Physical Chemistry">Physical Chemistry</option>
-                <option value="Organic Chemistry">Organic Chemistry</option>
-                <option value="Inorganic Chemistry">Inorganic Chemistry</option>
+                <optgroup label="Exam-wise">
+                  <option value="JEE">JEE (Main & Advanced)</option>
+                  <option value="NEET">NEET</option>
+                  <option value="IAT">IAT (IISER Aptitude Test)</option>
+                  <option value="NEST">NEST (National Entrance Screening Test)</option>
+                  <option value="TIFR">TIFR (Tata Institute)</option>
+                  <option value="CSIR NET">CSIR NET</option>
+                  <option value="GATE">GATE</option>
+                  <option value="IIT JAM">IIT JAM</option>
+                </optgroup>
+                <optgroup label="Chemistry Topics">
+                  <option value="Physical Chemistry">Physical Chemistry</option>
+                  <option value="Organic Chemistry">Organic Chemistry</option>
+                  <option value="Inorganic Chemistry">Inorganic Chemistry</option>
+                </optgroup>
               </select>
             </div>
 

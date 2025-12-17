@@ -100,6 +100,21 @@ const Contact = () => {
             </select>
           </div>
 
+          {/* Consent Checkbox - Mandatory */}
+          <div className="mb-6">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="consent"
+                required
+                className="mt-1 w-4 h-4 text-cyan-500 bg-gray-900 border-gray-700 rounded focus:ring-cyan-500 focus:ring-2"
+              />
+              <span className="text-sm text-gray-300 leading-relaxed">
+                I would like to receive communication via <strong className="text-white">SMS, Email, OBD, Google RCS, and WhatsApp</strong> regarding my services, offers, and updates. <span className="text-red-400">*</span>
+              </span>
+            </label>
+          </div>
+
           <button type="submit" disabled={status !== 'idle'} className={`w-full font-bold py-3 rounded transition ${status === 'success' ? 'bg-green-500' : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:scale-105'
             }`}>
             {status === 'idle' && 'Request Call Back'}
