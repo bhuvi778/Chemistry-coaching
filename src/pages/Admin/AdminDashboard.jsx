@@ -7,6 +7,7 @@ import ManageAudioBooks from './ManageAudioBooks';
 import ManageStudyMaterials from './ManageStudyMaterials';
 import ManageMagazines from './ManageMagazines';
 import ManageWebinar from './ManageWebinar';
+import MeetingRequests from './MeetingRequests';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -70,6 +71,12 @@ const AdminDashboard = () => {
               <i className="fas fa-calendar-check mr-2"></i> Manage Webinar
             </button>
             <button
+              onClick={() => setActiveTab('requests')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'requests' ? 'bg-yellow-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-calendar-alt mr-2"></i> Meeting Requests
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -92,6 +99,7 @@ const AdminDashboard = () => {
           {activeTab === 'materials' && <ManageStudyMaterials />}
           {activeTab === 'magazines' && <ManageMagazines />}
           {activeTab === 'webinar' && <ManageWebinar />}
+          {activeTab === 'requests' && <MeetingRequests />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>

@@ -37,6 +37,9 @@ export const DataProvider = ({ children }) => {
     isActive: true
   });
 
+  // Meeting Requests State
+  const [meetingRequests, setMeetingRequests] = useState([]);
+
   // Auth State
   const [isAdmin, setIsAdmin] = useState(() => {
     return localStorage.getItem('reaction_isAdmin') === 'true';
@@ -85,6 +88,10 @@ export const DataProvider = ({ children }) => {
           const contactsRes = await fetch(`${API_URL}/contacts`);
           const contactsData = await contactsRes.json();
           setContacts(contactsData);
+
+          const meetingRequestsRes = await fetch(`${API_URL}/meeting-requests`);
+          const meetingRequestsData = await meetingRequestsRes.json();
+          setMeetingRequests(meetingRequestsData);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -407,6 +414,45 @@ export const DataProvider = ({ children }) => {
     localStorage.setItem('webinarSettings', JSON.stringify(settings));
   };
 
+  // Meeting Requests Management
+  const addMeetingRequest = async (request) => {
+    try {
+      const requestData = {
+        ...request,
+        status: 'pending',
+        submittedAt: new Date().toISOString()
+      };
+
+      const res = await fetch(`${API_URL}/meeting-requests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const newRequest = await res.json();
+      setMeetingRequests([newRequest, ...meetingRequests]);
+      return newRequest;
+    } catch (error) {
+      console.error("Error adding meeting request:", error);
+      throw error;
+    }
+  };
+
+  const deleteMeetingRequest = async (id) => {
+    try {
+      await fetch(`${API_URL}/meeting-requests/${id}`, {
+        method: 'DELETE'
+      });
+      setMeetingRequests(meetingRequests.filter(r => r._id !== id));
+    } catch (error) {
+      console.error("Error deleting meeting request:", error);
+    }
+  };
+
   const logout = () => {
     setIsAdmin(false);
   };
@@ -438,6 +484,9 @@ export const DataProvider = ({ children }) => {
       addMagazine,
       updateMagazine,
       deleteMagazine,
+      meetingRequests,
+      addMeetingRequest,
+      deleteMeetingRequest,
       webinarSettings,
       updateWebinarSettings,
       login,
