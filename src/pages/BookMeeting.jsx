@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 
 const BookMeeting = () => {
-    const { webinarSettings } = useData();
+    const { webinarSettings, addMeetingRequest } = useData();
 
     // Countdown timer state
     const [timeLeft, setTimeLeft] = useState({
@@ -13,11 +13,19 @@ const BookMeeting = () => {
         seconds: 0
     });
 
+    // Form state
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: ''
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     // Calculate countdown based on webinar date/time
     useEffect(() => {
         if (!webinarSettings.date || !webinarSettings.time) {
             // Default countdown if no date set
-            setTimeLeft({ days: 4, hours: 23, minutes: 34, seconds: 14 });
+            setTimeLeft({ days: 4, hours: 23, minutes: 24, seconds: 48 });
             return;
         }
 
@@ -70,6 +78,43 @@ const BookMeeting = () => {
 
     const dateInfo = getFormattedDate();
     const timeInfo = getFormattedTime();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        try {
+            const requestData = {
+                ...formData,
+                requestType: 'Webinar',
+                phone: '', // Optional field
+                message: `Registered for: ${webinarSettings.title || 'Demo Webinar'}`
+            };
+
+            await addMeetingRequest(requestData);
+            alert('Registration successful! Our team will contact you shortly.');
+
+            // Reset form
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: ''
+            });
+        } catch (error) {
+            console.error('Error submitting registration:', error);
+            alert('Failed to submit registration. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -193,17 +238,78 @@ const BookMeeting = () => {
                         </div>
                     </div>
 
-                    {/* Right Column - Zoho Bookings Iframe */}
-                    <div className="bg-white rounded-lg shadow-sm overflow-hidden" style={{ minHeight: '750px' }}>
-                        <iframe
-                            width='100%'
-                            height='750px'
-                            src='https://ace2examzlive.zohobookings.in/portal-embed#/ace2examz'
-                            frameBorder='0'
-                            allowFullScreen
-                            title="Book Your Meeting"
-                            className="w-full"
-                        />
+                    {/* Right Column - Registration Form */}
+                    <div className="bg-white rounded-lg shadow-sm p-8">
+                        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+                            Webinar Registration
+                        </h2>
+
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {/* First Name */}
+                            <div>
+                                <label htmlFor="firstName" className="block text-sm text-gray-700 mb-2">
+                                    First Name <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="firstName"
+                                    name="firstName"
+                                    value={formData.firstName}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                                />
+                            </div>
+
+                            {/* Last Name */}
+                            <div>
+                                <label htmlFor="lastName" className="block text-sm text-gray-700 mb-2">
+                                    Last Name <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="lastName"
+                                    name="lastName"
+                                    value={formData.lastName}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                                />
+                            </div>
+
+                            {/* Email Address */}
+                            <div>
+                                <label htmlFor="email" className="block text-sm text-gray-700 mb-2">
+                                    Email Address <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                                />
+                            </div>
+
+                            {/* Disclaimer */}
+                            <div className="text-xs text-gray-600 leading-relaxed">
+                                By clicking 'Register', you acknowledge that the webinar organizer may use this information to share updates regarding this webinar as well as for future communications.
+                            </div>
+
+                            {/* Register Button */}
+                            <div className="pt-2">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md transition-colors duration-200 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                                        }`}
+                                >
+                                    {isSubmitting ? 'Submitting...' : 'Register'}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 

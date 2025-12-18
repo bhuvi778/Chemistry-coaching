@@ -21,6 +21,7 @@ import RefundPolicy from './pages/RefundPolicy';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import BookMeeting from './pages/BookMeeting';
+import Doubts from './pages/Doubts';
 
 const ProtectedRoute = ({ children }) => {
   const { isAdmin } = useData();
@@ -68,6 +69,7 @@ function AppContent() {
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/book-meeting" element={<BookMeeting />} />
+          <Route path="/doubts" element={<Doubts />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
