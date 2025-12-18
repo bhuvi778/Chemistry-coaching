@@ -118,37 +118,47 @@ const Navbar = () => {
                   Ask AI
                 </span>
               </Link>
-              <Link to="/contact" className={getNavLinkClass('/contact')}>Contact Us</Link>
             </div>
 
-            {/* Theme Toggle Button */}
-            <button
-              onClick={toggleTheme}
-              className="relative w-16 h-8 rounded-full bg-gradient-to-r from-gray-700 to-gray-600 border-2 border-gray-600 transition-all duration-300 hover:shadow-lg group"
-              aria-label="Toggle theme"
-            >
-              <div className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-lg transform transition-all duration-300 flex items-center justify-center ${isDark ? 'translate-x-8' : 'translate-x-0'}`}>
-                {isDark ? (
-                  <i className="fas fa-moon text-gray-800 text-xs"></i>
-                ) : (
-                  <i className="fas fa-sun text-yellow-500 text-xs"></i>
-                )}
-              </div>
-              <div className="absolute inset-0 flex items-center justify-between px-2">
-                <i className={`fas fa-sun text-xs ${!isDark ? 'text-yellow-400' : 'text-gray-500'}`}></i>
-                <i className={`fas fa-moon text-xs ${isDark ? 'text-cyan-400' : 'text-gray-500'}`}></i>
-              </div>
-            </button>
+            {/* Enhanced Theme Toggle Button */}
+            <div className="flex items-center gap-3">
+              <span className={`text-xs font-semibold ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                {isDark ? 'Dark' : 'Light'}
+              </span>
+              <button
+                onClick={toggleTheme}
+                className={`relative w-14 h-7 rounded-full transition-all duration-300 hover:scale-105 ${isDark
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg shadow-purple-500/50'
+                  : 'bg-gradient-to-r from-yellow-400 to-orange-400 shadow-lg shadow-yellow-500/50'
+                  }`}
+                aria-label="Toggle theme"
+              >
+                <div className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-md transform transition-all duration-300 flex items-center justify-center ${isDark ? 'translate-x-7' : 'translate-x-0'
+                  }`}>
+                  {isDark ? (
+                    <i className="fas fa-moon text-indigo-600 text-sm"></i>
+                  ) : (
+                    <i className="fas fa-sun text-orange-500 text-sm"></i>
+                  )}
+                </div>
+              </button>
+            </div>
           </div>
 
           <div className="-mr-2 flex md:hidden gap-3 items-center">
             {/* Mobile Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="text-gray-300 hover:text-white p-2"
+              className={`relative w-12 h-6 rounded-full transition-all duration-300 ${isDark
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600'
+                  : 'bg-gradient-to-r from-yellow-400 to-orange-400'
+                }`}
               aria-label="Toggle theme"
             >
-              <i className={`fas ${isDark ? 'fa-moon' : 'fa-sun'} fa-lg`}></i>
+              <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-md transform transition-all duration-300 flex items-center justify-center ${isDark ? 'translate-x-6' : 'translate-x-0'
+                }`}>
+                <i className={`fas ${isDark ? 'fa-moon text-indigo-600' : 'fa-sun text-orange-500'} text-xs`}></i>
+              </div>
             </button>
             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white p-2">
               <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-flask'} fa-lg`}></i>
