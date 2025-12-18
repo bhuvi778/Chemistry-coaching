@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import ParticleCanvas from '../components/UI/ParticleCanvas';
 
 const Doubts = () => {
     const { isDark } = useTheme();
@@ -104,7 +105,10 @@ const Doubts = () => {
     };
 
     return (
-        <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} relative`}>
+        <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} relative overflow-hidden`}>
+            {/* Particle Background */}
+            <ParticleCanvas />
+
             <div className="max-w-6xl mx-auto px-4 py-8 relative z-10">
                 {/* Back Button */}
                 <div className="mb-6">
