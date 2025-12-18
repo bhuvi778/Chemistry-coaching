@@ -109,7 +109,7 @@ const Doubts = () => {
             {/* Particle Background */}
             <ParticleCanvas />
 
-            <div className="max-w-6xl mx-auto px-4 py-8 relative z-10">
+            <div className="max-w-6xl mx-auto px-4 py-8 relative z-20">
                 {/* Back Button */}
                 <div className="mb-6">
                     <Link to="/" className={`${isDark ? 'text-gray-400 hover:text-cyan-400' : 'text-gray-600 hover:text-gray-900'} flex items-center gap-2 transition`}>
