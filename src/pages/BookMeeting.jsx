@@ -10,8 +10,6 @@ const BookMeeting = () => {
         email: '',
         phone: '',
         requestType: 'Webinar',
-        preferredDate: '',
-        preferredTime: '',
         message: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,8 +37,6 @@ const BookMeeting = () => {
                 email: '',
                 phone: '',
                 requestType: 'Webinar',
-                preferredDate: '',
-                preferredTime: '',
                 message: ''
             });
         } catch (error) {
@@ -51,9 +47,21 @@ const BookMeeting = () => {
         }
     };
 
+    const getSessionDescription = (type) => {
+        const descriptions = {
+            'Webinar': 'Join our interactive webinar sessions with expert faculty and learn key concepts',
+            'Demo': 'Experience our teaching methodology with a free demo class',
+            'Workshop': 'Hands-on workshop sessions for practical learning and skill development',
+            'Consultation': 'One-on-one personalized consultation with our expert mentors',
+            'Trial Class': 'Try our regular classes for free before enrolling',
+            'Doubt Session': 'Get your doubts cleared by our experienced faculty'
+        };
+        return descriptions[type] || 'Session - Description';
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="max-w-7xl mx-auto px-4 py-8">
                 {/* Back Button */}
                 <div className="mb-6">
                     <Link to="/" className="text-gray-600 hover:text-gray-900 flex items-center gap-2 transition">
@@ -61,51 +69,116 @@ const BookMeeting = () => {
                     </Link>
                 </div>
 
-                {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-3">
-                        <i className="fas fa-calendar-check text-blue-600 mr-3"></i>
-                        Book Your Session
-                    </h1>
-                    <p className="text-lg text-gray-600">
-                        Request a personalized session with our expert faculty
-                    </p>
-                </div>
-
-                {/* Main Form Card */}
-                <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                        Session Request Form
-                    </h2>
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Request Type */}
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Session Type <span className="text-red-500">*</span>
-                            </label>
-                            <select
-                                name="requestType"
-                                value={formData.requestType}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                            >
-                                <option value="Webinar">Webinar</option>
-                                <option value="Demo">Demo Session</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Consultation">One-on-One Consultation</option>
-                                <option value="Trial Class">Trial Class</option>
-                                <option value="Doubt Session">Doubt Clearing Session</option>
-                            </select>
-                            <p className="text-xs text-gray-500 mt-1">Select the type of session you're interested in</p>
+                {/* Main Content - Two Column Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    {/* Left Column - Session Details */}
+                    <div className="bg-white rounded-lg shadow-sm p-8 space-y-8">
+                        {/* Logo */}
+                        <div className="mb-6">
+                            <img
+                                src="/logo.png"
+                                alt="Ace2Examz"
+                                className="h-12"
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.nextSibling.style.display = 'block';
+                                }}
+                            />
+                            <div style={{ display: 'none' }} className="text-2xl font-bold text-blue-600">
+                                ACE 2 EXAMZ
+                            </div>
                         </div>
 
-                        {/* Name Fields Row */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Session Title */}
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                                Request Your Session
+                            </h1>
+                            <p className="text-gray-600">
+                                {formData.requestType} - {getSessionDescription(formData.requestType)}
+                            </p>
+                        </div>
+
+                        {/* Session Type Selection */}
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-gray-900">Select Session Type</h3>
+                            <div className="grid grid-cols-2 gap-3">
+                                {['Webinar', 'Demo', 'Workshop', 'Consultation', 'Trial Class', 'Doubt Session'].map(type => (
+                                    <button
+                                        key={type}
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, requestType: type }))}
+                                        className={`p-3 rounded-lg border-2 transition-all ${formData.requestType === type
+                                                ? 'border-blue-500 bg-blue-50 text-blue-700 font-semibold'
+                                                : 'border-gray-200 hover:border-blue-300 text-gray-700'
+                                            }`}
+                                    >
+                                        {type}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Features */}
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-gray-900">What You'll Get</h3>
+                            <div className="space-y-3">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <i className="fas fa-user-tie text-blue-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-gray-900">Expert Faculty</h4>
+                                        <p className="text-sm text-gray-600">Learn from experienced teachers</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                        <i className="fas fa-clock text-purple-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-gray-900">Flexible Timing</h4>
+                                        <p className="text-sm text-gray-600">We'll work with your schedule</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="flex-shrink-0 w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center">
+                                        <i className="fas fa-video text-pink-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-gray-900">Online Meeting</h4>
+                                        <p className="text-sm text-gray-600">Join from anywhere via video call</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h4 className="font-semibold text-gray-900 mb-2">Need Help?</h4>
+                            <div className="space-y-2 text-sm">
+                                <a href="tel:+919115179935" className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
+                                    <i className="fas fa-phone"></i>
+                                    +91 9115179935
+                                </a>
+                                <a href="mailto:crack@ace2examz.in" className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
+                                    <i className="fas fa-envelope"></i>
+                                    crack@ace2examz.in
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Column - Registration Form */}
+                    <div className="bg-white rounded-lg shadow-sm p-8 lg:sticky lg:top-8">
+                        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+                            Registration Form
+                        </h2>
+
+                        <form onSubmit={handleSubmit} className="space-y-5">
                             {/* First Name */}
                             <div>
-                                <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">
+                                <label htmlFor="firstName" className="block text-sm text-gray-700 mb-2">
                                     First Name <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -121,7 +194,7 @@ const BookMeeting = () => {
 
                             {/* Last Name */}
                             <div>
-                                <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">
+                                <label htmlFor="lastName" className="block text-sm text-gray-700 mb-2">
                                     Last Name <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -134,13 +207,10 @@ const BookMeeting = () => {
                                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                                 />
                             </div>
-                        </div>
 
-                        {/* Contact Fields Row */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Email */}
+                            {/* Email Address */}
                             <div>
-                                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                                <label htmlFor="email" className="block text-sm text-gray-700 mb-2">
                                     Email Address <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -154,9 +224,9 @@ const BookMeeting = () => {
                                 />
                             </div>
 
-                            {/* Phone */}
+                            {/* Phone Number */}
                             <div>
-                                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                                <label htmlFor="phone" className="block text-sm text-gray-700 mb-2">
                                     Phone Number <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -170,128 +240,50 @@ const BookMeeting = () => {
                                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                                 />
                             </div>
-                        </div>
 
-                        {/* Preferred Date and Time Row */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Preferred Date */}
+                            {/* Additional Message */}
                             <div>
-                                <label htmlFor="preferredDate" className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Preferred Date
+                                <label htmlFor="message" className="block text-sm text-gray-700 mb-2">
+                                    Additional Requirements (Optional)
                                 </label>
-                                <input
-                                    type="date"
-                                    id="preferredDate"
-                                    name="preferredDate"
-                                    value={formData.preferredDate}
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    value={formData.message}
                                     onChange={handleChange}
-                                    min={new Date().toISOString().split('T')[0]}
+                                    rows="3"
+                                    placeholder="Tell us about your specific needs or questions..."
                                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                                 />
-                                <p className="text-xs text-gray-500 mt-1">Optional - We'll try to accommodate your preference</p>
                             </div>
 
-                            {/* Preferred Time */}
-                            <div>
-                                <label htmlFor="preferredTime" className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Preferred Time
-                                </label>
-                                <select
-                                    name="preferredTime"
-                                    value={formData.preferredTime}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                            {/* Disclaimer */}
+                            <div className="text-xs text-gray-600 leading-relaxed">
+                                By clicking 'Register', you acknowledge that our team will review your request and contact you within 24-48 hours to schedule your session.
+                            </div>
+
+                            {/* Register Button */}
+                            <div className="pt-2">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                                        }`}
                                 >
-                                    <option value="">Any Time</option>
-                                    <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
-                                    <option value="Afternoon (12 PM - 4 PM)">Afternoon (12 PM - 4 PM)</option>
-                                    <option value="Evening (4 PM - 8 PM)">Evening (4 PM - 8 PM)</option>
-                                </select>
+                                    {isSubmitting ? (
+                                        <>
+                                            <i className="fas fa-spinner fa-spin"></i>
+                                            Submitting...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fas fa-paper-plane"></i>
+                                            Register
+                                        </>
+                                    )}
+                                </button>
                             </div>
-                        </div>
-
-                        {/* Message/Requirements */}
-                        <div>
-                            <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
-                                Additional Requirements / Message
-                            </label>
-                            <textarea
-                                id="message"
-                                name="message"
-                                value={formData.message}
-                                onChange={handleChange}
-                                rows="4"
-                                placeholder="Tell us about your specific needs, topics you want to cover, or any questions..."
-                                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                            />
-                        </div>
-
-                        {/* Disclaimer */}
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <p className="text-sm text-gray-700">
-                                <i className="fas fa-info-circle text-blue-600 mr-2"></i>
-                                By submitting this request, you acknowledge that our team will review your request and contact you within 24-48 hours to schedule your session.
-                            </p>
-                        </div>
-
-                        {/* Submit Button */}
-                        <div className="pt-2">
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                                    }`}
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <i className="fas fa-spinner fa-spin"></i>
-                                        Submitting Request...
-                                    </>
-                                ) : (
-                                    <>
-                                        <i className="fas fa-paper-plane"></i>
-                                        Submit Request
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                {/* Info Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-                        <i className="fas fa-user-tie text-4xl text-blue-500 mb-3"></i>
-                        <h3 className="text-gray-900 font-bold mb-2">Expert Faculty</h3>
-                        <p className="text-gray-600 text-sm">Get guidance from experienced teachers</p>
-                    </div>
-                    <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-                        <i className="fas fa-clock text-4xl text-purple-500 mb-3"></i>
-                        <h3 className="text-gray-900 font-bold mb-2">Flexible Timing</h3>
-                        <p className="text-gray-600 text-sm">We'll work with your schedule</p>
-                    </div>
-                    <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-                        <i className="fas fa-video text-4xl text-pink-500 mb-3"></i>
-                        <h3 className="text-gray-900 font-bold mb-2">Online Meeting</h3>
-                        <p className="text-gray-600 text-sm">Join from anywhere via video call</p>
-                    </div>
-                </div>
-
-                {/* Contact Support */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-                    <p className="text-gray-700 mb-3">
-                        <i className="fas fa-headset text-blue-600 mr-2"></i>
-                        Need help? Contact our support team
-                    </p>
-                    <div className="flex justify-center gap-6 flex-wrap">
-                        <a href="tel:+919115179935" className="text-blue-600 hover:text-blue-700 transition">
-                            <i className="fas fa-phone mr-2"></i>
-                            +91 9115179935
-                        </a>
-                        <a href="mailto:crack@ace2examz.in" className="text-blue-600 hover:text-blue-700 transition">
-                            <i className="fas fa-envelope mr-2"></i>
-                            crack@ace2examz.in
-                        </a>
+                        </form>
                     </div>
                 </div>
             </div>
