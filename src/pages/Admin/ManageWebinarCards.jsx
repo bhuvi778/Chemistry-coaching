@@ -4,6 +4,7 @@ const ManageWebinarCards = () => {
     const [cards, setCards] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
     const [editingCard, setEditingCard] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         subtitle: '',
@@ -43,6 +44,8 @@ const ManageWebinarCards = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
+
         try {
             const url = editingCard
                 ? `${API_URL}/webinar-cards/${editingCard._id}`
@@ -64,6 +67,8 @@ const ManageWebinarCards = () => {
         } catch (error) {
             console.error('Error saving card:', error);
             alert('Failed to save card');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -317,15 +322,28 @@ const ManageWebinarCards = () => {
                         <div className="flex gap-3">
                             <button
                                 type="submit"
-                                className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-bold"
+                                disabled={isSubmitting}
+                                className={`px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-bold ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
                             >
-                                <i className="fas fa-save mr-2"></i>
-                                {editingCard ? 'Update Card' : 'Add Card'}
+                                {isSubmitting ? (
+                                    <>
+                                        <i className="fas fa-spinner fa-spin mr-2"></i>
+                                        {editingCard ? 'Updating...' : 'Adding...'}
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="fas fa-save mr-2"></i>
+                                        {editingCard ? 'Update Card' : 'Add Card'}
+                                    </>
+                                )}
                             </button>
                             <button
                                 type="button"
                                 onClick={resetForm}
-                                className="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition"
+                                disabled={isSubmitting}
+                                className={`px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
                             >
                                 Cancel
                             </button>
