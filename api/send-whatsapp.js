@@ -1,4 +1,4 @@
-// Vercel Serverless Function to send WhatsApp messages via webhook
+// Vercel Serverless Function to send WhatsApp messages via BotBiz API
 export default async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
@@ -18,56 +18,60 @@ export default async function handler(req, res) {
 
         console.log('Sending WhatsApp to:', phone);
 
-        // Call the webhook
-        const webhookUrl = 'https://dash.botbiz.io/webhook/whatsapp-workflow/37938.234726.277083.1765173100';
+        // BotBiz API endpoint
+        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
 
-        const webhookResponse = await fetch(webhookUrl, {
+        // You need to add your BotBiz API key here
+        // Get it from your BotBiz dashboard
+        const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || 'YOUR_API_KEY_HERE';
+
+        const payload = {
+            phone: phone,
+            message: message,
+            // Add other required fields based on BotBiz API documentation
+        };
+
+        console.log('Calling BotBiz API with payload:', payload);
+
+        const apiResponse = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${BOTBIZ_API_KEY}`,
                 'Accept': 'application/json',
             },
-            body: JSON.stringify({
-                phone: phone,
-                phoneNumber: phone,
-                mobile: phone,
-                to: phone,
-                number: phone,
-                message: message,
-                text: message,
-                body: message
-            })
+            body: JSON.stringify(payload)
         });
 
-        console.log('Webhook response status:', webhookResponse.status);
+        console.log('BotBiz API response status:', apiResponse.status);
 
         // Try to get response data
-        let webhookData;
-        const contentType = webhookResponse.headers.get('content-type');
+        let apiData;
+        const contentType = apiResponse.headers.get('content-type');
 
         if (contentType && contentType.includes('application/json')) {
-            webhookData = await webhookResponse.json();
-            console.log('Webhook response data:', webhookData);
+            apiData = await apiResponse.json();
+            console.log('BotBiz API response data:', apiData);
         } else {
-            const textData = await webhookResponse.text();
-            console.log('Webhook response (text):', textData);
-            webhookData = { message: textData };
+            const textData = await apiResponse.text();
+            console.log('BotBiz API response (text):', textData);
+            apiData = { message: textData };
         }
 
         // Check if successful
-        if (webhookResponse.ok || webhookResponse.status === 200) {
+        if (apiResponse.ok || apiResponse.status === 200 || apiResponse.status === 201) {
             return res.status(200).json({
                 success: true,
                 message: 'WhatsApp message sent successfully',
-                data: webhookData
+                data: apiData
             });
         } else {
-            console.error('Webhook error:', webhookData);
-            return res.status(webhookResponse.status).json({
+            console.error('BotBiz API error:', apiData);
+            return res.status(apiResponse.status).json({
                 success: false,
-                error: 'Webhook request failed',
-                details: webhookData,
-                status: webhookResponse.status
+                error: 'API request failed',
+                details: apiData?.message || apiData?.error || 'Failed to send message',
+                status: apiResponse.status
             });
         }
 
