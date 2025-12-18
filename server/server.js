@@ -8,6 +8,7 @@ const Video = require('./models/Video');
 const AudioBook = require('./models/AudioBook');
 const StudyMaterial = require('./models/StudyMaterial');
 const Magazine = require('./models/Magazine');
+const MeetingRequest = require('./models/MeetingRequest');
 
 const app = express();
 
@@ -514,6 +515,35 @@ app.post('/api/send-app-link', async (req, res) => {
   } catch (error) {
     console.error('Error sending app link:', error);
     res.status(500).json({ message: 'Failed to send app link. Please try again.' });
+  }
+});
+
+// Meeting Requests Routes
+app.get('/api/meeting-requests', async (req, res) => {
+  try {
+    const requests = await MeetingRequest.find().sort({ submittedAt: -1 });
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/meeting-requests', async (req, res) => {
+  try {
+    const meetingRequest = new MeetingRequest(req.body);
+    await meetingRequest.save();
+    res.json(meetingRequest);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/meeting-requests/:id', async (req, res) => {
+  try {
+    await MeetingRequest.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Meeting request deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
