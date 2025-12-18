@@ -26,6 +26,17 @@ export const DataProvider = ({ children }) => {
   // Magazines State
   const [magazines, setMagazines] = useState([]);
 
+  // Webinar Settings State
+  const [webinarSettings, setWebinarSettings] = useState({
+    title: 'Demo Webinar',
+    description: 'Webinar - Description',
+    type: 'Webinar',
+    date: '',
+    time: '14:30',
+    timezone: 'IST',
+    isActive: true
+  });
+
   // Auth State
   const [isAdmin, setIsAdmin] = useState(() => {
     return localStorage.getItem('reaction_isAdmin') === 'true';
@@ -59,6 +70,12 @@ export const DataProvider = ({ children }) => {
         const magazinesRes = await fetch(`${API_URL}/magazines`);
         const magazinesData = await magazinesRes.json();
         setMagazines(magazinesData);
+
+        // Fetch webinar settings
+        const storedWebinarSettings = localStorage.getItem('webinarSettings');
+        if (storedWebinarSettings) {
+          setWebinarSettings(JSON.parse(storedWebinarSettings));
+        }
 
         if (isAdmin) {
           const enquiriesRes = await fetch(`${API_URL}/enquiries`);
@@ -384,6 +401,12 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // Webinar Settings Management
+  const updateWebinarSettings = (settings) => {
+    setWebinarSettings(settings);
+    localStorage.setItem('webinarSettings', JSON.stringify(settings));
+  };
+
   const logout = () => {
     setIsAdmin(false);
   };
@@ -415,6 +438,8 @@ export const DataProvider = ({ children }) => {
       addMagazine,
       updateMagazine,
       deleteMagazine,
+      webinarSettings,
+      updateWebinarSettings,
       login,
       logout
     }}>

@@ -6,6 +6,7 @@ import ManageVideos from './ManageVideos';
 import ManageAudioBooks from './ManageAudioBooks';
 import ManageStudyMaterials from './ManageStudyMaterials';
 import ManageMagazines from './ManageMagazines';
+import ManageWebinar from './ManageWebinar';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -63,6 +64,12 @@ const AdminDashboard = () => {
               <i className="fas fa-book-open mr-2"></i> Manage Magazines
             </button>
             <button
+              onClick={() => setActiveTab('webinar')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'webinar' ? 'bg-blue-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-calendar-check mr-2"></i> Manage Webinar
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -84,6 +91,7 @@ const AdminDashboard = () => {
           {activeTab === 'audiobooks' && <ManageAudioBooks />}
           {activeTab === 'materials' && <ManageStudyMaterials />}
           {activeTab === 'magazines' && <ManageMagazines />}
+          {activeTab === 'webinar' && <ManageWebinar />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>

@@ -1,43 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useData } from '../context/DataContext';
 
 const BookMeeting = () => {
+    const { webinarSettings } = useData();
+
     // Countdown timer state
     const [timeLeft, setTimeLeft] = useState({
-        days: 5,
-        hours: 3,
-        minutes: 3,
-        seconds: 22
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
     });
 
-    // Countdown timer effect
+    // Calculate countdown based on webinar date/time
     useEffect(() => {
-        const timer = setInterval(() => {
-            setTimeLeft(prev => {
-                let { days, hours, minutes, seconds } = prev;
+        if (!webinarSettings.date || !webinarSettings.time) return;
 
-                if (seconds > 0) {
-                    seconds--;
-                } else if (minutes > 0) {
-                    minutes--;
-                    seconds = 59;
-                } else if (hours > 0) {
-                    hours--;
-                    minutes = 59;
-                    seconds = 59;
-                } else if (days > 0) {
-                    days--;
-                    hours = 23;
-                    minutes = 59;
-                    seconds = 59;
-                }
+        const calculateTimeLeft = () => {
+            const webinarDateTime = new Date(`${webinarSettings.date}T${webinarSettings.time}`);
+            const now = new Date();
+            const difference = webinarDateTime - now;
 
-                return { days, hours, minutes, seconds };
-            });
-        }, 1000);
+            if (difference > 0) {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((difference / 1000 / 60) % 60);
+                const seconds = Math.floor((difference / 1000) % 60);
+
+                setTimeLeft({ days, hours, minutes, seconds });
+            } else {
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+            }
+        };
+
+        calculateTimeLeft();
+        const timer = setInterval(calculateTimeLeft, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [webinarSettings.date, webinarSettings.time]);
+
+    // Format date for display
+    const getFormattedDate = () => {
+        if (!webinarSettings.date) return { month: 'DEC', day: '23', weekday: 'Tuesday' };
+
+        const date = new Date(webinarSettings.date);
+        return {
+            month: date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+            day: date.getDate(),
+            weekday: date.toLocaleDateString('en-US', { weekday: 'long' })
+        };
+    };
+
+    // Format time for display
+    const getFormattedTime = () => {
+        if (!webinarSettings.time) return '02:30 PM';
+
+        const [hours, minutes] = webinarSettings.time.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12;
+
+        return `${displayHour.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+    };
+
+    const dateInfo = getFormattedDate();
+    const timeInfo = getFormattedTime();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -77,10 +105,10 @@ const BookMeeting = () => {
                         {/* Webinar Title */}
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                                Demo Webinar
+                                {webinarSettings.title || 'Demo Webinar'}
                             </h1>
                             <p className="text-gray-600">
-                                Webinar - Description
+                                {webinarSettings.type} - {webinarSettings.description || 'Description'}
                             </p>
                         </div>
 
@@ -89,13 +117,13 @@ const BookMeeting = () => {
                             <h3 className="text-lg font-semibold text-gray-900">Date/Time</h3>
                             <div className="flex items-center gap-4">
                                 <div className="bg-blue-500 text-white rounded-lg p-3 text-center min-w-[80px]">
-                                    <div className="text-xs font-semibold uppercase">DEC</div>
-                                    <div className="text-2xl font-bold">23</div>
+                                    <div className="text-xs font-semibold uppercase">{dateInfo.month}</div>
+                                    <div className="text-2xl font-bold">{dateInfo.day}</div>
                                 </div>
                                 <div>
-                                    <div className="text-gray-900 font-semibold">Tuesday</div>
+                                    <div className="text-gray-900 font-semibold">{dateInfo.weekday}</div>
                                     <div className="text-blue-600 text-sm flex items-center gap-1">
-                                        02:30 PM - IST
+                                        {timeInfo} - {webinarSettings.timezone}
                                         <i className="fas fa-external-link-alt text-xs"></i>
                                     </div>
                                 </div>
