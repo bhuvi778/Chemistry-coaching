@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { DataProvider, useData } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -29,10 +30,29 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// Component to handle auto-logout when navigating away from admin
+const AdminAutoLogout = () => {
+  const location = useLocation();
+  const { isAdmin, logout } = useData();
+
+  useEffect(() => {
+    // Check if user is admin and navigating to a non-admin page
+    if (isAdmin && !location.pathname.startsWith('/admin')) {
+      // Show popup notification
+      alert('You have been automatically logged out from the admin panel.');
+      // Perform logout
+      logout();
+    }
+  }, [location.pathname, isAdmin, logout]);
+
+  return null;
+};
+
 function AppContent() {
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
+      <AdminAutoLogout />
       <ParticleCanvas />
       <Navbar />
 

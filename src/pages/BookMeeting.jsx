@@ -43,25 +43,70 @@ const BookMeeting = () => {
                 </div>
 
                 {/* Booking Interface */}
-                <div className="glass-panel rounded-2xl overflow-hidden">
-                    <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-4">
-                        <h2 className="text-white font-bold text-xl text-center">
-                            <i className="fas fa-calendar-alt mr-2"></i>
-                            Select Your Preferred Time Slot
+                <div className="glass-panel rounded-2xl overflow-hidden max-w-2xl mx-auto">
+                    <div className="bg-white p-8">
+                        <h2 className="text-gray-800 font-semibold text-2xl mb-8">
+                            Webinar Registration
                         </h2>
-                    </div>
 
-                    {/* Zoho Bookings Iframe */}
-                    <div className="bg-white">
-                        <iframe
-                            width='100%'
-                            height='750px'
-                            src='https://ace2examzlive.zohobookings.in/portal-embed#/ace2examz'
-                            frameBorder='0'
-                            allowFullScreen
-                            title="Book Your Meeting"
-                            className="w-full"
-                        />
+                        <form className="space-y-6">
+                            {/* First Name */}
+                            <div>
+                                <label htmlFor="firstName" className="block text-gray-700 text-sm mb-2">
+                                    First Name <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="firstName"
+                                    name="firstName"
+                                    required
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
+                                />
+                            </div>
+
+                            {/* Last Name */}
+                            <div>
+                                <label htmlFor="lastName" className="block text-gray-700 text-sm mb-2">
+                                    Last Name <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="lastName"
+                                    name="lastName"
+                                    required
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
+                                />
+                            </div>
+
+                            {/* Email Address */}
+                            <div>
+                                <label htmlFor="email" className="block text-gray-700 text-sm mb-2">
+                                    Email Address <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
+                                />
+                            </div>
+
+                            {/* Disclaimer Text */}
+                            <div className="text-xs text-gray-600 leading-relaxed">
+                                By clicking 'Register', you acknowledge that the webinar organizer may use this information to share updates regarding this webinar as well as for future communications.
+                            </div>
+
+                            {/* Register Button */}
+                            <div className="flex justify-center pt-2">
+                                <button
+                                    type="submit"
+                                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-12 py-3 rounded-md transition-colors duration-200"
+                                >
+                                    Register
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 

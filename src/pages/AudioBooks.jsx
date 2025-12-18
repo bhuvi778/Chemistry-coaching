@@ -50,8 +50,8 @@ const AudioBooks = () => {
           <button
             onClick={() => setSelectedCategory('all')}
             className={`px-6 py-2 rounded-full transition ${selectedCategory === 'all'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              ? 'bg-purple-500 text-white'
+              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
               }`}
           >
             All
@@ -61,8 +61,8 @@ const AudioBooks = () => {
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-6 py-2 rounded-full transition ${selectedCategory === cat
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                ? 'bg-purple-500 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                 }`}
             >
               {cat}
@@ -170,6 +170,7 @@ const AudioBooks = () => {
                                     {topic.audioUrl && (
                                       <audio
                                         controls
+                                        controlsList="nodownload"
                                         className="w-full mt-2"
                                         style={{
                                           height: '40px',
