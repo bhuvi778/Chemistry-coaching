@@ -26,46 +26,42 @@ const AppDownload = () => {
 
       const messageText = `Hi! 👋\n\nThank you for your interest in Ace2Examz!\n\nDownload our app to learn from the best and access:\n✅ Live Classes\n✅ Study Materials\n✅ Practice Tests\n✅ Expert Guidance\n\n📱 Download Now:\nhttps://play.google.com/store/apps/details?id=com.ace2examzapp.android\n\nStart your journey to success today! 🚀`;
 
-      // Send to WhatsApp webhook - trying multiple payload formats
-      const payload = {
-        phone: fullPhoneNumber,
-        phoneNumber: fullPhoneNumber,
-        mobile: fullPhoneNumber,
-        to: fullPhoneNumber,
-        number: fullPhoneNumber,
-        message: messageText,
-        text: messageText,
-        body: messageText
-      };
+      console.log('=== WhatsApp Send Debug ===');
+      console.log('Phone:', fullPhoneNumber);
+      console.log('Message:', messageText);
+      console.log('API Endpoint: /api/send-whatsapp');
+      console.log('========================');
 
-      console.log('Payload:', payload); // Debug log
-
-      const response = await fetch('https://dash.botbiz.io/webhook/whatsapp-workflow/37938.234726.277083.1765173100', {
+      // Call our backend API which will call the webhook
+      const response = await fetch('/api/send-whatsapp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          phone: fullPhoneNumber,
+          message: messageText
+        })
       });
 
-      console.log('Response status:', response.status); // Debug log
+      console.log('API response status:', response.status); // Debug log
 
-      // Try to parse response
+      // Parse response
       let responseData;
       try {
         responseData = await response.json();
-        console.log('Response data:', responseData); // Debug log
+        console.log('API response data:', responseData); // Debug log
       } catch (e) {
         console.log('Could not parse response as JSON');
       }
 
-      if (response.ok || response.status === 200) {
+      if (response.ok && responseData?.success) {
         setMessage('✓ App download link sent to your WhatsApp!');
         setMobileNumber('');
       } else {
-        const errorMsg = responseData?.message || responseData?.error || 'Failed to send link';
-        setMessage(`⚠ ${errorMsg}. Please try again or contact support.`);
-        console.error('Webhook error:', responseData);
+        const errorMsg = responseData?.error || responseData?.details || 'Failed to send link';
+        setMessage(`⚠ ${errorMsg}. Please contact support if issue persists.`);
+        console.error('API error:', responseData);
       }
     } catch (error) {
       console.error('Error sending WhatsApp:', error);
