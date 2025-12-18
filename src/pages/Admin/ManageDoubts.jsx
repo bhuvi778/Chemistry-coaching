@@ -117,6 +117,26 @@ const ManageDoubts = () => {
         }
     };
 
+    const handleReject = async (doubt) => {
+        if (window.confirm('Are you sure you want to reject this question?')) {
+            try {
+                await fetch(`${API_URL}/doubts/${doubt._id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        status: 'rejected',
+                        isPublished: false
+                    })
+                });
+                fetchDoubts();
+                alert('Question rejected successfully!');
+            } catch (error) {
+                console.error('Error rejecting doubt:', error);
+                alert('Failed to reject question');
+            }
+        }
+    };
+
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
@@ -157,6 +177,15 @@ const ManageDoubts = () => {
                         }`}
                 >
                     Answered ({doubts.filter(d => d.status === 'answered').length})
+                </button>
+                <button
+                    onClick={() => setFilter('rejected')}
+                    className={`px-4 py-2 rounded-lg transition ${filter === 'rejected'
+                        ? 'bg-red-500 text-white font-bold'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                        }`}
+                >
+                    Rejected ({doubts.filter(d => d.status === 'rejected').length})
                 </button>
             </div>
 
@@ -284,6 +313,15 @@ const ManageDoubts = () => {
                                     >
                                         <i className={`fas ${doubt.isPublished ? 'fa-eye-slash' : 'fa-eye'} mr-2`}></i>
                                         {doubt.isPublished ? 'Unpublish' : 'Publish'}
+                                    </button>
+                                )}
+                                {doubt.status !== 'rejected' && (
+                                    <button
+                                        onClick={() => handleReject(doubt)}
+                                        className="px-4 py-2 bg-orange-500/20 text-orange-400 rounded-lg hover:bg-orange-500 hover:text-white transition text-sm"
+                                    >
+                                        <i className="fas fa-ban mr-2"></i>
+                                        Reject
                                     </button>
                                 )}
                                 <button
