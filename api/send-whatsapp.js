@@ -16,22 +16,32 @@ export default async function handler(req, res) {
             });
         }
 
-        console.log('Sending WhatsApp to:', phone);
+        console.log('=== BotBiz WhatsApp Template API ===');
+        console.log('Phone:', phone);
+        console.log('Message:', message);
 
-        // BotBiz API endpoint
-        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
+        // BotBiz Template API endpoint
+        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
 
-        // You need to add your BotBiz API key here
-        // Get it from your BotBiz dashboard
-        const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || 'YOUR_API_KEY_HERE';
+        // API Key
+        const BOTBIZ_API_KEY = '16072|FVaURdAB4Z07Py9V0HNBEkMHRpKY9zX9XWVitfHc123452c1';
 
+        // Template payload format
         const payload = {
             phone: phone,
             message: message,
-            // Add other required fields based on BotBiz API documentation
+            template_name: 'app_download', // You may need to adjust this
+            language: 'en',
+            parameters: [
+                {
+                    type: 'text',
+                    text: message
+                }
+            ]
         };
 
-        console.log('Calling BotBiz API with payload:', payload);
+        console.log('Sending to BotBiz API...');
+        console.log('Payload:', JSON.stringify(payload, null, 2));
 
         const apiResponse = await fetch(apiUrl, {
             method: 'POST',
@@ -43,41 +53,53 @@ export default async function handler(req, res) {
             body: JSON.stringify(payload)
         });
 
-        console.log('BotBiz API response status:', apiResponse.status);
+        console.log('Response status:', apiResponse.status);
 
-        // Try to get response data
+        // Get response data
         let apiData;
         const contentType = apiResponse.headers.get('content-type');
 
-        if (contentType && contentType.includes('application/json')) {
-            apiData = await apiResponse.json();
-            console.log('BotBiz API response data:', apiData);
-        } else {
-            const textData = await apiResponse.text();
-            console.log('BotBiz API response (text):', textData);
-            apiData = { message: textData };
+        try {
+            if (contentType && contentType.includes('application/json')) {
+                apiData = await apiResponse.json();
+            } else {
+                const textData = await apiResponse.text();
+                apiData = { rawResponse: textData };
+            }
+            console.log('Response data:', JSON.stringify(apiData, null, 2));
+        } catch (parseError) {
+            console.error('Error parsing response:', parseError);
+            apiData = { error: 'Could not parse response' };
         }
 
         // Check if successful
         if (apiResponse.ok || apiResponse.status === 200 || apiResponse.status === 201) {
+            console.log('✓ WhatsApp message sent successfully');
             return res.status(200).json({
                 success: true,
                 message: 'WhatsApp message sent successfully',
                 data: apiData
             });
         } else {
-            console.error('BotBiz API error:', apiData);
-            return res.status(apiResponse.status).json({
+            console.error('✗ API request failed');
+            console.error('Status:', apiResponse.status);
+            console.error('Response:', apiData);
+
+            return res.status(200).json({
                 success: false,
-                error: 'API request failed',
-                details: apiData?.message || apiData?.error || 'Failed to send message',
-                status: apiResponse.status
+                error: 'Failed to send WhatsApp message',
+                details: apiData?.message || apiData?.error || apiData?.rawResponse || 'Unknown error',
+                status: apiResponse.status,
+                fullResponse: apiData
             });
         }
 
     } catch (error) {
-        console.error('Error sending WhatsApp:', error);
-        return res.status(500).json({
+        console.error('=== Error ===');
+        console.error('Message:', error.message);
+        console.error('Stack:', error.stack);
+
+        return res.status(200).json({
             success: false,
             error: 'Internal server error',
             details: error.message
