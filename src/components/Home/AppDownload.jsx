@@ -19,25 +19,26 @@ const AppDownload = () => {
     try {
       setMessage('Sending link...');
 
-      // Use Vercel API route
-      const response = await fetch('/api/send-app-link', {
+      // Format phone number with country code
+      const fullPhoneNumber = `${countryCode}${mobileNumber}`;
+
+      // Send to WhatsApp webhook
+      const response = await fetch('https://dash.botbiz.io/webhook/whatsapp-workflow/37938.234726.277083.1765173100', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          countryCode: countryCode.replace('+', ''),
-          mobileNumber: mobileNumber
+          phone: fullPhoneNumber,
+          message: `Hi! 👋\n\nThank you for your interest in Ace2Examz!\n\nDownload our app to learn from the best and access:\n✅ Live Classes\n✅ Study Materials\n✅ Practice Tests\n✅ Expert Guidance\n\n📱 Download Now:\nhttps://play.google.com/store/apps/details?id=com.ace2examzapp.android\n\nStart your journey to success today! 🚀`
         })
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        setMessage('✓ App download link sent to your mobile!');
+        setMessage('✓ App download link sent to your WhatsApp!');
         setMobileNumber('');
       } else {
-        setMessage('⚠ ' + (data.message || 'Failed to send link. Please try again.'));
+        setMessage('⚠ Failed to send link. Please try again.');
       }
     } catch (error) {
       console.error('Error:', error);
