@@ -118,7 +118,7 @@ const Resources = () => {
                   className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
                 >
                   <i className="fas fa-mobile-alt mr-2"></i>
-                  Practice Now
+                  {resource.title === 'Test Series' ? 'Test Now' : 'Practice Now'}
                 </a>
               ) : resource.lecturesLink ? (
                 <Link
