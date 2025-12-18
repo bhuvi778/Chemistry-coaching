@@ -436,7 +436,7 @@ const Doubts = () => {
 
                 {/* Feedback Modal */}
                 {showFeedbackModal && (
-                    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
+                    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
                         <div className={`${isDark ? 'glass-panel' : 'bg-white'} rounded-xl p-8 max-w-md w-full my-8 shadow-2xl`}>
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
