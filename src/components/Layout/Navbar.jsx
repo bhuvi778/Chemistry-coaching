@@ -39,7 +39,7 @@ const Navbar = () => {
                 onMouseLeave={() => setIsStudyMaterialOpen(false)}
               >
                 <button className={`px-3 py-2 transition relative ${location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') ||
-                  location.pathname.includes('/study-materials') || location.pathname.includes('/magazines')
+                  location.pathname.includes('/study-materials') || location.pathname.includes('/magazines') || location.pathname.includes('/doubts')
                   ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                   }`}>
                   <span className="flex items-center gap-2">
@@ -84,9 +84,23 @@ const Navbar = () => {
                     <i className="fas fa-book-open text-pink-500"></i>
                     <span>Chemistry Magazine</span>
                   </Link>
+                  <Link
+                    to="/doubts"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsStudyMaterialOpen(false)}
+                  >
+                    <i className="fas fa-question-circle text-orange-500"></i>
+                    <span>Doubts</span>
+                  </Link>
                 </div>
               </div>
 
+              <Link to="/book-meeting" className={getNavLinkClass('/book-meeting')}>
+                <span className="flex items-center gap-2">
+                  <i className="fas fa-calendar-check text-pink-400"></i>
+                  Book Your Meet
+                </span>
+              </Link>
               <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
                 <span className="flex items-center gap-2">
                   <i className="fas fa-robot text-cyan-400"></i>
@@ -149,6 +163,12 @@ const Navbar = () => {
             </Link>
             <Link to="/magazines" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-book-open text-pink-500 mr-2"></i>Chemistry Magazine
+            </Link>
+            <Link to="/doubts" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+              <i className="fas fa-question-circle text-orange-500 mr-2"></i>Doubts
+            </Link>
+            <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+              <i className="fas fa-calendar-check text-pink-400 mr-2"></i>Book Your Meet
             </Link>
             <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI

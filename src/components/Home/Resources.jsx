@@ -20,7 +20,7 @@ const Resources = () => {
       items: ["Daily Practice Papers", "Previous Year Questions", "Mock Tests", "Topic-wise Tests"],
       color: "pink",
       image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500",
-      appLink: "https://play.google.com/store/apps/details?id=com.ace2examz.app" // Add your actual app link here
+      appLink: "https://play.google.com/store/apps/details?id=com.ace2examzapp.android" // Add your actual app link here
     },
     {
       title: "Video Lectures",
@@ -36,7 +36,7 @@ const Resources = () => {
       items: ["Chapter-wise Tests", "Full Syllabus Tests", "All India Test Series", "Previous Year Papers"],
       color: "yellow",
       image: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=500",
-      appLink: "https://play.google.com/store/apps/details?id=com.ace2examz.app" // App link for test series
+      appLink: "https://play.google.com/store/apps/details?id=com.ace2examzapp.android" // App link for test series
     },
     {
       title: "Solved Examples",
@@ -118,7 +118,7 @@ const Resources = () => {
                   className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
                 >
                   <i className="fas fa-mobile-alt mr-2"></i>
-                  Test Now
+                  Practice Now
                 </a>
               ) : resource.lecturesLink ? (
                 <Link

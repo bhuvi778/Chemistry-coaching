@@ -9,6 +9,8 @@ const AudioBook = require('./models/AudioBook');
 const StudyMaterial = require('./models/StudyMaterial');
 const Magazine = require('./models/Magazine');
 const MeetingRequest = require('./models/MeetingRequest');
+const WebinarCard = require('./models/WebinarCard');
+const Doubt = require('./models/Doubt');
 
 const app = express();
 
@@ -542,6 +544,100 @@ app.delete('/api/meeting-requests/:id', async (req, res) => {
   try {
     await MeetingRequest.findByIdAndDelete(req.params.id);
     res.json({ message: 'Meeting request deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Webinar Cards Routes
+app.get('/api/webinar-cards', async (req, res) => {
+  try {
+    const cards = await WebinarCard.find({ isActive: true }).sort({ order: 1, createdAt: -1 });
+    res.json(cards);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/webinar-cards', async (req, res) => {
+  try {
+    const card = new WebinarCard(req.body);
+    await card.save();
+    res.json(card);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/webinar-cards/:id', async (req, res) => {
+  try {
+    const card = await WebinarCard.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(card);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/webinar-cards/:id', async (req, res) => {
+  try {
+    await WebinarCard.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Webinar card deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Doubts/Q&A Routes
+// Get published doubts (for students)
+app.get('/api/doubts/published', async (req, res) => {
+  try {
+    const doubts = await Doubt.find({ isPublished: true, status: 'answered' }).sort({ createdAt: -1 });
+    res.json(doubts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get all doubts (for admin)
+app.get('/api/doubts', async (req, res) => {
+  try {
+    const doubts = await Doubt.find().sort({ createdAt: -1 });
+    res.json(doubts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Submit new doubt
+app.post('/api/doubts', async (req, res) => {
+  try {
+    const doubt = new Doubt(req.body);
+    await doubt.save();
+    res.json(doubt);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Update doubt (answer it)
+app.put('/api/doubts/:id', async (req, res) => {
+  try {
+    const updateData = {
+      ...req.body,
+      answeredAt: new Date()
+    };
+    const doubt = await Doubt.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    res.json(doubt);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete doubt
+app.delete('/api/doubts/:id', async (req, res) => {
+  try {
+    await Doubt.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Doubt deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
