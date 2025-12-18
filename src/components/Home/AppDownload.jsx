@@ -19,29 +19,56 @@ const AppDownload = () => {
     try {
       setMessage('Sending link...');
 
-      // Format phone number with country code
-      const fullPhoneNumber = `${countryCode}${mobileNumber}`;
+      // Format phone number with country code (remove + sign for webhook)
+      const fullPhoneNumber = `${countryCode.replace('+', '')}${mobileNumber}`;
 
-      // Send to WhatsApp webhook
+      console.log('Sending to phone:', fullPhoneNumber); // Debug log
+
+      const messageText = `Hi! 👋\n\nThank you for your interest in Ace2Examz!\n\nDownload our app to learn from the best and access:\n✅ Live Classes\n✅ Study Materials\n✅ Practice Tests\n✅ Expert Guidance\n\n📱 Download Now:\nhttps://play.google.com/store/apps/details?id=com.ace2examzapp.android\n\nStart your journey to success today! 🚀`;
+
+      // Send to WhatsApp webhook - trying multiple payload formats
+      const payload = {
+        phone: fullPhoneNumber,
+        phoneNumber: fullPhoneNumber,
+        mobile: fullPhoneNumber,
+        to: fullPhoneNumber,
+        number: fullPhoneNumber,
+        message: messageText,
+        text: messageText,
+        body: messageText
+      };
+
+      console.log('Payload:', payload); // Debug log
+
       const response = await fetch('https://dash.botbiz.io/webhook/whatsapp-workflow/37938.234726.277083.1765173100', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          phone: fullPhoneNumber,
-          message: `Hi! 👋\n\nThank you for your interest in Ace2Examz!\n\nDownload our app to learn from the best and access:\n✅ Live Classes\n✅ Study Materials\n✅ Practice Tests\n✅ Expert Guidance\n\n📱 Download Now:\nhttps://play.google.com/store/apps/details?id=com.ace2examzapp.android\n\nStart your journey to success today! 🚀`
-        })
+        body: JSON.stringify(payload)
       });
 
-      if (response.ok) {
+      console.log('Response status:', response.status); // Debug log
+
+      // Try to parse response
+      let responseData;
+      try {
+        responseData = await response.json();
+        console.log('Response data:', responseData); // Debug log
+      } catch (e) {
+        console.log('Could not parse response as JSON');
+      }
+
+      if (response.ok || response.status === 200) {
         setMessage('✓ App download link sent to your WhatsApp!');
         setMobileNumber('');
       } else {
-        setMessage('⚠ Failed to send link. Please try again.');
+        const errorMsg = responseData?.message || responseData?.error || 'Failed to send link';
+        setMessage(`⚠ ${errorMsg}. Please try again or contact support.`);
+        console.error('Webhook error:', responseData);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error sending WhatsApp:', error);
       setMessage('⚠ Network error. Please check your connection and try again.');
     }
 
