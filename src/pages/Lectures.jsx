@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
+import Pagination from '../components/UI/Pagination';
 
 const Lectures = () => {
   const { videos } = useData();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const videosPerPage = 12;
 
   const categories = [
     { id: 'all', name: 'All Videos', icon: 'fa-video' },
@@ -14,9 +17,20 @@ const Lectures = () => {
     { id: 'other', name: 'Other Topics', icon: 'fa-star' }
   ];
 
-  const filteredVideos = selectedCategory === 'all' 
-    ? videos 
+  // Reset to page 1 when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
+
+  const filteredVideos = selectedCategory === 'all'
+    ? videos
     : videos.filter(video => video.category === selectedCategory);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
+  const indexOfLastVideo = currentPage * videosPerPage;
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+  const currentVideos = filteredVideos.slice(indexOfFirstVideo, indexOfLastVideo);
 
   return (
     <div className="min-h-screen py-20 animate-fadeIn">
@@ -33,8 +47,8 @@ const Lectures = () => {
 
         {/* YouTube Channel Button */}
         <div className="text-center mb-8">
-          <a 
-            href="https://www.youtube.com/@YourChannelName" 
+          <a
+            href="https://www.youtube.com/@YourChannelName"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 px-8 py-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-[0_0_20px_rgba(255,0,0,0.4)] transition-all transform hover:scale-105"
@@ -53,11 +67,10 @@ const Lectures = () => {
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${
-                selectedCategory === category.id
-                  ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white shadow-lg scale-105'
-                  : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700 hover:text-white'
-              }`}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${selectedCategory === category.id
+                ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white shadow-lg scale-105'
+                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700 hover:text-white'
+                }`}
             >
               <i className={`fas ${category.icon}`}></i>
               {category.name}
@@ -73,27 +86,34 @@ const Lectures = () => {
             <i className="fas fa-video text-6xl text-gray-600 mb-4"></i>
             <h3 className="text-2xl font-bold text-white mb-2">No Videos Found</h3>
             <p className="text-gray-400">
-              {selectedCategory === 'all' 
-                ? 'No videos available yet. Check back soon!' 
+              {selectedCategory === 'all'
+                ? 'No videos available yet. Check back soon!'
                 : 'No videos in this category yet.'}
             </p>
           </div>
         ) : (
           <>
-            <div className="mb-6 text-gray-400">
-              <i className="fas fa-play-circle mr-2"></i>
-              Showing {filteredVideos.length} {filteredVideos.length === 1 ? 'video' : 'videos'}
+            <div className="mb-6 flex justify-between items-center">
+              <div className="text-gray-400">
+                <i className="fas fa-play-circle mr-2"></i>
+                Showing {indexOfFirstVideo + 1}-{Math.min(indexOfLastVideo, filteredVideos.length)} of {filteredVideos.length} {filteredVideos.length === 1 ? 'video' : 'videos'}
+              </div>
+              {totalPages > 1 && (
+                <div className="text-gray-400 text-sm">
+                  Page {currentPage} of {totalPages}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredVideos.map((video, index) => (
-                <div 
+              {currentVideos.map((video, index) => (
+                <div
                   key={video._id || index}
                   className="group glass-panel rounded-2xl overflow-hidden hover:shadow-[0_0_30px_rgba(255,0,0,0.3)] transition-all duration-300"
                 >
                   {/* YouTube Thumbnail */}
                   <div className="relative aspect-video bg-gray-900">
-                    <img 
+                    <img
                       src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
                       alt={video.title}
                       className="w-full h-full object-cover"
@@ -101,9 +121,9 @@ const Lectures = () => {
                         e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
                       }}
                     />
-                    
+
                     {/* Play Button Overlay */}
-                    <a 
+                    <a
                       href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -138,7 +158,7 @@ const Lectures = () => {
                     <p className="text-gray-400 text-sm mb-4 line-clamp-2">
                       {video.description}
                     </p>
-                    
+
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2 text-cyan-400 text-xs">
                         <i className="fas fa-chalkboard-teacher"></i>
@@ -166,6 +186,13 @@ const Lectures = () => {
                 </div>
               ))}
             </div>
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </>
         )}
       </section>
@@ -180,8 +207,8 @@ const Lectures = () => {
           <p className="text-gray-400 text-lg mb-6 max-w-2xl mx-auto">
             Subscribe to our YouTube channel and hit the bell icon to get notified about new video lectures, live sessions, and important updates.
           </p>
-          <a 
-            href="https://www.youtube.com/@YourChannelName" 
+          <a
+            href="https://www.youtube.com/@YourChannelName"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-[0_0_30px_rgba(255,0,0,0.5)] transition-all transform hover:scale-105"

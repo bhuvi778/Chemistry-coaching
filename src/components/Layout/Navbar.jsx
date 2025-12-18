@@ -92,6 +92,17 @@ const Navbar = () => {
                     <i className="fas fa-question-circle text-orange-500"></i>
                     <span>Doubts</span>
                   </Link>
+                  <a
+                    href="https://www.ace2examz.in/blog"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsStudyMaterialOpen(false)}
+                  >
+                    <i className="fas fa-blog text-blue-500"></i>
+                    <span>Blog</span>
+                    <i className="fas fa-external-link-alt text-xs ml-auto"></i>
+                  </a>
                 </div>
               </div>
 
@@ -167,6 +178,16 @@ const Navbar = () => {
             <Link to="/doubts" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-question-circle text-orange-500 mr-2"></i>Doubts
             </Link>
+            <a
+              href="https://www.ace2examz.in/blog"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsMenuOpen(false)}
+              className="block px-3 py-2 text-white hover:bg-gray-700"
+            >
+              <i className="fas fa-blog text-blue-500 mr-2"></i>Blog
+              <i className="fas fa-external-link-alt text-xs ml-2"></i>
+            </a>
             <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-calendar-check text-pink-400 mr-2"></i>Book Your Meet
             </Link>

@@ -9,6 +9,7 @@ const Doubts = () => {
     const [publishedDoubts, setPublishedDoubts] = useState([]);
     const [filteredDoubts, setFilteredDoubts] = useState([]);
     const [showAskForm, setShowAskForm] = useState(false);
+    const [showAll, setShowAll] = useState(false);
     const [formData, setFormData] = useState({
         studentName: '',
         studentEmail: '',
@@ -281,42 +282,82 @@ const Doubts = () => {
                 {/* Q&A List */}
                 <div className="space-y-4">
                     {filteredDoubts.length > 0 ? (
-                        filteredDoubts.map((doubt) => (
-                            <div key={doubt._id} className={`${isDark ? 'glass-panel' : 'bg-white shadow-md'} rounded-xl p-6 hover:shadow-xl transition-shadow`}>
-                                {/* Question */}
-                                <div className="mb-4">
-                                    <div className="flex items-start gap-3">
-                                        <div className="flex-shrink-0 w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center">
-                                            <i className="fas fa-question text-cyan-400"></i>
-                                        </div>
-                                        <div className="flex-1">
-                                            <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
-                                                {doubt.question}
-                                            </h3>
-                                            <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                                                Asked by {doubt.studentName}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                        <>
+                            {/* Determine how many to show */}
+                            {(() => {
+                                // If searching, show all matching results
+                                // If not searching, show 5 or all based on showAll state
+                                const doubtsToShow = searchQuery.trim()
+                                    ? filteredDoubts
+                                    : (showAll ? filteredDoubts : filteredDoubts.slice(0, 5));
 
-                                {/* Answer */}
-                                <div className={`${isDark ? 'bg-green-500/10 border-green-500/30' : 'bg-green-50 border-green-200'} border rounded-lg p-4`}>
-                                    <div className="flex items-start gap-3">
-                                        <div className="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                                            <i className="fas fa-check text-green-400 text-sm"></i>
+                                return doubtsToShow.map((doubt) => (
+                                    <div key={doubt._id} className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-xl p-6 hover:shadow-xl transition-shadow`}>
+                                        {/* Question */}
+                                        <div className="mb-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex-shrink-0 w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center">
+                                                    <i className="fas fa-question text-cyan-400"></i>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
+                                                        {doubt.question}
+                                                    </h3>
+                                                    <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                                                        Asked by {doubt.studentName}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex-1">
-                                            <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
-                                                {doubt.answer}
-                                            </p>
+
+                                        {/* Answer */}
+                                        <div className={`${isDark ? 'bg-green-500/10 border-green-500/30' : 'bg-green-50 border-green-200'} border rounded-lg p-4`}>
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                                                    <i className="fas fa-check text-green-400 text-sm"></i>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                                                        {doubt.answer}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                ));
+                            })()}
+
+                            {/* View More Button - Only show when not searching and there are more than 5 doubts */}
+                            {!searchQuery.trim() && filteredDoubts.length > 5 && !showAll && (
+                                <div className="text-center mt-8">
+                                    <button
+                                        onClick={() => setShowAll(true)}
+                                        className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition transform hover:scale-105"
+                                    >
+                                        <i className="fas fa-chevron-down mr-2"></i>
+                                        View More ({filteredDoubts.length - 5} more questions)
+                                    </button>
                                 </div>
-                            </div>
-                        ))
+                            )}
+
+                            {/* Show Less Button - Only show when showing all and not searching */}
+                            {!searchQuery.trim() && showAll && filteredDoubts.length > 5 && (
+                                <div className="text-center mt-8">
+                                    <button
+                                        onClick={() => {
+                                            setShowAll(false);
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        className="px-8 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-600 transition"
+                                    >
+                                        <i className="fas fa-chevron-up mr-2"></i>
+                                        Show Less
+                                    </button>
+                                </div>
+                            )}
+                        </>
                     ) : (
-                        <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-md'} rounded-xl p-12 text-center`}>
+                        <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-xl p-12 text-center`}>
                             <i className={`fas fa-search text-6xl ${isDark ? 'text-gray-700' : 'text-gray-300'} mb-4`}></i>
                             <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                                 {searchQuery ? 'No matching questions found. Click "Ask" to submit your question!' : 'No questions yet. Be the first to ask!'}

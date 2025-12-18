@@ -10,6 +10,8 @@ const AllCourses = () => {
 
     const [activeCategory, setActiveCategory] = useState(categoryParam || 'all'); // New category filter (Live Batch, Recorded, etc.)
     const [activeExam, setActiveExam] = useState('all'); // Old exam filter (JEE, NEET, Foundation)
+    const [currentPage, setCurrentPage] = useState(1);
+    const coursesPerPage = 6;
     const { courses } = useData();
 
     // Update active category when URL parameter changes
@@ -18,6 +20,11 @@ const AllCourses = () => {
             setActiveCategory(categoryParam);
         }
     }, [categoryParam]);
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeCategory, activeExam]);
 
     // Filter by both category and exam
     const filteredCourses = courses.filter(course => {
@@ -31,6 +38,17 @@ const AllCourses = () => {
 
         return categoryMatch && examMatch;
     });
+
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
+    const indexOfLastCourse = currentPage * coursesPerPage;
+    const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
+    const currentCourses = filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse);
+
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const getCategoryClass = (category) => {
         const isActive = activeCategory === category;
@@ -227,15 +245,85 @@ const AllCourses = () => {
                             </div>
                         ) : (
                             <>
-                                <div className="mb-4 text-gray-400">
-                                    <i className="fas fa-graduation-cap mr-2"></i>
-                                    Showing {filteredCourses.length} {filteredCourses.length === 1 ? 'course' : 'courses'}
+                                <div className="mb-4 flex justify-between items-center">
+                                    <div className="text-gray-400">
+                                        <i className="fas fa-graduation-cap mr-2"></i>
+                                        Showing {indexOfFirstCourse + 1}-{Math.min(indexOfLastCourse, filteredCourses.length)} of {filteredCourses.length} {filteredCourses.length === 1 ? 'course' : 'courses'}
+                                    </div>
+                                    {totalPages > 1 && (
+                                        <div className="text-gray-400 text-sm">
+                                            Page {currentPage} of {totalPages}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                    {filteredCourses.map(course => (
+                                    {currentCourses.map(course => (
                                         <CourseCard key={course._id} course={course} />
                                     ))}
                                 </div>
+
+                                {/* Pagination Controls */}
+                                {totalPages > 1 && (
+                                    <div className="mt-10 flex justify-center items-center gap-2">
+                                        {/* Previous Button */}
+                                        <button
+                                            onClick={() => paginate(currentPage - 1)}
+                                            disabled={currentPage === 1}
+                                            className={`px-4 py-2 rounded-lg font-semibold transition ${currentPage === 1
+                                                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                                                    : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]'
+                                                }`}
+                                        >
+                                            <i className="fas fa-chevron-left mr-2"></i>
+                                            Previous
+                                        </button>
+
+                                        {/* Page Numbers */}
+                                        <div className="flex gap-2">
+                                            {[...Array(totalPages)].map((_, index) => {
+                                                const pageNumber = index + 1;
+                                                // Show first page, last page, current page, and pages around current
+                                                if (
+                                                    pageNumber === 1 ||
+                                                    pageNumber === totalPages ||
+                                                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                                                ) {
+                                                    return (
+                                                        <button
+                                                            key={pageNumber}
+                                                            onClick={() => paginate(pageNumber)}
+                                                            className={`w-10 h-10 rounded-lg font-bold transition ${currentPage === pageNumber
+                                                                    ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.5)]'
+                                                                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                                                                }`}
+                                                        >
+                                                            {pageNumber}
+                                                        </button>
+                                                    );
+                                                } else if (
+                                                    pageNumber === currentPage - 2 ||
+                                                    pageNumber === currentPage + 2
+                                                ) {
+                                                    return <span key={pageNumber} className="text-gray-600 px-2">...</span>;
+                                                }
+                                                return null;
+                                            })}
+                                        </div>
+
+                                        {/* Next Button */}
+                                        <button
+                                            onClick={() => paginate(currentPage + 1)}
+                                            disabled={currentPage === totalPages}
+                                            className={`px-4 py-2 rounded-lg font-semibold transition ${currentPage === totalPages
+                                                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                                                    : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]'
+                                                }`}
+                                        >
+                                            Next
+                                            <i className="fas fa-chevron-right ml-2"></i>
+                                        </button>
+                                    </div>
+                                )}
                             </>
                         )}
                     </div>

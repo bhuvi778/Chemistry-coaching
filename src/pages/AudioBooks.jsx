@@ -1,16 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import Pagination from '../components/UI/Pagination';
 
 const AudioBooks = () => {
   const { audioBooks } = useData();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [expandedBooks, setExpandedBooks] = useState({});
   const [expandedChapters, setExpandedChapters] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 6;
+
+  // Reset to page 1 when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
 
   const filteredAudioBooks = selectedCategory === 'all'
     ? audioBooks
     : audioBooks.filter(book => book.category === selectedCategory);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredAudioBooks.length / booksPerPage);
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = filteredAudioBooks.slice(indexOfFirstBook, indexOfLastBook);
 
   const toggleBook = (bookId) => {
     setExpandedBooks(prev => ({
@@ -78,122 +92,143 @@ const AudioBooks = () => {
             <p className="text-gray-400">Audio books will be available soon!</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {filteredAudioBooks.map((book) => (
-              <div key={book._id} className="glass-panel rounded-xl overflow-hidden">
-                {/* Book Header - Clickable */}
-                <button
-                  onClick={() => toggleBook(book._id)}
-                  className="w-full p-6 flex items-center justify-between hover:bg-gray-800/50 transition"
-                >
-                  <div className="flex items-center gap-4 flex-1 text-left">
-                    {book.thumbnailUrl && (
-                      <img
-                        src={book.thumbnailUrl}
-                        alt={book.title}
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white mb-1">{book.title}</h3>
-                      <p className="text-gray-400 text-sm mb-2">{book.description}</p>
-                      <div className="flex gap-2 flex-wrap">
-                        <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
-                          {book.category}
-                        </span>
-                        {book.author && (
-                          <span className="px-3 py-1 bg-gray-800 text-gray-400 rounded-full text-xs">
-                            <i className="fas fa-user mr-1"></i>
-                            {book.author}
+          <>
+            <div className="mb-6 flex justify-between items-center">
+              <div className="text-gray-400">
+                <i className="fas fa-headphones mr-2"></i>
+                Showing {indexOfFirstBook + 1}-{Math.min(indexOfLastBook, filteredAudioBooks.length)} of {filteredAudioBooks.length} {filteredAudioBooks.length === 1 ? 'book' : 'books'}
+              </div>
+              {totalPages > 1 && (
+                <div className="text-gray-400 text-sm">
+                  Page {currentPage} of {totalPages}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              {currentBooks.map((book) => (
+                <div key={book._id} className="glass-panel rounded-xl overflow-hidden">
+                  {/* Book Header - Clickable */}
+                  <button
+                    onClick={() => toggleBook(book._id)}
+                    className="w-full p-6 flex items-center justify-between hover:bg-gray-800/50 transition"
+                  >
+                    <div className="flex items-center gap-4 flex-1 text-left">
+                      {book.thumbnailUrl && (
+                        <img
+                          src={book.thumbnailUrl}
+                          alt={book.title}
+                          className="w-20 h-20 object-cover rounded-lg"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-1">{book.title}</h3>
+                        <p className="text-gray-400 text-sm mb-2">{book.description}</p>
+                        <div className="flex gap-2 flex-wrap">
+                          <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
+                            {book.category}
                           </span>
-                        )}
-                        {book.chapters && (
-                          <span className="px-3 py-1 bg-cyan-900/50 border border-cyan-500 text-cyan-400 rounded-full text-xs">
-                            {book.chapters.length} Chapters
-                          </span>
-                        )}
+                          {book.author && (
+                            <span className="px-3 py-1 bg-gray-800 text-gray-400 rounded-full text-xs">
+                              <i className="fas fa-user mr-1"></i>
+                              {book.author}
+                            </span>
+                          )}
+                          {book.chapters && (
+                            <span className="px-3 py-1 bg-cyan-900/50 border border-cyan-500 text-cyan-400 rounded-full text-xs">
+                              {book.chapters.length} Chapters
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <i className={`fas fa-chevron-${expandedBooks[book._id] ? 'up' : 'down'} text-purple-400 text-xl`}></i>
-                </button>
+                    <i className={`fas fa-chevron-${expandedBooks[book._id] ? 'up' : 'down'} text-purple-400 text-xl`}></i>
+                  </button>
 
-                {/* Chapters List - Expandable */}
-                {expandedBooks[book._id] && book.chapters && book.chapters.length > 0 && (
-                  <div className="border-t border-gray-700 bg-gray-900/30 p-4">
-                    <div className="space-y-3">
-                      {book.chapters.map((chapter, chapterIndex) => {
-                        const chapterId = `${book._id}-${chapterIndex}`;
-                        return (
-                          <div key={chapterIndex} className="bg-gray-800/50 rounded-lg overflow-hidden">
-                            {/* Chapter Header - Clickable */}
-                            <button
-                              onClick={() => toggleChapter(chapterId)}
-                              className="w-full p-4 flex items-center justify-between hover:bg-gray-700/50 transition"
-                            >
-                              <div className="flex items-center gap-3">
-                                <i className={`fas fa-chevron-${expandedChapters[chapterId] ? 'down' : 'right'} text-cyan-400`}></i>
-                                <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-xs font-bold mr-2">
-                                  Ch {chapterIndex + 1}
+                  {/* Chapters List - Expandable */}
+                  {expandedBooks[book._id] && book.chapters && book.chapters.length > 0 && (
+                    <div className="border-t border-gray-700 bg-gray-900/30 p-4">
+                      <div className="space-y-3">
+                        {book.chapters.map((chapter, chapterIndex) => {
+                          const chapterId = `${book._id}-${chapterIndex}`;
+                          return (
+                            <div key={chapterIndex} className="bg-gray-800/50 rounded-lg overflow-hidden">
+                              {/* Chapter Header - Clickable */}
+                              <button
+                                onClick={() => toggleChapter(chapterId)}
+                                className="w-full p-4 flex items-center justify-between hover:bg-gray-700/50 transition"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <i className={`fas fa-chevron-${expandedChapters[chapterId] ? 'down' : 'right'} text-cyan-400`}></i>
+                                  <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-xs font-bold mr-2">
+                                    Ch {chapterIndex + 1}
+                                  </span>
+                                  <span className="text-white font-semibold">{chapter.title}</span>
+                                </div>
+                                <span className="text-xs text-gray-400">
+                                  {chapter.topics?.length || 0} topics
                                 </span>
-                                <span className="text-white font-semibold">{chapter.title}</span>
-                              </div>
-                              <span className="text-xs text-gray-400">
-                                {chapter.topics?.length || 0} topics
-                              </span>
-                            </button>
+                              </button>
 
-                            {/* Topics List with Audio Players */}
-                            {expandedChapters[chapterId] && chapter.topics && chapter.topics.length > 0 && (
-                              <div className="bg-gray-900/50 p-4 space-y-3">
-                                {chapter.topics.map((topic, topicIndex) => (
-                                  <div key={topicIndex} className="bg-gray-800 rounded-lg p-4">
-                                    <div className="flex items-start gap-3 mb-3">
-                                      <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs font-bold mt-1">
-                                        {topicIndex + 1}
-                                      </span>
-                                      <i className="fas fa-headphones text-purple-400 mt-1"></i>
-                                      <div className="flex-1">
-                                        <h5 className="text-white font-semibold mb-1">{topic.title}</h5>
-                                        {topic.description && (
-                                          <p className="text-gray-400 text-sm mb-2">{topic.description}</p>
-                                        )}
-                                        {topic.duration && (
-                                          <span className="text-xs text-gray-500">
-                                            <i className="fas fa-clock mr-1"></i>
-                                            {topic.duration}
-                                          </span>
-                                        )}
+                              {/* Topics List with Audio Players */}
+                              {expandedChapters[chapterId] && chapter.topics && chapter.topics.length > 0 && (
+                                <div className="bg-gray-900/50 p-4 space-y-3">
+                                  {chapter.topics.map((topic, topicIndex) => (
+                                    <div key={topicIndex} className="bg-gray-800 rounded-lg p-4">
+                                      <div className="flex items-start gap-3 mb-3">
+                                        <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs font-bold mt-1">
+                                          {topicIndex + 1}
+                                        </span>
+                                        <i className="fas fa-headphones text-purple-400 mt-1"></i>
+                                        <div className="flex-1">
+                                          <h5 className="text-white font-semibold mb-1">{topic.title}</h5>
+                                          {topic.description && (
+                                            <p className="text-gray-400 text-sm mb-2">{topic.description}</p>
+                                          )}
+                                          {topic.duration && (
+                                            <span className="text-xs text-gray-500">
+                                              <i className="fas fa-clock mr-1"></i>
+                                              {topic.duration}
+                                            </span>
+                                          )}
+                                        </div>
                                       </div>
+                                      {/* Audio Player */}
+                                      {topic.audioUrl && (
+                                        <audio
+                                          controls
+                                          controlsList="nodownload"
+                                          className="w-full mt-2"
+                                          style={{
+                                            height: '40px',
+                                            borderRadius: '8px'
+                                          }}
+                                        >
+                                          <source src={topic.audioUrl} type="audio/mpeg" />
+                                          Your browser does not support the audio element.
+                                        </audio>
+                                      )}
                                     </div>
-                                    {/* Audio Player */}
-                                    {topic.audioUrl && (
-                                      <audio
-                                        controls
-                                        controlsList="nodownload"
-                                        className="w-full mt-2"
-                                        style={{
-                                          height: '40px',
-                                          borderRadius: '8px'
-                                        }}
-                                      >
-                                        <source src={topic.audioUrl} type="audio/mpeg" />
-                                        Your browser does not support the audio element.
-                                      </audio>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </>
         )}
       </div>
     </div>
