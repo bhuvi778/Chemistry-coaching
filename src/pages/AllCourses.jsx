@@ -270,8 +270,8 @@ const AllCourses = () => {
                                             onClick={() => paginate(currentPage - 1)}
                                             disabled={currentPage === 1}
                                             className={`px-4 py-2 rounded-lg font-semibold transition ${currentPage === 1
-                                                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                                                    : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]'
+                                                ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                                                : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]'
                                                 }`}
                                         >
                                             <i className="fas fa-chevron-left mr-2"></i>
@@ -293,8 +293,8 @@ const AllCourses = () => {
                                                             key={pageNumber}
                                                             onClick={() => paginate(pageNumber)}
                                                             className={`w-10 h-10 rounded-lg font-bold transition ${currentPage === pageNumber
-                                                                    ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.5)]'
-                                                                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                                                                ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.5)]'
+                                                                : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
                                                                 }`}
                                                         >
                                                             {pageNumber}
@@ -315,8 +315,8 @@ const AllCourses = () => {
                                             onClick={() => paginate(currentPage + 1)}
                                             disabled={currentPage === totalPages}
                                             className={`px-4 py-2 rounded-lg font-semibold transition ${currentPage === totalPages
-                                                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                                                    : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]'
+                                                ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                                                : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]'
                                                 }`}
                                         >
                                             Next
@@ -326,6 +326,43 @@ const AllCourses = () => {
                                 )}
                             </>
                         )}
+                    </div>
+                </div>
+
+                {/* Focus Test Series Section */}
+                <div className="mt-16 mb-8">
+                    <div className="glass-panel rounded-2xl p-8 border border-cyan-500/30">
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center">
+                                    <i className="fas fa-clipboard-check text-3xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-bold text-white mb-1">Focus Test Series</h3>
+                                    <p className="text-gray-400">Practice with our comprehensive test series platform</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <a
+                                    href="https://candidatea.speedexam.net/register.aspx?site=ace2examz"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition transform hover:scale-105"
+                                >
+                                    <i className="fas fa-user-plus mr-2"></i>
+                                    Register
+                                </a>
+                                <a
+                                    href="https://candidate.speedexam.net/signin.aspx?site=ace2examz"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-8 py-3 border-2 border-cyan-400 text-cyan-400 font-bold rounded-lg hover:bg-cyan-400 hover:text-black transition"
+                                >
+                                    <i className="fas fa-sign-in-alt mr-2"></i>
+                                    Login
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

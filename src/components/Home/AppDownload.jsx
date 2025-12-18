@@ -9,7 +9,7 @@ const AppDownload = () => {
 
   const handleGetLink = async (e) => {
     e.preventDefault();
-    
+
     if (mobileNumber.length < 10) {
       setMessage('Please enter a valid 10-digit mobile number');
       setTimeout(() => setMessage(''), 3000);
@@ -18,7 +18,7 @@ const AppDownload = () => {
 
     try {
       setMessage('Sending link...');
-      
+
       // Use Vercel API route
       const response = await fetch('/api/send-app-link', {
         method: 'POST',
@@ -54,7 +54,7 @@ const AppDownload = () => {
           {/* Left Side - Text Content */}
           <div>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Get link in SMS to download the app
+              Get link in WhatsApp to download the app
             </h2>
             <p className="text-gray-400 text-lg mb-8">
               Download the Ace2Examz app and start learning on the go. Access all courses, live classes, and study materials from your mobile device.
@@ -65,7 +65,7 @@ const AppDownload = () => {
               <div className="flex flex-col sm:flex-row gap-3">
                 {/* Country Code Dropdown */}
                 <div className="relative">
-                  <select 
+                  <select
                     value={countryCode}
                     onChange={(e) => setCountryCode(e.target.value)}
                     className="w-full sm:w-28 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 appearance-none cursor-pointer"
@@ -79,7 +79,7 @@ const AppDownload = () => {
                 </div>
 
                 {/* Mobile Number Input */}
-                <input 
+                <input
                   type="tel"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, ''))}
@@ -90,14 +90,14 @@ const AppDownload = () => {
                 />
 
                 {/* Get Link Button */}
-                <button 
+                <button
                   type="submit"
                   className="bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 text-white font-bold px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg whitespace-nowrap"
                 >
                   Get the link
                 </button>
               </div>
-              
+
               {/* Success/Error Message */}
               {message && (
                 <div className={`mt-3 text-sm ${message.includes('sent') ? 'text-green-400' : 'text-red-400'}`}>
@@ -108,15 +108,15 @@ const AppDownload = () => {
             </form>
 
             {/* Play Store Button */}
-            <a 
-              href="https://play.google.com/store/apps/details?id=com.ace2examzapp.android&hl=en_IN" 
-              target="_blank" 
+            <a
+              href="https://play.google.com/store/apps/details?id=com.ace2examzapp.android&hl=en_IN"
+              target="_blank"
               rel="noopener noreferrer"
               className="inline-block hover:scale-105 transition-transform duration-300"
             >
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
-                alt="Get it on Google Play" 
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                alt="Get it on Google Play"
                 className="h-14 w-auto"
               />
             </a>
@@ -127,22 +127,22 @@ const AppDownload = () => {
             <div className="relative w-full max-w-md h-[500px]">
               {/* Image 07 - Background Layer */}
               <div className="absolute left-0 top-0 w-3/5 h-full">
-                <img 
-                  src="/07.png" 
-                  alt="App Download" 
+                <img
+                  src="/07.png"
+                  alt="App Download"
                   className="w-full h-full object-contain drop-shadow-2xl"
                 />
               </div>
-              
+
               {/* Image 09 - Foreground Layer (Overlapping on the right) */}
               <div className="absolute right-0 top-0 w-3/5 h-full">
-                <img 
-                  src="/09.png" 
-                  alt="App Features" 
+                <img
+                  src="/09.png"
+                  alt="App Features"
                   className="w-full h-full object-contain drop-shadow-2xl"
                 />
               </div>
-              
+
               {/* Decorative Elements */}
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-cyan-500/20 rounded-full blur-2xl"></div>
               <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl"></div>

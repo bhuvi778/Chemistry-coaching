@@ -46,9 +46,9 @@ const BookMeeting = () => {
                     </p>
                 </div>
 
-                {/* Main Content - Two Column Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                    {/* Left Column - Zoho Bookings Iframe */}
+                {/* Main Content - Stacked Layout */}
+                <div className="space-y-8">
+                    {/* Zoho Bookings Iframe Section */}
                     <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg border border-gray-200'} rounded-lg overflow-hidden`} style={{ minHeight: '750px' }}>
                         <iframe
                             width='100%'
@@ -61,70 +61,76 @@ const BookMeeting = () => {
                         />
                     </div>
 
-                    {/* Right Column - Webinar Cards */}
-                    <div className="space-y-6">
-                        {webinarCards.length > 0 ? (
-                            webinarCards.map((card) => (
-                                <div key={card._id} className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-lg overflow-hidden hover:shadow-xl transition-shadow`}>
-                                    <div className="flex flex-col sm:flex-row">
-                                        {/* Card Image */}
-                                        <div className="sm:w-1/3 h-48 sm:h-auto">
-                                            <img
-                                                src={card.image}
-                                                alt={card.title}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
+                    {/* Webinar Cards Section */}
+                    <div>
+                        <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6`}>
+                            <i className="fas fa-graduation-cap text-blue-600 mr-3"></i>
+                            Upcoming Programs & Webinars
+                        </h2>
+                        <div className="space-y-6">
+                            {webinarCards.length > 0 ? (
+                                webinarCards.map((card) => (
+                                    <div key={card._id} className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-lg overflow-hidden hover:shadow-xl transition-shadow`}>
+                                        <div className="flex flex-col sm:flex-row">
+                                            {/* Card Image */}
+                                            <div className="sm:w-1/3 h-48 sm:h-auto">
+                                                <img
+                                                    src={card.image}
+                                                    alt={card.title}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
 
-                                        {/* Card Content */}
-                                        <div className="sm:w-2/3 p-6">
-                                            {card.subtitle && (
-                                                <div className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full mb-2">
-                                                    {card.subtitle}
-                                                </div>
-                                            )}
-                                            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
-                                                {card.title}
-                                            </h3>
-                                            <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                {card.description}
-                                            </p>
+                                            {/* Card Content */}
+                                            <div className="sm:w-2/3 p-6">
+                                                {card.subtitle && (
+                                                    <div className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full mb-2">
+                                                        {card.subtitle}
+                                                    </div>
+                                                )}
+                                                <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
+                                                    {card.title}
+                                                </h3>
+                                                <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                    {card.description}
+                                                </p>
 
-                                            {/* Date and Time */}
-                                            {(card.date || card.time) && (
-                                                <div className="mb-4 space-y-1">
-                                                    {card.date && (
-                                                        <p className={`text-sm flex items-center gap-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                                                            <i className="fas fa-calendar text-blue-600"></i>
-                                                            {card.date}
-                                                        </p>
-                                                    )}
-                                                    {card.time && (
-                                                        <p className={`text-sm flex items-center gap-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                                                            <i className="fas fa-clock text-blue-600"></i>
-                                                            {card.time}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
+                                                {/* Date and Time */}
+                                                {(card.date || card.time) && (
+                                                    <div className="mb-4 space-y-1">
+                                                        {card.date && (
+                                                            <p className={`text-sm flex items-center gap-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                <i className="fas fa-calendar text-blue-600"></i>
+                                                                {card.date}
+                                                            </p>
+                                                        )}
+                                                        {card.time && (
+                                                            <p className={`text-sm flex items-center gap-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                <i className="fas fa-clock text-blue-600"></i>
+                                                                {card.time}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
 
-                                            {/* Register Button */}
-                                            <a
-                                                href={card.buttonLink}
-                                                className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition-colors duration-200"
-                                            >
-                                                {card.buttonText}
-                                            </a>
+                                                {/* Register Button */}
+                                                <a
+                                                    href={card.buttonLink}
+                                                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition-colors duration-200"
+                                                >
+                                                    {card.buttonText}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
+                                ))
+                            ) : (
+                                <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-lg p-12 text-center`}>
+                                    <i className={`fas fa-inbox text-6xl ${isDark ? 'text-gray-700' : 'text-gray-300'} mb-4`}></i>
+                                    <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No programs available at the moment</p>
                                 </div>
-                            ))
-                        ) : (
-                            <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-lg p-12 text-center`}>
-                                <i className={`fas fa-inbox text-6xl ${isDark ? 'text-gray-700' : 'text-gray-300'} mb-4`}></i>
-                                <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No programs available at the moment</p>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                 </div>
 

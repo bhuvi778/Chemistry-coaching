@@ -5,6 +5,7 @@ import Pagination from '../components/UI/Pagination';
 const Lectures = () => {
   const { videos } = useData();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedExam, setSelectedExam] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = 12;
 
@@ -17,14 +18,16 @@ const Lectures = () => {
     { id: 'other', name: 'Other Topics', icon: 'fa-star' }
   ];
 
-  // Reset to page 1 when category changes
+  // Reset to page 1 when category or exam changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedExam]);
 
-  const filteredVideos = selectedCategory === 'all'
-    ? videos
-    : videos.filter(video => video.category === selectedCategory);
+  const filteredVideos = videos.filter(video => {
+    const categoryMatch = selectedCategory === 'all' || video.category === selectedCategory;
+    const examMatch = selectedExam === 'all' || video.examType === selectedExam;
+    return categoryMatch && examMatch;
+  });
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
@@ -61,21 +64,73 @@ const Lectures = () => {
           </a>
         </div>
 
-        {/* Category Filter Tabs */}
-        <div className="flex flex-wrap justify-center gap-3">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${selectedCategory === category.id
-                ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white shadow-lg scale-105'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700 hover:text-white'
-                }`}
-            >
-              <i className={`fas ${category.icon}`}></i>
-              {category.name}
-            </button>
-          ))}
+        {/* Filter Panel */}
+        <div className="glass-panel rounded-2xl p-6 mb-8">
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <i className="fas fa-filter text-red-400"></i>
+            Filter Video Lectures
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Exam Type Dropdown */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-3">
+                <i className="fas fa-graduation-cap mr-2 text-red-400"></i>
+                Filter by Exam
+              </label>
+              <select
+                value={selectedExam}
+                onChange={(e) => setSelectedExam(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-red-400 transition"
+              >
+                <option value="all">All Exams</option>
+                <optgroup label="Engineering Entrance">
+                  <option value="JEE">JEE (Main & Advanced)</option>
+                  <option value="GATE">GATE</option>
+                </optgroup>
+                <optgroup label="Medical Entrance">
+                  <option value="NEET">NEET</option>
+                  <option value="AIIMS">AIIMS</option>
+                </optgroup>
+                <optgroup label="Science Entrance">
+                  <option value="IAT">IAT (IISER Aptitude Test)</option>
+                  <option value="NEST">NEST (National Entrance Screening Test)</option>
+                  <option value="KVPY">KVPY (Kishore Vaigyanik Protsahan Yojana)</option>
+                  <option value="TIFR">TIFR (Tata Institute)</option>
+                </optgroup>
+                <optgroup label="Post Graduate">
+                  <option value="CSIR NET">CSIR NET</option>
+                  <option value="IIT JAM">IIT JAM</option>
+                </optgroup>
+                <optgroup label="Other Competitive">
+                  <option value="OLYMPIAD">Olympiad (Chemistry/Physics/Math)</option>
+                  <option value="CUET">CUET (Common University Entrance Test)</option>
+                </optgroup>
+                <optgroup label="School Level">
+                  <option value="BOARDS">Board Exams (CBSE/State - 11th/12th)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            {/* Chemistry Category Dropdown */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-3">
+                <i className="fas fa-flask mr-2 text-blue-400"></i>
+                Filter by Chemistry Type
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-blue-400 transition"
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </section>
 

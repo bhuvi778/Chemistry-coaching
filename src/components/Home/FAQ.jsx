@@ -14,7 +14,7 @@ const FAQ = () => {
     },
     {
       question: "What is the fee structure?",
-      answer: "Our fees vary based on the course and batch type. For Class 11-12 programs, fees range from ₹40,000 to ₹55,000 per year. We also offer flexible payment plans and scholarship opportunities for deserving students."
+      answer: "Our fees vary based on the course and batch type.For programs, fees range from ₹149 to ₹1,50,000 per year. We also offer flexible payment plans and scholarship opportunities for deserving students."
     },
     {
       question: "Is Ace2examz AI free to use?",
@@ -55,27 +55,24 @@ const FAQ = () => {
 
       <div className="space-y-4">
         {faqs.map((faq, index) => (
-          <div 
+          <div
             key={index}
-            className={`glass-panel rounded-xl overflow-hidden border-2 transition-all duration-300 ${
-              openIndex === index ? 'border-cyan-400 shadow-[0_0_20px_rgba(0,243,255,0.3)]' : 'border-gray-700'
-            }`}
+            className={`glass-panel rounded-xl overflow-hidden border-2 transition-all duration-300 ${openIndex === index ? 'border-cyan-400 shadow-[0_0_20px_rgba(0,243,255,0.3)]' : 'border-gray-700'
+              }`}
           >
             <button
               onClick={() => toggleFAQ(index)}
               className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-800/30 transition"
             >
               <span className="text-lg font-bold text-white pr-8">{faq.question}</span>
-              <div className={`w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
-                openIndex === index ? 'rotate-180' : ''
-              }`}>
+              <div className={`w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
+                }`}>
                 <i className="fas fa-chevron-down text-cyan-400"></i>
               </div>
             </button>
-            
-            <div className={`overflow-hidden transition-all duration-300 ${
-              openIndex === index ? 'max-h-96' : 'max-h-0'
-            }`}>
+
+            <div className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-96' : 'max-h-0'
+              }`}>
               <div className="px-6 pb-5 pt-2 border-t border-gray-700">
                 <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
               </div>
@@ -88,17 +85,17 @@ const FAQ = () => {
         <h3 className="text-2xl font-bold text-white mb-3">Still have questions?</h3>
         <p className="text-gray-400 mb-6">Our counseling team is here to help you with any queries.</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a 
-            href="tel:+919876543210" 
+          <a
+            href="tel:+919876543210"
             className="px-6 py-3 bg-cyan-500 text-black font-bold rounded-lg hover:shadow-[0_0_20px_rgba(0,243,255,0.5)] transition inline-flex items-center justify-center"
           >
             <i className="fas fa-phone mr-2"></i>
             Call Now
           </a>
-          <a 
-            href="https://wa.me/919876543210?text=Hello%2C%20I%20want%20to%20know%20more%20about%20Reaction%20Lab%20courses" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href="https://wa.me/919876543210?text=Hello%2C%20I%20want%20to%20know%20more%20about%20Reaction%20Lab%20courses"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:shadow-[0_0_20px_rgba(34,197,94,0.5)] transition inline-flex items-center justify-center"
           >
             <i className="fab fa-whatsapp mr-2"></i>

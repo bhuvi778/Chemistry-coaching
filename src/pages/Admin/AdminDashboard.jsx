@@ -7,7 +7,6 @@ import ManageAudioBooks from './ManageAudioBooks';
 import ManageStudyMaterials from './ManageStudyMaterials';
 import ManageMagazines from './ManageMagazines';
 import ManageWebinarCards from './ManageWebinarCards';
-import MeetingRequests from './MeetingRequests';
 import ManageDoubts from './ManageDoubts';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
@@ -71,12 +70,7 @@ const AdminDashboard = () => {
             >
               <i className="fas fa-th-large mr-2"></i> Webinar Cards
             </button>
-            <button
-              onClick={() => setActiveTab('requests')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'requests' ? 'bg-yellow-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-calendar-alt mr-2"></i> Meeting Requests
-            </button>
+
             <button
               onClick={() => setActiveTab('doubts')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'doubts' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
@@ -106,7 +100,6 @@ const AdminDashboard = () => {
           {activeTab === 'materials' && <ManageStudyMaterials />}
           {activeTab === 'magazines' && <ManageMagazines />}
           {activeTab === 'webinar-cards' && <ManageWebinarCards />}
-          {activeTab === 'requests' && <MeetingRequests />}
           {activeTab === 'doubts' && <ManageDoubts />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}

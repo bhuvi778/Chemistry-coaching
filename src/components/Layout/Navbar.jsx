@@ -194,7 +194,6 @@ const Navbar = () => {
             <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
             </Link>
-            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Contact Us</Link>
           </div>
         </div>
       )}

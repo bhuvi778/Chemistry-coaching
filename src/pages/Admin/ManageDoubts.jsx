@@ -1,4 +1,35 @@
 import React, { useState, useEffect } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+// Quill editor configuration
+const quillModules = {
+    toolbar: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'font': [] }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'script': 'sub' }, { 'script': 'super' }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        [{ 'indent': '-1' }, { 'indent': '+1' }],
+        [{ 'align': [] }],
+        ['blockquote', 'code-block'],
+        ['link', 'image', 'video'],
+        ['clean']
+    ]
+};
+
+const quillFormats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike',
+    'color', 'background',
+    'script',
+    'list', 'bullet', 'indent',
+    'align',
+    'blockquote', 'code-block',
+    'link', 'image', 'video'
+];
 
 const ManageDoubts = () => {
     const [doubts, setDoubts] = useState([]);
@@ -103,8 +134,8 @@ const ManageDoubts = () => {
                 <button
                     onClick={() => setFilter('all')}
                     className={`px-4 py-2 rounded-lg transition ${filter === 'all'
-                            ? 'bg-cyan-500 text-black font-bold'
-                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                        ? 'bg-cyan-500 text-black font-bold'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                         }`}
                 >
                     All ({doubts.length})
@@ -112,8 +143,8 @@ const ManageDoubts = () => {
                 <button
                     onClick={() => setFilter('pending')}
                     className={`px-4 py-2 rounded-lg transition ${filter === 'pending'
-                            ? 'bg-yellow-500 text-black font-bold'
-                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                        ? 'bg-yellow-500 text-black font-bold'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                         }`}
                 >
                     Pending ({doubts.filter(d => d.status === 'pending').length})
@@ -121,8 +152,8 @@ const ManageDoubts = () => {
                 <button
                     onClick={() => setFilter('answered')}
                     className={`px-4 py-2 rounded-lg transition ${filter === 'answered'
-                            ? 'bg-green-500 text-black font-bold'
-                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                        ? 'bg-green-500 text-black font-bold'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                         }`}
                 >
                     Answered ({doubts.filter(d => d.status === 'answered').length})
@@ -141,14 +172,22 @@ const ManageDoubts = () => {
                         </p>
                     </div>
                     <form onSubmit={handleSubmitAnswer}>
-                        <textarea
-                            value={answerText}
-                            onChange={(e) => setAnswerText(e.target.value)}
-                            required
-                            rows="6"
-                            placeholder="Type your answer here..."
-                            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 mb-4"
-                        />
+                        <div className="mb-4">
+                            <label className="block text-white font-semibold mb-2">
+                                Your Answer
+                            </label>
+                            <div className="bg-white rounded-lg">
+                                <ReactQuill
+                                    theme="snow"
+                                    value={answerText}
+                                    onChange={setAnswerText}
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    placeholder="Type your answer here... Use the toolbar to format text, add lists, links, etc."
+                                    style={{ height: '300px', marginBottom: '50px' }}
+                                />
+                            </div>
+                        </div>
                         <div className="flex gap-3">
                             <button
                                 type="submit"
@@ -191,8 +230,8 @@ const ManageDoubts = () => {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2">
                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${doubt.status === 'answered'
-                                                ? 'bg-green-500/20 text-green-400'
-                                                : 'bg-yellow-500/20 text-yellow-400'
+                                            ? 'bg-green-500/20 text-green-400'
+                                            : 'bg-yellow-500/20 text-yellow-400'
                                             }`}>
                                             {doubt.status === 'answered' ? 'Answered' : 'Pending'}
                                         </span>
@@ -219,7 +258,10 @@ const ManageDoubts = () => {
                             {doubt.answer && (
                                 <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4 mb-4">
                                     <p className="text-green-400 font-semibold mb-2">Answer:</p>
-                                    <p className="text-gray-300">{doubt.answer}</p>
+                                    <div
+                                        className="text-gray-300 prose prose-invert max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: doubt.answer }}
+                                    />
                                 </div>
                             )}
 
@@ -236,8 +278,8 @@ const ManageDoubts = () => {
                                     <button
                                         onClick={() => handleTogglePublish(doubt)}
                                         className={`px-4 py-2 rounded-lg transition text-sm ${doubt.isPublished
-                                                ? 'bg-orange-500/20 text-orange-400 hover:bg-orange-500 hover:text-white'
-                                                : 'bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white'
+                                            ? 'bg-orange-500/20 text-orange-400 hover:bg-orange-500 hover:text-white'
+                                            : 'bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white'
                                             }`}
                                     >
                                         <i className={`fas ${doubt.isPublished ? 'fa-eye-slash' : 'fa-eye'} mr-2`}></i>

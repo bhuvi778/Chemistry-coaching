@@ -10,6 +10,14 @@ const Doubts = () => {
     const [filteredDoubts, setFilteredDoubts] = useState([]);
     const [showAskForm, setShowAskForm] = useState(false);
     const [showAll, setShowAll] = useState(false);
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+    const [selectedDoubt, setSelectedDoubt] = useState(null);
+    const [reactionType, setReactionType] = useState(null); // 'like' or 'dislike'
+    const [feedbackData, setFeedbackData] = useState({
+        name: '',
+        email: '',
+        feedback: ''
+    });
     const [formData, setFormData] = useState({
         studentName: '',
         studentEmail: '',
@@ -102,6 +110,38 @@ const Doubts = () => {
             alert('Failed to submit question. Please try again.');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleReaction = (doubt, type) => {
+        setSelectedDoubt(doubt);
+        setReactionType(type);
+        setShowFeedbackModal(true);
+    };
+
+    const handleFeedbackSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(`${API_URL}/doubts/${selectedDoubt._id}/reaction`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    reactionType,
+                    ...feedbackData
+                })
+            });
+
+            if (response.ok) {
+                alert('Thank you for your feedback!');
+                setShowFeedbackModal(false);
+                setFeedbackData({ name: '', email: '', feedback: '' });
+                setSelectedDoubt(null);
+                setReactionType(null);
+            }
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            alert('Failed to submit feedback. Please try again.');
         }
     };
 
@@ -317,11 +357,38 @@ const Doubts = () => {
                                                     <i className="fas fa-check text-green-400 text-sm"></i>
                                                 </div>
                                                 <div className="flex-1">
-                                                    <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
-                                                        {doubt.answer}
-                                                    </p>
+                                                    <div
+                                                        className={`${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed prose ${isDark ? 'prose-invert' : ''} max-w-none`}
+                                                        dangerouslySetInnerHTML={{ __html: doubt.answer }}
+                                                    />
                                                 </div>
                                             </div>
+                                        </div>
+
+                                        {/* Like/Dislike Buttons */}
+                                        <div className="mt-4 flex items-center gap-4 pt-4 border-t border-gray-700/30">
+                                            <button
+                                                onClick={() => handleReaction(doubt, 'like')}
+                                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${isDark
+                                                    ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20'
+                                                    : 'bg-green-50 text-green-600 hover:bg-green-100'
+                                                    }`}
+                                            >
+                                                <i className="fas fa-thumbs-up"></i>
+                                                <span className="font-semibold">Helpful</span>
+                                                {doubt.likes > 0 && <span className="text-sm">({doubt.likes})</span>}
+                                            </button>
+                                            <button
+                                                onClick={() => handleReaction(doubt, 'dislike')}
+                                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${isDark
+                                                    ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                                                    : 'bg-red-50 text-red-600 hover:bg-red-100'
+                                                    }`}
+                                            >
+                                                <i className="fas fa-thumbs-down"></i>
+                                                <span className="font-semibold">Not Helpful</span>
+                                                {doubt.dislikes > 0 && <span className="text-sm">({doubt.dislikes})</span>}
+                                            </button>
                                         </div>
                                     </div>
                                 ));
@@ -365,6 +432,108 @@ const Doubts = () => {
                         </div>
                     )}
                 </div>
+
+                {/* Feedback Modal */}
+                {showFeedbackModal && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                        <div className={`${isDark ? 'glass-panel' : 'bg-white'} rounded-xl p-8 max-w-md w-full`}>
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                    {reactionType === 'like' ? '👍 Thank you!' : '👎 Help us improve'}
+                                </h3>
+                                <button
+                                    onClick={() => {
+                                        setShowFeedbackModal(false);
+                                        setFeedbackData({ name: '', email: '', feedback: '' });
+                                    }}
+                                    className={`${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                                >
+                                    <i className="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+
+                            <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                {reactionType === 'like'
+                                    ? 'We\'re glad this answer helped you! Please share your feedback.'
+                                    : 'We\'re sorry this wasn\'t helpful. Please tell us how we can improve.'}
+                            </p>
+
+                            <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+                                <div>
+                                    <label className={`block mb-2 font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                        Your Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={feedbackData.name}
+                                        onChange={(e) => setFeedbackData({ ...feedbackData, name: e.target.value })}
+                                        className={`w-full px-4 py-2 rounded-lg border ${isDark
+                                            ? 'bg-gray-800 border-gray-700 text-white'
+                                            : 'bg-white border-gray-300 text-gray-900'
+                                            } focus:outline-none focus:ring-2 focus:ring-cyan-500`}
+                                        placeholder="Enter your name"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className={`block mb-2 font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        required
+                                        value={feedbackData.email}
+                                        onChange={(e) => setFeedbackData({ ...feedbackData, email: e.target.value })}
+                                        className={`w-full px-4 py-2 rounded-lg border ${isDark
+                                            ? 'bg-gray-800 border-gray-700 text-white'
+                                            : 'bg-white border-gray-300 text-gray-900'
+                                            } focus:outline-none focus:ring-2 focus:ring-cyan-500`}
+                                        placeholder="your@email.com"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className={`block mb-2 font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                        Feedback (Optional)
+                                    </label>
+                                    <textarea
+                                        value={feedbackData.feedback}
+                                        onChange={(e) => setFeedbackData({ ...feedbackData, feedback: e.target.value })}
+                                        rows="4"
+                                        className={`w-full px-4 py-2 rounded-lg border ${isDark
+                                            ? 'bg-gray-800 border-gray-700 text-white'
+                                            : 'bg-white border-gray-300 text-gray-900'
+                                            } focus:outline-none focus:ring-2 focus:ring-cyan-500`}
+                                        placeholder="Share your thoughts..."
+                                    ></textarea>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        type="submit"
+                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition"
+                                    >
+                                        Submit Feedback
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowFeedbackModal(false);
+                                            setFeedbackData({ name: '', email: '', feedback: '' });
+                                        }}
+                                        className={`px-6 py-3 rounded-lg font-bold transition ${isDark
+                                            ? 'bg-gray-700 text-white hover:bg-gray-600'
+                                            : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+                                            }`}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

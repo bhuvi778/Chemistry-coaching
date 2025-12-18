@@ -6,6 +6,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import ParticleCanvas from './components/UI/ParticleCanvas';
+import ContentProtection from './components/UI/ContentProtection';
 import Home from './pages/Home';
 import Contact from './pages/Contact';
 import About from './pages/About';
@@ -54,6 +55,7 @@ function AppContent() {
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
       <AdminAutoLogout />
+      <ContentProtection />
       <ParticleCanvas />
       <Navbar />
 
