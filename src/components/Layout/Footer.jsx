@@ -71,8 +71,8 @@ const Footer = () => {
                             <li><Link to="/study-materials" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-file-alt text-xs"></i> Study Notes</Link></li>
                             <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</Link></li>
                             <li><Link to="/lectures" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-play-circle text-xs"></i> Video Lectures</Link></li>
-                            <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-clipboard-check text-xs"></i> Test Series</Link></li>
-                            <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-book-open text-xs"></i> Solved Examples</Link></li>
+                            <li><Link to="/contact" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-question-circle text-xs"></i> Doubts</Link></li>
+                            <li><Link to="/book-meeting" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-calendar-check text-xs"></i> Book Your Meet</Link></li>
                         </ul>
                     </div>
 

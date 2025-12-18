@@ -19,6 +19,7 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import RefundPolicy from './pages/RefundPolicy';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import BookMeeting from './pages/BookMeeting';
 
 const ProtectedRoute = ({ children }) => {
   const { isAdmin } = useData();
@@ -34,7 +35,7 @@ function AppContent() {
       <ScrollToTop />
       <ParticleCanvas />
       <Navbar />
-      
+
       <div className="pt-20 flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -46,17 +47,18 @@ function AppContent() {
           <Route path="/magazines" element={<Magazines />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-            <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/book-meeting" element={<BookMeeting />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/admin" element={<AdminLogin />} />
-          <Route 
-            path="/admin/dashboard" 
+          <Route
+            path="/admin/dashboard"
             element={
               <ProtectedRoute>
                 <AdminDashboard />
               </ProtectedRoute>
-            } 
+            }
           />
         </Routes>
       </div>

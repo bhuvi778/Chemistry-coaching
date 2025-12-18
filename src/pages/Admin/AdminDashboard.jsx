@@ -7,6 +7,7 @@ import ManageAudioBooks from './ManageAudioBooks';
 import ManageStudyMaterials from './ManageStudyMaterials';
 import ManageMagazines from './ManageMagazines';
 import Enquiries from './Enquiries';
+import AdminSettings from './AdminSettings';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('courses');
@@ -67,6 +68,12 @@ const AdminDashboard = () => {
             >
               <i className="fas fa-envelope mr-2"></i> Enquiries & Contacts
             </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'settings' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-cog mr-2"></i> Settings
+            </button>
           </div>
         </div>
 
@@ -78,6 +85,7 @@ const AdminDashboard = () => {
           {activeTab === 'materials' && <ManageStudyMaterials />}
           {activeTab === 'magazines' && <ManageMagazines />}
           {activeTab === 'enquiries' && <Enquiries />}
+          {activeTab === 'settings' && <AdminSettings />}
         </div>
       </div>
     </div>

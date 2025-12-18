@@ -357,7 +357,11 @@ export const DataProvider = ({ children }) => {
   };
 
   const login = (username, password) => {
-    if (username === 'admin' && password === 'admin123') {
+    // Get stored credentials or use defaults
+    const storedUsername = localStorage.getItem('admin_username') || 'admin';
+    const storedPassword = localStorage.getItem('admin_password') || 'admin123';
+
+    if (username === storedUsername && password === storedPassword) {
       setIsAdmin(true);
       // Fetch enquiries and contacts immediately after login
       fetchEnquiriesAndContacts();
