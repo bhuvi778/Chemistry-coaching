@@ -182,18 +182,56 @@ const ManageWebinarCards = () => {
                             />
                         </div>
 
-                        {/* Image URL */}
+                        {/* Image Upload */}
                         <div>
-                            <label className="block text-gray-300 mb-2">Image URL *</label>
-                            <input
-                                type="url"
-                                name="image"
-                                value={formData.image}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
-                                placeholder="https://example.com/image.jpg"
-                            />
+                            <label className="block text-gray-300 mb-2">Card Image *</label>
+                            <div className="space-y-3">
+                                {formData.image && (
+                                    <div className="relative">
+                                        <img
+                                            src={formData.image}
+                                            alt="Preview"
+                                            className="w-full h-48 object-cover rounded-lg border border-gray-700"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                                            className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition text-sm"
+                                        >
+                                            <i className="fas fa-times mr-1"></i> Remove
+                                        </button>
+                                    </div>
+                                )}
+                                <div className="relative">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        image: reader.result
+                                                    }));
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                        className="hidden"
+                                        id="imageUpload"
+                                    />
+                                    <label
+                                        htmlFor="imageUpload"
+                                        className="block w-full px-4 py-8 bg-gray-800 border-2 border-dashed border-gray-700 rounded-lg text-center cursor-pointer hover:border-cyan-500 transition"
+                                    >
+                                        <i className="fas fa-cloud-upload-alt text-4xl text-gray-500 mb-2"></i>
+                                        <p className="text-gray-400">Click to upload image</p>
+                                        <p className="text-gray-600 text-sm mt-1">PNG, JPG, JPEG (Max 5MB)</p>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

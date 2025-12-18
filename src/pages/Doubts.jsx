@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import ParticleCanvas from '../components/UI/ParticleCanvas';
 
 const Doubts = () => {
     const { isDark } = useTheme();
@@ -104,18 +105,21 @@ const Doubts = () => {
     };
 
     return (
-        <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-            <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} relative`}>
+            {/* Particle Background */}
+            <ParticleCanvas />
+
+            <div className="max-w-6xl mx-auto px-4 py-8 relative z-10">
                 {/* Back Button */}
                 <div className="mb-6">
-                    <Link to="/" className={`${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'} flex items-center gap-2 transition`}>
+                    <Link to="/" className={`${isDark ? 'text-gray-400 hover:text-cyan-400' : 'text-gray-600 hover:text-gray-900'} flex items-center gap-2 transition`}>
                         <i className="fas fa-arrow-left"></i> Back to Home
                     </Link>
                 </div>
 
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h1 className={`text-4xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>
+                    <h1 className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>
                         <i className="fas fa-question-circle text-cyan-500 mr-3"></i>
                         Doubts & Questions
                     </h1>
@@ -125,24 +129,24 @@ const Doubts = () => {
                 </div>
 
                 {/* Search Bar with Ask Button */}
-                <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg'} rounded-xl p-6 mb-8`}>
-                    <div className="flex gap-3">
+                <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg border border-gray-200'} rounded-xl p-6 mb-8`}>
+                    <div className="flex gap-3 flex-col sm:flex-row">
                         <div className="flex-1 relative">
-                            <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <i className={`fas fa-search absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}></i>
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={handleSearchChange}
                                 placeholder="Search your question here..."
                                 className={`w-full pl-12 pr-4 py-4 ${isDark
-                                        ? 'bg-gray-800 border-gray-700 text-white'
-                                        : 'bg-gray-50 border-gray-300 text-gray-900'
-                                    } border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent`}
+                                    ? 'bg-gray-800/50 border-gray-700 text-white placeholder-gray-500'
+                                    : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400'
+                                    } border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition`}
                             />
                         </div>
                         <button
                             onClick={handleAskClick}
-                            className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition"
+                            className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition transform hover:scale-105"
                         >
                             <i className="fas fa-paper-plane mr-2"></i>
                             Ask
@@ -152,7 +156,7 @@ const Doubts = () => {
 
                 {/* Ask Question Form Modal */}
                 {showAskForm && (
-                    <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg'} rounded-xl p-8 mb-8`}>
+                    <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg border border-gray-200'} rounded-xl p-8 mb-8`}>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                 Submit Your Question
@@ -178,8 +182,8 @@ const Doubts = () => {
                                     onChange={handleFormChange}
                                     required
                                     className={`w-full px-4 py-3 ${isDark
-                                            ? 'bg-gray-800 border-gray-700 text-white'
-                                            : 'bg-white border-gray-300 text-gray-900'
+                                        ? 'bg-gray-800 border-gray-700 text-white'
+                                        : 'bg-white border-gray-300 text-gray-900'
                                         } border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500`}
                                 />
                             </div>
@@ -196,8 +200,8 @@ const Doubts = () => {
                                     onChange={handleFormChange}
                                     required
                                     className={`w-full px-4 py-3 ${isDark
-                                            ? 'bg-gray-800 border-gray-700 text-white'
-                                            : 'bg-white border-gray-300 text-gray-900'
+                                        ? 'bg-gray-800 border-gray-700 text-white'
+                                        : 'bg-white border-gray-300 text-gray-900'
                                         } border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500`}
                                 />
                             </div>
@@ -215,8 +219,8 @@ const Doubts = () => {
                                     required
                                     placeholder="+91 XXXXX XXXXX"
                                     className={`w-full px-4 py-3 ${isDark
-                                            ? 'bg-gray-800 border-gray-700 text-white'
-                                            : 'bg-white border-gray-300 text-gray-900'
+                                        ? 'bg-gray-800 border-gray-700 text-white'
+                                        : 'bg-white border-gray-300 text-gray-900'
                                         } border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500`}
                                 />
                             </div>
@@ -233,8 +237,8 @@ const Doubts = () => {
                                     required
                                     rows="4"
                                     className={`w-full px-4 py-3 ${isDark
-                                            ? 'bg-gray-800 border-gray-700 text-white'
-                                            : 'bg-white border-gray-300 text-gray-900'
+                                        ? 'bg-gray-800 border-gray-700 text-white'
+                                        : 'bg-white border-gray-300 text-gray-900'
                                         } border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500`}
                                 />
                             </div>
@@ -263,8 +267,8 @@ const Doubts = () => {
                                     type="button"
                                     onClick={() => setShowAskForm(false)}
                                     className={`px-6 py-3 ${isDark
-                                            ? 'bg-gray-700 hover:bg-gray-600'
-                                            : 'bg-gray-200 hover:bg-gray-300'
+                                        ? 'bg-gray-700 hover:bg-gray-600'
+                                        : 'bg-gray-200 hover:bg-gray-300'
                                         } ${isDark ? 'text-white' : 'text-gray-900'} font-semibold rounded-lg transition`}
                                 >
                                     Cancel
