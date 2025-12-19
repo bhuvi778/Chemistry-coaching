@@ -738,11 +738,20 @@ app.get('/api/crosswords/:id', async (req, res) => {
 // Add new crossword
 app.post('/api/crosswords', async (req, res) => {
   try {
+    console.log('Received crossword data:', req.body);
     const crossword = new Crossword(req.body);
     const newCrossword = await crossword.save();
+    console.log('Crossword saved successfully:', newCrossword._id);
     res.status(201).json(newCrossword);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error creating crossword:', error);
+    res.status(400).json({
+      message: error.message,
+      details: error.errors ? Object.keys(error.errors).map(key => ({
+        field: key,
+        message: error.errors[key].message
+      })) : []
+    });
   }
 });
 

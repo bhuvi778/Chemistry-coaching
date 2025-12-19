@@ -169,7 +169,12 @@ const ManageCrosswords = () => {
                 fetchCrosswords();
             } else {
                 const error = await response.json();
-                alert(`Error: ${error.message || 'Failed to save crossword'}`);
+                console.error('Server error:', error);
+                let errorMsg = error.message || 'Failed to save crossword';
+                if (error.details && error.details.length > 0) {
+                    errorMsg += '\n' + error.details.map(d => `${d.field}: ${d.message}`).join('\n');
+                }
+                alert(`Error: ${errorMsg}`);
             }
         } catch (error) {
             console.error('Error submitting crossword:', error);
@@ -211,11 +216,10 @@ const ManageCrosswords = () => {
                         />
                         <input
                             type="text"
-                            placeholder="Topic (e.g., Reaction Mechanisms)"
+                            placeholder="Topic (Optional)"
                             value={formData.topic}
                             onChange={e => setFormData({ ...formData, topic: e.target.value })}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
-                            required
                         />
                     </div>
 
