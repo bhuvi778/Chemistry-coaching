@@ -159,7 +159,7 @@ const StudyMaterials = () => {
             <p className="text-gray-400">Study materials will be available soon!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {filteredMaterials.map((material) => (
               <div key={material._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] transition-all duration-300">
                 {material.thumbnailUrl && (
