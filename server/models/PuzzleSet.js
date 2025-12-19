@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
-const crosswordSchema = new mongoose.Schema({
+const puzzleSetSchema = new mongoose.Schema({
+    setNumber: {
+        type: String,
+        required: true
+    },
     title: {
         type: String,
         required: true
@@ -39,9 +43,23 @@ const crosswordSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    crosswordUrl: {
+    // PDF for the puzzle set
+    setPdfUrl: {
         type: String,
         required: true
+    },
+    setPdfSize: {
+        type: String,
+        default: ''
+    },
+    // PDF for the answers
+    answerPdfUrl: {
+        type: String,
+        required: true
+    },
+    answerPdfSize: {
+        type: String,
+        default: ''
     },
     createdAt: {
         type: Date,
@@ -49,4 +67,4 @@ const crosswordSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Crossword', crosswordSchema);
+module.exports = mongoose.model('PuzzleSet', puzzleSetSchema);

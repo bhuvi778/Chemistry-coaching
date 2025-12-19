@@ -4,12 +4,14 @@ import { Link } from 'react-router-dom';
 const Puzzle = () => {
     const [selectedExam, setSelectedExam] = useState('all');
     const [crosswords, setCrosswords] = useState([]);
+    const [puzzleSets, setPuzzleSets] = useState([]);
     const [selectedChapter, setSelectedChapter] = useState('all');
     const [loading, setLoading] = useState(true);
 
-    // Fetch crosswords
+    // Fetch crosswords and puzzle sets
     useEffect(() => {
         fetchCrosswords();
+        fetchPuzzleSets();
     }, []);
 
     const fetchCrosswords = async () => {
@@ -24,6 +26,16 @@ const Puzzle = () => {
         }
     };
 
+    const fetchPuzzleSets = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/puzzle-sets`);
+            const data = await response.json();
+            setPuzzleSets(data);
+        } catch (error) {
+            console.error('Error fetching puzzle sets:', error);
+        }
+    };
+
     // Filter crosswords
     const filteredCrosswords = crosswords.filter(crossword => {
         const examMatch = selectedExam === 'all' || crossword.examType === selectedExam;
@@ -31,8 +43,16 @@ const Puzzle = () => {
         return examMatch && chapterMatch;
     });
 
-    // Get unique chapters
-    const chapters = ['all', ...new Set(crosswords.map(c => c.chapter))];
+    // Filter puzzle sets
+    const filteredPuzzleSets = puzzleSets.filter(puzzleSet => {
+        const examMatch = selectedExam === 'all' || puzzleSet.examType === selectedExam;
+        const chapterMatch = selectedChapter === 'all' || puzzleSet.chapter === selectedChapter;
+        return examMatch && chapterMatch;
+    });
+
+    // Get unique chapters from both
+    const allChapters = [...new Set([...crosswords.map(c => c.chapter), ...puzzleSets.map(p => p.chapter)])];
+    const chapters = ['all', ...allChapters];
 
     return (
         <div className="animate-fadeIn min-h-screen">
@@ -47,10 +67,10 @@ const Puzzle = () => {
                 <div className="text-center mb-12">
                     <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
                         <i className="fas fa-th mr-3"></i>
-                        Chemistry Crossword Puzzles
+                        Chemistry Puzzles
                     </h1>
                     <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                        Download crossword puzzles and their answers to test your chemistry knowledge
+                        Interactive crosswords and downloadable puzzle sets to test your chemistry knowledge
                     </p>
                 </div>
 
@@ -100,12 +120,12 @@ const Puzzle = () => {
                     </div>
                 </div>
 
-                {/* Crossword Cards */}
-                <div>
+                {/* ==================== INTERACTIVE CROSSWORDS SECTION ==================== */}
+                <div className="mb-16">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-3xl font-bold text-white flex items-center gap-3">
                             <i className="fas fa-th text-cyan-400"></i>
-                            Crossword Puzzle Sets
+                            Interactive Crosswords
                         </h2>
                         <span className="px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-full text-sm font-semibold">
                             {filteredCrosswords.length} Available
@@ -115,34 +135,103 @@ const Puzzle = () => {
                     {loading ? (
                         <div className="text-center py-20">
                             <i className="fas fa-spinner fa-spin text-6xl text-cyan-400 mb-4"></i>
-                            <p className="text-gray-400 text-xl">Loading puzzles...</p>
+                            <p className="text-gray-400 text-xl">Loading crosswords...</p>
                         </div>
                     ) : filteredCrosswords.length === 0 ? (
                         <div className="text-center py-20 glass-panel rounded-2xl">
                             <i className="fas fa-th text-6xl text-gray-600 mb-4"></i>
-                            <h3 className="text-2xl font-bold text-white mb-2">No Puzzles Found</h3>
+                            <h3 className="text-2xl font-bold text-white mb-2">No Interactive Crosswords Found</h3>
                             <p className="text-gray-400">
                                 {selectedExam !== 'all' || selectedChapter !== 'all'
                                     ? 'Try changing your filters'
-                                    : 'Crossword puzzles will be available soon!'}
+                                    : 'Interactive crosswords will be available soon!'}
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredCrosswords.map((crossword) => (
+                                <div key={crossword._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300 group">
+                                    {crossword.thumbnailUrl && (
+                                        <div className="w-full aspect-[16/9] overflow-hidden relative">
+                                            <img
+                                                src={crossword.thumbnailUrl}
+                                                alt={crossword.title}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="p-6">
+                                        <h3 className="text-xl font-bold text-white mb-2">{crossword.title}</h3>
+                                        {crossword.description && (
+                                            <p className="text-gray-400 text-sm mb-4">{crossword.description}</p>
+                                        )}
+                                        <div className="flex gap-2 mb-4 flex-wrap">
+                                            <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
+                                                {crossword.chapter}
+                                            </span>
+                                            {crossword.topic && (
+                                                <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
+                                                    {crossword.topic}
+                                                </span>
+                                            )}
+                                            <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
+                                                {crossword.examType}
+                                            </span>
+                                        </div>
+                                        <a
+                                            href={crossword.crosswordUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold"
+                                        >
+                                            <i className="fas fa-play"></i>
+                                            Play Crossword
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* ==================== PUZZLE PDF SETS SECTION ==================== */}
+                <div className="mb-16">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-3xl font-bold text-white flex items-center gap-3">
+                            <i className="fas fa-puzzle-piece text-orange-400"></i>
+                            Downloadable Puzzle Sets
+                        </h2>
+                        <span className="px-4 py-2 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
+                            {filteredPuzzleSets.length} Available
+                        </span>
+                    </div>
+
+                    {filteredPuzzleSets.length === 0 ? (
+                        <div className="text-center py-20 glass-panel rounded-2xl">
+                            <i className="fas fa-puzzle-piece text-6xl text-gray-600 mb-4"></i>
+                            <h3 className="text-2xl font-bold text-white mb-2">No Puzzle Sets Found</h3>
+                            <p className="text-gray-400">
+                                {selectedExam !== 'all' || selectedChapter !== 'all'
+                                    ? 'Try changing your filters'
+                                    : 'Puzzle sets will be available soon!'}
                             </p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {filteredCrosswords.map((crossword) => (
-                                <div key={crossword._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300">
+                            {filteredPuzzleSets.map((puzzleSet) => (
+                                <div key={puzzleSet._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(251,146,60,0.3)] transition-all duration-300">
                                     {/* Circle Image */}
                                     <div className="flex justify-center mb-6">
-                                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-cyan-400 shadow-lg">
-                                            {crossword.thumbnailUrl ? (
+                                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-orange-400 shadow-lg">
+                                            {puzzleSet.thumbnailUrl ? (
                                                 <img
-                                                    src={crossword.thumbnailUrl}
-                                                    alt={crossword.title}
+                                                    src={puzzleSet.thumbnailUrl}
+                                                    alt={puzzleSet.title}
                                                     className="w-full h-full object-cover"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                                                    <i className="fas fa-th text-white text-4xl"></i>
+                                                <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+                                                    <i className="fas fa-puzzle-piece text-white text-4xl"></i>
                                                 </div>
                                             )}
                                         </div>
@@ -150,13 +239,13 @@ const Puzzle = () => {
 
                                     {/* Title */}
                                     <h3 className="text-white font-bold text-center mb-2 text-lg">
-                                        {crossword.title}
+                                        {puzzleSet.title}
                                     </h3>
 
                                     {/* Description */}
-                                    {crossword.description && (
+                                    {puzzleSet.description && (
                                         <p className="text-gray-400 text-sm text-center mb-4 line-clamp-2">
-                                            {crossword.description}
+                                            {puzzleSet.description}
                                         </p>
                                     )}
 
@@ -164,18 +253,18 @@ const Puzzle = () => {
                                     <div className="grid grid-cols-2 gap-3 mb-4">
                                         {/* Set PDF Button */}
                                         <a
-                                            href={crossword.setPdfUrl}
-                                            download={`${crossword.setNumber}.pdf`}
+                                            href={puzzleSet.setPdfUrl}
+                                            download={`${puzzleSet.setNumber}.pdf`}
                                             className="py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg text-center font-bold hover:from-cyan-600 hover:to-blue-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
                                         >
                                             <i className="fas fa-download"></i>
-                                            {crossword.setNumber}
+                                            {puzzleSet.setNumber}
                                         </a>
 
                                         {/* Answer PDF Button */}
                                         <a
-                                            href={crossword.answerPdfUrl}
-                                            download={`${crossword.setNumber}-Answers.pdf`}
+                                            href={puzzleSet.answerPdfUrl}
+                                            download={`${puzzleSet.setNumber}-Answers.pdf`}
                                             className="py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-center font-bold hover:from-green-600 hover:to-emerald-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
                                         >
                                             <i className="fas fa-check-circle"></i>
@@ -186,25 +275,25 @@ const Puzzle = () => {
                                     {/* Tags */}
                                     <div className="flex gap-2 justify-center flex-wrap">
                                         <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
-                                            {crossword.chapter}
+                                            {puzzleSet.chapter}
                                         </span>
-                                        {crossword.topic && (
+                                        {puzzleSet.topic && (
                                             <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
-                                                {crossword.topic}
+                                                {puzzleSet.topic}
                                             </span>
                                         )}
                                         <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
-                                            {crossword.examType}
+                                            {puzzleSet.examType}
                                         </span>
                                     </div>
 
                                     {/* Difficulty Badge */}
                                     <div className="mt-3 text-center">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${crossword.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
-                                                crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${puzzleSet.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
+                                                puzzleSet.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
                                                     'bg-red-500/20 text-red-400'
                                             }`}>
-                                            {crossword.difficulty}
+                                            {puzzleSet.difficulty}
                                         </span>
                                     </div>
                                 </div>

@@ -10,6 +10,7 @@ import ManageWebinarCards from './ManageWebinarCards';
 import ManageDoubts from './ManageDoubts';
 import ManageFeedback from './ManageFeedback';
 import ManageCrosswords from './ManageCrosswords';
+import ManagePuzzleSets from './ManagePuzzleSets';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -73,6 +74,12 @@ const AdminDashboard = () => {
               <i className="fas fa-th mr-2"></i> Manage Crosswords
             </button>
             <button
+              onClick={() => setActiveTab('puzzle-sets')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'puzzle-sets' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-puzzle-piece mr-2"></i> Manage Puzzle Sets
+            </button>
+            <button
               onClick={() => setActiveTab('webinar-cards')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'webinar-cards' ? 'bg-purple-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -114,6 +121,7 @@ const AdminDashboard = () => {
           {activeTab === 'materials' && <ManageStudyMaterials />}
           {activeTab === 'magazines' && <ManageMagazines />}
           {activeTab === 'crosswords' && <ManageCrosswords />}
+          {activeTab === 'puzzle-sets' && <ManagePuzzleSets />}
           {activeTab === 'webinar-cards' && <ManageWebinarCards />}
           {activeTab === 'doubts' && <ManageDoubts />}
           {activeTab === 'feedback' && <ManageFeedback />}

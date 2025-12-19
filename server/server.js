@@ -14,6 +14,7 @@ const Doubt = require('./models/Doubt');
 const Feedback = require('./models/Feedback');
 const Crossword = require('./models/Crossword');
 const CrosswordAnswer = require('./models/CrosswordAnswer');
+const PuzzleSet = require('./models/PuzzleSet');
 
 
 const app = express();
@@ -858,6 +859,72 @@ app.delete('/api/crossword-answers/:id', async (req, res) => {
       return res.status(404).json({ message: 'Answer not found' });
     }
     res.json({ message: 'Answer deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ==================== Puzzle Set Routes ====================
+
+// Get all puzzle sets
+app.get('/api/puzzle-sets', async (req, res) => {
+  try {
+    const puzzleSets = await PuzzleSet.find().sort({ createdAt: -1 });
+    res.json(puzzleSets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get puzzle set by ID
+app.get('/api/puzzle-sets/:id', async (req, res) => {
+  try {
+    const puzzleSet = await PuzzleSet.findById(req.params.id);
+    if (!puzzleSet) {
+      return res.status(404).json({ message: 'Puzzle set not found' });
+    }
+    res.json(puzzleSet);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Add new puzzle set
+app.post('/api/puzzle-sets', async (req, res) => {
+  try {
+    const puzzleSet = new PuzzleSet(req.body);
+    const newPuzzleSet = await puzzleSet.save();
+    res.status(201).json(newPuzzleSet);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Update puzzle set
+app.put('/api/puzzle-sets/:id', async (req, res) => {
+  try {
+    const puzzleSet = await PuzzleSet.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!puzzleSet) {
+      return res.status(404).json({ message: 'Puzzle set not found' });
+    }
+    res.json(puzzleSet);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Delete puzzle set
+app.delete('/api/puzzle-sets/:id', async (req, res) => {
+  try {
+    const puzzleSet = await PuzzleSet.findByIdAndDelete(req.params.id);
+    if (!puzzleSet) {
+      return res.status(404).json({ message: 'Puzzle set not found' });
+    }
+    res.json({ message: 'Puzzle set deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
