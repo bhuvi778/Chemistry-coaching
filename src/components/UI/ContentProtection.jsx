@@ -30,23 +30,9 @@ const ContentProtection = () => {
 
         // Disable keyboard shortcuts
         const handleKeyDown = (e) => {
-            // Disable F12 (DevTools)
-            if (e.keyCode === 123) {
-                e.preventDefault();
-                return false;
-            }
-
-            // Disable Ctrl+Shift+I (DevTools)
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-                e.preventDefault();
-                return false;
-            }
-
-            // Disable Ctrl+Shift+J (Console)
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-                e.preventDefault();
-                return false;
-            }
+            // DEVTOOLS NOW ALLOWED - removed F12 blocking
+            // DEVTOOLS NOW ALLOWED - removed Ctrl+Shift+I blocking
+            // DEVTOOLS NOW ALLOWED - removed Ctrl+Shift+J blocking
 
             // Disable Ctrl+U (View Source)
             if (e.ctrlKey && e.keyCode === 85) {

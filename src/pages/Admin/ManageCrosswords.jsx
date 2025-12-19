@@ -154,13 +154,20 @@ const ManageCrosswords = () => {
                 ? `${API_URL}/api/crosswords/${currentCrossword._id}`
                 : `${API_URL}/api/crosswords`;
 
+            console.log('Submitting to:', url);
+            console.log('Form data:', formData);
+
             const response = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
 
+            console.log('Response status:', response.status);
+
             if (response.ok) {
+                const savedCrossword = await response.json();
+                console.log('Saved crossword:', savedCrossword);
                 alert(isEditing ? 'Crossword updated successfully!' : 'Crossword added successfully!');
                 setIsEditing(false);
                 setCurrentCrossword(null);
@@ -178,7 +185,13 @@ const ManageCrosswords = () => {
             }
         } catch (error) {
             console.error('Error submitting crossword:', error);
-            alert('Error submitting crossword. Please try again.');
+
+            // Check if it's a network error
+            if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                alert('Network Error: Cannot connect to server.\n\nPlease check:\n1. Is the server running? (npm run dev in server folder)\n2. Is the server URL correct?\n3. Check browser console for details');
+            } else {
+                alert('Error submitting crossword: ' + error.message + '\n\nCheck browser console for details');
+            }
         }
     };
 
