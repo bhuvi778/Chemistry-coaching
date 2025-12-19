@@ -13,18 +13,17 @@ const Puzzle = () => {
         return categoryMatch && examMatch;
     });
 
+
     // Load Notix script
     useEffect(() => {
         const script = document.createElement('script');
         script.id = 'notix-script';
         script.src = 'https://notixio.com/ent/current/enot.min.js';
         script.onload = function (sdk) {
-            if (window.sdk) {
-                window.sdk.startInstall({
-                    appId: '1009dd9e969441892aa1e896dd18d0c',
-                    loadSettings: true
-                });
-            }
+            sdk.startInstall({
+                appId: '1009dd9e969441892aa1e896dd18d0c',
+                loadSettings: true
+            });
         };
         document.head.appendChild(script);
 
@@ -36,6 +35,7 @@ const Puzzle = () => {
             }
         };
     }, []);
+
 
     return (
         <div className="animate-fadeIn min-h-screen">
