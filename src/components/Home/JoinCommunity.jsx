@@ -15,7 +15,7 @@ const JoinCommunity = () => {
                         <div className="inline-block px-4 py-2 mb-4 bg-cyan-500/20 border border-cyan-400/50 rounded-full">
                             <span className="text-cyan-400 font-semibold text-sm flex items-center gap-2">
                                 <i className="fas fa-users"></i>
-                                Join 10,000+ Students
+                                Join 5,000+ Students
                             </span>
                         </div>
 
@@ -110,7 +110,7 @@ const JoinCommunity = () => {
                             <div className="absolute top-1/2 -right-8 glass-panel p-3 rounded-lg border border-pink-400/30 animate-float" style={{ animationDelay: '0.5s' }}>
                                 <div className="flex items-center gap-2">
                                     <i className="fas fa-star text-yellow-400"></i>
-                                    <span className="text-white font-semibold text-sm">4.9/5</span>
+                                    <span className="text-white font-semibold text-sm">4.8/5</span>
                                 </div>
                             </div>
                         </div>
