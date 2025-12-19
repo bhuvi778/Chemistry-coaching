@@ -170,6 +170,41 @@ const Doubts = () => {
                         </p>
                     </div>
 
+                    {/* Statistics Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg border border-gray-200'} rounded-xl p-6`}>
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <i className="fas fa-question text-white text-2xl"></i>
+                                </div>
+                                <div>
+                                    <p className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
+                                        Total Questions
+                                    </p>
+                                    <p className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                        {publishedDoubts.length}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg border border-gray-200'} rounded-xl p-6`}>
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
+                                    <i className="fas fa-check-circle text-white text-2xl"></i>
+                                </div>
+                                <div>
+                                    <p className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
+                                        Answered Questions
+                                    </p>
+                                    <p className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                        {publishedDoubts.length}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Search Bar with Ask Button */}
                     <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg border border-gray-200'} rounded-xl p-6 mb-8`}>
                         <div className="flex gap-3 flex-col sm:flex-row">
@@ -482,11 +517,10 @@ const Doubts = () => {
 
                                 <div>
                                     <label className={`block mb-2 font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                                        Email
+                                        Email (Optional)
                                     </label>
                                     <input
                                         type="email"
-                                        required
                                         value={feedbackData.email}
                                         onChange={(e) => setFeedbackData({ ...feedbackData, email: e.target.value })}
                                         className={`w-full px-4 py-2 rounded-lg border ${isDark
@@ -499,9 +533,10 @@ const Doubts = () => {
 
                                 <div>
                                     <label className={`block mb-2 font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                                        Feedback (Optional)
+                                        Feedback <span className="text-red-500">*</span>
                                     </label>
                                     <textarea
+                                        required
                                         value={feedbackData.feedback}
                                         onChange={(e) => setFeedbackData({ ...feedbackData, feedback: e.target.value })}
                                         rows="4"

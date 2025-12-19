@@ -49,10 +49,10 @@ const BookMeeting = () => {
                 {/* Main Content - Stacked Layout */}
                 <div className="space-y-8">
                     {/* Zoho Bookings Iframe Section */}
-                    <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg border border-gray-200'} rounded-lg overflow-hidden`} style={{ minHeight: '750px' }}>
+                    <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-lg border border-gray-200'} rounded-lg overflow-hidden`} style={{ minHeight: '1000px' }}>
                         <iframe
                             width='100%'
-                            height='750px'
+                            height='1000px'
                             src='https://ace2examzlive.zohobookings.in/portal-embed#/ace2examz'
                             frameBorder='0'
                             allowFullScreen
@@ -65,7 +65,7 @@ const BookMeeting = () => {
                     <div>
                         <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6`}>
                             <i className="fas fa-graduation-cap text-blue-600 mr-3"></i>
-                            Upcoming Programs & Webinars
+                            Upcoming Webinars
                         </h2>
                         <div className="space-y-6">
                             {webinarCards.length > 0 ? (

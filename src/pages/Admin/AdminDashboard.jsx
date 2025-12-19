@@ -9,6 +9,7 @@ import ManageMagazines from './ManageMagazines';
 import ManageWebinarCards from './ManageWebinarCards';
 import ManageDoubts from './ManageDoubts';
 import ManageFeedback from './ManageFeedback';
+import ManageCrosswords from './ManageCrosswords';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -66,6 +67,12 @@ const AdminDashboard = () => {
               <i className="fas fa-book-open mr-2"></i> Manage Magazines
             </button>
             <button
+              onClick={() => setActiveTab('crosswords')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'crosswords' ? 'bg-cyan-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-th mr-2"></i> Manage Crosswords
+            </button>
+            <button
               onClick={() => setActiveTab('webinar-cards')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'webinar-cards' ? 'bg-purple-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -106,6 +113,7 @@ const AdminDashboard = () => {
           {activeTab === 'audiobooks' && <ManageAudioBooks />}
           {activeTab === 'materials' && <ManageStudyMaterials />}
           {activeTab === 'magazines' && <ManageMagazines />}
+          {activeTab === 'crosswords' && <ManageCrosswords />}
           {activeTab === 'webinar-cards' && <ManageWebinarCards />}
           {activeTab === 'doubts' && <ManageDoubts />}
           {activeTab === 'feedback' && <ManageFeedback />}
