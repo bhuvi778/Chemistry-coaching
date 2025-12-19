@@ -5,6 +5,9 @@ import { useData } from '../context/DataContext';
 const Puzzle = () => {
     const { studyMaterials } = useData();
     const [selectedExam, setSelectedExam] = useState('all');
+    const [crosswords, setCrosswords] = useState([]);
+    const [selectedChapter, setSelectedChapter] = useState('all');
+    const [loading, setLoading] = useState(true);
 
     // Filter only puzzle materials
     const puzzleMaterials = studyMaterials.filter(material => {
@@ -13,6 +16,32 @@ const Puzzle = () => {
         return categoryMatch && examMatch;
     });
 
+    // Fetch crosswords
+    useEffect(() => {
+        fetchCrosswords();
+    }, []);
+
+    const fetchCrosswords = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/crosswords`);
+            const data = await response.json();
+            setCrosswords(data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching crosswords:', error);
+            setLoading(false);
+        }
+    };
+
+    // Filter crosswords
+    const filteredCrosswords = crosswords.filter(crossword => {
+        const examMatch = selectedExam === 'all' || crossword.examType === selectedExam;
+        const chapterMatch = selectedChapter === 'all' || crossword.chapter === selectedChapter;
+        return examMatch && chapterMatch;
+    });
+
+    // Get unique chapters
+    const chapters = ['all', ...new Set(crosswords.map(c => c.chapter))];
 
     // Load Notix script
     useEffect(() => {
@@ -36,7 +65,6 @@ const Puzzle = () => {
         };
     }, []);
 
-
     return (
         <div className="animate-fadeIn min-h-screen">
             <div className="max-w-7xl mx-auto px-4 py-20">
@@ -52,7 +80,7 @@ const Puzzle = () => {
                         Chemistry Puzzles
                     </h1>
                     <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                        Challenge your mind with engaging chemistry puzzles and brain teasers
+                        Challenge your mind with interactive crosswords and downloadable puzzles
                     </p>
                 </div>
 
@@ -63,125 +91,260 @@ const Puzzle = () => {
                         Filter Puzzles
                     </h3>
 
-                    <div className="max-w-md">
-                        <label className="block text-sm font-semibold text-gray-400 mb-3">
-                            <i className="fas fa-graduation-cap mr-2 text-purple-400"></i>
-                            Filter by Exam
-                        </label>
-                        <select
-                            value={selectedExam}
-                            onChange={(e) => setSelectedExam(e.target.value)}
-                            className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-purple-400 transition"
-                        >
-                            <option value="all">All Exams</option>
-                            <optgroup label="Engineering Entrance">
-                                <option value="JEE">JEE (Main & Advanced)</option>
-                                <option value="GATE">GATE</option>
-                            </optgroup>
-                            <optgroup label="Medical Entrance">
-                                <option value="NEET">NEET</option>
-                                <option value="AIIMS">AIIMS</option>
-                            </optgroup>
-                            <optgroup label="Science Entrance">
-                                <option value="IAT">IAT (IISER Aptitude Test)</option>
-                                <option value="NEST">NEST (National Entrance Screening Test)</option>
-                                <option value="KVPY">KVPY (Kishore Vaigyanik Protsahan Yojana)</option>
-                                <option value="TIFR">TIFR (Tata Institute)</option>
-                            </optgroup>
-                            <optgroup label="Post Graduate">
-                                <option value="CSIR NET">CSIR NET</option>
-                                <option value="IIT JAM">IIT JAM</option>
-                            </optgroup>
-                            <optgroup label="Other Competitive">
-                                <option value="OLYMPIAD">Olympiad (Chemistry/Physics/Math)</option>
-                                <option value="CUET">CUET (Common University Entrance Test)</option>
-                            </optgroup>
-                            <optgroup label="School Level">
-                                <option value="BOARDS">Board Exams (CBSE/State - 11th/12th)</option>
-                            </optgroup>
-                        </select>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Exam Filter */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-400 mb-3">
+                                <i className="fas fa-graduation-cap mr-2 text-purple-400"></i>
+                                Filter by Exam
+                            </label>
+                            <select
+                                value={selectedExam}
+                                onChange={(e) => setSelectedExam(e.target.value)}
+                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-purple-400 transition"
+                            >
+                                <option value="all">All Exams</option>
+                                <optgroup label="Engineering Entrance">
+                                    <option value="JEE">JEE (Main & Advanced)</option>
+                                    <option value="GATE">GATE</option>
+                                </optgroup>
+                                <optgroup label="Medical Entrance">
+                                    <option value="NEET">NEET</option>
+                                    <option value="AIIMS">AIIMS</option>
+                                </optgroup>
+                                <optgroup label="Science Entrance">
+                                    <option value="IAT">IAT (IISER Aptitude Test)</option>
+                                    <option value="NEST">NEST (National Entrance Screening Test)</option>
+                                    <option value="KVPY">KVPY (Kishore Vaigyanik Protsahan Yojana)</option>
+                                    <option value="TIFR">TIFR (Tata Institute)</option>
+                                </optgroup>
+                                <optgroup label="Post Graduate">
+                                    <option value="CSIR NET">CSIR NET</option>
+                                    <option value="IIT JAM">IIT JAM</option>
+                                </optgroup>
+                                <optgroup label="Other Competitive">
+                                    <option value="OLYMPIAD">Olympiad (Chemistry/Physics/Math)</option>
+                                    <option value="CUET">CUET (Common University Entrance Test)</option>
+                                </optgroup>
+                                <optgroup label="School Level">
+                                    <option value="BOARDS">Board Exams (CBSE/State - 11th/12th)</option>
+                                </optgroup>
+                            </select>
+                        </div>
 
-                        {/* Active Filter Display */}
-                        {selectedExam !== 'all' && (
-                            <div className="mt-4 flex items-center gap-3">
-                                <span className="text-sm text-gray-400">Active filter:</span>
+                        {/* Chapter Filter */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-400 mb-3">
+                                <i className="fas fa-book mr-2 text-cyan-400"></i>
+                                Filter by Chapter
+                            </label>
+                            <select
+                                value={selectedChapter}
+                                onChange={(e) => setSelectedChapter(e.target.value)}
+                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
+                            >
+                                {chapters.map(chapter => (
+                                    <option key={chapter} value={chapter}>
+                                        {chapter === 'all' ? 'All Chapters' : chapter}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Active Filters */}
+                    {(selectedExam !== 'all' || selectedChapter !== 'all') && (
+                        <div className="mt-4 flex items-center gap-3 flex-wrap">
+                            <span className="text-sm text-gray-400">Active filters:</span>
+                            {selectedExam !== 'all' && (
                                 <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm flex items-center gap-2">
                                     {selectedExam}
                                     <button onClick={() => setSelectedExam('all')} className="hover:text-white">
                                         <i className="fas fa-times"></i>
                                     </button>
                                 </span>
-                            </div>
-                        )}
-                    </div>
+                            )}
+                            {selectedChapter !== 'all' && (
+                                <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm flex items-center gap-2">
+                                    {selectedChapter}
+                                    <button onClick={() => setSelectedChapter('all')} className="hover:text-white">
+                                        <i className="fas fa-times"></i>
+                                    </button>
+                                </span>
+                            )}
+                        </div>
+                    )}
                 </div>
 
-                {/* Puzzles Grid */}
-                {puzzleMaterials.length === 0 ? (
-                    <div className="text-center py-20 glass-panel rounded-2xl">
-                        <i className="fas fa-puzzle-piece text-6xl text-gray-600 mb-4"></i>
-                        <h3 className="text-2xl font-bold text-white mb-2">No Puzzles Found</h3>
-                        <p className="text-gray-400">
-                            {selectedExam !== 'all'
-                                ? `No puzzles available for ${selectedExam}. Try selecting a different exam.`
-                                : 'Exciting chemistry puzzles will be available soon!'
-                            }
-                        </p>
+                {/* ==================== CROSSWORDS SECTION ==================== */}
+                <div className="mb-16">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-3xl font-bold text-white flex items-center gap-3">
+                            <i className="fas fa-th text-cyan-400"></i>
+                            Interactive Crosswords
+                        </h2>
+                        <span className="px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-full text-sm font-semibold">
+                            {filteredCrosswords.length} Available
+                        </span>
                     </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {puzzleMaterials.map((puzzle) => (
-                            <div key={puzzle._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all duration-300 group">
-                                {puzzle.thumbnailUrl && (
-                                    <div className="w-full aspect-[1/1.414] overflow-hidden relative">
-                                        <img
-                                            src={puzzle.thumbnailUrl}
-                                            alt={puzzle.title}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                        />
-                                        <div className="absolute top-4 right-4">
-                                            <span className="px-3 py-1 bg-purple-500/90 backdrop-blur-sm text-white rounded-full text-xs font-semibold">
-                                                <i className="fas fa-puzzle-piece mr-1"></i>
-                                                Puzzle
+
+                    {loading ? (
+                        <div className="text-center py-20">
+                            <i className="fas fa-spinner fa-spin text-6xl text-cyan-400 mb-4"></i>
+                            <p className="text-gray-400">Loading crosswords...</p>
+                        </div>
+                    ) : filteredCrosswords.length === 0 ? (
+                        <div className="text-center py-20 glass-panel rounded-2xl">
+                            <i className="fas fa-th text-6xl text-gray-600 mb-4"></i>
+                            <h3 className="text-2xl font-bold text-white mb-2">No Crosswords Found</h3>
+                            <p className="text-gray-400">
+                                {selectedExam !== 'all' || selectedChapter !== 'all'
+                                    ? 'Try changing your filters'
+                                    : 'Interactive crosswords will be available soon!'
+                                }
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredCrosswords.map((crossword) => (
+                                <div key={crossword._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300 group">
+                                    {crossword.thumbnailUrl && (
+                                        <div className="w-full h-48 overflow-hidden relative bg-gradient-to-br from-cyan-900/40 to-blue-900/40">
+                                            <img
+                                                src={crossword.thumbnailUrl}
+                                                alt={crossword.title}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                            />
+                                            <div className="absolute top-4 right-4">
+                                                <span className="px-3 py-1 bg-cyan-500/90 backdrop-blur-sm text-white rounded-full text-xs font-semibold">
+                                                    <i className="fas fa-th mr-1"></i>
+                                                    Crossword
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="p-6">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <h3 className="text-xl font-bold text-white flex-1">{crossword.title}</h3>
+                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${crossword.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
+                                                    crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                        'bg-red-500/20 text-red-400'
+                                                }`}>
+                                                {crossword.difficulty}
                                             </span>
                                         </div>
+                                        <p className="text-gray-400 text-sm mb-4">{crossword.description}</p>
+                                        <div className="flex gap-2 mb-4 flex-wrap">
+                                            <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
+                                                <i className="fas fa-book mr-1"></i>
+                                                {crossword.chapter}
+                                            </span>
+                                            <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
+                                                <i className="fas fa-graduation-cap mr-1"></i>
+                                                {crossword.examType}
+                                            </span>
+                                            {crossword.topic && (
+                                                <span className="px-3 py-1 bg-pink-500/20 text-pink-400 rounded-full text-xs">
+                                                    <i className="fas fa-tag mr-1"></i>
+                                                    {crossword.topic}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <a
+                                            href={crossword.crosswordUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:from-cyan-600 hover:to-blue-700 transition font-semibold"
+                                        >
+                                            <i className="fas fa-play"></i>
+                                            Play Crossword
+                                            <i className="fas fa-external-link-alt text-xs"></i>
+                                        </a>
                                     </div>
-                                )}
-                                <div className="p-6">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <h3 className="text-xl font-bold text-white flex-1">{puzzle.title}</h3>
-                                        <span className="px-3 py-1 bg-pink-500/20 text-pink-400 rounded-full text-xs">
-                                            {puzzle.fileType}
-                                        </span>
-                                    </div>
-                                    <p className="text-gray-400 text-sm mb-4">{puzzle.description}</p>
-                                    <div className="flex gap-2 mb-4">
-                                        <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
-                                            <i className="fas fa-graduation-cap mr-1"></i>
-                                            {puzzle.examType}
-                                        </span>
-                                    </div>
-                                    {puzzle.fileSize && (
-                                        <p className="text-gray-500 text-sm mb-4">
-                                            <i className="fas fa-file mr-2"></i>
-                                            Size: {puzzle.fileSize}
-                                        </p>
-                                    )}
-                                    <a
-                                        href={puzzle.fileUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        download
-                                        className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition font-semibold"
-                                    >
-                                        <i className="fas fa-download"></i>
-                                        Download Puzzle
-                                    </a>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* ==================== DOWNLOADABLE PUZZLES SECTION ==================== */}
+                <div>
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-3xl font-bold text-white flex items-center gap-3">
+                            <i className="fas fa-download text-purple-400"></i>
+                            Downloadable Puzzles
+                        </h2>
+                        <span className="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-full text-sm font-semibold">
+                            {puzzleMaterials.length} Available
+                        </span>
                     </div>
-                )}
+
+                    {puzzleMaterials.length === 0 ? (
+                        <div className="text-center py-20 glass-panel rounded-2xl">
+                            <i className="fas fa-puzzle-piece text-6xl text-gray-600 mb-4"></i>
+                            <h3 className="text-2xl font-bold text-white mb-2">No Downloadable Puzzles Found</h3>
+                            <p className="text-gray-400">
+                                {selectedExam !== 'all'
+                                    ? `No puzzles available for ${selectedExam}. Try selecting a different exam.`
+                                    : 'Exciting chemistry puzzles will be available soon!'
+                                }
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {puzzleMaterials.map((puzzle) => (
+                                <div key={puzzle._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all duration-300 group">
+                                    {puzzle.thumbnailUrl && (
+                                        <div className="w-full aspect-[1/1.414] overflow-hidden relative">
+                                            <img
+                                                src={puzzle.thumbnailUrl}
+                                                alt={puzzle.title}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                            />
+                                            <div className="absolute top-4 right-4">
+                                                <span className="px-3 py-1 bg-purple-500/90 backdrop-blur-sm text-white rounded-full text-xs font-semibold">
+                                                    <i className="fas fa-puzzle-piece mr-1"></i>
+                                                    Puzzle
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="p-6">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <h3 className="text-xl font-bold text-white flex-1">{puzzle.title}</h3>
+                                            <span className="px-3 py-1 bg-pink-500/20 text-pink-400 rounded-full text-xs">
+                                                {puzzle.fileType}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-400 text-sm mb-4">{puzzle.description}</p>
+                                        <div className="flex gap-2 mb-4">
+                                            <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
+                                                <i className="fas fa-graduation-cap mr-1"></i>
+                                                {puzzle.examType}
+                                            </span>
+                                        </div>
+                                        {puzzle.fileSize && (
+                                            <p className="text-gray-500 text-sm mb-4">
+                                                <i className="fas fa-file mr-2"></i>
+                                                Size: {puzzle.fileSize}
+                                            </p>
+                                        )}
+                                        <a
+                                            href={puzzle.fileUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            download
+                                            className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition font-semibold"
+                                        >
+                                            <i className="fas fa-download"></i>
+                                            Download Puzzle
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
                 {/* Info Section */}
                 <div className="mt-12 glass-panel rounded-2xl p-8">
@@ -232,6 +395,5 @@ const Puzzle = () => {
         </div>
     );
 };
-
 
 export default Puzzle;

@@ -12,6 +12,7 @@ const MeetingRequest = require('./models/MeetingRequest');
 const WebinarCard = require('./models/WebinarCard');
 const Doubt = require('./models/Doubt');
 const Feedback = require('./models/Feedback');
+const Crossword = require('./models/Crossword');
 
 
 const app = express();
@@ -702,6 +703,72 @@ app.get('/api/doubts/:id/feedback', async (req, res) => {
     const feedback = await Feedback.find({ doubtId: req.params.id })
       .sort({ submittedAt: -1 });
     res.json(feedback);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ==================== Crossword Routes ====================
+
+// Get all crosswords
+app.get('/api/crosswords', async (req, res) => {
+  try {
+    const crosswords = await Crossword.find().sort({ createdAt: -1 });
+    res.json(crosswords);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get crossword by ID
+app.get('/api/crosswords/:id', async (req, res) => {
+  try {
+    const crossword = await Crossword.findById(req.params.id);
+    if (!crossword) {
+      return res.status(404).json({ message: 'Crossword not found' });
+    }
+    res.json(crossword);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Add new crossword
+app.post('/api/crosswords', async (req, res) => {
+  try {
+    const crossword = new Crossword(req.body);
+    const newCrossword = await crossword.save();
+    res.status(201).json(newCrossword);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Update crossword
+app.put('/api/crosswords/:id', async (req, res) => {
+  try {
+    const crossword = await Crossword.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!crossword) {
+      return res.status(404).json({ message: 'Crossword not found' });
+    }
+    res.json(crossword);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Delete crossword
+app.delete('/api/crosswords/:id', async (req, res) => {
+  try {
+    const crossword = await Crossword.findByIdAndDelete(req.params.id);
+    if (!crossword) {
+      return res.status(404).json({ message: 'Crossword not found' });
+    }
+    res.json({ message: 'Crossword deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
