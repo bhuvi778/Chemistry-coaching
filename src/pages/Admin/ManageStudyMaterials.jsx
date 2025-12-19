@@ -397,6 +397,7 @@ const ManageStudyMaterials = () => {
                 <option value="Mock Tests">Mock Tests</option>
                 <option value="Study Guides">Study Guides</option>
                 <option value="Reference Materials">Reference Materials</option>
+                <option value="Puzzle">Puzzle</option>
               </optgroup>
               <optgroup label="Chemistry Topics">
                 <option value="Physical Chemistry">Physical Chemistry</option>

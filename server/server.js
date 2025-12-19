@@ -11,6 +11,8 @@ const Magazine = require('./models/Magazine');
 const MeetingRequest = require('./models/MeetingRequest');
 const WebinarCard = require('./models/WebinarCard');
 const Doubt = require('./models/Doubt');
+const Feedback = require('./models/Feedback');
+
 
 const app = express();
 
@@ -642,6 +644,69 @@ app.delete('/api/doubts/:id', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Submit feedback/reaction for a doubt
+app.post('/api/doubts/:id/reaction', async (req, res) => {
+  try {
+    const { reactionType, name, email, feedback } = req.body;
+    const doubtId = req.params.id;
+
+    // Validate reaction type
+    if (!['like', 'dislike'].includes(reactionType)) {
+      return res.status(400).json({ message: 'Invalid reaction type' });
+    }
+
+    // Create feedback entry
+    const feedbackEntry = new Feedback({
+      doubtId,
+      reactionType,
+      name,
+      email,
+      feedback: feedback || ''
+    });
+    await feedbackEntry.save();
+
+    // Update doubt's like/dislike count
+    const updateField = reactionType === 'like' ? 'likes' : 'dislikes';
+    const doubt = await Doubt.findByIdAndUpdate(
+      doubtId,
+      { $inc: { [updateField]: 1 } },
+      { new: true }
+    );
+
+    res.json({
+      message: 'Feedback submitted successfully',
+      doubt
+    });
+  } catch (error) {
+    console.error('Error submitting feedback:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get all feedback (for admin)
+app.get('/api/feedback', async (req, res) => {
+  try {
+    const feedback = await Feedback.find()
+      .populate('doubtId', 'question answer')
+      .sort({ submittedAt: -1 });
+    res.json(feedback);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get feedback for a specific doubt
+app.get('/api/doubts/:id/feedback', async (req, res) => {
+  try {
+    const feedback = await Feedback.find({ doubtId: req.params.id })
+      .sort({ submittedAt: -1 });
+    res.json(feedback);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

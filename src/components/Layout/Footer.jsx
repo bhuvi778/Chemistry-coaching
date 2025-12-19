@@ -69,6 +69,7 @@ const Footer = () => {
                         </h4>
                         <ul className="space-y-3 text-gray-400 text-sm">
                             <li><Link to="/study-materials" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-file-alt text-xs"></i> Study Notes</Link></li>
+                            <li><Link to="/puzzle" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-puzzle-piece text-xs"></i> Puzzles</Link></li>
                             <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</Link></li>
                             <li><Link to="/lectures" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-play-circle text-xs"></i> Video Lectures</Link></li>
                             <li><Link to="/doubts" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-question-circle text-xs"></i> Doubts</Link></li>

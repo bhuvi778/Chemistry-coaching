@@ -16,44 +16,63 @@ export default async function handler(req, res) {
             });
         }
 
-        console.log('=== BotBiz WhatsApp Template API ===');
+        console.log('=== BotBiz WhatsApp API ===');
         console.log('Phone:', phone);
-        console.log('Message:', message);
 
-        // BotBiz Template API endpoint
-        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
-
-        // API Key
+        // BotBiz API Key
         const BOTBIZ_API_KEY = '16072|FVaURdAB4Z07Py9V0HNBEkMHRpKY9zX9XWVitfHc123452c1';
 
-        // Template payload format
-        const payload = {
+        // Try the simple send endpoint first
+        const simpleUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
+
+        const simplePayload = {
             phone: phone,
-            message: message,
-            template_name: 'app_download', // You may need to adjust this
-            language: 'en',
-            parameters: [
-                {
-                    type: 'text',
-                    text: message
-                }
-            ]
+            message: message
         };
 
-        console.log('Sending to BotBiz API...');
-        console.log('Payload:', JSON.stringify(payload, null, 2));
+        console.log('Trying simple send endpoint...');
+        console.log('URL:', simpleUrl);
+        console.log('Payload:', JSON.stringify(simplePayload, null, 2));
 
-        const apiResponse = await fetch(apiUrl, {
+        let apiResponse = await fetch(simpleUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${BOTBIZ_API_KEY}`,
                 'Accept': 'application/json',
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(simplePayload)
         });
 
-        console.log('Response status:', apiResponse.status);
+        console.log('Simple endpoint response status:', apiResponse.status);
+
+        // If simple endpoint fails, try template endpoint
+        if (!apiResponse.ok && apiResponse.status !== 200) {
+            console.log('Simple endpoint failed, trying template endpoint...');
+
+            const templateUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
+            const templatePayload = {
+                phone: phone,
+                message: message,
+                template_name: 'app_download',
+                language: 'en'
+            };
+
+            console.log('Template URL:', templateUrl);
+            console.log('Template Payload:', JSON.stringify(templatePayload, null, 2));
+
+            apiResponse = await fetch(templateUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${BOTBIZ_API_KEY}`,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(templatePayload)
+            });
+
+            console.log('Template endpoint response status:', apiResponse.status);
+        }
 
         // Get response data
         let apiData;
@@ -66,7 +85,7 @@ export default async function handler(req, res) {
                 const textData = await apiResponse.text();
                 apiData = { rawResponse: textData };
             }
-            console.log('Response data:', JSON.stringify(apiData, null, 2));
+            console.log('Full Response:', JSON.stringify(apiData, null, 2));
         } catch (parseError) {
             console.error('Error parsing response:', parseError);
             apiData = { error: 'Could not parse response' };
@@ -74,35 +93,37 @@ export default async function handler(req, res) {
 
         // Check if successful
         if (apiResponse.ok || apiResponse.status === 200 || apiResponse.status === 201) {
-            console.log('✓ WhatsApp message sent successfully');
+            console.log('✓ WhatsApp message sent successfully!');
             return res.status(200).json({
                 success: true,
                 message: 'WhatsApp message sent successfully',
                 data: apiData
             });
         } else {
-            console.error('✗ API request failed');
-            console.error('Status:', apiResponse.status);
-            console.error('Response:', apiData);
+            console.error('✗ Both endpoints failed');
+            console.error('Final Status:', apiResponse.status);
+            console.error('Final Response:', apiData);
 
             return res.status(200).json({
                 success: false,
                 error: 'Failed to send WhatsApp message',
-                details: apiData?.message || apiData?.error || apiData?.rawResponse || 'Unknown error',
+                details: apiData?.message || apiData?.error || apiData?.rawResponse || `HTTP ${apiResponse.status}`,
                 status: apiResponse.status,
-                fullResponse: apiData
+                fullResponse: apiData,
+                suggestion: 'Please check BotBiz dashboard for API documentation or contact BotBiz support'
             });
         }
 
     } catch (error) {
-        console.error('=== Error ===');
+        console.error('=== Fatal Error ===');
         console.error('Message:', error.message);
         console.error('Stack:', error.stack);
 
         return res.status(200).json({
             success: false,
             error: 'Internal server error',
-            details: error.message
+            details: error.message,
+            suggestion: 'Please check server logs or contact administrator'
         });
     }
 }

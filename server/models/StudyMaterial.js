@@ -25,7 +25,7 @@ const studyMaterialSchema = new mongoose.Schema({
       'Notes', 'Handwritten Notes', 'Formula Sheets', 'Revision Notes',
       'Question Banks', 'Practice Problems', 'Solutions',
       'Previous Year Papers', 'Sample Papers', 'Mock Tests',
-      'Study Guides', 'Reference Materials',
+      'Study Guides', 'Reference Materials', 'Puzzle',
       // Chemistry Topics
       'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry',
       'Analytical Chemistry', 'Biochemistry'

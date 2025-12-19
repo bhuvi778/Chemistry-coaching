@@ -8,6 +8,7 @@ import ManageStudyMaterials from './ManageStudyMaterials';
 import ManageMagazines from './ManageMagazines';
 import ManageWebinarCards from './ManageWebinarCards';
 import ManageDoubts from './ManageDoubts';
+import ManageFeedback from './ManageFeedback';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -78,6 +79,12 @@ const AdminDashboard = () => {
               <i className="fas fa-question-circle mr-2"></i> Manage Doubts
             </button>
             <button
+              onClick={() => setActiveTab('feedback')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'feedback' ? 'bg-blue-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-comments mr-2"></i> User Feedback
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -101,6 +108,7 @@ const AdminDashboard = () => {
           {activeTab === 'magazines' && <ManageMagazines />}
           {activeTab === 'webinar-cards' && <ManageWebinarCards />}
           {activeTab === 'doubts' && <ManageDoubts />}
+          {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>

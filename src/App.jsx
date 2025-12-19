@@ -14,6 +14,7 @@ import AllCourses from './pages/AllCourses';
 import Lectures from './pages/Lectures';
 import AudioBooks from './pages/AudioBooks';
 import StudyMaterials from './pages/StudyMaterials';
+import Puzzle from './pages/Puzzle';
 import Magazines from './pages/Magazines';
 import AIAssistantPage from './pages/AIAssistantPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -67,6 +68,7 @@ function AppContent() {
           <Route path="/lectures" element={<Lectures />} />
           <Route path="/audiobooks" element={<AudioBooks />} />
           <Route path="/study-materials" element={<StudyMaterials />} />
+          <Route path="/puzzle" element={<Puzzle />} />
           <Route path="/magazines" element={<Magazines />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
