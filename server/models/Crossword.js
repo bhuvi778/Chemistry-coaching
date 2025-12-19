@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 
 const crosswordSchema = new mongoose.Schema({
+    setNumber: {
+        type: String,
+        required: true
+    },
     title: {
         type: String,
         required: true
     },
     description: {
         type: String,
-        required: true
+        default: ''
     },
     chapter: {
         type: String,
@@ -15,7 +19,7 @@ const crosswordSchema = new mongoose.Schema({
     },
     topic: {
         type: String,
-        required: true
+        default: ''
     },
     examType: {
         type: String,
@@ -30,16 +34,30 @@ const crosswordSchema = new mongoose.Schema({
         ],
         default: 'All'
     },
-    crosswordUrl: {
-        type: String,
-        required: true
-    },
     difficulty: {
         type: String,
         enum: ['Easy', 'Medium', 'Hard'],
         default: 'Medium'
     },
     thumbnailUrl: {
+        type: String,
+        default: ''
+    },
+    // PDF for the puzzle set
+    setPdfUrl: {
+        type: String,
+        required: true
+    },
+    setPdfSize: {
+        type: String,
+        default: ''
+    },
+    // PDF for the answers
+    answerPdfUrl: {
+        type: String,
+        required: true
+    },
+    answerPdfSize: {
         type: String,
         default: ''
     },
