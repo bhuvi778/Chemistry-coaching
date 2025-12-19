@@ -76,9 +76,9 @@ const ManageStudyMaterials = () => {
         return;
       }
 
-      // Check file size (limit to 25MB)
-      if (file.size > 25 * 1024 * 1024) {
-        alert('File size should be less than 25MB');
+      // Check file size (limit to 50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        alert('File size should be less than 50MB');
         return;
       }
 
@@ -163,8 +163,8 @@ const ManageStudyMaterials = () => {
         return;
       }
 
-      if (file.size > 25 * 1024 * 1024) {
-        alert('File size should be less than 25MB');
+      if (file.size > 50 * 1024 * 1024) {
+        alert('File size should be less than 50MB');
         return;
       }
 
@@ -303,7 +303,7 @@ const ManageStudyMaterials = () => {
                   {fileFileName || 'Click to upload or drag and drop'}
                 </p>
                 <p className="text-gray-500 text-sm">
-                  PDF, DOC, PPT, ZIP (Max 25MB)
+                  PDF, DOC, PPT, ZIP (Max 50MB)
                 </p>
               </label>
             </div>

@@ -69,9 +69,9 @@ const ManageMagazines = () => {
         return;
       }
 
-      // Check file size (limit to 25MB)
-      if (file.size > 25 * 1024 * 1024) {
-        alert('PDF file size should be less than 25MB');
+      // Check file size (limit to 50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        alert('PDF file size should be less than 50MB');
         return;
       }
 
@@ -129,8 +129,8 @@ const ManageMagazines = () => {
 
     const file = e.dataTransfer.files[0];
     if (file && file.type === 'application/pdf') {
-      if (file.size > 25 * 1024 * 1024) {
-        alert('PDF file size should be less than 25MB');
+      if (file.size > 50 * 1024 * 1024) {
+        alert('PDF file size should be less than 50MB');
         return;
       }
 
@@ -271,8 +271,8 @@ const ManageMagazines = () => {
               onDragLeave={handleCoverDragLeave}
               onDrop={handleCoverDrop}
               className={`border-2 border-dashed rounded-lg p-6 text-center transition-all ${isDraggingCover
-                  ? 'border-pink-400 bg-pink-500/10'
-                  : 'border-gray-700 hover:border-pink-500'
+                ? 'border-pink-400 bg-pink-500/10'
+                : 'border-gray-700 hover:border-pink-500'
                 }`}
             >
               <input
@@ -320,8 +320,8 @@ const ManageMagazines = () => {
               onDragLeave={handlePdfDragLeave}
               onDrop={handlePdfDrop}
               className={`border-2 border-dashed rounded-lg p-6 text-center transition-all ${isDraggingPdf
-                  ? 'border-red-400 bg-red-500/10'
-                  : 'border-gray-700 hover:border-red-500'
+                ? 'border-red-400 bg-red-500/10'
+                : 'border-gray-700 hover:border-red-500'
                 }`}
             >
               <input
@@ -337,7 +337,7 @@ const ManageMagazines = () => {
                   {pdfFileName || 'Click to upload or drag and drop'}
                 </p>
                 <p className="text-gray-500 text-sm">
-                  PDF only (Max 25MB)
+                  PDF only (Max 50MB)
                 </p>
               </label>
             </div>
