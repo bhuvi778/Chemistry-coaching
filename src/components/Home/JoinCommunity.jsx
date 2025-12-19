@@ -86,8 +86,8 @@ const JoinCommunity = () => {
                                 <div className="absolute inset-4 rounded-full bg-gray-900/80 backdrop-blur-xl flex items-center justify-center border border-cyan-400/30">
                                     <div className="text-center">
                                         <i className="fas fa-users text-6xl text-cyan-400 mb-2"></i>
-                                        <p className="text-white font-bold text-2xl">10,000+</p>
-                                        <p className="text-gray-400 text-sm">Active Members</p>
+                                        <p className="text-white font-bold text-2xl">5,000+</p>
+                                        <p className="text-gray-400 text-sm">Active Alumni</p>
                                     </div>
                                 </div>
                             </div>
