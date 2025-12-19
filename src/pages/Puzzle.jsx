@@ -74,28 +74,6 @@ const Puzzle = () => {
     // Get unique chapters
     const chapters = ['all', ...new Set(crosswords.map(c => c.chapter))];
 
-    // Load Notix script
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.id = 'notix-script';
-        script.src = 'https://notixio.com/ent/current/enot.min.js';
-        script.onload = function (sdk) {
-            sdk.startInstall({
-                appId: '1009dd9e969441892aa1e896dd18d0c',
-                loadSettings: true
-            });
-        };
-        document.head.appendChild(script);
-
-        // Cleanup on unmount
-        return () => {
-            const existingScript = document.getElementById('notix-script');
-            if (existingScript) {
-                existingScript.remove();
-            }
-        };
-    }, []);
-
     return (
         <div className="animate-fadeIn min-h-screen">
             <div className="max-w-7xl mx-auto px-4 py-20">
