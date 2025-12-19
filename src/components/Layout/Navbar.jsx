@@ -39,7 +39,7 @@ const Navbar = () => {
                 onMouseLeave={() => setIsStudyMaterialOpen(false)}
               >
                 <button className={`px-3 py-2 transition relative ${location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') ||
-                  location.pathname.includes('/study-materials') || location.pathname.includes('/magazines') || location.pathname.includes('/doubts')
+                  location.pathname.includes('/study-materials') || location.pathname.includes('/puzzle') || location.pathname.includes('/magazines') || location.pathname.includes('/doubts')
                   ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                   }`}>
                   <span className="flex items-center gap-2">
@@ -75,6 +75,14 @@ const Navbar = () => {
                   >
                     <i className="fas fa-file-pdf text-green-500"></i>
                     <span>Free Study Materials</span>
+                  </Link>
+                  <Link
+                    to="/puzzle"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                    onClick={() => setIsStudyMaterialOpen(false)}
+                  >
+                    <i className="fas fa-puzzle-piece text-purple-500"></i>
+                    <span>Puzzles</span>
                   </Link>
                   <Link
                     to="/magazines"
@@ -150,8 +158,8 @@ const Navbar = () => {
             <button
               onClick={toggleTheme}
               className={`relative w-12 h-6 rounded-full transition-all duration-300 ${isDark
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600'
-                  : 'bg-gradient-to-r from-yellow-400 to-orange-400'
+                ? 'bg-gradient-to-r from-indigo-600 to-purple-600'
+                : 'bg-gradient-to-r from-yellow-400 to-orange-400'
                 }`}
               aria-label="Toggle theme"
             >
@@ -181,6 +189,9 @@ const Navbar = () => {
             </Link>
             <Link to="/study-materials" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-file-pdf text-green-500 mr-2"></i>Free Study Materials
+            </Link>
+            <Link to="/puzzle" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+              <i className="fas fa-puzzle-piece text-purple-500 mr-2"></i>Puzzles
             </Link>
             <Link to="/magazines" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-book-open text-pink-500 mr-2"></i>Chemistry Magazine
