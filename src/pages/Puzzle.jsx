@@ -8,6 +8,9 @@ const Puzzle = () => {
     const [crosswords, setCrosswords] = useState([]);
     const [selectedChapter, setSelectedChapter] = useState('all');
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searching, setSearching] = useState(false);
 
     // Filter only puzzle materials
     const puzzleMaterials = studyMaterials.filter(material => {
@@ -32,6 +35,34 @@ const Puzzle = () => {
             setLoading(false);
         }
     };
+
+    // Search crossword answers
+    const searchAnswers = async (query) => {
+        if (!query.trim()) {
+            setSearchResults([]);
+            return;
+        }
+
+        setSearching(true);
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/crossword-answers/search?query=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            setSearchResults(data);
+        } catch (error) {
+            console.error('Error searching answers:', error);
+        } finally {
+            setSearching(false);
+        }
+    };
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            searchAnswers(searchQuery);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
 
     // Filter crosswords
     const filteredCrosswords = crosswords.filter(crossword => {
@@ -227,8 +258,8 @@ const Puzzle = () => {
                                         <div className="flex items-start justify-between mb-3">
                                             <h3 className="text-xl font-bold text-white flex-1">{crossword.title}</h3>
                                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${crossword.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
-                                                    crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                        'bg-red-500/20 text-red-400'
+                                                crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                    'bg-red-500/20 text-red-400'
                                                 }`}>
                                                 {crossword.difficulty}
                                             </span>
@@ -342,6 +373,87 @@ const Puzzle = () => {
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* ==================== CROSSWORD ANSWERS SEARCH SECTION ==================== */}
+                <div className="mt-16">
+                    <h2 className="text-3xl font-bold text-white flex items-center gap-3 mb-6">
+                        <i className="fas fa-search text-green-400"></i>
+                        Search Crossword Answers
+                    </h2>
+
+                    {/* Statistics - Compact Design */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-cyan-500 flex items-center justify-center flex-shrink-0">
+                                <i className="fas fa-question text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-xs">Total Questions</p>
+                                <p className="text-white text-2xl font-bold">{searchResults.length > 0 ? searchResults.length : '0'}</p>
+                            </div>
+                        </div>
+
+                        <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                                <i className="fas fa-check-circle text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-xs">Answered Questions</p>
+                                <p className="text-white text-2xl font-bold">{searchResults.length > 0 ? searchResults.length : '0'}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Search Bar */}
+                    <div className="glass-panel rounded-lg p-4 mb-6 flex items-center gap-3">
+                        <i className="fas fa-search text-gray-400 text-xl"></i>
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search your question here..."
+                            className="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:outline-none"
+                        />
+                        {searching && (
+                            <i className="fas fa-spinner fa-spin text-green-400"></i>
+                        )}
+                    </div>
+
+                    {/* Questions List - Simple Design */}
+                    {searchQuery && searchResults.length > 0 && (
+                        <div className="space-y-4">
+                            {searchResults.map((result, index) => (
+                                <div key={result._id} className="glass-panel rounded-lg p-5 hover:border-green-400 border border-transparent transition">
+                                    <div className="flex items-start gap-4">
+                                        {/* Question Number Icon */}
+                                        <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                                            <i className="fas fa-question text-cyan-400"></i>
+                                        </div>
+
+                                        {/* Question and Answer */}
+                                        <div className="flex-1">
+                                            <h3 className="text-white font-semibold mb-2">{result.word}</h3>
+                                            <p className="text-gray-400 text-sm mb-3">{result.answer}</p>
+
+                                            {/* Meta Info */}
+                                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                                                <span>Asked by {result.crosswordSetName}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* No Results */}
+                    {searchQuery && !searching && searchResults.length === 0 && (
+                        <div className="text-center py-10 glass-panel rounded-lg">
+                            <i className="fas fa-search text-4xl text-gray-600 mb-3"></i>
+                            <p className="text-gray-400">No answers found for "{searchQuery}"</p>
                         </div>
                     )}
                 </div>

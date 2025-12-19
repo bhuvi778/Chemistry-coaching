@@ -13,6 +13,7 @@ const WebinarCard = require('./models/WebinarCard');
 const Doubt = require('./models/Doubt');
 const Feedback = require('./models/Feedback');
 const Crossword = require('./models/Crossword');
+const CrosswordAnswer = require('./models/CrosswordAnswer');
 
 
 const app = express();
@@ -769,6 +770,94 @@ app.delete('/api/crosswords/:id', async (req, res) => {
       return res.status(404).json({ message: 'Crossword not found' });
     }
     res.json({ message: 'Crossword deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ==================== Crossword Answer Routes ====================
+
+// Search crossword answers
+app.get('/api/crossword-answers/search', async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return res.json([]);
+    }
+
+    const answers = await CrosswordAnswer.find({
+      $or: [
+        { word: { $regex: query, $options: 'i' } },
+        { answer: { $regex: query, $options: 'i' } },
+        { crosswordSetName: { $regex: query, $options: 'i' } }
+      ]
+    }).sort({ createdAt: -1 });
+
+    res.json(answers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get all crossword answers
+app.get('/api/crossword-answers', async (req, res) => {
+  try {
+    const answers = await CrosswordAnswer.find().sort({ createdAt: -1 });
+    res.json(answers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get crossword answer by ID
+app.get('/api/crossword-answers/:id', async (req, res) => {
+  try {
+    const answer = await CrosswordAnswer.findById(req.params.id);
+    if (!answer) {
+      return res.status(404).json({ message: 'Answer not found' });
+    }
+    res.json(answer);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Add new crossword answer
+app.post('/api/crossword-answers', async (req, res) => {
+  try {
+    const answer = new CrosswordAnswer(req.body);
+    const newAnswer = await answer.save();
+    res.status(201).json(newAnswer);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Update crossword answer
+app.put('/api/crossword-answers/:id', async (req, res) => {
+  try {
+    const answer = await CrosswordAnswer.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!answer) {
+      return res.status(404).json({ message: 'Answer not found' });
+    }
+    res.json(answer);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Delete crossword answer
+app.delete('/api/crossword-answers/:id', async (req, res) => {
+  try {
+    const answer = await CrosswordAnswer.findByIdAndDelete(req.params.id);
+    if (!answer) {
+      return res.status(404).json({ message: 'Answer not found' });
+    }
+    res.json({ message: 'Answer deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

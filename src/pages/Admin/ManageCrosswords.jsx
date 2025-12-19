@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData } from '../../context/DataContext';
 
 const ManageCrosswords = () => {
@@ -23,7 +23,7 @@ const ManageCrosswords = () => {
     const [formData, setFormData] = useState(initialFormState);
 
     // Fetch crosswords on mount
-    useState(() => {
+    useEffect(() => {
         fetchCrosswords();
     }, []);
 
@@ -290,8 +290,8 @@ const ManageCrosswords = () => {
                             onDragLeave={handleThumbnailDragLeave}
                             onDrop={handleThumbnailDrop}
                             className={`border-2 border-dashed rounded-lg p-6 text-center transition-all ${isDraggingThumbnail
-                                    ? 'border-blue-400 bg-blue-500/10'
-                                    : 'border-gray-700 hover:border-blue-500'
+                                ? 'border-blue-400 bg-blue-500/10'
+                                : 'border-gray-700 hover:border-blue-500'
                                 }`}
                         >
                             <input
@@ -379,8 +379,8 @@ const ManageCrosswords = () => {
                                         {crossword.examType}
                                     </span>
                                     <span className={`px-3 py-1 rounded-full text-xs ${crossword.difficulty === 'Easy' ? 'bg-green-900/50 border border-green-500 text-green-400' :
-                                            crossword.difficulty === 'Medium' ? 'bg-yellow-900/50 border border-yellow-500 text-yellow-400' :
-                                                'bg-red-900/50 border border-red-500 text-red-400'
+                                        crossword.difficulty === 'Medium' ? 'bg-yellow-900/50 border border-yellow-500 text-yellow-400' :
+                                            'bg-red-900/50 border border-red-500 text-red-400'
                                         }`}>
                                         {crossword.difficulty}
                                     </span>
