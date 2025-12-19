@@ -20,11 +20,7 @@ const ContentProtection = () => {
             return false;
         };
 
-        // Disable paste
-        const handlePaste = (e) => {
-            e.preventDefault();
-            return false;
-        };
+        // PASTE IS NOW ALLOWED - removed handlePaste
 
         // Disable text selection
         const handleSelectStart = (e) => {
@@ -76,11 +72,7 @@ const ContentProtection = () => {
                 return false;
             }
 
-            // Disable Ctrl+V (Paste)
-            if (e.ctrlKey && e.keyCode === 86) {
-                e.preventDefault();
-                return false;
-            }
+            // PASTE IS NOW ALLOWED - removed Ctrl+V blocking
 
             // Disable Ctrl+A (Select All)
             if (e.ctrlKey && e.keyCode === 65) {
@@ -99,7 +91,7 @@ const ContentProtection = () => {
         document.addEventListener('contextmenu', handleContextMenu);
         document.addEventListener('copy', handleCopy);
         document.addEventListener('cut', handleCut);
-        document.addEventListener('paste', handlePaste);
+        // PASTE IS NOW ALLOWED - removed paste event listener
         document.addEventListener('selectstart', handleSelectStart);
         document.addEventListener('keydown', handleKeyDown);
 
@@ -132,7 +124,7 @@ const ContentProtection = () => {
             document.removeEventListener('contextmenu', handleContextMenu);
             document.removeEventListener('copy', handleCopy);
             document.removeEventListener('cut', handleCut);
-            document.removeEventListener('paste', handlePaste);
+            // PASTE IS NOW ALLOWED - removed paste cleanup
             document.removeEventListener('selectstart', handleSelectStart);
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('dragstart', handleSelectStart);

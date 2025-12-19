@@ -154,18 +154,23 @@ const ManageCrosswords = () => {
                 ? `${API_URL}/api/crosswords/${currentCrossword._id}`
                 : `${API_URL}/api/crosswords`;
 
-            await fetch(url, {
+            const response = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
 
-            alert(isEditing ? 'Crossword updated successfully!' : 'Crossword added successfully!');
-            setIsEditing(false);
-            setCurrentCrossword(null);
-            setFormData(initialFormState);
-            setThumbnailFileName('');
-            fetchCrosswords();
+            if (response.ok) {
+                alert(isEditing ? 'Crossword updated successfully!' : 'Crossword added successfully!');
+                setIsEditing(false);
+                setCurrentCrossword(null);
+                setFormData(initialFormState);
+                setThumbnailFileName('');
+                fetchCrosswords();
+            } else {
+                const error = await response.json();
+                alert(`Error: ${error.message || 'Failed to save crossword'}`);
+            }
         } catch (error) {
             console.error('Error submitting crossword:', error);
             alert('Error submitting crossword. Please try again.');
