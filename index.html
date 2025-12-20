@@ -52,22 +52,22 @@
       height: 60px !important;
     }
 
-    /* Position the notification dialog ABOVE the bell */
+    /* Position the notification dialog to the RIGHT of the bell */
     .onesignal-bell-launcher-dialog,
     .onesignal-bell-launcher-dialog-body,
     div[class*="onesignal-bell-launcher-dialog"] {
-      bottom: 90px !important;
-      /* Position above the bell (20px + 60px + 10px spacing) */
+      bottom: 20px !important;
+      /* Same level as bell */
       top: auto !important;
-      left: 20px !important;
-      /* Align with the bell */
+      left: 100px !important;
+      /* To the right: 20px margin + 60px bell + 20px spacing */
       right: auto !important;
       transform: none !important;
       position: fixed !important;
       z-index: 10000 !important;
       max-width: 380px !important;
       width: 380px !important;
-      max-height: 400px !important;
+      max-height: 500px !important;
       overflow-y: auto !important;
     }
 
@@ -166,7 +166,7 @@
             }
           });
 
-          // Position dialog ABOVE the bell
+          // Position dialog to the RIGHT of the bell
           const dialogElements = [
             document.querySelector('.onesignal-bell-launcher-dialog'),
             document.querySelector('.onesignal-bell-launcher-dialog-body'),
@@ -175,17 +175,17 @@
 
           dialogElements.forEach(element => {
             if (element) {
-              element.style.setProperty('bottom', '90px', 'important'); // Above the bell
+              element.style.setProperty('bottom', '20px', 'important'); // Same level as bell
               element.style.setProperty('top', 'auto', 'important');
-              element.style.setProperty('left', '20px', 'important'); // Align with bell
+              element.style.setProperty('left', '100px', 'important'); // To the right
               element.style.setProperty('right', 'auto', 'important');
               element.style.setProperty('position', 'fixed', 'important');
               element.style.setProperty('transform', 'none', 'important');
               element.style.setProperty('z-index', '10000', 'important');
               element.style.setProperty('max-width', '380px', 'important');
               element.style.setProperty('width', '380px', 'important');
-              element.style.setProperty('max-height', '400px', 'important');
-              console.log('[OneSignal] Dialog positioned above bell');
+              element.style.setProperty('max-height', '500px', 'important');
+              console.log('[OneSignal] Dialog positioned to the right of bell');
             }
           });
         }, 2000);
@@ -195,16 +195,17 @@
           mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
               if (node.nodeType === 1 && node.className && node.className.includes('onesignal-bell-launcher-dialog')) {
-                node.style.setProperty('bottom', '90px', 'important');
+                node.style.setProperty('bottom', '20px', 'important');
                 node.style.setProperty('top', 'auto', 'important');
-                node.style.setProperty('left', '20px', 'important');
+                node.style.setProperty('left', '100px', 'important');
                 node.style.setProperty('right', 'auto', 'important');
                 node.style.setProperty('position', 'fixed', 'important');
                 node.style.setProperty('transform', 'none', 'important');
                 node.style.setProperty('z-index', '10000', 'important');
                 node.style.setProperty('max-width', '380px', 'important');
                 node.style.setProperty('width', '380px', 'important');
-                console.log('[OneSignal] Dialog dynamically positioned above bell');
+                node.style.setProperty('max-height', '500px', 'important');
+                console.log('[OneSignal] Dialog dynamically positioned to the right of bell');
               }
             });
           });

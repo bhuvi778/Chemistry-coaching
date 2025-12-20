@@ -30,22 +30,35 @@ const ParticleCanvas = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.3; // Slightly increased for better movement
-        this.vy = (Math.random() - 0.5) * 0.3;
-        this.size = Math.random() * 3 + 2; // Increased base size from 2+1.5 to 3+2
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+
         const colors = isDark
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
           : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
         this.color = colors[Math.floor(Math.random() * colors.length)];
-        // Increase formula probability
+
+        // Determine particle type
         const rand = Math.random();
         if (rand < 0.5) this.type = 1; // Formula (50%)
         else if (rand < 0.8) this.type = 2; // Bond (30%)
         else this.type = 0; // Hexagon (20%)
 
+        // Set consistent sizes based on type to prevent stretching
+        if (this.type === 0) {
+          // Hexagon - fixed radius
+          this.size = 8 + Math.random() * 4; // 8-12px radius
+        } else if (this.type === 1) {
+          // Formula - font size
+          this.size = 14 + Math.random() * 6; // 14-20px font
+        } else {
+          // Bond - length
+          this.size = 12 + Math.random() * 6; // 12-18px half-length
+        }
+
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
         this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.008; // Slightly increased rotation
+        this.spin = (Math.random() - 0.5) * 0.01;
       }
       update() {
         this.x += this.vx;
@@ -66,29 +79,28 @@ const ParticleCanvas = () => {
         ctx.globalAlpha = baseOpacity;
 
         if (this.type === 0) {
-          // Hexagon (Benzene Ring) - Fixed aspect ratio
+          // Hexagon (Benzene Ring) - Use size directly as radius
           ctx.beginPath();
-          const hexRadius = this.size * 5; // Increased from 4 to 5
           for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i;
-            const hx = hexRadius * Math.cos(angle);
-            const hy = hexRadius * Math.sin(angle);
+            const hx = this.size * Math.cos(angle);
+            const hy = this.size * Math.sin(angle);
             if (i === 0) ctx.moveTo(hx, hy);
             else ctx.lineTo(hx, hy);
           }
           ctx.closePath();
-          ctx.lineWidth = 2.5; // Increased from 2
+          ctx.lineWidth = 2.5;
           ctx.stroke();
 
           // Inner circle
           ctx.beginPath();
-          ctx.arc(0, 0, this.size * 2, 0, Math.PI * 2);
-          ctx.globalAlpha = baseOpacity * 0.6; // Increased from 0.5
+          ctx.arc(0, 0, this.size * 0.4, 0, Math.PI * 2);
+          ctx.globalAlpha = baseOpacity * 0.6;
           ctx.fill();
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula - Increased size with better visibility
-          ctx.font = `bold ${this.size * 6}px 'Orbitron', sans-serif`; // Increased from 5 to 6
+          // Chemical Formula - Use size directly as font size
+          ctx.font = `bold ${this.size}px 'Orbitron', sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
@@ -114,11 +126,11 @@ const ParticleCanvas = () => {
           ctx.shadowBlur = 0;
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 2) {
-          // Chemical Bond (Double or Triple Bond) - Fixed proportions
+          // Chemical Bond - Use size directly as half-length
           const bondType = Math.floor(Math.random() * 3) + 1;
-          const bondLength = this.size * 6; // Increased from 4 to 6
-          const atomRadius = this.size * 2; // Increased from 1.5 to 2
-          ctx.lineWidth = 2.5; // Increased from 2
+          const bondLength = this.size; // Use size directly
+          const atomRadius = this.size * 0.3; // Proportional to bond length
+          ctx.lineWidth = 2.5;
 
           for (let i = 0; i < bondType; i++) {
             const offset = (i - (bondType - 1) / 2) * 3;
