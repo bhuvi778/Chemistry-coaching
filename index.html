@@ -34,6 +34,20 @@
       right: auto !important;
       transform: none !important;
       position: fixed !important;
+      width: 60px !important;
+      height: 60px !important;
+      max-width: 60px !important;
+      max-height: 60px !important;
+      min-width: 60px !important;
+      min-height: 60px !important;
+    }
+
+    /* Size the bell icon itself */
+    .onesignal-bell-launcher .onesignal-bell-launcher-button,
+    .onesignal-bell-launcher svg,
+    .onesignal-bell-launcher img {
+      width: 60px !important;
+      height: 60px !important;
     }
 
     /* Ensure it's above other elements */
@@ -117,7 +131,13 @@
               element.style.setProperty('position', 'fixed', 'important');
               element.style.setProperty('transform', 'none', 'important');
               element.style.setProperty('z-index', '9999', 'important');
-              console.log('[OneSignal] Bell button repositioned to bottom-left');
+              element.style.setProperty('width', '60px', 'important');
+              element.style.setProperty('height', '60px', 'important');
+              element.style.setProperty('max-width', '60px', 'important');
+              element.style.setProperty('max-height', '60px', 'important');
+              element.style.setProperty('min-width', '60px', 'important');
+              element.style.setProperty('min-height', '60px', 'important');
+              console.log('[OneSignal] Bell button repositioned to bottom-left with size 60x60px');
             }
           });
         }, 2000);

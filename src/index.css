@@ -311,15 +311,19 @@ h3,
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -331,4 +335,16 @@ h3,
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Particle Canvas - Ensure it's visible on all pages */
+canvas[class*="pointer-events-none"] {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100vh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
 }

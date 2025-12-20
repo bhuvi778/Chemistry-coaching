@@ -13,7 +13,7 @@ const ParticleCanvas = () => {
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.height = Math.max(window.innerHeight, document.documentElement.scrollHeight);
     };
 
     window.addEventListener('resize', resizeCanvas);
@@ -182,7 +182,7 @@ const ParticleCanvas = () => {
     };
   }, [isDark]); // Re-render when theme changes
 
-  return <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />;
+  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 0, minHeight: '100vh' }} />;
 };
 
 export default ParticleCanvas;
