@@ -64,13 +64,12 @@ const ParticleCanvas = () => {
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.color;
 
-        // High opacity for clear visibility
-        const baseOpacity = isDark ? 0.85 : 0.9;
-        ctx.globalAlpha = baseOpacity;
+        // Maximum opacity for visibility
+        ctx.globalAlpha = 1;
 
         if (this.type === 0) {
-          // Hexagon - FIXED SIZE 10px radius
-          const radius = 10;
+          // Hexagon - MUCH LARGER 25px radius
+          const radius = 25;
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i;
@@ -80,61 +79,59 @@ const ParticleCanvas = () => {
             else ctx.lineTo(hx, hy);
           }
           ctx.closePath();
-          ctx.lineWidth = 2.5;
+          ctx.lineWidth = 4;
           ctx.stroke();
 
-          // Inner circle - FIXED SIZE
+          // Inner circle - LARGER
           ctx.beginPath();
-          ctx.arc(0, 0, 4, 0, Math.PI * 2);
-          ctx.globalAlpha = baseOpacity * 0.6;
+          ctx.arc(0, 0, 10, 0, Math.PI * 2);
+          ctx.globalAlpha = 0.7;
           ctx.fill();
-          ctx.globalAlpha = baseOpacity;
+          ctx.globalAlpha = 1;
 
         } else if (this.type === 1) {
-          // Chemical Formula - FIXED FONT SIZE 18px
-          ctx.font = `bold 18px 'Orbitron', sans-serif`;
+          // Chemical Formula - MUCH LARGER 28px font
+          ctx.font = `bold 28px 'Orbitron', sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
 
-          // Strong text stroke for visibility
-          ctx.lineWidth = 3;
-          ctx.strokeStyle = isDark ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.95)';
+          // Very strong text stroke for visibility
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = isDark ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)';
           ctx.strokeText(this.formula, 0, 0);
 
-          // Glow effect
+          // Strong glow effect
           ctx.shadowColor = this.color;
-          ctx.shadowBlur = 10;
+          ctx.shadowBlur = 15;
           ctx.shadowOffsetX = 0;
           ctx.shadowOffsetY = 0;
 
-          // Fill text
+          // Fill text with full opacity
           ctx.fillStyle = this.color;
-          ctx.globalAlpha = 1; // Full opacity for text
           ctx.fillText(this.formula, 0, 0);
 
           // Reset
           ctx.shadowColor = 'transparent';
           ctx.shadowBlur = 0;
-          ctx.globalAlpha = baseOpacity;
 
         } else if (this.type === 2) {
-          // Chemical Bond - FIXED SIZE 15px half-length
-          const bondLength = 15;
-          const atomRadius = 4;
+          // Chemical Bond - MUCH LARGER 35px half-length
+          const bondLength = 35;
+          const atomRadius = 10;
           const bondType = Math.floor(Math.random() * 3) + 1;
-          ctx.lineWidth = 2.5;
+          ctx.lineWidth = 4;
 
           // Draw bonds
           for (let i = 0; i < bondType; i++) {
-            const offset = (i - (bondType - 1) / 2) * 3;
+            const offset = (i - (bondType - 1) / 2) * 5;
             ctx.beginPath();
             ctx.moveTo(-bondLength, offset);
             ctx.lineTo(bondLength, offset);
             ctx.stroke();
           }
 
-          // Atoms at ends - FIXED SIZE
+          // Atoms at ends - LARGER
           ctx.beginPath();
           ctx.arc(-bondLength, 0, atomRadius, 0, Math.PI * 2);
           ctx.arc(bondLength, 0, atomRadius, 0, Math.PI * 2);
@@ -148,8 +145,8 @@ const ParticleCanvas = () => {
 
     const initParticles = () => {
       particles = [];
-      // Reduced particle count for less visual clutter
-      const particleCount = Math.min(window.innerWidth / 12, 100);
+      // Fewer particles since they're larger
+      const particleCount = Math.min(window.innerWidth / 20, 60);
       for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle());
       }
@@ -165,15 +162,15 @@ const ParticleCanvas = () => {
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 150) {
-            const opacity = (150 - distance) / 150 * 0.08;
+          if (distance < 200) {
+            const opacity = (200 - distance) / 200 * 0.15;
             ctx.beginPath();
             if (isDark) {
               ctx.strokeStyle = `rgba(100, 200, 255, ${opacity})`;
             } else {
-              ctx.strokeStyle = `rgba(8, 145, 178, ${opacity * 1.2})`;
+              ctx.strokeStyle = `rgba(8, 145, 178, ${opacity * 1.5})`;
             }
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 2;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
