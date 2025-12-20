@@ -40,8 +40,8 @@ const ParticleCanvas = () => {
 
         // Increase formula probability
         const rand = Math.random();
-        if (rand < 0.6) this.type = 1; // Formula (60%)
-        else if (rand < 0.85) this.type = 2; // Bond (25%)
+        if (rand < 0.9) this.type = 1; // Formula (60%)
+        else if (rand < 1) this.type = 2; // Bond (25%)
         else this.type = 0; // Hexagon (15%)
 
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
