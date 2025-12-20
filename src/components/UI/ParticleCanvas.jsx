@@ -33,7 +33,7 @@ const ParticleCanvas = () => {
         this.vx = (Math.random() - 0.5) * 0.5;
         this.vy = (Math.random() - 0.5) * 0.5;
         this.size = Math.random() * 3 + 2;
-        const colors = isDark 
+        const colors = isDark
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
           : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -42,7 +42,7 @@ const ParticleCanvas = () => {
         if (rand < 0.5) this.type = 1; // Formula (50%)
         else if (rand < 0.8) this.type = 2; // Bond (30%)
         else this.type = 0; // Hexagon (20%)
-        
+
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
         this.angle = Math.random() * Math.PI * 2;
         this.spin = (Math.random() - 0.5) * 0.015;
@@ -60,7 +60,7 @@ const ParticleCanvas = () => {
         ctx.rotate(this.angle);
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.color;
-        
+
         // Adjust opacity based on theme
         const baseOpacity = isDark ? 0.6 : 0.8;
         ctx.globalAlpha = baseOpacity;
@@ -78,7 +78,7 @@ const ParticleCanvas = () => {
           ctx.closePath();
           ctx.lineWidth = 2;
           ctx.stroke();
-          
+
           // Inner circle
           ctx.beginPath();
           ctx.arc(0, 0, this.size * 1.5, 0, Math.PI * 2);
@@ -91,7 +91,7 @@ const ParticleCanvas = () => {
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
-          
+
           // Add shadow for better visibility in light mode
           if (!isDark) {
             ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
@@ -99,9 +99,9 @@ const ParticleCanvas = () => {
             ctx.shadowOffsetX = 1;
             ctx.shadowOffsetY = 1;
           }
-          
+
           ctx.fillText(this.formula, 0, 0);
-          
+
           // Reset shadow
           ctx.shadowColor = 'transparent';
           ctx.shadowBlur = 0;
@@ -109,7 +109,7 @@ const ParticleCanvas = () => {
           // Chemical Bond (Double or Triple Bond)
           const bondType = Math.floor(Math.random() * 3) + 1;
           ctx.lineWidth = 2;
-          
+
           for (let i = 0; i < bondType; i++) {
             const offset = (i - (bondType - 1) / 2) * 3;
             ctx.beginPath();
@@ -141,7 +141,7 @@ const ParticleCanvas = () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       // Draw connecting lines between particles
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
@@ -182,7 +182,7 @@ const ParticleCanvas = () => {
     };
   }, [isDark]); // Re-render when theme changes
 
-  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full -z-10" />;
+  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />;
 };
 
 export default ParticleCanvas;
