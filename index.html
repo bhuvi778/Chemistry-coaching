@@ -27,7 +27,7 @@
     .onesignal-bell-launcher,
     #onesignal-bell-container,
     .onesignal-bell-launcher-button,
-    div[class*="onesignal-bell"] {
+    div[class*="onesignal-bell"]:not(.onesignal-bell-launcher-dialog) {
       bottom: 20px !important;
       top: auto !important;
       left: 20px !important;
@@ -50,6 +50,23 @@
       height: 60px !important;
     }
 
+    /* Position the notification dialog to the RIGHT of the bell */
+    .onesignal-bell-launcher-dialog,
+    .onesignal-bell-launcher-dialog-body,
+    div[class*="onesignal-bell-launcher-dialog"] {
+      bottom: 20px !important;
+      top: auto !important;
+      left: 100px !important;
+      /* Position to the right of the bell (20px + 60px + 20px spacing) */
+      right: auto !important;
+      transform: none !important;
+      position: fixed !important;
+      z-index: 10000 !important;
+      max-width: 400px !important;
+      width: auto !important;
+      height: auto !important;
+    }
+
     /* Ensure it's above other elements */
     .onesignal-bell-launcher,
     .onesignal-bell-launcher-dialog,
@@ -57,9 +74,9 @@
       z-index: 9999 !important;
     }
 
-    /* Override any right positioning */
-    [class*="onesignal"] {
-      right: auto !important;
+    /* Make sure dialog has proper z-index */
+    .onesignal-bell-launcher-dialog {
+      z-index: 10000 !important;
     }
   </style>
 
@@ -113,13 +130,13 @@
           console.log('[OneSignal] 👆 Notification clicked:', event.notification);
         });
 
-        // Force reposition bell button to bottom-left
+        // Force reposition bell button to bottom-left and dialog to the right
         setTimeout(() => {
           const bellElements = [
             document.querySelector('.onesignal-bell-launcher'),
             document.querySelector('#onesignal-bell-container'),
             document.querySelector('.onesignal-bell-launcher-button'),
-            ...document.querySelectorAll('[class*="onesignal-bell"]')
+            ...document.querySelectorAll('[class*="onesignal-bell"]:not([class*="dialog"])')
           ];
 
           bellElements.forEach(element => {
@@ -140,7 +157,51 @@
               console.log('[OneSignal] Bell button repositioned to bottom-left with size 60x60px');
             }
           });
+
+          // Position dialog to the right of the bell
+          const dialogElements = [
+            document.querySelector('.onesignal-bell-launcher-dialog'),
+            document.querySelector('.onesignal-bell-launcher-dialog-body'),
+            ...document.querySelectorAll('[class*="onesignal-bell-launcher-dialog"]')
+          ];
+
+          dialogElements.forEach(element => {
+            if (element) {
+              element.style.setProperty('bottom', '20px', 'important');
+              element.style.setProperty('top', 'auto', 'important');
+              element.style.setProperty('left', '100px', 'important'); // 20px + 60px + 20px spacing
+              element.style.setProperty('right', 'auto', 'important');
+              element.style.setProperty('position', 'fixed', 'important');
+              element.style.setProperty('transform', 'none', 'important');
+              element.style.setProperty('z-index', '10000', 'important');
+              element.style.setProperty('max-width', '400px', 'important');
+              console.log('[OneSignal] Dialog positioned to the right of bell');
+            }
+          });
         }, 2000);
+
+        // Also watch for dialog creation with MutationObserver
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+              if (node.nodeType === 1 && node.className && node.className.includes('onesignal-bell-launcher-dialog')) {
+                node.style.setProperty('bottom', '20px', 'important');
+                node.style.setProperty('top', 'auto', 'important');
+                node.style.setProperty('left', '100px', 'important');
+                node.style.setProperty('right', 'auto', 'important');
+                node.style.setProperty('position', 'fixed', 'important');
+                node.style.setProperty('transform', 'none', 'important');
+                node.style.setProperty('z-index', '10000', 'important');
+                console.log('[OneSignal] Dialog dynamically positioned to the right');
+              }
+            });
+          });
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
 
       } catch (error) {
         console.error('[OneSignal] ❌ Initialization error:', error);

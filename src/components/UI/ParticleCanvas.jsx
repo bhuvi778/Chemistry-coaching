@@ -30,9 +30,9 @@ const ParticleCanvas = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.2; // Reduced from 0.5 to 0.2
-        this.vy = (Math.random() - 0.5) * 0.2; // Reduced from 0.5 to 0.2
-        this.size = Math.random() * 2 + 1.5; // Reduced from 3+2 to 2+1.5
+        this.vx = (Math.random() - 0.5) * 0.3; // Slightly increased for better movement
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.size = Math.random() * 3 + 2; // Increased base size from 2+1.5 to 3+2
         const colors = isDark
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
           : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
@@ -45,7 +45,7 @@ const ParticleCanvas = () => {
 
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
         this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.005; // Reduced from 0.015 to 0.005
+        this.spin = (Math.random() - 0.5) * 0.008; // Slightly increased rotation
       }
       update() {
         this.x += this.vx;
@@ -62,16 +62,17 @@ const ParticleCanvas = () => {
         ctx.strokeStyle = this.color;
 
         // Adjust opacity based on theme
-        const baseOpacity = isDark ? 0.4 : 0.5; // Reduced from 0.6/0.8 to 0.4/0.5
+        const baseOpacity = isDark ? 0.5 : 0.6; // Increased visibility
         ctx.globalAlpha = baseOpacity;
 
         if (this.type === 0) {
-          // Hexagon (Benzene Ring)
+          // Hexagon (Benzene Ring) - Fixed aspect ratio
           ctx.beginPath();
+          const hexRadius = this.size * 5; // Increased from 4 to 5
           for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i;
-            const hx = (this.size * 4) * Math.cos(angle);
-            const hy = (this.size * 4) * Math.sin(angle);
+            const hx = hexRadius * Math.cos(angle);
+            const hy = hexRadius * Math.sin(angle);
             if (i === 0) ctx.moveTo(hx, hy);
             else ctx.lineTo(hx, hy);
           }
@@ -81,13 +82,13 @@ const ParticleCanvas = () => {
 
           // Inner circle
           ctx.beginPath();
-          ctx.arc(0, 0, this.size * 1.5, 0, Math.PI * 2);
+          ctx.arc(0, 0, this.size * 2, 0, Math.PI * 2);
           ctx.globalAlpha = baseOpacity * 0.5;
           ctx.fill();
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula
-          ctx.font = `bold ${this.size * 4}px 'Orbitron', sans-serif`;
+          // Chemical Formula - Increased size
+          ctx.font = `bold ${this.size * 5}px 'Orbitron', sans-serif`; // Increased from 4 to 5
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
@@ -106,22 +107,24 @@ const ParticleCanvas = () => {
           ctx.shadowColor = 'transparent';
           ctx.shadowBlur = 0;
         } else if (this.type === 2) {
-          // Chemical Bond (Double or Triple Bond)
+          // Chemical Bond (Double or Triple Bond) - Fixed proportions
           const bondType = Math.floor(Math.random() * 3) + 1;
+          const bondLength = this.size * 6; // Increased from 4 to 6
+          const atomRadius = this.size * 2; // Increased from 1.5 to 2
           ctx.lineWidth = 2;
 
           for (let i = 0; i < bondType; i++) {
             const offset = (i - (bondType - 1) / 2) * 3;
             ctx.beginPath();
-            ctx.moveTo(-this.size * 4, offset);
-            ctx.lineTo(this.size * 4, offset);
+            ctx.moveTo(-bondLength, offset);
+            ctx.lineTo(bondLength, offset);
             ctx.stroke();
           }
 
-          // Atoms at ends
+          // Atoms at ends - properly sized
           ctx.beginPath();
-          ctx.arc(-this.size * 4, 0, this.size * 1.5, 0, Math.PI * 2);
-          ctx.arc(this.size * 4, 0, this.size * 1.5, 0, Math.PI * 2);
+          ctx.arc(-bondLength, 0, atomRadius, 0, Math.PI * 2);
+          ctx.arc(bondLength, 0, atomRadius, 0, Math.PI * 2);
           ctx.fill();
         }
 
