@@ -20,124 +20,73 @@ const ParticleCanvas = () => {
     resizeCanvas();
 
     const formulas = [
-      'H₂O', 'CO₂', 'O₂', 'CH₄', 'NH₃', 'C₆H₆', 'NaCl', 'H⁺', 'OH⁻', 'e⁻',
-      'H₂SO₄', 'HCl', 'NaOH', 'KOH', 'CaCO₃', 'Fe²⁺', 'Cu²⁺', 'Zn', 'Ag⁺',
-      'C₂H₅OH', 'CH₃COOH', 'NH₄⁺', 'NO₃⁻', 'SO₄²⁻', 'Cl⁻', 'Na⁺', 'K⁺',
-      'Mg²⁺', 'Ca²⁺', 'Al³⁺', 'C₆H₁₂O₆', 'H₂O₂', 'N₂', 'Cl₂', 'Br₂'
+      'H₂O', 'CO₂', 'O₂', 'CH₄', 'NH₃', 'NaCl', 'H⁺', 'OH⁻',
+      'HCl', 'NaOH', 'KOH', 'Fe²⁺', 'Cu²⁺', 'Zn', 'Ag⁺',
+      'NH₄⁺', 'NO₃⁻', 'Cl⁻', 'Na⁺', 'K⁺', 'Ca²⁺', 'N₂', 'Cl₂'
     ];
 
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.6;
-        this.vy = (Math.random() - 0.5) * 0.6;
+        this.vx = (Math.random() - 0.5) * 0.8;
+        this.vy = (Math.random() - 0.5) * 0.8;
 
         const colors = isDark
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
           : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
         this.color = colors[Math.floor(Math.random() * colors.length)];
 
-        // Determine particle type
-        const rand = Math.random();
-        if (rand < 0.6) this.type = 1; // Formula (60%)
-        else if (rand < 0.85) this.type = 2; // Bond (25%)
-        else this.type = 0; // Hexagon (15%)
-
+        // Only use formulas - they're clearest and most readable
+        this.type = 1;
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
-        this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.012;
+
+        // NO rotation to prevent stretching
+        this.angle = 0;
+        this.spin = 0;
       }
 
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.angle += this.spin;
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        // Bounce off edges
+        if (this.x < 50 || this.x > canvas.width - 50) this.vx *= -1;
+        if (this.y < 50 || this.y > canvas.height - 50) this.vy *= -1;
       }
 
       draw() {
         ctx.save();
         ctx.translate(this.x, this.y);
-        ctx.rotate(this.angle);
+
+        // NO ROTATION - keep text perfectly horizontal
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.color;
-
-        // Maximum opacity for visibility
         ctx.globalAlpha = 1;
 
-        if (this.type === 0) {
-          // Hexagon - MASSIVE 40px radius
-          const radius = 40;
-          ctx.beginPath();
-          for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const hx = radius * Math.cos(angle);
-            const hy = radius * Math.sin(angle);
-            if (i === 0) ctx.moveTo(hx, hy);
-            else ctx.lineTo(hx, hy);
-          }
-          ctx.closePath();
-          ctx.lineWidth = 5;
-          ctx.stroke();
+        // Chemical Formula - HUGE 42px font, NO rotation
+        ctx.font = `bold 42px 'Orbitron', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
 
-          // Inner circle - MUCH LARGER
-          ctx.beginPath();
-          ctx.arc(0, 0, 16, 0, Math.PI * 2);
-          ctx.globalAlpha = 0.7;
-          ctx.fill();
-          ctx.globalAlpha = 1;
+        // Very thick black/white outline for maximum contrast
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = isDark ? '#000000' : '#FFFFFF';
+        ctx.strokeText(this.formula, 0, 0);
 
-        } else if (this.type === 1) {
-          // Chemical Formula - HUGE 36px font
-          ctx.font = `bold 36px 'Orbitron', sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.rotate(-this.angle); // Keep text upright
+        // Strong glow effect
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 25;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
 
-          // Extra strong text stroke for visibility
-          ctx.lineWidth = 5;
-          ctx.strokeStyle = isDark ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)';
-          ctx.strokeText(this.formula, 0, 0);
+        // Fill text with bright color
+        ctx.fillStyle = this.color;
+        ctx.fillText(this.formula, 0, 0);
 
-          // Very strong glow effect
-          ctx.shadowColor = this.color;
-          ctx.shadowBlur = 20;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 0;
-
-          // Fill text with full opacity
-          ctx.fillStyle = this.color;
-          ctx.fillText(this.formula, 0, 0);
-
-          // Reset
-          ctx.shadowColor = 'transparent';
-          ctx.shadowBlur = 0;
-
-        } else if (this.type === 2) {
-          // Chemical Bond - MASSIVE 50px half-length
-          const bondLength = 50;
-          const atomRadius = 14;
-          const bondType = Math.floor(Math.random() * 3) + 1;
-          ctx.lineWidth = 5;
-
-          // Draw bonds
-          for (let i = 0; i < bondType; i++) {
-            const offset = (i - (bondType - 1) / 2) * 6;
-            ctx.beginPath();
-            ctx.moveTo(-bondLength, offset);
-            ctx.lineTo(bondLength, offset);
-            ctx.stroke();
-          }
-
-          // Atoms at ends - MUCH LARGER
-          ctx.beginPath();
-          ctx.arc(-bondLength, 0, atomRadius, 0, Math.PI * 2);
-          ctx.arc(bondLength, 0, atomRadius, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
+        // Reset
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = 1;
         ctx.restore();
       }
@@ -145,8 +94,8 @@ const ParticleCanvas = () => {
 
     const initParticles = () => {
       particles = [];
-      // Fewer particles since they're MUCH larger
-      const particleCount = Math.min(window.innerWidth / 25, 50);
+      // More particles since we're only showing formulas
+      const particleCount = Math.min(window.innerWidth / 15, 80);
       for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle());
       }
@@ -162,15 +111,15 @@ const ParticleCanvas = () => {
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 250) {
-            const opacity = (250 - distance) / 250 * 0.2;
+          if (distance < 300) {
+            const opacity = (300 - distance) / 300 * 0.25;
             ctx.beginPath();
             if (isDark) {
               ctx.strokeStyle = `rgba(100, 200, 255, ${opacity})`;
             } else {
               ctx.strokeStyle = `rgba(8, 145, 178, ${opacity * 1.5})`;
             }
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 3;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
