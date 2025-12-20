@@ -46,7 +46,8 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Connect to MongoDB
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/?appName=Ace2Examz-Cluster';
+// New DB (for future migration): mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/?appName=Ace2Examz-Cluster
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://bhupeshsingh778_db_user:qwerty12345@cluster0.u70wcn8.mongodb.net/?appName=Cluster0';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
