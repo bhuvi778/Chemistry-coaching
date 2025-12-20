@@ -19,62 +19,41 @@ export default async function handler(req, res) {
         console.log('=== BotBiz WhatsApp API ===');
         console.log('Phone:', phone);
 
-        // BotBiz API Key - Use environment variable or fallback to hardcoded (update in Vercel dashboard)
+        // BotBiz API Configuration
         const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
+        const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || ''; // You need to provide this
 
         console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
 
-        // Try the simple send endpoint first
-        const simpleUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
+        // Check if phone number ID is provided
+        if (!PHONE_NUMBER_ID) {
+            console.error('⚠ PHONE_NUMBER_ID not configured');
+            return res.status(500).json({
+                success: false,
+                error: 'WhatsApp configuration incomplete',
+                details: 'PHONE_NUMBER_ID is required. Please add it to environment variables.',
+                suggestion: 'Add BOTBIZ_PHONE_NUMBER_ID to your Vercel environment variables'
+            });
+        }
 
-        const simplePayload = {
-            phone: phone,
-            message: message
-        };
+        // Build the API URL with query parameters
+        const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send');
+        apiUrl.searchParams.append('apiToken', BOTBIZ_API_KEY);
+        apiUrl.searchParams.append('phone_number_id', PHONE_NUMBER_ID);
+        apiUrl.searchParams.append('phone_number', phone);
+        apiUrl.searchParams.append('message', message);
 
-        console.log('Trying simple send endpoint...');
-        console.log('URL:', simpleUrl);
-        console.log('Payload:', JSON.stringify(simplePayload, null, 2));
+        console.log('API URL:', apiUrl.toString().replace(BOTBIZ_API_KEY, 'API_KEY_HIDDEN'));
 
-        let apiResponse = await fetch(simpleUrl, {
-            method: 'POST',
+        // Make GET request to BotBiz API
+        const apiResponse = await fetch(apiUrl.toString(), {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${BOTBIZ_API_KEY}`,
                 'Accept': 'application/json',
-            },
-            body: JSON.stringify(simplePayload)
+            }
         });
 
-        console.log('Simple endpoint response status:', apiResponse.status);
-
-        // If simple endpoint fails, try template endpoint
-        if (!apiResponse.ok && apiResponse.status !== 200) {
-            console.log('Simple endpoint failed, trying template endpoint...');
-
-            const templateUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
-            const templatePayload = {
-                phone: phone,
-                message: message,
-                template_name: 'app_download',
-                language: 'en'
-            };
-
-            console.log('Template URL:', templateUrl);
-            console.log('Template Payload:', JSON.stringify(templatePayload, null, 2));
-
-            apiResponse = await fetch(templateUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${BOTBIZ_API_KEY}`,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify(templatePayload)
-            });
-
-            console.log('Template endpoint response status:', apiResponse.status);
-        }
+        console.log('API response status:', apiResponse.status);
 
         // Get response data
         let apiData;
@@ -113,7 +92,7 @@ export default async function handler(req, res) {
                 data: apiData
             });
         } else {
-            console.error('✗ Both endpoints failed');
+            console.error('✗ API request failed');
             console.error('Final Status:', apiResponse.status);
             console.error('Final Response:', JSON.stringify(apiData, null, 2));
 
@@ -123,7 +102,7 @@ export default async function handler(req, res) {
                 details: apiData?.message || apiData?.error || apiData?.errors || apiData?.rawResponse || `HTTP ${apiResponse.status}`,
                 status: apiResponse.status,
                 fullResponse: apiData,
-                suggestion: 'Please check BotBiz dashboard for API documentation or contact BotBiz support'
+                suggestion: 'Please check BotBiz dashboard for API documentation or verify your phone_number_id'
             });
         }
 
