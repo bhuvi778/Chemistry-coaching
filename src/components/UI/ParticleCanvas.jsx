@@ -89,8 +89,13 @@ const ParticleCanvas = () => {
           ctx.fill();
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula - MASSIVE
-          ctx.font = `bold ${this.size * 4}px 'Orbitron', sans-serif`; // 4x multiplier (was 3x)
+          // Chemical Formula - MASSIVE and TALL
+          ctx.save(); // Save state before scaling
+
+          // Scale vertically to make text TALLER (2x height)
+          ctx.scale(1, 2);
+
+          ctx.font = `bold ${this.size * 4}px 'Orbitron', sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
@@ -106,6 +111,8 @@ const ParticleCanvas = () => {
           // Reset shadow
           ctx.shadowColor = 'transparent';
           ctx.shadowBlur = 0;
+
+          ctx.restore(); // Restore state after scaling
         } else if (this.type === 2) {
           // Chemical Bond - MASSIVE
           const bondType = Math.floor(Math.random() * 3) + 1;
