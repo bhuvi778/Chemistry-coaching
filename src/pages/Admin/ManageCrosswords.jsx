@@ -28,7 +28,9 @@ const ManageCrosswords = () => {
 
     const fetchCrosswords = async () => {
         try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            // Normalize API URL - remove /api if it's already included
+            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
             const response = await fetch(`${API_URL}/api/crosswords`);
             const data = await response.json();
             setCrosswords(data);
@@ -49,7 +51,9 @@ const ManageCrosswords = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this crossword?')) {
             try {
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                // Normalize API URL - remove /api if it's already included
+                let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
                 await fetch(`${API_URL}/api/crosswords/${id}`, {
                     method: 'DELETE'
                 });
@@ -148,7 +152,9 @@ const ManageCrosswords = () => {
         }
 
         try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            // Normalize API URL - remove /api if it's already included
+            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
             const method = isEditing ? 'PUT' : 'POST';
             const url = isEditing
                 ? `${API_URL}/api/crosswords/${currentCrossword._id}`

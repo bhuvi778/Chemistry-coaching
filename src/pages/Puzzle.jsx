@@ -16,7 +16,10 @@ const Puzzle = () => {
 
     const fetchCrosswords = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/crosswords`);
+            // Normalize API URL - remove /api if it's already included
+            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
+            const response = await fetch(`${API_URL}/api/crosswords`);
             const data = await response.json();
             setCrosswords(data);
             setLoading(false);
@@ -28,7 +31,10 @@ const Puzzle = () => {
 
     const fetchPuzzleSets = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/puzzle-sets`);
+            // Normalize API URL - remove /api if it's already included
+            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
+            const response = await fetch(`${API_URL}/api/puzzle-sets`);
             const data = await response.json();
             setPuzzleSets(data);
         } catch (error) {
@@ -290,8 +296,8 @@ const Puzzle = () => {
                                     {/* Difficulty Badge */}
                                     <div className="mt-3 text-center">
                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${puzzleSet.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
-                                                puzzleSet.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                    'bg-red-500/20 text-red-400'
+                                            puzzleSet.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                'bg-red-500/20 text-red-400'
                                             }`}>
                                             {puzzleSet.difficulty}
                                         </span>
