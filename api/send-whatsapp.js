@@ -91,8 +91,19 @@ export default async function handler(req, res) {
             apiData = { error: 'Could not parse response' };
         }
 
-        // Check if successful
-        if (apiResponse.ok || apiResponse.status === 200 || apiResponse.status === 201) {
+        // Check if successful - Look for success indicators in the response data
+        const isSuccess = (apiResponse.ok || apiResponse.status === 200 || apiResponse.status === 201) &&
+            (!apiData?.error && !apiData?.errors && apiData?.success !== false);
+
+        console.log('=== Response Analysis ===');
+        console.log('HTTP Status:', apiResponse.status);
+        console.log('Response OK:', apiResponse.ok);
+        console.log('Has Error in Data:', !!apiData?.error || !!apiData?.errors);
+        console.log('Success Flag:', apiData?.success);
+        console.log('Is Success:', isSuccess);
+        console.log('========================');
+
+        if (isSuccess) {
             console.log('✓ WhatsApp message sent successfully!');
             return res.status(200).json({
                 success: true,
@@ -102,12 +113,12 @@ export default async function handler(req, res) {
         } else {
             console.error('✗ Both endpoints failed');
             console.error('Final Status:', apiResponse.status);
-            console.error('Final Response:', apiData);
+            console.error('Final Response:', JSON.stringify(apiData, null, 2));
 
-            return res.status(200).json({
+            return res.status(500).json({
                 success: false,
                 error: 'Failed to send WhatsApp message',
-                details: apiData?.message || apiData?.error || apiData?.rawResponse || `HTTP ${apiResponse.status}`,
+                details: apiData?.message || apiData?.error || apiData?.errors || apiData?.rawResponse || `HTTP ${apiResponse.status}`,
                 status: apiResponse.status,
                 fullResponse: apiData,
                 suggestion: 'Please check BotBiz dashboard for API documentation or contact BotBiz support'
@@ -119,7 +130,7 @@ export default async function handler(req, res) {
         console.error('Message:', error.message);
         console.error('Stack:', error.stack);
 
-        return res.status(200).json({
+        return res.status(500).json({
             success: false,
             error: 'Internal server error',
             details: error.message,

@@ -59,9 +59,25 @@ const AppDownload = () => {
         setMessage('✓ App download link sent to your WhatsApp!');
         setMobileNumber('');
       } else {
-        const errorMsg = responseData?.error || responseData?.details || 'Failed to send link';
+        // Extract detailed error information
+        let errorMsg = 'Failed to send link';
+
+        if (responseData?.details) {
+          errorMsg = responseData.details;
+        } else if (responseData?.error) {
+          errorMsg = responseData.error;
+        }
+
+        // Log full error for debugging
+        console.error('=== Full Error Details ===');
+        console.error('Status:', response.status);
+        console.error('Response Data:', responseData);
+        if (responseData?.fullResponse) {
+          console.error('BotBiz API Response:', responseData.fullResponse);
+        }
+        console.error('========================');
+
         setMessage(`⚠ ${errorMsg}. Please contact support if issue persists.`);
-        console.error('API error:', responseData);
       }
     } catch (error) {
       console.error('Error sending WhatsApp:', error);
