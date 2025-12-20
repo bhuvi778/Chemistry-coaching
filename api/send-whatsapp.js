@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         console.log('Sending WhatsApp TEMPLATE message via BotBiz API...');
 
         // Use template endpoint (required by WhatsApp for new users)
-        const TEMPLATE_NAME = process.env.BOTBIZ_TEMPLATE_NAME || 'app_download'; // Your template name
+        const TEMPLATE_NAME = process.env.BOTBIZ_TEMPLATE_NAME || 'get_link'; // Your template name in BotBiz
 
         const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send/template');
         apiUrl.searchParams.append('apiToken', BOTBIZ_API_KEY);
