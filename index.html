@@ -23,15 +23,15 @@
 
   <!-- Custom CSS for OneSignal Bell Position -->
   <style>
-    /* Position OneSignal bell button in bottom-right corner */
+    /* Position OneSignal bell button in bottom-left corner */
     .onesignal-bell-launcher,
     #onesignal-bell-container,
     .onesignal-bell-launcher-button,
     div[class*="onesignal-bell"]:not(.onesignal-bell-launcher-dialog):not(.onesignal-bell-launcher-dialog-body) {
       bottom: 20px !important;
       top: auto !important;
-      right: 20px !important;
-      left: auto !important;
+      left: 20px !important;
+      right: auto !important;
       transform: none !important;
       position: fixed !important;
       width: 60px !important;
@@ -59,9 +59,9 @@
       bottom: 100px !important;
       /* Above the bell: 20px + 60px + 20px spacing */
       top: auto !important;
-      right: 20px !important;
+      left: 20px !important;
       /* Align with the bell */
-      left: auto !important;
+      right: auto !important;
       transform: none !important;
       position: fixed !important;
       z-index: 999998 !important;
@@ -155,8 +155,8 @@
             if (element) {
               element.style.setProperty('bottom', '20px', 'important');
               element.style.setProperty('top', 'auto', 'important');
-              element.style.setProperty('right', '20px', 'important');
-              element.style.setProperty('left', 'auto', 'important');
+              element.style.setProperty('left', '20px', 'important');
+              element.style.setProperty('right', 'auto', 'important');
               element.style.setProperty('position', 'fixed', 'important');
               element.style.setProperty('transform', 'none', 'important');
               element.style.setProperty('z-index', '999999', 'important');
@@ -170,7 +170,7 @@
               element.style.setProperty('border-radius', '50%', 'important');
               element.style.setProperty('pointer-events', 'auto', 'important');
               element.style.setProperty('cursor', 'pointer', 'important');
-              console.log('[OneSignal] Bell button repositioned to bottom-right with size 60x60px');
+              console.log('[OneSignal] Bell button repositioned to bottom-left with size 60x60px');
             }
           });
 
@@ -185,8 +185,8 @@
             if (element) {
               element.style.setProperty('bottom', '100px', 'important'); // Above bell
               element.style.setProperty('top', 'auto', 'important');
-              element.style.setProperty('right', '20px', 'important'); // Align with bell
-              element.style.setProperty('left', 'auto', 'important');
+              element.style.setProperty('left', '20px', 'important'); // Align with bell
+              element.style.setProperty('right', 'auto', 'important');
               element.style.setProperty('position', 'fixed', 'important');
               element.style.setProperty('transform', 'none', 'important');
               element.style.setProperty('z-index', '999998', 'important');
@@ -205,8 +205,8 @@
               if (node.nodeType === 1 && node.className && node.className.includes('onesignal-bell-launcher-dialog')) {
                 node.style.setProperty('bottom', '100px', 'important');
                 node.style.setProperty('top', 'auto', 'important');
-                node.style.setProperty('right', '20px', 'important');
-                node.style.setProperty('left', 'auto', 'important');
+                node.style.setProperty('left', '20px', 'important');
+                node.style.setProperty('right', 'auto', 'important');
                 node.style.setProperty('position', 'fixed', 'important');
                 node.style.setProperty('transform', 'none', 'important');
                 node.style.setProperty('z-index', '999998', 'important');
