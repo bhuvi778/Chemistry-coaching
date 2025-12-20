@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 
 const Puzzle = () => {
@@ -359,8 +360,11 @@ const Puzzle = () => {
             </div>
 
             {/* Crossword Modal */}
-            {showCrosswordModal && selectedCrossword && (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999] p-4">
+            {showCrosswordModal && selectedCrossword && ReactDOM.createPortal(
+                <div
+                    className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999] p-4"
+                    style={{ top: 0, left: 0, right: 0, bottom: 0, position: 'fixed' }}
+                >
                     <div className="relative w-full max-w-6xl bg-gray-900 rounded-xl overflow-hidden shadow-2xl">
                         {/* Modal Header */}
                         <div className="flex items-center justify-between p-4 bg-gradient-to-r from-cyan-500 to-blue-500">
@@ -417,7 +421,8 @@ const Puzzle = () => {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
