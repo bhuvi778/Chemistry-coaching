@@ -22,11 +22,9 @@ export default async function handler(req, res) {
         // BotBiz API Configuration
         const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
         const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || '884991348021443';
-        const TEMPLATE_NAME = process.env.BOTBIZ_TEMPLATE_NAME || 'hello_world'; // Default WhatsApp template
 
         console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
         console.log('Phone Number ID:', PHONE_NUMBER_ID);
-        console.log('Template Name:', TEMPLATE_NAME);
 
         // Check if phone number ID is provided
         if (!PHONE_NUMBER_ID) {
@@ -39,49 +37,26 @@ export default async function handler(req, res) {
             });
         }
 
-        // Try using template endpoint first (required for users outside 24-hour window)
-        console.log('Attempting to send via Template API...');
+        // Build the API URL with query parameters
+        console.log('Sending WhatsApp message via BotBiz API...');
 
-        const templateUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send/template');
-        templateUrl.searchParams.append('apiToken', BOTBIZ_API_KEY);
-        templateUrl.searchParams.append('phone_number_id', PHONE_NUMBER_ID);
-        templateUrl.searchParams.append('phone_number', phone);
-        templateUrl.searchParams.append('template_name', TEMPLATE_NAME);
-        templateUrl.searchParams.append('language', 'en');
+        const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send');
+        apiUrl.searchParams.append('apiToken', BOTBIZ_API_KEY);
+        apiUrl.searchParams.append('phone_number_id', PHONE_NUMBER_ID);
+        apiUrl.searchParams.append('phone_number', phone);
+        apiUrl.searchParams.append('message', message);
 
-        console.log('Template API URL:', templateUrl.toString().replace(BOTBIZ_API_KEY, 'API_KEY_HIDDEN'));
+        console.log('API URL:', apiUrl.toString().replace(BOTBIZ_API_KEY, 'API_KEY_HIDDEN'));
 
-        // Make GET request to BotBiz Template API
-        let apiResponse = await fetch(templateUrl.toString(), {
+        // Make GET request to BotBiz API
+        const apiResponse = await fetch(apiUrl.toString(), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
             }
         });
 
-        console.log('Template API response status:', apiResponse.status);
-
-        // If template fails, try regular message (for users within 24-hour window)
-        if (!apiResponse.ok) {
-            console.log('Template API failed, trying regular message API...');
-
-            const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send');
-            apiUrl.searchParams.append('apiToken', BOTBIZ_API_KEY);
-            apiUrl.searchParams.append('phone_number_id', PHONE_NUMBER_ID);
-            apiUrl.searchParams.append('phone_number', phone);
-            apiUrl.searchParams.append('message', message);
-
-            console.log('Regular API URL:', apiUrl.toString().replace(BOTBIZ_API_KEY, 'API_KEY_HIDDEN'));
-
-            apiResponse = await fetch(apiUrl.toString(), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                }
-            });
-
-            console.log('Regular API response status:', apiResponse.status);
-        }
+        console.log('API response status:', apiResponse.status);
 
         // Get response data
         let apiData;
@@ -133,7 +108,7 @@ export default async function handler(req, res) {
                 status: apiResponse.status,
                 fullResponse: apiData,
                 suggestion: apiData?.message?.includes('24 hour')
-                    ? 'You need to create and use a WhatsApp Message Template in BotBiz dashboard. Free-form messages only work within 24 hours of user contact.'
+                    ? 'WORKAROUND: First, send a WhatsApp message from your phone to +919115179935, then try again. OR create a Message Template in BotBiz dashboard (see WHATSAPP_TEMPLATE_SETUP.md).'
                     : 'Please check BotBiz dashboard for API documentation or verify your phone_number_id'
             });
         }
