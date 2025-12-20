@@ -20,82 +20,62 @@ const ParticleCanvas = () => {
     resizeCanvas();
 
     const formulas = [
-      'H₂O', 'CO₂', 'O₂', 'CH₄', 'NH₃', 'NaCl', 'H⁺', 'OH⁻',
-      'HCl', 'NaOH', 'KOH', 'Fe²⁺', 'Cu²⁺', 'Zn', 'Ag⁺',
-      'NH₄⁺', 'NO₃⁻', 'Cl⁻', 'Na⁺', 'K⁺', 'Ca²⁺', 'N₂', 'Cl₂'
+      'H₂O', 'CO₂', 'O₂', 'CH₄', 'NH₃', 'NaCl',
+      'HCl', 'NaOH', 'Fe²⁺', 'Cu²⁺', 'Ag⁺',
+      'NO₃⁻', 'Cl⁻', 'Na⁺', 'K⁺', 'N₂'
     ];
 
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.8;
-        this.vy = (Math.random() - 0.5) * 0.8;
+        this.vx = (Math.random() - 0.5);
+        this.vy = (Math.random() - 0.5);
 
         const colors = isDark
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
           : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
         this.color = colors[Math.floor(Math.random() * colors.length)];
 
-        // Only use formulas - they're clearest and most readable
-        this.type = 1;
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
-
-        // NO rotation to prevent stretching
-        this.angle = 0;
-        this.spin = 0;
       }
 
       update() {
         this.x += this.vx;
         this.y += this.vy;
 
-        // Bounce off edges
-        if (this.x < 50 || this.x > canvas.width - 50) this.vx *= -1;
-        if (this.y < 50 || this.y > canvas.height - 50) this.vy *= -1;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
       }
 
       draw() {
         ctx.save();
-        ctx.translate(this.x, this.y);
 
-        // NO ROTATION - keep text perfectly horizontal
-        ctx.fillStyle = this.color;
-        ctx.strokeStyle = this.color;
-        ctx.globalAlpha = 1;
-
-        // Chemical Formula - HUGE 42px font, NO rotation
-        ctx.font = `bold 42px 'Orbitron', sans-serif`;
+        // Draw formula - NO translation, NO rotation
+        ctx.font = `bold 48px 'Orbitron', monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        // Very thick black/white outline for maximum contrast
-        ctx.lineWidth = 6;
+        // Black/white outline for contrast
+        ctx.lineWidth = 8;
         ctx.strokeStyle = isDark ? '#000000' : '#FFFFFF';
-        ctx.strokeText(this.formula, 0, 0);
+        ctx.strokeText(this.formula, this.x, this.y);
 
-        // Strong glow effect
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 25;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-
-        // Fill text with bright color
+        // Colored fill
         ctx.fillStyle = this.color;
-        ctx.fillText(this.formula, 0, 0);
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 30;
+        ctx.fillText(this.formula, this.x, this.y);
 
         // Reset
-        ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
-        ctx.globalAlpha = 1;
         ctx.restore();
       }
     }
 
     const initParticles = () => {
       particles = [];
-      // More particles since we're only showing formulas
-      const particleCount = Math.min(window.innerWidth / 15, 80);
+      const particleCount = Math.min(Math.floor(window.innerWidth / 18), 70);
       for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle());
       }
@@ -104,29 +84,30 @@ const ParticleCanvas = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw connecting lines between particles
+      // Draw connecting lines
+      ctx.globalAlpha = 0.3;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 300) {
-            const opacity = (300 - distance) / 300 * 0.25;
+          if (distance < 250) {
+            const opacity = (250 - distance) / 250 * 0.3;
             ctx.beginPath();
-            if (isDark) {
-              ctx.strokeStyle = `rgba(100, 200, 255, ${opacity})`;
-            } else {
-              ctx.strokeStyle = `rgba(8, 145, 178, ${opacity * 1.5})`;
-            }
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = isDark
+              ? `rgba(100, 200, 255, ${opacity})`
+              : `rgba(8, 145, 178, ${opacity})`;
+            ctx.lineWidth = 2;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
           }
         }
       }
+      ctx.globalAlpha = 1;
 
+      // Draw particles
       particles.forEach(p => {
         p.update();
         p.draw();
