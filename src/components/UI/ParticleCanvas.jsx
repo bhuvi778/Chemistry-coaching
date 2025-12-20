@@ -89,30 +89,32 @@ const ParticleCanvas = () => {
           ctx.fill();
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula - TALL and NARROW for clarity
-          ctx.save(); // Save state before scaling
-
-          // Scale: 70% width, 200% height for tall, narrow text
-          ctx.scale(0.7, 2);
-
-          ctx.font = `bold ${this.size * 4}px 'Orbitron', sans-serif`;
+          // Chemical Formula - MASSIVE font, NO distortion
+          ctx.font = `bold ${this.size * 5}px 'Orbitron', sans-serif`; // 75-125px font!
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
 
-          // Strong shadow for visibility
-          ctx.shadowColor = isDark ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 1)';
-          ctx.shadowBlur = 10;
-          ctx.shadowOffsetX = 3;
-          ctx.shadowOffsetY = 3;
+          // Very thick outline for maximum contrast
+          ctx.lineWidth = 8;
+          ctx.strokeStyle = isDark ? '#000000' : '#FFFFFF';
+          ctx.strokeText(this.formula, 0, 0);
 
+          // Strong glow effect
+          ctx.shadowColor = this.color;
+          ctx.shadowBlur = 20;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          // Fill with bright color at full opacity
+          ctx.fillStyle = this.color;
+          ctx.globalAlpha = 1;
           ctx.fillText(this.formula, 0, 0);
 
-          // Reset shadow
+          // Reset
           ctx.shadowColor = 'transparent';
           ctx.shadowBlur = 0;
-
-          ctx.restore(); // Restore state after scaling
+          ctx.globalAlpha = baseOpacity;
         } else if (this.type === 2) {
           // Chemical Bond - MASSIVE
           const bondType = Math.floor(Math.random() * 3) + 1;
