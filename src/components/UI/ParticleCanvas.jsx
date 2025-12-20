@@ -30,8 +30,8 @@ const ParticleCanvas = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = (Math.random() - 0.5) * 0.6;
 
         const colors = isDark
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
@@ -46,7 +46,7 @@ const ParticleCanvas = () => {
 
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
         this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.01;
+        this.spin = (Math.random() - 0.5) * 0.012;
       }
 
       update() {
@@ -68,8 +68,8 @@ const ParticleCanvas = () => {
         ctx.globalAlpha = 1;
 
         if (this.type === 0) {
-          // Hexagon - MUCH LARGER 25px radius
-          const radius = 25;
+          // Hexagon - MASSIVE 40px radius
+          const radius = 40;
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i;
@@ -79,31 +79,31 @@ const ParticleCanvas = () => {
             else ctx.lineTo(hx, hy);
           }
           ctx.closePath();
-          ctx.lineWidth = 4;
+          ctx.lineWidth = 5;
           ctx.stroke();
 
-          // Inner circle - LARGER
+          // Inner circle - MUCH LARGER
           ctx.beginPath();
-          ctx.arc(0, 0, 10, 0, Math.PI * 2);
+          ctx.arc(0, 0, 16, 0, Math.PI * 2);
           ctx.globalAlpha = 0.7;
           ctx.fill();
           ctx.globalAlpha = 1;
 
         } else if (this.type === 1) {
-          // Chemical Formula - MUCH LARGER 28px font
-          ctx.font = `bold 28px 'Orbitron', sans-serif`;
+          // Chemical Formula - HUGE 36px font
+          ctx.font = `bold 36px 'Orbitron', sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
 
-          // Very strong text stroke for visibility
-          ctx.lineWidth = 4;
+          // Extra strong text stroke for visibility
+          ctx.lineWidth = 5;
           ctx.strokeStyle = isDark ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)';
           ctx.strokeText(this.formula, 0, 0);
 
-          // Strong glow effect
+          // Very strong glow effect
           ctx.shadowColor = this.color;
-          ctx.shadowBlur = 15;
+          ctx.shadowBlur = 20;
           ctx.shadowOffsetX = 0;
           ctx.shadowOffsetY = 0;
 
@@ -116,22 +116,22 @@ const ParticleCanvas = () => {
           ctx.shadowBlur = 0;
 
         } else if (this.type === 2) {
-          // Chemical Bond - MUCH LARGER 35px half-length
-          const bondLength = 35;
-          const atomRadius = 10;
+          // Chemical Bond - MASSIVE 50px half-length
+          const bondLength = 50;
+          const atomRadius = 14;
           const bondType = Math.floor(Math.random() * 3) + 1;
-          ctx.lineWidth = 4;
+          ctx.lineWidth = 5;
 
           // Draw bonds
           for (let i = 0; i < bondType; i++) {
-            const offset = (i - (bondType - 1) / 2) * 5;
+            const offset = (i - (bondType - 1) / 2) * 6;
             ctx.beginPath();
             ctx.moveTo(-bondLength, offset);
             ctx.lineTo(bondLength, offset);
             ctx.stroke();
           }
 
-          // Atoms at ends - LARGER
+          // Atoms at ends - MUCH LARGER
           ctx.beginPath();
           ctx.arc(-bondLength, 0, atomRadius, 0, Math.PI * 2);
           ctx.arc(bondLength, 0, atomRadius, 0, Math.PI * 2);
@@ -145,8 +145,8 @@ const ParticleCanvas = () => {
 
     const initParticles = () => {
       particles = [];
-      // Fewer particles since they're larger
-      const particleCount = Math.min(window.innerWidth / 20, 60);
+      // Fewer particles since they're MUCH larger
+      const particleCount = Math.min(window.innerWidth / 25, 50);
       for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle());
       }
@@ -162,15 +162,15 @@ const ParticleCanvas = () => {
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 200) {
-            const opacity = (200 - distance) / 200 * 0.15;
+          if (distance < 250) {
+            const opacity = (250 - distance) / 250 * 0.2;
             ctx.beginPath();
             if (isDark) {
               ctx.strokeStyle = `rgba(100, 200, 255, ${opacity})`;
             } else {
               ctx.strokeStyle = `rgba(8, 145, 178, ${opacity * 1.5})`;
             }
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 2.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
