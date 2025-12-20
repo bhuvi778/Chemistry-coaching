@@ -25,6 +25,7 @@ import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import BookMeeting from './pages/BookMeeting';
 import Doubts from './pages/Doubts';
+import GetAppLink from './pages/GetAppLink';
 
 const ProtectedRoute = ({ children }) => {
   const { isAdmin } = useData();
@@ -75,6 +76,7 @@ function AppContent() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/book-meeting" element={<BookMeeting />} />
           <Route path="/doubts" element={<Doubts />} />
+          <Route path="/get-app" element={<GetAppLink />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />

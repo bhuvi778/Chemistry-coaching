@@ -939,6 +939,76 @@ app.delete('/api/puzzle-sets/:id', async (req, res) => {
   }
 });
 
+// ============================================
+// WHATSAPP API - Send App Download Link
+// ============================================
+
+// Send app download link via WhatsApp
+app.post('/api/send-app-link', async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ message: 'Phone number is required' });
+    }
+
+    // Format phone number (remove spaces, dashes, etc.)
+    const formattedPhone = phoneNumber.replace(/[\s\-\(\)]/g, '');
+
+    // Validate phone number format (basic validation)
+    if (!/^\+?[1-9]\d{1,14}$/.test(formattedPhone)) {
+      return res.status(400).json({ message: 'Invalid phone number format' });
+    }
+
+    // BotBiz API credentials (should be in environment variables)
+    const BOTBIZ_API_TOKEN = process.env.BOTBIZ_API_TOKEN || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
+    const BOTBIZ_USER_ID = process.env.BOTBIZ_USER_ID || '37938';
+    const BOTBIZ_WHATSAPP_ACCOUNT_ID = process.env.BOTBIZ_WHATSAPP_ACCOUNT_ID || '1166987055278920';
+    const BOTBIZ_ACCESS_TOKEN = process.env.BOTBIZ_ACCESS_TOKEN || 'EAAMEFjdaU8sBQDev7RVnHvgv1MHaW4MDnsDgknAfbYEWOZB1WWtAcxt22myZASfMGI6dIdM5csqZAJMEuwIpDrNQzrO2ZCmISgXykyOa4107bApxZA0cbHRjE6RKqlErIAJ4F70fbBlZBMZBnQsnqBIx3cRDL7smlfBjQxSjPdVUu3bhqeWTqXA2NDGuCHZBRa7bNgZDZD';
+
+    // Your app download link
+    const APP_DOWNLOAD_LINK = process.env.APP_DOWNLOAD_LINK || 'https://yourapp.com/download';
+
+    // Message to send
+    const message = `🎓 Welcome to Ace2Examz!\n\nDownload our app to access:\n✅ Video Lectures\n✅ Study Materials\n✅ Chemistry Puzzles\n✅ Doubt Solving\n✅ Live Sessions\n\n📱 Download Now: ${APP_DOWNLOAD_LINK}\n\nHappy Learning! 🚀`;
+
+    // Call BotBiz API to send WhatsApp message
+    const botbizUrl = `https://dash.botbiz.io/api/v1/whatsapp/account/connect?apiToken=${BOTBIZ_API_TOKEN}&user_id=${BOTBIZ_USER_ID}&whatsapp_business_account_id=${BOTBIZ_WHATSAPP_ACCOUNT_ID}&access_token=${BOTBIZ_ACCESS_TOKEN}`;
+
+    const response = await fetch(botbizUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        to: formattedPhone,
+        message: message,
+        type: 'text'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send WhatsApp message');
+    }
+
+    const result = await response.json();
+
+    res.json({
+      success: true,
+      message: 'App download link sent successfully via WhatsApp!',
+      phoneNumber: formattedPhone
+    });
+
+  } catch (error) {
+    console.error('WhatsApp API Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send app link. Please try again.',
+      error: error.message
+    });
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

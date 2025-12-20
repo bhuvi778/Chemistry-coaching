@@ -21,6 +21,23 @@
     };
   </script>
 
+  <!-- Custom CSS for OneSignal Bell Position -->
+  <style>
+    /* Position OneSignal bell button in top-right corner */
+    .onesignal-bell-launcher {
+      bottom: auto !important;
+      top: 90px !important;
+      right: 20px !important;
+      left: auto !important;
+    }
+
+    /* Ensure it's above other elements */
+    .onesignal-bell-launcher,
+    .onesignal-bell-launcher-dialog {
+      z-index: 9999 !important;
+    }
+  </style>
+
   <!-- OneSignal Push Notifications -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
@@ -34,10 +51,6 @@
             enable: true,
             size: 'medium',
             position: 'bottom-right',
-            offset: {
-              bottom: '200px',
-              right: '20px'
-            },
             showCredit: false,
           },
         });
