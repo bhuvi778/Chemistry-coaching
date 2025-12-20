@@ -7,6 +7,7 @@ import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import ParticleCanvas from './components/UI/ParticleCanvas';
 import ContentProtection from './components/UI/ContentProtection';
+import ScrollToTopButton from './components/UI/ScrollToTopButton';
 import Home from './pages/Home';
 import Contact from './pages/Contact';
 import About from './pages/About';
@@ -90,6 +91,7 @@ function AppContent() {
       </div>
 
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 }
