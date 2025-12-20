@@ -32,7 +32,7 @@ const ParticleCanvas = () => {
         this.y = Math.random() * canvas.height;
         this.vx = (Math.random() - 0.5) * 0.5; // Increased for better movement
         this.vy = (Math.random() - 0.5) * 0.5;
-        this.size = Math.random() * 7 + 8; // MUCH LARGER: 8-15 (was 1.5-3.5)
+        this.size = Math.random() * 10 + 15; // MASSIVE: 15-25 (was 8-15)
         const colors = isDark
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
           : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
@@ -40,9 +40,9 @@ const ParticleCanvas = () => {
 
         // Increase formula probability
         const rand = Math.random();
-        if (rand < 0.9) this.type = 1; // Formula (60%)
-        else if (rand < 1) this.type = 2; // Bond (25%)
-        else this.type = 0; // Hexagon (15%)
+        if (rand < 0.9) this.type = 1; // Formula (90%)
+        else if (rand < 1) this.type = 2; // Bond (10%)
+        else this.type = 0; // Hexagon (0%)
 
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
         this.angle = Math.random() * Math.PI * 2;
@@ -65,41 +65,41 @@ const ParticleCanvas = () => {
         ctx.strokeStyle = this.color;
 
         // MUCH HIGHER opacity for visibility
-        const baseOpacity = isDark ? 0.85 : 0.9; // Increased from 0.4/0.5
+        const baseOpacity = isDark ? 0.85 : 0.9;
         ctx.globalAlpha = baseOpacity;
 
         if (this.type === 0) {
-          // Hexagon (Benzene Ring) - 10x LARGER
+          // Hexagon (Benzene Ring) - MASSIVE
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i;
-            const hx = (this.size * 3) * Math.cos(angle); // 3x multiplier
-            const hy = (this.size * 3) * Math.sin(angle);
+            const hx = (this.size * 4) * Math.cos(angle); // 4x multiplier (was 3x)
+            const hy = (this.size * 4) * Math.sin(angle);
             if (i === 0) ctx.moveTo(hx, hy);
             else ctx.lineTo(hx, hy);
           }
           ctx.closePath();
-          ctx.lineWidth = 3; // Thicker lines
+          ctx.lineWidth = 4; // Thicker lines
           ctx.stroke();
 
           // Inner circle
           ctx.beginPath();
-          ctx.arc(0, 0, this.size * 1.2, 0, Math.PI * 2);
+          ctx.arc(0, 0, this.size * 1.5, 0, Math.PI * 2);
           ctx.globalAlpha = baseOpacity * 0.6;
           ctx.fill();
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula - 10x LARGER
-          ctx.font = `bold ${this.size * 3}px 'Orbitron', sans-serif`; // 3x multiplier
+          // Chemical Formula - MASSIVE
+          ctx.font = `bold ${this.size * 4}px 'Orbitron', sans-serif`; // 4x multiplier (was 3x)
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
 
           // Strong shadow for visibility
-          ctx.shadowColor = isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)';
-          ctx.shadowBlur = 8;
-          ctx.shadowOffsetX = 2;
-          ctx.shadowOffsetY = 2;
+          ctx.shadowColor = isDark ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 1)';
+          ctx.shadowBlur = 10;
+          ctx.shadowOffsetX = 3;
+          ctx.shadowOffsetY = 3;
 
           ctx.fillText(this.formula, 0, 0);
 
@@ -107,22 +107,22 @@ const ParticleCanvas = () => {
           ctx.shadowColor = 'transparent';
           ctx.shadowBlur = 0;
         } else if (this.type === 2) {
-          // Chemical Bond - 10x LARGER
+          // Chemical Bond - MASSIVE
           const bondType = Math.floor(Math.random() * 3) + 1;
-          ctx.lineWidth = 3; // Thicker lines
+          ctx.lineWidth = 4; // Thicker lines
 
           for (let i = 0; i < bondType; i++) {
-            const offset = (i - (bondType - 1) / 2) * 4;
+            const offset = (i - (bondType - 1) / 2) * 5;
             ctx.beginPath();
-            ctx.moveTo(-this.size * 3, offset); // 3x multiplier
-            ctx.lineTo(this.size * 3, offset);
+            ctx.moveTo(-this.size * 4, offset); // 4x multiplier (was 3x)
+            ctx.lineTo(this.size * 4, offset);
             ctx.stroke();
           }
 
           // Atoms at ends
           ctx.beginPath();
-          ctx.arc(-this.size * 3, 0, this.size * 1.2, 0, Math.PI * 2);
-          ctx.arc(this.size * 3, 0, this.size * 1.2, 0, Math.PI * 2);
+          ctx.arc(-this.size * 4, 0, this.size * 1.5, 0, Math.PI * 2);
+          ctx.arc(this.size * 4, 0, this.size * 1.5, 0, Math.PI * 2);
           ctx.fill();
         }
 
