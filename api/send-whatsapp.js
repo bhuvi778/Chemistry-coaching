@@ -41,11 +41,14 @@ export default async function handler(req, res) {
         console.log('=== Building API Request ===');
         console.log('Sending WhatsApp message via BotBiz API...');
 
+        // Properly encode the message
+        const encodedMessage = encodeURIComponent(message);
+
         const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send');
         apiUrl.searchParams.append('apiToken', BOTBIZ_API_KEY);
         apiUrl.searchParams.append('phone_number_id', PHONE_NUMBER_ID);
         apiUrl.searchParams.append('phone_number', phone);
-        apiUrl.searchParams.append('message', message);
+        apiUrl.searchParams.append('message', message); // URL class handles encoding
 
         console.log('Full API URL:', apiUrl.toString());
         console.log('Parameters:');
@@ -53,6 +56,7 @@ export default async function handler(req, res) {
         console.log('  - phone_number_id:', PHONE_NUMBER_ID);
         console.log('  - phone_number:', phone);
         console.log('  - message length:', message.length, 'chars');
+        console.log('  - message preview:', message.substring(0, 50) + '...');
         console.log('========================');
 
         // Make GET request to BotBiz API
@@ -60,6 +64,8 @@ export default async function handler(req, res) {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'User-Agent': 'Ace2Examz-Website/1.0'
             }
         });
 
