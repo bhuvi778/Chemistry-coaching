@@ -27,7 +27,7 @@
     .onesignal-bell-launcher,
     #onesignal-bell-container,
     .onesignal-bell-launcher-button,
-    div[class*="onesignal-bell"]:not(.onesignal-bell-launcher-dialog) {
+    div[class*="onesignal-bell"]:not(.onesignal-bell-launcher-dialog):not(.onesignal-bell-launcher-dialog-body) {
       bottom: 20px !important;
       top: auto !important;
       left: 20px !important;
@@ -40,6 +40,8 @@
       max-height: 60px !important;
       min-width: 60px !important;
       min-height: 60px !important;
+      z-index: 10001 !important;
+      /* Higher than dialog to stay on top */
     }
 
     /* Size the bell icon itself */
@@ -50,33 +52,39 @@
       height: 60px !important;
     }
 
-    /* Position the notification dialog to the RIGHT of the bell */
+    /* Position the notification dialog ABOVE the bell */
     .onesignal-bell-launcher-dialog,
     .onesignal-bell-launcher-dialog-body,
     div[class*="onesignal-bell-launcher-dialog"] {
-      bottom: 20px !important;
+      bottom: 90px !important;
+      /* Position above the bell (20px + 60px + 10px spacing) */
       top: auto !important;
-      left: 100px !important;
-      /* Position to the right of the bell (20px + 60px + 20px spacing) */
+      left: 20px !important;
+      /* Align with the bell */
       right: auto !important;
       transform: none !important;
       position: fixed !important;
       z-index: 10000 !important;
-      max-width: 400px !important;
-      width: auto !important;
-      height: auto !important;
+      max-width: 380px !important;
+      width: 380px !important;
+      max-height: 400px !important;
+      overflow-y: auto !important;
     }
 
-    /* Ensure it's above other elements */
-    .onesignal-bell-launcher,
-    .onesignal-bell-launcher-dialog,
-    #onesignal-bell-container {
-      z-index: 9999 !important;
+    /* Ensure bell stays on top */
+    .onesignal-bell-launcher {
+      z-index: 10001 !important;
     }
 
-    /* Make sure dialog has proper z-index */
+    /* Dialog below bell */
     .onesignal-bell-launcher-dialog {
       z-index: 10000 !important;
+    }
+
+    /* Make sure bell button is always clickable */
+    .onesignal-bell-launcher-button {
+      pointer-events: auto !important;
+      z-index: 10001 !important;
     }
   </style>
 
@@ -158,7 +166,7 @@
             }
           });
 
-          // Position dialog to the right of the bell
+          // Position dialog ABOVE the bell
           const dialogElements = [
             document.querySelector('.onesignal-bell-launcher-dialog'),
             document.querySelector('.onesignal-bell-launcher-dialog-body'),
@@ -167,15 +175,17 @@
 
           dialogElements.forEach(element => {
             if (element) {
-              element.style.setProperty('bottom', '20px', 'important');
+              element.style.setProperty('bottom', '90px', 'important'); // Above the bell
               element.style.setProperty('top', 'auto', 'important');
-              element.style.setProperty('left', '100px', 'important'); // 20px + 60px + 20px spacing
+              element.style.setProperty('left', '20px', 'important'); // Align with bell
               element.style.setProperty('right', 'auto', 'important');
               element.style.setProperty('position', 'fixed', 'important');
               element.style.setProperty('transform', 'none', 'important');
               element.style.setProperty('z-index', '10000', 'important');
-              element.style.setProperty('max-width', '400px', 'important');
-              console.log('[OneSignal] Dialog positioned to the right of bell');
+              element.style.setProperty('max-width', '380px', 'important');
+              element.style.setProperty('width', '380px', 'important');
+              element.style.setProperty('max-height', '400px', 'important');
+              console.log('[OneSignal] Dialog positioned above bell');
             }
           });
         }, 2000);
@@ -185,14 +195,16 @@
           mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
               if (node.nodeType === 1 && node.className && node.className.includes('onesignal-bell-launcher-dialog')) {
-                node.style.setProperty('bottom', '20px', 'important');
+                node.style.setProperty('bottom', '90px', 'important');
                 node.style.setProperty('top', 'auto', 'important');
-                node.style.setProperty('left', '100px', 'important');
+                node.style.setProperty('left', '20px', 'important');
                 node.style.setProperty('right', 'auto', 'important');
                 node.style.setProperty('position', 'fixed', 'important');
                 node.style.setProperty('transform', 'none', 'important');
                 node.style.setProperty('z-index', '10000', 'important');
-                console.log('[OneSignal] Dialog dynamically positioned to the right');
+                node.style.setProperty('max-width', '380px', 'important');
+                node.style.setProperty('width', '380px', 'important');
+                console.log('[OneSignal] Dialog dynamically positioned above bell');
               }
             });
           });

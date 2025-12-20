@@ -61,8 +61,8 @@ const ParticleCanvas = () => {
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.color;
 
-        // Adjust opacity based on theme
-        const baseOpacity = isDark ? 0.5 : 0.6; // Increased visibility
+        // Adjust opacity based on theme - Increased for better visibility
+        const baseOpacity = isDark ? 0.7 : 0.8; // Increased from 0.5/0.6
         ctx.globalAlpha = baseOpacity;
 
         if (this.type === 0) {
@@ -77,41 +77,48 @@ const ParticleCanvas = () => {
             else ctx.lineTo(hx, hy);
           }
           ctx.closePath();
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 2.5; // Increased from 2
           ctx.stroke();
 
           // Inner circle
           ctx.beginPath();
           ctx.arc(0, 0, this.size * 2, 0, Math.PI * 2);
-          ctx.globalAlpha = baseOpacity * 0.5;
+          ctx.globalAlpha = baseOpacity * 0.6; // Increased from 0.5
           ctx.fill();
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula - Increased size
-          ctx.font = `bold ${this.size * 5}px 'Orbitron', sans-serif`; // Increased from 4 to 5
+          // Chemical Formula - Increased size with better visibility
+          ctx.font = `bold ${this.size * 6}px 'Orbitron', sans-serif`; // Increased from 5 to 6
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
 
-          // Add shadow for better visibility in light mode
-          if (!isDark) {
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-            ctx.shadowBlur = 4;
-            ctx.shadowOffsetX = 1;
-            ctx.shadowOffsetY = 1;
-          }
+          // Add text stroke for better visibility
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)';
+          ctx.strokeText(this.formula, 0, 0);
 
+          // Add shadow/glow for better visibility
+          ctx.shadowColor = this.color;
+          ctx.shadowBlur = 8;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          // Fill text
+          ctx.fillStyle = this.color;
+          ctx.globalAlpha = isDark ? 0.9 : 0.95; // Increased opacity
           ctx.fillText(this.formula, 0, 0);
 
           // Reset shadow
           ctx.shadowColor = 'transparent';
           ctx.shadowBlur = 0;
+          ctx.globalAlpha = baseOpacity;
         } else if (this.type === 2) {
           // Chemical Bond (Double or Triple Bond) - Fixed proportions
           const bondType = Math.floor(Math.random() * 3) + 1;
           const bondLength = this.size * 6; // Increased from 4 to 6
           const atomRadius = this.size * 2; // Increased from 1.5 to 2
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 2.5; // Increased from 2
 
           for (let i = 0; i < bondType; i++) {
             const offset = (i - (bondType - 1) / 2) * 3;
