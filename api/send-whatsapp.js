@@ -19,8 +19,10 @@ export default async function handler(req, res) {
         console.log('=== BotBiz WhatsApp API ===');
         console.log('Phone:', phone);
 
-        // BotBiz API Key
-        const BOTBIZ_API_KEY = '16072|FVaURdAB4Z07Py9V0HNBEkMHRpKY9zX9XWVitfHc123452c1';
+        // BotBiz API Key - Use environment variable or fallback to hardcoded (update in Vercel dashboard)
+        const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
+
+        console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
 
         // Try the simple send endpoint first
         const simpleUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
