@@ -21,9 +21,10 @@ export default async function handler(req, res) {
 
         // BotBiz API Configuration
         const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
-        const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || ''; // You need to provide this
+        const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || '884991348021443';
 
         console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
+        console.log('Phone Number ID:', PHONE_NUMBER_ID);
 
         // Check if phone number ID is provided
         if (!PHONE_NUMBER_ID) {
