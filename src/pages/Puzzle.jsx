@@ -7,6 +7,8 @@ const Puzzle = () => {
     const [puzzleSets, setPuzzleSets] = useState([]);
     const [selectedChapter, setSelectedChapter] = useState('all');
     const [loading, setLoading] = useState(true);
+    const [showCrosswordModal, setShowCrosswordModal] = useState(false);
+    const [selectedCrossword, setSelectedCrossword] = useState(null);
 
     // Fetch crosswords and puzzle sets
     useEffect(() => {
@@ -184,15 +186,16 @@ const Puzzle = () => {
                                                 {crossword.examType}
                                             </span>
                                         </div>
-                                        <a
-                                            href={crossword.crosswordUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                        <button
+                                            onClick={() => {
+                                                setSelectedCrossword(crossword);
+                                                setShowCrosswordModal(true);
+                                            }}
                                             className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold"
                                         >
                                             <i className="fas fa-play"></i>
                                             Play Crossword
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -205,7 +208,7 @@ const Puzzle = () => {
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-3xl font-bold text-white flex items-center gap-3">
                             <i className="fas fa-puzzle-piece text-orange-400"></i>
-                            Downloadable Puzzle Sets
+                            Search word
                         </h2>
                         <span className="px-4 py-2 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
                             {filteredPuzzleSets.length} Available
@@ -354,6 +357,68 @@ const Puzzle = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Crossword Modal */}
+            {showCrosswordModal && selectedCrossword && (
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
+                    <div className="relative w-full max-w-6xl bg-gray-900 rounded-xl overflow-hidden shadow-2xl">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-cyan-500 to-blue-500">
+                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                <i className="fas fa-th"></i>
+                                {selectedCrossword.title}
+                            </h2>
+                            <button
+                                onClick={() => {
+                                    setShowCrosswordModal(false);
+                                    setSelectedCrossword(null);
+                                }}
+                                className="text-white hover:bg-white/20 rounded-full p-2 transition"
+                                aria-label="Close"
+                            >
+                                <i className="fas fa-times text-2xl"></i>
+                            </button>
+                        </div>
+
+                        {/* Iframe Container */}
+                        <div className="bg-white p-4">
+                            <iframe
+                                src={selectedCrossword.crosswordUrl}
+                                className="w-full h-[70vh] md:h-[80vh] border-4 border-gray-800 rounded-lg"
+                                frameBorder="0"
+                                title={selectedCrossword.title}
+                                allowFullScreen
+                            />
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-4 bg-gray-800 flex items-center justify-between flex-wrap gap-3">
+                            <div className="flex gap-2 flex-wrap">
+                                <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
+                                    {selectedCrossword.chapter}
+                                </span>
+                                {selectedCrossword.topic && (
+                                    <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
+                                        {selectedCrossword.topic}
+                                    </span>
+                                )}
+                                <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
+                                    {selectedCrossword.examType}
+                                </span>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setShowCrosswordModal(false);
+                                    setSelectedCrossword(null);
+                                }}
+                                className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition font-semibold"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
