@@ -38,6 +38,7 @@ export default async function handler(req, res) {
         }
 
         // Build the API URL with query parameters
+        console.log('=== Building API Request ===');
         console.log('Sending WhatsApp message via BotBiz API...');
 
         const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send');
@@ -46,7 +47,13 @@ export default async function handler(req, res) {
         apiUrl.searchParams.append('phone_number', phone);
         apiUrl.searchParams.append('message', message);
 
-        console.log('API URL:', apiUrl.toString().replace(BOTBIZ_API_KEY, 'API_KEY_HIDDEN'));
+        console.log('Full API URL:', apiUrl.toString());
+        console.log('Parameters:');
+        console.log('  - apiToken:', BOTBIZ_API_KEY.substring(0, 10) + '...');
+        console.log('  - phone_number_id:', PHONE_NUMBER_ID);
+        console.log('  - phone_number:', phone);
+        console.log('  - message length:', message.length, 'chars');
+        console.log('========================');
 
         // Make GET request to BotBiz API
         const apiResponse = await fetch(apiUrl.toString(), {
