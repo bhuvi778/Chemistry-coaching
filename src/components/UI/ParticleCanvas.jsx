@@ -89,11 +89,11 @@ const ParticleCanvas = () => {
           ctx.fill();
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula - MASSIVE and TALL
+          // Chemical Formula - TALL and NARROW for clarity
           ctx.save(); // Save state before scaling
 
-          // Scale vertically to make text TALLER (2x height)
-          ctx.scale(1, 2);
+          // Scale: 70% width, 200% height for tall, narrow text
+          ctx.scale(0.7, 2);
 
           ctx.font = `bold ${this.size * 4}px 'Orbitron', sans-serif`;
           ctx.textAlign = 'center';
