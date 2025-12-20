@@ -37,29 +37,30 @@ export default async function handler(req, res) {
             });
         }
 
-        // Build the API URL with query parameters
+        // Build the API URL with query parameters for TEMPLATE message
         console.log('=== Building API Request ===');
-        console.log('Sending WhatsApp message via BotBiz API...');
+        console.log('Sending WhatsApp TEMPLATE message via BotBiz API...');
 
-        // Properly encode the message
-        const encodedMessage = encodeURIComponent(message);
+        // Use template endpoint (required by WhatsApp for new users)
+        const TEMPLATE_NAME = process.env.BOTBIZ_TEMPLATE_NAME || 'app_download'; // Your template name
 
-        const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send');
+        const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send/template');
         apiUrl.searchParams.append('apiToken', BOTBIZ_API_KEY);
         apiUrl.searchParams.append('phone_number_id', PHONE_NUMBER_ID);
         apiUrl.searchParams.append('phone_number', phone);
-        apiUrl.searchParams.append('message', message); // URL class handles encoding
+        apiUrl.searchParams.append('template_name', TEMPLATE_NAME);
+        apiUrl.searchParams.append('language', 'en');
 
         console.log('Full API URL:', apiUrl.toString());
         console.log('Parameters:');
         console.log('  - apiToken:', BOTBIZ_API_KEY.substring(0, 10) + '...');
         console.log('  - phone_number_id:', PHONE_NUMBER_ID);
         console.log('  - phone_number:', phone);
-        console.log('  - message length:', message.length, 'chars');
-        console.log('  - message preview:', message.substring(0, 50) + '...');
+        console.log('  - template_name:', TEMPLATE_NAME);
+        console.log('  - language: en');
         console.log('========================');
 
-        // Make GET request to BotBiz API
+        // Make GET request to BotBiz Template API
         const apiResponse = await fetch(apiUrl.toString(), {
             method: 'GET',
             headers: {
