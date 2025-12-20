@@ -37,37 +37,38 @@ export default async function handler(req, res) {
             });
         }
 
-        // Build the API URL with query parameters for TEMPLATE message
+        // Build the API request for TEMPLATE message
         console.log('=== Building API Request ===');
         console.log('Sending WhatsApp TEMPLATE message via BotBiz API...');
 
-        // Use template endpoint (required by WhatsApp for new users)
-        const TEMPLATE_NAME = process.env.BOTBIZ_TEMPLATE_NAME || 'get_link'; // Your template name in BotBiz
+        // Use template endpoint with POST method and form data
+        const TEMPLATE_ID = process.env.BOTBIZ_TEMPLATE_ID || '277083'; // Your template ID in BotBiz
 
-        const apiUrl = new URL('https://dash.botbiz.io/api/v1/whatsapp/send/template');
-        apiUrl.searchParams.append('apiToken', BOTBIZ_API_KEY);
-        apiUrl.searchParams.append('phone_number_id', PHONE_NUMBER_ID);
-        apiUrl.searchParams.append('phone_number', phone);
-        apiUrl.searchParams.append('template_name', TEMPLATE_NAME);
-        apiUrl.searchParams.append('language', 'en_US'); // Match BotBiz template language
+        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
 
-        console.log('Full API URL:', apiUrl.toString());
+        // Build form data
+        const formData = new URLSearchParams();
+        formData.append('apiToken', BOTBIZ_API_KEY);
+        formData.append('phone_number_id', PHONE_NUMBER_ID);
+        formData.append('template_id', TEMPLATE_ID);
+        formData.append('phone_number', phone);
+
+        console.log('API URL:', apiUrl);
         console.log('Parameters:');
         console.log('  - apiToken:', BOTBIZ_API_KEY.substring(0, 10) + '...');
         console.log('  - phone_number_id:', PHONE_NUMBER_ID);
+        console.log('  - template_id:', TEMPLATE_ID);
         console.log('  - phone_number:', phone);
-        console.log('  - template_name:', TEMPLATE_NAME);
-        console.log('  - language: en_US');
         console.log('========================');
 
-        // Make GET request to BotBiz Template API
-        const apiResponse = await fetch(apiUrl.toString(), {
-            method: 'GET',
+        // Make POST request to BotBiz Template API
+        const apiResponse = await fetch(apiUrl, {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'User-Agent': 'Ace2Examz-Website/1.0'
-            }
+            },
+            body: formData.toString()
         });
 
         console.log('API response status:', apiResponse.status);
