@@ -68,6 +68,11 @@ const AppDownload = () => {
           errorMsg = responseData.error;
         }
 
+        // Add suggestion if available
+        if (responseData?.suggestion) {
+          errorMsg += '. ' + responseData.suggestion;
+        }
+
         // Log full error for debugging
         console.error('=== Full Error Details ===');
         console.error('Status:', response.status);
@@ -77,7 +82,8 @@ const AppDownload = () => {
         }
         console.error('========================');
 
-        setMessage(`⚠ ${errorMsg}. Please contact support if issue persists.`);
+        // Show error with suggestion
+        setMessage(`⚠ ${errorMsg}`);
       }
     } catch (error) {
       console.error('Error sending WhatsApp:', error);
@@ -140,9 +146,9 @@ const AppDownload = () => {
 
               {/* Success/Error Message */}
               {message && (
-                <div className={`mt-3 text-sm ${message.includes('sent') ? 'text-green-400' : 'text-red-400'}`}>
-                  <i className={`fas ${message.includes('sent') ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2`}></i>
-                  {message}
+                <div className={`mt-3 text-sm ${message.includes('sent') || message.includes('✓') ? 'text-green-400' : 'text-red-400'}`}>
+                  <i className={`fas ${message.includes('sent') || message.includes('✓') ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2`}></i>
+                  <span className="inline-block">{message}</span>
                 </div>
               )}
             </form>
