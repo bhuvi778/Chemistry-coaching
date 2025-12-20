@@ -30,22 +30,23 @@ const ParticleCanvas = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.2; // Reduced from 0.5 to 0.2
-        this.vy = (Math.random() - 0.5) * 0.2; // Reduced from 0.5 to 0.2
-        this.size = Math.random() * 2 + 1.5; // Reduced from 3+2 to 2+1.5
+        this.vx = (Math.random() - 0.5) * 0.5; // Increased for better movement
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.size = Math.random() * 7 + 8; // MUCH LARGER: 8-15 (was 1.5-3.5)
         const colors = isDark
           ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
           : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
         this.color = colors[Math.floor(Math.random() * colors.length)];
+
         // Increase formula probability
         const rand = Math.random();
-        if (rand < 0.5) this.type = 1; // Formula (50%)
-        else if (rand < 0.8) this.type = 2; // Bond (30%)
-        else this.type = 0; // Hexagon (20%)
+        if (rand < 0.6) this.type = 1; // Formula (60%)
+        else if (rand < 0.85) this.type = 2; // Bond (25%)
+        else this.type = 0; // Hexagon (15%)
 
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
         this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.005; // Reduced from 0.015 to 0.005
+        this.spin = (Math.random() - 0.5) * 0.01; // Increased rotation
       }
 
       update() {
@@ -63,66 +64,65 @@ const ParticleCanvas = () => {
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.color;
 
-        // Adjust opacity based on theme
-        const baseOpacity = isDark ? 0.4 : 0.5; // Reduced from 0.6/0.8 to 0.4/0.5
+        // MUCH HIGHER opacity for visibility
+        const baseOpacity = isDark ? 0.85 : 0.9; // Increased from 0.4/0.5
         ctx.globalAlpha = baseOpacity;
 
         if (this.type === 0) {
-          // Hexagon (Benzene Ring)
+          // Hexagon (Benzene Ring) - 10x LARGER
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i;
-            const hx = (this.size * 4) * Math.cos(angle);
-            const hy = (this.size * 4) * Math.sin(angle);
+            const hx = (this.size * 3) * Math.cos(angle); // 3x multiplier
+            const hy = (this.size * 3) * Math.sin(angle);
             if (i === 0) ctx.moveTo(hx, hy);
             else ctx.lineTo(hx, hy);
           }
           ctx.closePath();
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 3; // Thicker lines
           ctx.stroke();
 
           // Inner circle
           ctx.beginPath();
-          ctx.arc(0, 0, this.size * 1.5, 0, Math.PI * 2);
-          ctx.globalAlpha = baseOpacity * 0.5;
+          ctx.arc(0, 0, this.size * 1.2, 0, Math.PI * 2);
+          ctx.globalAlpha = baseOpacity * 0.6;
           ctx.fill();
           ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula
-          ctx.font = `bold ${this.size * 4}px 'Orbitron', sans-serif`;
+          // Chemical Formula - 10x LARGER
+          ctx.font = `bold ${this.size * 3}px 'Orbitron', sans-serif`; // 3x multiplier
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.rotate(-this.angle); // Keep text upright
 
-          // Add shadow for better visibility in light mode
-          if (!isDark) {
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-            ctx.shadowBlur = 4;
-            ctx.shadowOffsetX = 1;
-            ctx.shadowOffsetY = 1;
-          }
+          // Strong shadow for visibility
+          ctx.shadowColor = isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)';
+          ctx.shadowBlur = 8;
+          ctx.shadowOffsetX = 2;
+          ctx.shadowOffsetY = 2;
 
           ctx.fillText(this.formula, 0, 0);
 
-        // Reset
-        ctx.shadowBlur = 0;
+          // Reset shadow
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
         } else if (this.type === 2) {
-          // Chemical Bond (Double or Triple Bond)
+          // Chemical Bond - 10x LARGER
           const bondType = Math.floor(Math.random() * 3) + 1;
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 3; // Thicker lines
 
           for (let i = 0; i < bondType; i++) {
-            const offset = (i - (bondType - 1) / 2) * 3;
+            const offset = (i - (bondType - 1) / 2) * 4;
             ctx.beginPath();
-            ctx.moveTo(-this.size * 4, offset);
-            ctx.lineTo(this.size * 4, offset);
+            ctx.moveTo(-this.size * 3, offset); // 3x multiplier
+            ctx.lineTo(this.size * 3, offset);
             ctx.stroke();
           }
 
           // Atoms at ends
           ctx.beginPath();
-          ctx.arc(-this.size * 4, 0, this.size * 1.5, 0, Math.PI * 2);
-          ctx.arc(this.size * 4, 0, this.size * 1.5, 0, Math.PI * 2);
+          ctx.arc(-this.size * 3, 0, this.size * 1.2, 0, Math.PI * 2);
+          ctx.arc(this.size * 3, 0, this.size * 1.2, 0, Math.PI * 2);
           ctx.fill();
         }
 
