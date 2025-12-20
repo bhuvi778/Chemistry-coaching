@@ -42,6 +42,9 @@ const Footer = () => {
                             <a href="https://t.me/ace2examz" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-500 hover:text-white transition-all duration-300">
                                 <i className="fab fa-telegram"></i>
                             </a>
+                            <a href="https://www.quora.com/profile/Ace2Examz" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-red-700 hover:text-white transition-all duration-300">
+                                <i className="fab fa-quora"></i>
+                            </a>
                         </div>
                     </div>
 
@@ -58,6 +61,7 @@ const Footer = () => {
                             <li><Link to="/lectures" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fab fa-youtube text-xs text-red-500"></i> Video Lectures</Link></li>
                             <li><Link to="/ai-assistant" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-robot text-xs text-cyan-400"></i> Ask AI Assistant</Link></li>
                             <li><Link to="/contact" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> Contact Us</Link></li>
+                            <li><a href="https://www.ace2examz.in/careers" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-users text-xs text-green-500"></i> Join Us</a></li>
                         </ul>
                     </div>
 
