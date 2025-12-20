@@ -49,7 +49,7 @@ export default async function handler(req, res) {
         apiUrl.searchParams.append('phone_number_id', PHONE_NUMBER_ID);
         apiUrl.searchParams.append('phone_number', phone);
         apiUrl.searchParams.append('template_name', TEMPLATE_NAME);
-        apiUrl.searchParams.append('language', 'en');
+        apiUrl.searchParams.append('language', 'en_US'); // Match BotBiz template language
 
         console.log('Full API URL:', apiUrl.toString());
         console.log('Parameters:');
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
         console.log('  - phone_number_id:', PHONE_NUMBER_ID);
         console.log('  - phone_number:', phone);
         console.log('  - template_name:', TEMPLATE_NAME);
-        console.log('  - language: en');
+        console.log('  - language: en_US');
         console.log('========================');
 
         // Make GET request to BotBiz Template API
