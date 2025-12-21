@@ -1136,6 +1136,90 @@ app.post('/api/send-app-link', async (req, res) => {
   }
 });
 
+// Send app download link via WhatsApp using TEMPLATE (with name personalization)
+app.post('/api/send-whatsapp', async (req, res) => {
+  try {
+    const { phone, name } = req.body;
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone number is required'
+      });
+    }
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name is required'
+      });
+    }
+
+    // Format phone number (ensure it starts with country code)
+    let formattedPhone = phone.replace(/[\\s\\-\\(\\)]/g, '');
+
+    // Add 91 if it's a 10-digit number (India)
+    if (formattedPhone.length === 10) {
+      formattedPhone = '91' + formattedPhone;
+    }
+
+    console.log('Sending WhatsApp template message...');
+    console.log('Phone:', formattedPhone);
+    console.log('Name:', name);
+
+    // BotBiz Template API credentials
+    const API_TOKEN = '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
+    const PHONE_NUMBER_ID = '884991348021443';
+    const TEMPLATE_ID = '280021'; // Your template ID from the image
+    const TEMPLATE_NAME = 'app_download_link'; // Template name
+
+    // Call BotBiz Template API
+    const templateUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
+
+    const response = await fetch(templateUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_TOKEN}`
+      },
+      body: JSON.stringify({
+        phone_number_id: PHONE_NUMBER_ID,
+        to: formattedPhone,
+        template_id: TEMPLATE_ID,
+        template_name: TEMPLATE_NAME,
+        variables: {
+          'username-1': name  // Map name to username-1 variable in template
+        }
+      })
+    });
+
+    const result = await response.json();
+    console.log('BotBiz API Response:', result);
+
+    if (!response.ok) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send WhatsApp message',
+        details: result
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'App download link sent successfully via WhatsApp!',
+      phoneNumber: formattedPhone
+    });
+
+  } catch (error) {
+    console.error('WhatsApp Template API Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send app link. Please try again.',
+      error: error.message
+    });
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -26,23 +26,16 @@ const AppDownload = () => {
     try {
       setMessage('Sending link...');
 
-      // Format phone number with country code (remove + sign for webhook)
+      // Format phone number with country code (remove + sign for API)
       const fullPhoneNumber = `${countryCode.replace('+', '')}${mobileNumber}`;
 
-      console.log('Sending to phone:', fullPhoneNumber); // Debug log
-
-      // Personalized message with user's name
-      const greeting = name ? `Hi ${name}! 👋` : 'Hi! 👋';
-      const messageText = `${greeting}\n\nThank you for your interest in Ace2Examz!\n\nDownload our app to learn from the best and access:\n✅ Live Classes\n✅ Study Materials\n✅ Practice Tests\n✅ Expert Guidance\n\n📱 Download Now:\nhttps://play.google.com/store/apps/details?id=com.ace2examzapp.android\n\nStart your journey to success today! 🚀`;
-
-      console.log('=== WhatsApp Send Debug ===');
+      console.log('=== WhatsApp Template Send ===');
       console.log('Name:', name);
       console.log('Phone:', fullPhoneNumber);
-      console.log('Message:', messageText);
       console.log('API Endpoint: /api/send-whatsapp');
       console.log('========================');
 
-      // Call our backend API which will call the webhook
+      // Call backend API which will use WhatsApp template
       const response = await fetch('/api/send-whatsapp', {
         method: 'POST',
         headers: {
@@ -50,8 +43,7 @@ const AppDownload = () => {
         },
         body: JSON.stringify({
           phone: fullPhoneNumber,
-          message: messageText,
-          name: name // Include name in the API call
+          name: name  // Name will be used in template as {{username}}
         })
       });
 
