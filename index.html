@@ -98,18 +98,22 @@
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function (OneSignal) {
       try {
+        console.log('[OneSignal] 🚀 Starting initialization...');
+
         await OneSignal.init({
           appId: "f19678f2-4968-4172-b5a8-7854008c21b0",
           safari_web_id: "web.onesignal.auto.41b6a3ea-cfe2-480b-805a-97ab17a018f3",
           notifyButton: {
             enable: true,
             size: 'medium',
-            position: 'bottom-right',
+            position: 'bottom-left',
             showCredit: false,
           },
+          allowLocalhostAsSecureOrigin: true,
         });
 
         console.log('[OneSignal] ✅ Initialized successfully');
+        console.log('[OneSignal] App ID:', "f19678f2-4968-4172-b5a8-7854008c21b0");
 
         // Check subscription status
         const optedIn = await OneSignal.User.PushSubscription.optedIn;
@@ -130,6 +134,7 @@
         // Listen for subscription changes
         OneSignal.User.PushSubscription.addEventListener('change', (event) => {
           console.log('[OneSignal] 🔔 Subscription changed:', event);
+          console.log('[OneSignal] New subscription status:', event.current.optedIn);
         });
 
         // Listen for notification display
@@ -142,7 +147,44 @@
           console.log('[OneSignal] 👆 Notification clicked:', event.notification);
         });
 
-        // Force reposition bell button to bottom-right and dialog above it
+        // Add click listener to bell button for debugging AND manual trigger
+        setTimeout(() => {
+          const bellButton = document.querySelector('.onesignal-bell-launcher-button');
+          const bellLauncher = document.querySelector('.onesignal-bell-launcher');
+
+          if (bellButton || bellLauncher) {
+            console.log('[OneSignal] ✅ Bell button found!');
+
+            const clickHandler = async (e) => {
+              console.log('[OneSignal] 🔔 Bell button clicked!');
+              console.log('[OneSignal] Event:', e);
+
+              try {
+                // Manually trigger subscription prompt
+                console.log('[OneSignal] Attempting to show subscription prompt...');
+                await OneSignal.Slidedown.promptPush();
+                console.log('[OneSignal] Subscription prompt shown');
+              } catch (error) {
+                console.error('[OneSignal] Error showing prompt:', error);
+              }
+            };
+
+            if (bellButton) {
+              bellButton.addEventListener('click', clickHandler, true);
+              bellButton.style.pointerEvents = 'auto';
+              bellButton.style.cursor = 'pointer';
+            }
+            if (bellLauncher) {
+              bellLauncher.addEventListener('click', clickHandler, true);
+              bellLauncher.style.pointerEvents = 'auto';
+              bellLauncher.style.cursor = 'pointer';
+            }
+          } else {
+            console.error('[OneSignal] ❌ Bell button not found!');
+          }
+        }, 3000);
+
+        // Force reposition bell button to bottom-left and dialog to the right
         setTimeout(() => {
           const bellElements = [
             document.querySelector('.onesignal-bell-launcher'),
@@ -150,6 +192,8 @@
             document.querySelector('.onesignal-bell-launcher-button'),
             ...document.querySelectorAll('[class*="onesignal-bell"]:not([class*="dialog"])')
           ];
+
+          console.log('[OneSignal] Found', bellElements.filter(e => e).length, 'bell elements');
 
           bellElements.forEach(element => {
             if (element) {
@@ -226,6 +270,7 @@
 
       } catch (error) {
         console.error('[OneSignal] ❌ Initialization error:', error);
+        console.error('[OneSignal] Error details:', error.message, error.stack);
       }
     });
   </script>
