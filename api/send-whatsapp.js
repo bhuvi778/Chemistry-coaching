@@ -46,7 +46,8 @@ export default async function handler(req, res) {
         console.log('Sending WhatsApp TEMPLATE message with User-Name variable...');
 
         // Build URL with query parameters (as shown in BotBiz docs)
-        const apiUrl = `https://dash.botbiz.io/api/v1/whatsapp/send/template?apiToken=${BOTBIZ_API_KEY}&phone_number_id=${PHONE_NUMBER_ID}&template_id=${TEMPLATE_ID}&phone_number=${phone}&User-Name=${encodeURIComponent(name)}`;
+        // Template variables are passed as variable_1, variable_2, etc.
+        const apiUrl = `https://dash.botbiz.io/api/v1/whatsapp/send/template?apiToken=${BOTBIZ_API_KEY}&phone_number_id=${PHONE_NUMBER_ID}&template_id=${TEMPLATE_ID}&phone_number=${phone}&variable_1=${encodeURIComponent(name)}`;
 
         console.log('API URL:', apiUrl.substring(0, 100) + '...');
         console.log('Template ID:', TEMPLATE_ID);
