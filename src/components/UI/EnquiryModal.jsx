@@ -26,7 +26,47 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
     };
 
     try {
+      // Save enquiry to database
       await addEnquiry(enquiryData);
+
+      // Send WhatsApp message using BotBiz API
+      try {
+        // Format phone number - ensure it has country code (91 for India)
+        let phoneNumber = formData.phone.replace(/\D/g, ''); // Remove non-digits
+        if (phoneNumber.length === 10) {
+          phoneNumber = '91' + phoneNumber; // Add India country code if 10 digits
+        }
+
+        const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
+        const whatsappPayload = {
+          apiToken: '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26',
+          phone_number_id: '884991348021443',
+          template_id: '280021',
+          templateVariable: {
+            'coursename-2': course.title
+          },
+          phone_number: phoneNumber
+        };
+
+        const response = await fetch(whatsappApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(whatsappPayload)
+        });
+
+        const result = await response.json();
+        console.log('WhatsApp API Response:', result);
+
+        if (!response.ok) {
+          console.error('WhatsApp API Error:', result);
+          // Don't fail the entire submission if WhatsApp fails
+        }
+      } catch (whatsappError) {
+        console.error('Error sending WhatsApp message:', whatsappError);
+        // Don't fail the entire submission if WhatsApp fails
+      }
 
       setShowSuccess(true);
       setFormData({ name: '', phone: '', email: '', message: '' });
