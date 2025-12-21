@@ -50,8 +50,8 @@ const compression = require('compression');
 app.use(compression());
 
 // Connect to MongoDB with ADVANCED OPTIMIZATIONS for high traffic
-// Old DB (migrated from): mongodb+srv://bhupeshsingh778_db_user:qwerty12345@cluster0.u70wcn8.mongodb.net/?appName=Cluster0
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/?appName=Ace2Examz-Cluster';
+// Old DB (migrated from): mongodb+srv://bhupeshsingh778_db_user:qwerty12345@cluster0.u70wcn8.mongodb.net/test?appName=Cluster0
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/test?appName=Ace2Examz-Cluster';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
