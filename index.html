@@ -68,7 +68,11 @@
       /* Below bell but above everything else */
       max-width: 360px !important;
       width: 360px !important;
+      min-height: 200px !important;
+      /* Minimum height so it's visible */
       max-height: 450px !important;
+      height: auto !important;
+      /* Auto height to fit content */
       overflow-y: auto !important;
     }
 
@@ -175,6 +179,8 @@
                       dialog.style.setProperty('display', 'block', 'important');
                       dialog.style.setProperty('visibility', 'visible', 'important');
                       dialog.style.setProperty('opacity', '1', 'important');
+                      dialog.style.setProperty('min-height', '200px', 'important');
+                      dialog.style.setProperty('height', 'auto', 'important');
                     } else {
                       console.log('[OneSignal] ⚠️ Notification panel not found - bell might not have notifications');
                     }
@@ -256,7 +262,9 @@
               element.style.setProperty('z-index', '999998', 'important');
               element.style.setProperty('max-width', '360px', 'important');
               element.style.setProperty('width', '360px', 'important');
+              element.style.setProperty('min-height', '200px', 'important');
               element.style.setProperty('max-height', '450px', 'important');
+              element.style.setProperty('height', 'auto', 'important');
               console.log('[OneSignal] Dialog positioned to the right of bell');
             }
           });
