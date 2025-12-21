@@ -50,7 +50,7 @@ export default async function handler(req, res) {
         // Build request body with template variables
         const requestBody = {
             phone_number_id: PHONE_NUMBER_ID,
-            to: phone,
+            phone_number: phone,  // Changed from 'to' to 'phone_number'
             template_id: TEMPLATE_ID,
             template_name: TEMPLATE_NAME,
             variables: {
