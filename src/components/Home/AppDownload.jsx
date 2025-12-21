@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 
 const AppDownload = () => {
+  const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
   const [mobileNumber, setMobileNumber] = useState('');
   const [message, setMessage] = useState('');
@@ -57,6 +58,7 @@ const AppDownload = () => {
 
       if (response.ok && responseData?.success) {
         setMessage('✓ App download link sent to your WhatsApp!');
+        setName('');
         setMobileNumber('');
       } else {
         // Extract detailed error information
@@ -108,6 +110,18 @@ const AppDownload = () => {
 
             {/* Mobile Number Input Form */}
             <form onSubmit={handleGetLink} className="mb-6">
+              {/* Name Input - Full Width */}
+              <div className="mb-3">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your name"
+                  className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  required
+                />
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-3">
                 {/* Country Code Dropdown */}
                 <div className="relative">
@@ -117,9 +131,6 @@ const AppDownload = () => {
                     className="w-full sm:w-28 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 appearance-none cursor-pointer"
                   >
                     <option value="+91">🇮🇳 +91</option>
-                    <option value="+1">🇺🇸 +1</option>
-                    <option value="+44">🇬🇧 +44</option>
-                    <option value="+971">🇦🇪 +971</option>
                   </select>
                   <i className="fas fa-chevron-down absolute right-3 top-4 text-gray-500 pointer-events-none text-xs"></i>
                 </div>
