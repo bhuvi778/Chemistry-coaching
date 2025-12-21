@@ -53,7 +53,11 @@ export default async function handler(req, res) {
         formData.append('phone_number_id', PHONE_NUMBER_ID);
         formData.append('template_id', TEMPLATE_ID);
         formData.append('phone_number', phone);
-        formData.append('User-Name', name);  // Custom field name from template
+
+        // Try multiple variable formats to see which works
+        formData.append('User-Name', name);  // Format 1
+        formData.append('variables[User-Name]', name);  // Format 2
+        formData.append('variable_values[]', name);  // Format 3 (array)
 
         console.log('API URL:', apiUrl);
         console.log('Form Data:');
