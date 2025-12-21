@@ -43,24 +43,33 @@ export default async function handler(req, res) {
 
         // Build the API request for TEMPLATE message with variables
         console.log('=== Building API Request ===');
-        console.log('Sending WhatsApp TEMPLATE message with User-Name variable...');
+        console.log('Sending WhatsApp TEMPLATE message with variable...');
 
-        // Build URL with query parameters (as shown in BotBiz docs)
-        // Template variables are passed as variable_1, variable_2, etc.
-        const apiUrl = `https://dash.botbiz.io/api/v1/whatsapp/send/template?apiToken=${BOTBIZ_API_KEY}&phone_number_id=${PHONE_NUMBER_ID}&template_id=${TEMPLATE_ID}&phone_number=${phone}&variable_1=${encodeURIComponent(name)}`;
+        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
 
-        console.log('API URL:', apiUrl.substring(0, 100) + '...');
-        console.log('Template ID:', TEMPLATE_ID);
-        console.log('Phone:', phone);
-        console.log('Name:', name);
+        // Build form data as shown in BotBiz POST example
+        const formData = new URLSearchParams();
+        formData.append('apiToken', BOTBIZ_API_KEY);
+        formData.append('phone_number_id', PHONE_NUMBER_ID);
+        formData.append('template_id', TEMPLATE_ID);
+        formData.append('phone_number', phone);
+        formData.append('variable_1', name);  // First template variable
+
+        console.log('API URL:', apiUrl);
+        console.log('Form Data:');
+        console.log('  - template_id:', TEMPLATE_ID);
+        console.log('  - phone_number:', phone);
+        console.log('  - variable_1:', name);
         console.log('========================');
 
-        // Make GET request to BotBiz Template API (as shown in their example)
+        // Make POST request with form data (as shown in BotBiz curl example)
         const apiResponse = await fetch(apiUrl, {
-            method: 'GET',
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json',
-            }
+            },
+            body: formData.toString()
         });
 
         console.log('API response status:', apiResponse.status);
