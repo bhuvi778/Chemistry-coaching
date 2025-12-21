@@ -11,6 +11,12 @@ const AppDownload = () => {
   const handleGetLink = async (e) => {
     e.preventDefault();
 
+    if (!name || name.trim() === '') {
+      setMessage('Please enter your name');
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
+
     if (mobileNumber.length < 10) {
       setMessage('Please enter a valid 10-digit mobile number');
       setTimeout(() => setMessage(''), 3000);
@@ -25,9 +31,12 @@ const AppDownload = () => {
 
       console.log('Sending to phone:', fullPhoneNumber); // Debug log
 
-      const messageText = `Hi! 👋\n\nThank you for your interest in Ace2Examz!\n\nDownload our app to learn from the best and access:\n✅ Live Classes\n✅ Study Materials\n✅ Practice Tests\n✅ Expert Guidance\n\n📱 Download Now:\nhttps://play.google.com/store/apps/details?id=com.ace2examzapp.android\n\nStart your journey to success today! 🚀`;
+      // Personalized message with user's name
+      const greeting = name ? `Hi ${name}! 👋` : 'Hi! 👋';
+      const messageText = `${greeting}\n\nThank you for your interest in Ace2Examz!\n\nDownload our app to learn from the best and access:\n✅ Live Classes\n✅ Study Materials\n✅ Practice Tests\n✅ Expert Guidance\n\n📱 Download Now:\nhttps://play.google.com/store/apps/details?id=com.ace2examzapp.android\n\nStart your journey to success today! 🚀`;
 
       console.log('=== WhatsApp Send Debug ===');
+      console.log('Name:', name);
       console.log('Phone:', fullPhoneNumber);
       console.log('Message:', messageText);
       console.log('API Endpoint: /api/send-whatsapp');
@@ -41,7 +50,8 @@ const AppDownload = () => {
         },
         body: JSON.stringify({
           phone: fullPhoneNumber,
-          message: messageText
+          message: messageText,
+          name: name // Include name in the API call
         })
       });
 
