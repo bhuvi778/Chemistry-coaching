@@ -54,16 +54,14 @@ export default async function handler(req, res) {
         formData.append('template_id', TEMPLATE_ID);
         formData.append('phone_number', phone);
 
-        // Try multiple variable formats to see which works
-        formData.append('User-Name', name);  // Format 1
-        formData.append('variables[User-Name]', name);  // Format 2
-        formData.append('variable_values[]', name);  // Format 3 (array)
+        // BotBiz uses custom_fields for template variables with # syntax
+        formData.append('custom_fields[User-Name]', name);
 
         console.log('API URL:', apiUrl);
         console.log('Form Data:');
         console.log('  - template_id:', TEMPLATE_ID);
         console.log('  - phone_number:', phone);
-        console.log('  - User-Name:', name);
+        console.log('  - custom_fields[User-Name]:', name);
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
