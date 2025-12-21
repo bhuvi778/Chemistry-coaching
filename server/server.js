@@ -1188,7 +1188,7 @@ app.post('/api/send-whatsapp', async (req, res) => {
         template_id: TEMPLATE_ID,
         template_name: TEMPLATE_NAME,
         variables: {
-          'username-1': name  // Map name to username-1 variable in template
+          'User-Name': name  // Map name to User-Name variable (as shown in template: *#User-Name#*)
         }
       })
     });
