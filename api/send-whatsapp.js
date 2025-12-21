@@ -53,9 +53,7 @@ export default async function handler(req, res) {
             phone_number: phone,  // Changed from 'to' to 'phone_number'
             template_id: TEMPLATE_ID,
             template_name: TEMPLATE_NAME,
-            variables: {
-                'User-Name': name  // Map name to User-Name variable in template
-            }
+            variables: [name]  // BotBiz uses array format: first variable is {{1}}, second is {{2}}, etc.
         };
 
         console.log('API URL:', apiUrl);
