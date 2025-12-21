@@ -119,16 +119,36 @@
         console.log('[OneSignal] ✅ Initialized successfully');
         console.log('[OneSignal] App ID:', "f19678f2-4968-4172-b5a8-7854008c21b0");
 
+        // Custom notification storage
+        const getStoredNotifications = () => {
+          try {
+            return JSON.parse(localStorage.getItem('customNotifications') || '[]');
+          } catch {
+            return [];
+          }
+        };
+
+        const storeNotification = (notification) => {
+          const notifications = getStoredNotifications();
+          notifications.unshift({
+            id: notification.notificationId || Date.now(),
+            title: notification.title,
+            body: notification.body,
+            timestamp: Date.now(),
+            read: false
+          });
+          // Keep only last 20 notifications
+          if (notifications.length > 20) notifications.pop();
+          localStorage.setItem('customNotifications', JSON.stringify(notifications));
+        };
+
         // Check subscription status
         const optedIn = await OneSignal.User.PushSubscription.optedIn;
         console.log('[OneSignal] User opted in:', optedIn);
 
         if (optedIn) {
-          // Get subscription ID
           const subscriptionId = await OneSignal.User.PushSubscription.id;
           console.log('[OneSignal] Subscription ID:', subscriptionId);
-
-          // Get user ID
           const userId = await OneSignal.User.id;
           console.log('[OneSignal] User ID:', userId);
         } else {
@@ -141,9 +161,10 @@
           console.log('[OneSignal] New subscription status:', event.current.optedIn);
         });
 
-        // Listen for notification display
+        // Listen for notification display and store it
         OneSignal.Notifications.addEventListener('foregroundWillDisplay', (event) => {
-          console.log('[OneSignal] 📬 Notification will display:', event.notification);
+          console.log('[OneSignal] 📬 Notification received:', event.notification);
+          storeNotification(event.notification);
         });
 
         // Listen for notification click
@@ -151,7 +172,74 @@
           console.log('[OneSignal] 👆 Notification clicked:', event.notification);
         });
 
-        // Add click listener to bell button for debugging AND manual trigger
+        // Create custom notification panel
+        const createCustomNotificationPanel = () => {
+          const panel = document.createElement('div');
+          panel.id = 'custom-notification-panel';
+          panel.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 100px;
+            width: 360px;
+            max-height: 450px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 999997;
+            display: none;
+            overflow: hidden;
+          `;
+
+          const header = document.createElement('div');
+          header.style.cssText = `
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          `;
+          header.innerHTML = `
+            <span>Notifications</span>
+            <button onclick="document.getElementById('custom-notification-panel').style.display='none'" 
+                    style="border:none;background:none;font-size:20px;cursor:pointer;padding:0;width:24px;height:24px;">×</button>
+          `;
+
+          const content = document.createElement('div');
+          content.id = 'notification-list';
+          content.style.cssText = `
+            max-height: 380px;
+            overflow-y: auto;
+          `;
+
+          panel.appendChild(header);
+          panel.appendChild(content);
+          document.body.appendChild(panel);
+          return panel;
+        };
+
+        const updateNotificationList = () => {
+          const notifications = getStoredNotifications();
+          const list = document.getElementById('notification-list');
+          if (!list) return;
+
+          if (notifications.length === 0) {
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">No notifications yet</div>';
+            return;
+          }
+
+          list.innerHTML = notifications.map(notif => `
+            <div style="padding:12px 16px;border-bottom:1px solid #eee;cursor:pointer;${notif.read ? 'opacity:0.6;' : ''}"
+                 onmouseover="this.style.background='#f5f5f5'" 
+                 onmouseout="this.style.background='white'">
+              <div style="font-weight:bold;margin-bottom:4px;">${notif.title || 'Notification'}</div>
+              <div style="font-size:14px;color:#666;margin-bottom:4px;">${notif.body || ''}</div>
+              <div style="font-size:12px;color:#999;">${new Date(notif.timestamp).toLocaleString()}</div>
+            </div>
+          `).join('');
+        };
+
+        // Add click listener to bell button
         setTimeout(() => {
           const bellButton = document.querySelector('.onesignal-bell-launcher-button');
           const bellLauncher = document.querySelector('.onesignal-bell-launcher');
@@ -159,148 +247,45 @@
           if (bellButton || bellLauncher) {
             console.log('[OneSignal] ✅ Bell button found!');
 
+            // Create custom panel
+            const customPanel = createCustomNotificationPanel();
+
             const clickHandler = async (e) => {
+              e.stopPropagation();
               console.log('[OneSignal] 🔔 Bell button clicked!');
 
-              try {
-                // Check if user is subscribed
-                const isSubscribed = await OneSignal.User.PushSubscription.optedIn;
-                console.log('[OneSignal] User subscribed:', isSubscribed);
+              const isSubscribed = await OneSignal.User.PushSubscription.optedIn;
 
-                if (isSubscribed) {
-                  // User is subscribed - try to show notification panel
-                  console.log('[OneSignal] User already subscribed, looking for notification panel...');
-
-                  // Wait a bit for the panel to be created
-                  setTimeout(() => {
-                    const dialog = document.querySelector('.onesignal-bell-launcher-dialog');
-                    if (dialog) {
-                      console.log('[OneSignal] Found notification panel, making it visible');
-                      dialog.style.setProperty('display', 'block', 'important');
-                      dialog.style.setProperty('visibility', 'visible', 'important');
-                      dialog.style.setProperty('opacity', '1', 'important');
-                      dialog.style.setProperty('min-height', '200px', 'important');
-                      dialog.style.setProperty('height', 'auto', 'important');
-                    } else {
-                      console.log('[OneSignal] ⚠️ Notification panel not found - bell might not have notifications');
-                    }
-                  }, 100);
+              if (isSubscribed) {
+                // Show custom notification panel
+                const panel = document.getElementById('custom-notification-panel');
+                if (panel.style.display === 'none' || !panel.style.display) {
+                  updateNotificationList();
+                  panel.style.display = 'block';
                 } else {
-                  // User not subscribed - show subscription prompt
-                  console.log('[OneSignal] User not subscribed, showing prompt...');
-                  await OneSignal.Slidedown.promptPush();
+                  panel.style.display = 'none';
                 }
-              } catch (error) {
-                console.error('[OneSignal] Error:', error);
+              } else {
+                // Show subscription prompt
+                await OneSignal.Slidedown.promptPush();
               }
             };
 
             if (bellButton) {
               bellButton.addEventListener('click', clickHandler, true);
-              bellButton.style.pointerEvents = 'auto';
-              bellButton.style.cursor = 'pointer';
             }
             if (bellLauncher) {
               bellLauncher.addEventListener('click', clickHandler, true);
-              bellLauncher.style.pointerEvents = 'auto';
-              bellLauncher.style.cursor = 'pointer';
             }
-          } else {
-            console.error('[OneSignal] ❌ Bell button not found!');
           }
+        }
         }, 3000);
 
-        // Force reposition bell button to bottom-left and dialog to the right
-        setTimeout(() => {
-          const bellElements = [
-            document.querySelector('.onesignal-bell-launcher'),
-            document.querySelector('#onesignal-bell-container'),
-            document.querySelector('.onesignal-bell-launcher-button'),
-            ...document.querySelectorAll('[class*="onesignal-bell"]:not([class*="dialog"])')
-          ];
-
-          console.log('[OneSignal] Found', bellElements.filter(e => e).length, 'bell elements');
-
-          bellElements.forEach(element => {
-            if (element) {
-              element.style.setProperty('bottom', '20px', 'important');
-              element.style.setProperty('top', 'auto', 'important');
-              element.style.setProperty('left', '20px', 'important');
-              element.style.setProperty('right', 'auto', 'important');
-              element.style.setProperty('position', 'fixed', 'important');
-              element.style.setProperty('transform', 'none', 'important');
-              element.style.setProperty('z-index', '999999', 'important');
-              element.style.setProperty('width', '60px', 'important');
-              element.style.setProperty('height', '60px', 'important');
-              element.style.setProperty('max-width', '60px', 'important');
-              element.style.setProperty('max-height', '60px', 'important');
-              element.style.setProperty('min-width', '60px', 'important');
-              element.style.setProperty('min-height', '60px', 'important');
-              element.style.setProperty('background', 'rgba(0, 0, 0, 0.8)', 'important');
-              element.style.setProperty('border-radius', '50%', 'important');
-              element.style.setProperty('pointer-events', 'auto', 'important');
-              element.style.setProperty('cursor', 'pointer', 'important');
-              console.log('[OneSignal] Bell button repositioned to bottom-left with size 60x60px');
-            }
-          });
-
-          // Position dialog to the RIGHT of the bell
-          const dialogElements = [
-            document.querySelector('.onesignal-bell-launcher-dialog'),
-            document.querySelector('.onesignal-bell-launcher-dialog-body'),
-            ...document.querySelectorAll('[class*="onesignal-bell-launcher-dialog"]')
-          ];
-
-          dialogElements.forEach(element => {
-            if (element) {
-              element.style.setProperty('bottom', '20px', 'important'); // Same level as bell
-              element.style.setProperty('top', 'auto', 'important');
-              element.style.setProperty('left', '100px', 'important'); // To the right of bell
-              element.style.setProperty('right', 'auto', 'important');
-              element.style.setProperty('position', 'fixed', 'important');
-              element.style.setProperty('transform', 'none', 'important');
-              element.style.setProperty('z-index', '999998', 'important');
-              element.style.setProperty('max-width', '360px', 'important');
-              element.style.setProperty('width', '360px', 'important');
-              element.style.setProperty('min-height', '200px', 'important');
-              element.style.setProperty('max-height', '450px', 'important');
-              element.style.setProperty('height', 'auto', 'important');
-              console.log('[OneSignal] Dialog positioned to the right of bell');
-            }
-          });
-        }, 2000);
-
-        // Also watch for dialog creation with MutationObserver
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            mutation.addedNodes.forEach((node) => {
-              if (node.nodeType === 1 && node.className && node.className.includes('onesignal-bell-launcher-dialog')) {
-                node.style.setProperty('bottom', '20px', 'important');
-                node.style.setProperty('top', 'auto', 'important');
-                node.style.setProperty('left', '100px', 'important');
-                node.style.setProperty('right', 'auto', 'important');
-                node.style.setProperty('position', 'fixed', 'important');
-                node.style.setProperty('transform', 'none', 'important');
-                node.style.setProperty('z-index', '999998', 'important');
-                node.style.setProperty('max-width', '360px', 'important');
-                node.style.setProperty('width', '360px', 'important');
-                node.style.setProperty('max-height', '450px', 'important');
-                console.log('[OneSignal] Dialog dynamically positioned to the right of bell');
-              }
-            });
-          });
-        });
-
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
-
       } catch (error) {
-        console.error('[OneSignal] ❌ Initialization error:', error);
-        console.error('[OneSignal] Error details:', error.message, error.stack);
-      }
-    });
+      console.error('[OneSignal] ❌ Initialization error:', error);
+      console.error('[OneSignal] Error details:', error.message, error.stack);
+    }
+      });
   </script>
 
   <title>Ace2Examz | Your Path To Success - Premier Chemistry Coaching</title>
