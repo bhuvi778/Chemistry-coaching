@@ -157,15 +157,35 @@
 
             const clickHandler = async (e) => {
               console.log('[OneSignal] 🔔 Bell button clicked!');
-              console.log('[OneSignal] Event:', e);
 
               try {
-                // Manually trigger subscription prompt
-                console.log('[OneSignal] Attempting to show subscription prompt...');
-                await OneSignal.Slidedown.promptPush();
-                console.log('[OneSignal] Subscription prompt shown');
+                // Check if user is subscribed
+                const isSubscribed = await OneSignal.User.PushSubscription.optedIn;
+                console.log('[OneSignal] User subscribed:', isSubscribed);
+
+                if (isSubscribed) {
+                  // User is subscribed - try to show notification panel
+                  console.log('[OneSignal] User already subscribed, looking for notification panel...');
+
+                  // Wait a bit for the panel to be created
+                  setTimeout(() => {
+                    const dialog = document.querySelector('.onesignal-bell-launcher-dialog');
+                    if (dialog) {
+                      console.log('[OneSignal] Found notification panel, making it visible');
+                      dialog.style.setProperty('display', 'block', 'important');
+                      dialog.style.setProperty('visibility', 'visible', 'important');
+                      dialog.style.setProperty('opacity', '1', 'important');
+                    } else {
+                      console.log('[OneSignal] ⚠️ Notification panel not found - bell might not have notifications');
+                    }
+                  }, 100);
+                } else {
+                  // User not subscribed - show subscription prompt
+                  console.log('[OneSignal] User not subscribed, showing prompt...');
+                  await OneSignal.Slidedown.promptPush();
+                }
               } catch (error) {
-                console.error('[OneSignal] Error showing prompt:', error);
+                console.error('[OneSignal] Error:', error);
               }
             };
 
