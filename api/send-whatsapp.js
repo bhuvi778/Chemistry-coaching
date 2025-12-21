@@ -45,30 +45,21 @@ export default async function handler(req, res) {
         console.log('=== Building API Request ===');
         console.log('Sending WhatsApp TEMPLATE message with User-Name variable...');
 
-        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
+        // Build URL with query parameters (as shown in BotBiz docs)
+        const apiUrl = `https://dash.botbiz.io/api/v1/whatsapp/send/template?apiToken=${BOTBIZ_API_KEY}&phone_number_id=${PHONE_NUMBER_ID}&template_id=${TEMPLATE_ID}&phone_number=${phone}&User-Name=${encodeURIComponent(name)}`;
 
-        // Build request body with template variables
-        const requestBody = {
-            phone_number_id: PHONE_NUMBER_ID,
-            phone_number: phone,  // Changed from 'to' to 'phone_number'
-            template_id: TEMPLATE_ID,
-            template_name: TEMPLATE_NAME,
-            variables: [name]  // BotBiz uses array format: first variable is {{1}}, second is {{2}}, etc.
-        };
-
-        console.log('API URL:', apiUrl);
-        console.log('Request Body:', JSON.stringify(requestBody, null, 2));
+        console.log('API URL:', apiUrl.substring(0, 100) + '...');
+        console.log('Template ID:', TEMPLATE_ID);
+        console.log('Phone:', phone);
+        console.log('Name:', name);
         console.log('========================');
 
-        // Make POST request to BotBiz Template API
+        // Make GET request to BotBiz Template API (as shown in their example)
         const apiResponse = await fetch(apiUrl, {
-            method: 'POST',
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${BOTBIZ_API_KEY}`,
                 'Accept': 'application/json',
-            },
-            body: JSON.stringify(requestBody)
+            }
         });
 
         console.log('API response status:', apiResponse.status);
