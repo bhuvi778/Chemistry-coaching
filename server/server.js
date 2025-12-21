@@ -45,17 +45,138 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Connect to MongoDB
-// New DB (for future migration): mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/?appName=Ace2Examz-Cluster
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://bhupeshsingh778_db_user:qwerty12345@cluster0.u70wcn8.mongodb.net/?appName=Cluster0';
+// Enable compression for faster response times
+const compression = require('compression');
+app.use(compression());
+
+// Connect to MongoDB with ADVANCED OPTIMIZATIONS for high traffic
+// Old DB (migrated from): mongodb+srv://bhupeshsingh778_db_user:qwerty12345@cluster0.u70wcn8.mongodb.net/?appName=Cluster0
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/?appName=Ace2Examz-Cluster';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB', err));
+  useUnifiedTopology: true,
+  // Connection Pool Settings for HIGH TRAFFIC
+  maxPoolSize: 50,        // Maximum 50 connections in pool (handles high concurrent requests)
+  minPoolSize: 10,        // Minimum 10 connections always ready
+  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s if no server is available
+  // Performance Optimizations
+  maxIdleTimeMS: 30000,   // Close idle connections after 30 seconds
+  compressors: ['zlib'],  // Enable compression for network traffic
+  retryWrites: true,      // Automatically retry failed writes
+  w: 'majority'           // Write concern for data safety
+}).then(() => {
+  console.log('✅ Connected to MongoDB with optimized settings');
+  console.log('📊 Connection Pool: 10-50 connections');
+  console.log('⚡ Compression: Enabled');
+}).catch(err => console.error('❌ Could not connect to MongoDB', err));
+
+// In-memory cache for frequently accessed data (expires after 30 seconds)
+const cache = {
+  data: {},
+  timestamps: {},
+  TTL: 30000 // 30 seconds cache
+};
+
+// Cache middleware
+const getCachedData = (key) => {
+  const now = Date.now();
+  if (cache.data[key] && (now - cache.timestamps[key]) < cache.TTL) {
+    return cache.data[key];
+  }
+  return null;
+};
+
+const setCachedData = (key, data) => {
+  cache.data[key] = data;
+  cache.timestamps[key] = Date.now();
+};
+
+// Cache invalidation helper - call this when data is modified
+const invalidateCache = (keys) => {
+  if (Array.isArray(keys)) {
+    keys.forEach(key => {
+      delete cache.data[key];
+      delete cache.timestamps[key];
+    });
+  } else {
+    delete cache.data[keys];
+    delete cache.timestamps[keys];
+  }
+  console.log('🗑️  Cache invalidated:', keys);
+};
 
 // Routes
+
+// Bulk API - Get all public data in one request (OPTIMIZED with CACHING)
+app.get('/api/bulk', async (req, res) => {
+  try {
+    // Check cache first (30-second cache for high traffic)
+    const cachedData = getCachedData('bulk_public');
+    if (cachedData) {
+      console.log('⚡ Serving from cache: /api/bulk');
+      return res.json(cachedData);
+    }
+
+    // Fetch all data in parallel for maximum speed
+    const [courses, videos, audioBooks, studyMaterials, magazines] = await Promise.all([
+      Course.find().lean(),  // .lean() returns plain JS objects (faster)
+      Video.find({ isActive: true }).sort({ createdAt: -1 }).lean(),
+      AudioBook.find({ isActive: true }).sort({ createdAt: -1 }).lean(),
+      StudyMaterial.find({ isActive: true }).sort({ createdAt: -1 }).lean(),
+      Magazine.find({ isActive: true }).sort({ createdAt: -1 }).lean()
+    ]);
+
+    const responseData = {
+      courses,
+      videos,
+      audioBooks,
+      studyMaterials,
+      magazines
+    };
+
+    // Cache the response for 30 seconds
+    setCachedData('bulk_public', responseData);
+    console.log('💾 Cached: /api/bulk');
+
+    res.json(responseData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Bulk API for admin - includes enquiries, contacts, and meeting requests (with CACHING)
+app.get('/api/bulk/admin', async (req, res) => {
+  try {
+    // Check cache first
+    const cachedData = getCachedData('bulk_admin');
+    if (cachedData) {
+      console.log('⚡ Serving from cache: /api/bulk/admin');
+      return res.json(cachedData);
+    }
+
+    const [enquiries, contacts, meetingRequests] = await Promise.all([
+      Enquiry.find().sort({ date: -1 }).lean(),
+      Contact.find().sort({ date: -1 }).lean(),
+      MeetingRequest.find().sort({ submittedAt: -1 }).lean()
+    ]);
+
+    const responseData = {
+      enquiries,
+      contacts,
+      meetingRequests
+    };
+
+    // Cache for 30 seconds
+    setCachedData('bulk_admin', responseData);
+    console.log('💾 Cached: /api/bulk/admin');
+
+    res.json(responseData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Courses
 app.get('/api/courses', async (req, res) => {
@@ -72,6 +193,7 @@ app.post('/api/courses', async (req, res) => {
     console.log('Received course data:', req.body);
     const course = new Course(req.body);
     await course.save();
+    invalidateCache('bulk_public'); // Clear cache when data changes
     console.log('Course saved successfully:', course);
     res.json(course);
   } catch (error) {
@@ -83,6 +205,7 @@ app.post('/api/courses', async (req, res) => {
 app.put('/api/courses/:id', async (req, res) => {
   try {
     const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    invalidateCache('bulk_public'); // Clear cache
     res.json(course);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -92,6 +215,7 @@ app.put('/api/courses/:id', async (req, res) => {
 app.delete('/api/courses/:id', async (req, res) => {
   try {
     await Course.findByIdAndDelete(req.params.id);
+    invalidateCache('bulk_public'); // Clear cache
     res.json({ message: 'Deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -112,6 +236,7 @@ app.post('/api/enquiries', async (req, res) => {
   try {
     const enquiry = new Enquiry(req.body);
     await enquiry.save();
+    invalidateCache('bulk_admin'); // Clear admin cache
     res.json(enquiry);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -132,6 +257,7 @@ app.post('/api/contacts', async (req, res) => {
   try {
     const contact = new Contact(req.body);
     await contact.save();
+    invalidateCache('bulk_admin'); // Clear admin cache
     res.json(contact);
   } catch (error) {
     res.status(500).json({ message: error.message });

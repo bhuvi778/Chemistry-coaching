@@ -51,47 +51,31 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Seed data first if needed
-        await fetch(`${API_URL}/seed`);
+        // Use bulk API endpoint to get all public data in ONE request (MUCH FASTER!)
+        const bulkRes = await fetch(`${API_URL}/bulk`);
+        const bulkData = await bulkRes.json();
 
-        const coursesRes = await fetch(`${API_URL}/courses`);
-        const coursesData = await coursesRes.json();
-        setCourses(coursesData);
+        // Set all data at once
+        setCourses(bulkData.courses || []);
+        setVideos(bulkData.videos || []);
+        setAudioBooks(bulkData.audioBooks || []);
+        setStudyMaterials(bulkData.studyMaterials || []);
+        setMagazines(bulkData.magazines || []);
 
-        const videosRes = await fetch(`${API_URL}/videos`);
-        const videosData = await videosRes.json();
-        setVideos(videosData);
-
-        const audioBooksRes = await fetch(`${API_URL}/audiobooks`);
-        const audioBooksData = await audioBooksRes.json();
-        setAudioBooks(audioBooksData);
-
-        const studyMaterialsRes = await fetch(`${API_URL}/study-materials`);
-        const studyMaterialsData = await studyMaterialsRes.json();
-        setStudyMaterials(studyMaterialsData);
-
-        const magazinesRes = await fetch(`${API_URL}/magazines`);
-        const magazinesData = await magazinesRes.json();
-        setMagazines(magazinesData);
-
-        // Fetch webinar settings
+        // Fetch webinar settings from localStorage
         const storedWebinarSettings = localStorage.getItem('webinarSettings');
         if (storedWebinarSettings) {
           setWebinarSettings(JSON.parse(storedWebinarSettings));
         }
 
+        // Fetch admin data separately if user is admin
         if (isAdmin) {
-          const enquiriesRes = await fetch(`${API_URL}/enquiries`);
-          const enquiriesData = await enquiriesRes.json();
-          setEnquiries(enquiriesData);
+          const adminRes = await fetch(`${API_URL}/bulk/admin`);
+          const adminData = await adminRes.json();
 
-          const contactsRes = await fetch(`${API_URL}/contacts`);
-          const contactsData = await contactsRes.json();
-          setContacts(contactsData);
-
-          const meetingRequestsRes = await fetch(`${API_URL}/meeting-requests`);
-          const meetingRequestsData = await meetingRequestsRes.json();
-          setMeetingRequests(meetingRequestsData);
+          setEnquiries(adminData.enquiries || []);
+          setContacts(adminData.contacts || []);
+          setMeetingRequests(adminData.meetingRequests || []);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -396,15 +380,14 @@ export const DataProvider = ({ children }) => {
 
   const fetchEnquiriesAndContacts = async () => {
     try {
-      const enquiriesRes = await fetch(`${API_URL}/enquiries`);
-      const enquiriesData = await enquiriesRes.json();
-      setEnquiries(enquiriesData);
+      const adminRes = await fetch(`${API_URL}/bulk/admin`);
+      const adminData = await adminRes.json();
 
-      const contactsRes = await fetch(`${API_URL}/contacts`);
-      const contactsData = await contactsRes.json();
-      setContacts(contactsData);
+      setEnquiries(adminData.enquiries || []);
+      setContacts(adminData.contacts || []);
+      setMeetingRequests(adminData.meetingRequests || []);
     } catch (error) {
-      console.error("Error fetching enquiries and contacts:", error);
+      console.error("Error fetching admin data:", error);
     }
   };
 
