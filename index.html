@@ -95,6 +95,14 @@
       border-radius: 50% !important;
       cursor: pointer !important;
     }
+
+    /* Hide OneSignal's default subscription message */
+    .onesignal-bell-launcher-dialog-body,
+    .onesignal-bell-launcher-message,
+    .onesignal-bell-launcher-dialog .onesignal-bell-launcher-message,
+    div[class*="onesignal-bell-launcher"] div[class*="message"] {
+      display: none !important;
+    }
   </style>
 
   <!-- OneSignal Push Notifications -->
