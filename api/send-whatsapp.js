@@ -54,14 +54,15 @@ export default async function handler(req, res) {
         formData.append('template_id', TEMPLATE_ID);
         formData.append('phone_number', phone);
 
-        // BotBiz uses custom_fields for template variables with # syntax
-        formData.append('custom_fields[User-Name]', name);
+        // WhatsApp templates use numbered variables: {{1}}, {{2}}, etc.
+        // The first variable ({{1}}) should be the name
+        formData.append('variables', JSON.stringify([name]));
 
         console.log('API URL:', apiUrl);
         console.log('Form Data:');
         console.log('  - template_id:', TEMPLATE_ID);
         console.log('  - phone_number:', phone);
-        console.log('  - custom_fields[User-Name]:', name);
+        console.log('  - variables:', JSON.stringify([name]));
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
