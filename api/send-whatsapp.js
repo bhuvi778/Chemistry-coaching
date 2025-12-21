@@ -6,25 +6,29 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { phone, message } = req.body;
+        const { phone, name } = req.body;
 
         // Validate input
-        if (!phone || !message) {
+        if (!phone || !name) {
             return res.status(400).json({
                 error: 'Missing required fields',
-                details: 'Both phone and message are required'
+                details: 'Both phone and name are required'
             });
         }
 
-        console.log('=== BotBiz WhatsApp API ===');
+        console.log('=== BotBiz WhatsApp Template API ===');
         console.log('Phone:', phone);
+        console.log('Name:', name);
 
         // BotBiz API Configuration
         const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
         const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || '884991348021443';
+        const TEMPLATE_ID = process.env.BOTBIZ_TEMPLATE_ID || '280021'; // App download template ID
+        const TEMPLATE_NAME = 'app_download_link'; // Template name
 
         console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
         console.log('Phone Number ID:', PHONE_NUMBER_ID);
+        console.log('Template ID:', TEMPLATE_ID);
 
         // Check if phone number ID is provided
         if (!PHONE_NUMBER_ID) {
@@ -37,38 +41,36 @@ export default async function handler(req, res) {
             });
         }
 
-        // Build the API request for TEMPLATE message
+        // Build the API request for TEMPLATE message with variables
         console.log('=== Building API Request ===');
-        console.log('Sending WhatsApp TEMPLATE message via BotBiz API...');
-
-        // Use template endpoint with POST method and form data
-        const TEMPLATE_ID = process.env.BOTBIZ_TEMPLATE_ID || '277083'; // Your template ID in BotBiz
+        console.log('Sending WhatsApp TEMPLATE message with User-Name variable...');
 
         const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
 
-        // Build form data
-        const formData = new URLSearchParams();
-        formData.append('apiToken', BOTBIZ_API_KEY);
-        formData.append('phone_number_id', PHONE_NUMBER_ID);
-        formData.append('template_id', TEMPLATE_ID);
-        formData.append('phone_number', phone);
+        // Build request body with template variables
+        const requestBody = {
+            phone_number_id: PHONE_NUMBER_ID,
+            to: phone,
+            template_id: TEMPLATE_ID,
+            template_name: TEMPLATE_NAME,
+            variables: {
+                'User-Name': name  // Map name to User-Name variable in template
+            }
+        };
 
         console.log('API URL:', apiUrl);
-        console.log('Parameters:');
-        console.log('  - apiToken:', BOTBIZ_API_KEY.substring(0, 10) + '...');
-        console.log('  - phone_number_id:', PHONE_NUMBER_ID);
-        console.log('  - template_id:', TEMPLATE_ID);
-        console.log('  - phone_number:', phone);
+        console.log('Request Body:', JSON.stringify(requestBody, null, 2));
         console.log('========================');
 
         // Make POST request to BotBiz Template API
         const apiResponse = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${BOTBIZ_API_KEY}`,
                 'Accept': 'application/json',
             },
-            body: formData.toString()
+            body: JSON.stringify(requestBody)
         });
 
         console.log('API response status:', apiResponse.status);
