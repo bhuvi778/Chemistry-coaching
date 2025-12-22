@@ -54,31 +54,32 @@ export default async function handler(req, res) {
         formData.append('template_id', TEMPLATE_ID);
         formData.append('phone_number', phone);
 
-        // Try ALL possible formats that BotBiz might accept for custom fields
+        // Try ALL possible formats for template variable "Name"
         // Standard WhatsApp variables {{1}}
         formData.append('variables', JSON.stringify([name]));
         
-        // Custom fields with bracket notation
-        formData.append('custom_fields[User-Name]', name);
+        // Custom fields with bracket notation - using "Name"
+        formData.append('custom_fields[Name]', name);
         
         // Direct field name
-        formData.append('User-Name', name);
+        formData.append('Name', name);
         
         // Custom data object
-        formData.append('custom_data', JSON.stringify({ "User-Name": name }));
+        formData.append('custom_data', JSON.stringify({ "Name": name }));
         
         // Alternative custom fields format
-        formData.append('template_data', JSON.stringify({ "User-Name": name }));
+        formData.append('template_data', JSON.stringify({ "Name": name }));
 
         console.log('API URL:', apiUrl);
-        console.log('Sending ALL variable formats:');
+        console.log('Sending template variable "Name" in all formats:');
         console.log('  - template_id:', TEMPLATE_ID);
         console.log('  - phone_number:', phone);
+        console.log('  - Name value:', name);
         console.log('  - variables:', JSON.stringify([name]));
-        console.log('  - custom_fields[User-Name]:', name);
-        console.log('  - User-Name:', name);
-        console.log('  - custom_data:', JSON.stringify({ "User-Name": name }));
-        console.log('  - template_data:', JSON.stringify({ "User-Name": name }));
+        console.log('  - custom_fields[Name]:', name);
+        console.log('  - Name:', name);
+        console.log('  - custom_data:', JSON.stringify({ "Name": name }));
+        console.log('  - template_data:', JSON.stringify({ "Name": name }));
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
