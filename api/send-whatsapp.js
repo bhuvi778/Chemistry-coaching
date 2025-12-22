@@ -41,41 +41,47 @@ export default async function handler(req, res) {
             });
         }
 
-        // Build the API request for TEMPLATE message with variables
+        // Build the API request for REGULAR message (not template)
         console.log('=== Building API Request ===');
-        console.log('Sending WhatsApp TEMPLATE message with variable...');
+        console.log('Sending WhatsApp message with name filled in...');
 
-        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
+        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
 
-        // Build form data as shown in BotBiz POST example
+        // Build the message text manually with the name
+        const messageText = `Dear *${name}*,
+
+*Welcome to Ace2Examz!* 🎉
+
+Your all-in-one *Chemistry Learning Hub* for every major exam — all in one app.
+
+Inside the app you get:
+💯 Free Quiz (All Exams)
+📝 Free Notes
+📚 Free E-Books
+📖 Free Chemistry Today Magazine
+🎯 Daily Target-Based Quiz
+✅ Weekly Tests
+📋 Previous Year Questions (2002-2025)
+
+📝 *We Cover All Major Exams But Only One Subject: Chemistry* ⚗️
+
+Stay committed. Your success story is already in motion 🚀
+
+*Warm regards,*
+*Reaction Lab*`;
+
+        // Build form data
         const formData = new URLSearchParams();
         formData.append('apiToken', BOTBIZ_API_KEY);
         formData.append('phone_number_id', PHONE_NUMBER_ID);
-        formData.append('template_id', TEMPLATE_ID);
-        
-        // CRITICAL: BotBiz expects 'to' for recipient
-        formData.append('to', phone);
-        
-        // Try components format (WhatsApp Business API standard)
-        const components = [
-            {
-                "type": "body",
-                "parameters": [
-                    {
-                        "type": "text",
-                        "text": name
-                    }
-                ]
-            }
-        ];
-        formData.append('components', JSON.stringify(components));
+        formData.append('message', messageText);
+        formData.append('phone_number', phone);
 
         console.log('API URL:', apiUrl);
         console.log('=== SENDING MESSAGE ===');
-        console.log('  - template_id:', TEMPLATE_ID);
-        console.log('  - to (RECIPIENT):', phone);
+        console.log('  - phone_number (RECIPIENT):', phone);
         console.log('  - phone_number_id (BUSINESS):', PHONE_NUMBER_ID);
-        console.log('  - components:', JSON.stringify(components));
+        console.log('  - message preview:', messageText.substring(0, 100) + '...');
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
