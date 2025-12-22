@@ -120,8 +120,8 @@ const Navbar = () => {
               
               <Link to="/book-meeting" className={getNavLinkClass('/book-meeting')}>
                 <span className="flex items-center gap-2">
-                  <i className="fas fa-calendar-alt"></i>
-                  Book Meeting
+                  <i className="fas fa-calendar-alt text-green-500"></i>
+                  Book your meet
                 </span>
               </Link>
               <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
@@ -268,7 +268,7 @@ const Navbar = () => {
               <i className="fas fa-blog text-blue-500 mr-2"></i>Blog
             </a>
             <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-              <i className="fas fa-calendar-alt text-blue-500 mr-2"></i>Book Meeting
+              <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book your meet
             </Link>
             <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
               <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
