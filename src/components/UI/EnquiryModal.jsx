@@ -41,22 +41,29 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         whatsappPayload.append('apiToken', '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26');
         whatsappPayload.append('phone_number_id', '884991348021443');
         whatsappPayload.append('template_id', '280021');
-        
-        // Use 'to' for recipient phone number
         whatsappPayload.append('to', phoneNumber);
         
-        // Use body_variables format with text objects
-        const bodyVariables = [
-          { "text": formData.name },
-          { "text": course.title }
+        // Use components format (WhatsApp Business API standard)
+        const components = [
+          {
+            "type": "body",
+            "parameters": [
+              {
+                "type": "text",
+                "text": formData.name
+              },
+              {
+                "type": "text",
+                "text": course.title
+              }
+            ]
+          }
         ];
-        whatsappPayload.append('body_variables', JSON.stringify(bodyVariables));
+        whatsappPayload.append('components', JSON.stringify(components));
 
         console.log('Sending WhatsApp for enquiry:', {
-          name: formData.name,
-          course: course.title,
           to: phoneNumber,
-          body_variables: bodyVariables
+          components: components
         });
 
         const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';

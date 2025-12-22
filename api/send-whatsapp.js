@@ -53,19 +53,29 @@ export default async function handler(req, res) {
         formData.append('phone_number_id', PHONE_NUMBER_ID);
         formData.append('template_id', TEMPLATE_ID);
         
-        // CRITICAL: BotBiz expects 'to' for recipient, not 'phone_number'
+        // CRITICAL: BotBiz expects 'to' for recipient
         formData.append('to', phone);
-
-        // Try body_variables format for template {{1}}, {{2}}
-        const bodyVariables = [{ "text": name }];
-        formData.append('body_variables', JSON.stringify(bodyVariables));
+        
+        // Try components format (WhatsApp Business API standard)
+        const components = [
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": name
+                    }
+                ]
+            }
+        ];
+        formData.append('components', JSON.stringify(components));
 
         console.log('API URL:', apiUrl);
-        console.log('=== SENDING TO RECIPIENT ===');
+        console.log('=== SENDING MESSAGE ===');
         console.log('  - template_id:', TEMPLATE_ID);
         console.log('  - to (RECIPIENT):', phone);
-        console.log('  - phone_number_id (YOUR BUSINESS):', PHONE_NUMBER_ID);
-        console.log('  - body_variables:', JSON.stringify(bodyVariables));
+        console.log('  - phone_number_id (BUSINESS):', PHONE_NUMBER_ID);
+        console.log('  - components:', JSON.stringify(components));
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
