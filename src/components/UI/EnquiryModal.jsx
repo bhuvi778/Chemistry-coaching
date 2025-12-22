@@ -41,7 +41,9 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         whatsappPayload.append('apiToken', '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26');
         whatsappPayload.append('phone_number_id', '884991348021443');
         whatsappPayload.append('template_id', '280021');
-        whatsappPayload.append('phone_number', phoneNumber);
+        
+        // Use 'to' for recipient phone number
+        whatsappPayload.append('to', phoneNumber);
         
         // Use body_variables format with text objects
         const bodyVariables = [
@@ -53,7 +55,7 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         console.log('Sending WhatsApp for enquiry:', {
           name: formData.name,
           course: course.title,
-          phone: phoneNumber,
+          to: phoneNumber,
           body_variables: bodyVariables
         });
 

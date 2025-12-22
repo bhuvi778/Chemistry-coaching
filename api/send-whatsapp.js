@@ -52,9 +52,8 @@ export default async function handler(req, res) {
         formData.append('apiToken', BOTBIZ_API_KEY);
         formData.append('phone_number_id', PHONE_NUMBER_ID);
         formData.append('template_id', TEMPLATE_ID);
-        formData.append('phone_number', phone);
         
-        // Also try 'to' parameter (some APIs use this)
+        // CRITICAL: BotBiz expects 'to' for recipient, not 'phone_number'
         formData.append('to', phone);
 
         // Try body_variables format for template {{1}}, {{2}}
@@ -64,11 +63,9 @@ export default async function handler(req, res) {
         console.log('API URL:', apiUrl);
         console.log('=== SENDING TO RECIPIENT ===');
         console.log('  - template_id:', TEMPLATE_ID);
-        console.log('  - phone_number (recipient):', phone);
-        console.log('  - to (recipient):', phone);
-        console.log('  - phone_number_id (sender):', PHONE_NUMBER_ID);
+        console.log('  - to (RECIPIENT):', phone);
+        console.log('  - phone_number_id (YOUR BUSINESS):', PHONE_NUMBER_ID);
         console.log('  - body_variables:', JSON.stringify(bodyVariables));
-        console.log('  - Full form data:', formData.toString());
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
