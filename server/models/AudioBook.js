@@ -1,26 +1,5 @@
 const mongoose = require('mongoose');
 
-const topicSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  description: String,
-  duration: String,
-  audioUrl: {
-    type: String,
-    required: true
-  }
-});
-
-const chapterSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  topics: [topicSchema]
-});
-
 const audioBookSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -31,17 +10,17 @@ const audioBookSchema = new mongoose.Schema({
     required: true
   },
   author: String,
+  duration: String,
+  audioUrl: {
+    type: String,
+    required: true
+  },
   thumbnailUrl: String,
   category: {
     type: String,
-    enum: [
-      'General', 'JEE', 'NEET', 'IAT', 'NEST', 'TIFR',
-      'CSIR NET', 'GATE', 'IIT JAM',
-      'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry'
-    ],
+    enum: ['Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry', 'General'],
     default: 'General'
   },
-  chapters: [chapterSchema],
   isActive: {
     type: Boolean,
     default: true

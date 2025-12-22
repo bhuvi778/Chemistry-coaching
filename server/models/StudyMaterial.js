@@ -20,24 +20,12 @@ const studyMaterialSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: [
-      // General Categories
-      'Notes', 'Handwritten Notes', 'Formula Sheets', 'Revision Notes',
-      'Question Banks', 'Practice Problems', 'Solutions',
-      'Previous Year Papers', 'Sample Papers', 'Mock Tests',
-      'Study Guides', 'Reference Materials', 'Puzzle',
-      // Chemistry Topics
-      'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry',
-      'Analytical Chemistry', 'Biochemistry'
-    ],
+    enum: ['Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry', 'Notes', 'Question Banks', 'Previous Year Papers'],
     default: 'Notes'
   },
   examType: {
     type: String,
-    enum: [
-      'All', 'JEE', 'NEET', 'IAT', 'NEST', 'TIFR', 'KVPY',
-      'CSIR NET', 'GATE', 'IIT JAM', 'OLYMPIAD', 'CUET', 'AIIMS', 'BOARDS'
-    ],
+    enum: ['JEE', 'NEET', 'GATE', 'CSIR NET', 'IIT JAM', 'All'],
     default: 'All'
   },
   thumbnailUrl: String,

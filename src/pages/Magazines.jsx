@@ -1,29 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 
 const Magazines = () => {
   const { magazines } = useData();
-  const [selectedYear, setSelectedYear] = useState('all');
-
-  // Extract unique years from magazines and sort them
-  const availableYears = useMemo(() => {
-    const years = [...new Set(magazines.map(mag => mag.year).filter(year => year))];
-    return years.sort((a, b) => b - a); // Sort descending (newest first)
-  }, [magazines]);
-
-  // Filter magazines by selected year
-  const filteredMagazines = selectedYear === 'all'
-    ? magazines
-    : magazines.filter(mag => mag.year === parseInt(selectedYear));
-
-  const getYearClass = (year) => {
-    const isActive = selectedYear === year;
-    return `group px-6 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 cursor-pointer ${isActive
-      ? 'bg-gradient-to-r from-pink-500 via-orange-500 to-red-600 text-white shadow-[0_8px_30px_rgba(236,72,153,0.5)] scale-105 border-2 border-pink-400/50'
-      : 'bg-gray-800/50 text-gray-400 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-white hover:shadow-lg hover:scale-[1.02] border-2 border-gray-700 hover:border-pink-400/30'
-      }`;
-  };
 
   return (
     <div className="animate-fadeIn min-h-screen">
@@ -35,71 +15,29 @@ const Magazines = () => {
         </div>
 
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-pink-400 via-orange-400 to-red-500 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-pink-400 to-orange-500 bg-clip-text text-transparent">
             <i className="fas fa-book-open mr-3"></i>
             Chemistry Magazine
           </h1>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Monthly chemistry magazine with latest topics, problems, and insights
           </p>
         </div>
 
-        {/* Year Filter Tabs */}
-        {availableYears.length > 0 && (
-          <div className="mb-10">
-            <div className="glass-panel rounded-2xl p-6 mb-8">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <i className="fas fa-calendar-alt text-pink-400"></i>
-                  Filter by Year
-                </h3>
-                <span className="text-sm text-gray-400 hidden sm:block">
-                  {selectedYear === 'all' ? 'All Years' : selectedYear}
-                </span>
-              </div>
-              <div className="overflow-x-auto pb-2 scrollbar-hide">
-                <div className="flex gap-3 min-w-max lg:min-w-0 lg:flex-wrap lg:justify-start">
-                  <button
-                    onClick={() => setSelectedYear('all')}
-                    className={getYearClass('all')}
-                  >
-                    <i className="fas fa-th-large mr-2"></i>
-                    All Years
-                  </button>
-                  {availableYears.map(year => (
-                    <button
-                      key={year}
-                      onClick={() => setSelectedYear(year.toString())}
-                      className={getYearClass(year.toString())}
-                    >
-                      <i className="fas fa-calendar mr-2"></i>
-                      {year}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Magazines Grid */}
-        {filteredMagazines.length === 0 ? (
+        {magazines.length === 0 ? (
           <div className="text-center py-20 glass-panel rounded-2xl">
             <i className="fas fa-book-open text-6xl text-gray-600 mb-4"></i>
-            <h3 className="text-2xl font-bold text-white mb-2">
-              {selectedYear === 'all' ? 'No Magazines Available' : `No Magazines for ${selectedYear}`}
-            </h3>
-            <p className="text-gray-400">
-              {selectedYear === 'all' ? 'New magazines will be published soon!' : 'Try selecting a different year'}
-            </p>
+            <h3 className="text-2xl font-bold text-white mb-2">No Magazines Available</h3>
+            <p className="text-gray-400">New magazines will be published soon!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredMagazines.map((magazine) => (
+            {magazines.map((magazine) => (
               <div key={magazine._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(236,72,153,0.3)] transition-all duration-300">
                 {magazine.coverImageUrl && (
-                  <img
-                    src={magazine.coverImageUrl}
+                  <img 
+                    src={magazine.coverImageUrl} 
                     alt={magazine.title}
                     className="w-full h-80 object-cover"
                   />
@@ -119,7 +57,7 @@ const Magazines = () => {
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-3">{magazine.title}</h3>
                   <p className="text-gray-400 text-sm mb-4">{magazine.description}</p>
-
+                  
                   {magazine.topics && magazine.topics.length > 0 && (
                     <div className="mb-4">
                       <h4 className="text-white font-semibold text-sm mb-2">Topics Covered:</h4>
@@ -132,10 +70,10 @@ const Magazines = () => {
                       </div>
                     </div>
                   )}
-
-                  <a
-                    href={magazine.pdfUrl}
-                    target="_blank"
+                  
+                  <a 
+                    href={magazine.pdfUrl} 
+                    target="_blank" 
                     rel="noopener noreferrer"
                     download
                     className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg hover:from-pink-600 hover:to-orange-600 transition font-semibold"

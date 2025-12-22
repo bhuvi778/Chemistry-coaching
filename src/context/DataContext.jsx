@@ -26,20 +26,6 @@ export const DataProvider = ({ children }) => {
   // Magazines State
   const [magazines, setMagazines] = useState([]);
 
-  // Webinar Settings State
-  const [webinarSettings, setWebinarSettings] = useState({
-    title: 'Demo Webinar',
-    description: 'Webinar - Description',
-    type: 'Webinar',
-    date: '',
-    time: '14:30',
-    timezone: 'IST',
-    isActive: true
-  });
-
-  // Meeting Requests State
-  const [meetingRequests, setMeetingRequests] = useState([]);
-
   // Auth State
   const [isAdmin, setIsAdmin] = useState(() => {
     return localStorage.getItem('reaction_isAdmin') === 'true';
@@ -51,31 +37,37 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Use bulk API endpoint to get all public data in ONE request (MUCH FASTER!)
-        const bulkRes = await fetch(`${API_URL}/bulk`);
-        const bulkData = await bulkRes.json();
+        // Seed data first if needed
+        await fetch(`${API_URL}/seed`);
 
-        // Set all data at once
-        setCourses(bulkData.courses || []);
-        setVideos(bulkData.videos || []);
-        setAudioBooks(bulkData.audioBooks || []);
-        setStudyMaterials(bulkData.studyMaterials || []);
-        setMagazines(bulkData.magazines || []);
+        const coursesRes = await fetch(`${API_URL}/courses`);
+        const coursesData = await coursesRes.json();
+        setCourses(coursesData);
 
-        // Fetch webinar settings from localStorage
-        const storedWebinarSettings = localStorage.getItem('webinarSettings');
-        if (storedWebinarSettings) {
-          setWebinarSettings(JSON.parse(storedWebinarSettings));
-        }
+        const videosRes = await fetch(`${API_URL}/videos`);
+        const videosData = await videosRes.json();
+        setVideos(videosData);
 
-        // Fetch admin data separately if user is admin
+        const audioBooksRes = await fetch(`${API_URL}/audiobooks`);
+        const audioBooksData = await audioBooksRes.json();
+        setAudioBooks(audioBooksData);
+
+        const studyMaterialsRes = await fetch(`${API_URL}/study-materials`);
+        const studyMaterialsData = await studyMaterialsRes.json();
+        setStudyMaterials(studyMaterialsData);
+
+        const magazinesRes = await fetch(`${API_URL}/magazines`);
+        const magazinesData = await magazinesRes.json();
+        setMagazines(magazinesData);
+
         if (isAdmin) {
-          const adminRes = await fetch(`${API_URL}/bulk/admin`);
-          const adminData = await adminRes.json();
+          const enquiriesRes = await fetch(`${API_URL}/enquiries`);
+          const enquiriesData = await enquiriesRes.json();
+          setEnquiries(enquiriesData);
 
-          setEnquiries(adminData.enquiries || []);
-          setContacts(adminData.contacts || []);
-          setMeetingRequests(adminData.meetingRequests || []);
+          const contactsRes = await fetch(`${API_URL}/contacts`);
+          const contactsData = await contactsRes.json();
+          setContacts(contactsData);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -96,11 +88,11 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-
+      
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-
+      
       const newEnquiry = await res.json();
       setEnquiries([newEnquiry, ...enquiries]);
       console.log('Enquiry saved successfully:', newEnquiry);
@@ -133,12 +125,12 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(course)
       });
-
+      
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
       }
-
+      
       const newCourse = await res.json();
       console.log('Course added successfully:', newCourse);
       setCourses([...courses, newCourse]);
@@ -217,25 +209,15 @@ export const DataProvider = ({ children }) => {
   // Audio Books CRUD
   const addAudioBook = async (audioBook) => {
     try {
-      console.log('Sending audio book data:', audioBook);
       const res = await fetch(`${API_URL}/audiobooks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(audioBook)
       });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
-      }
-
       const newAudioBook = await res.json();
-      console.log('Audio book added successfully:', newAudioBook);
       setAudioBooks([newAudioBook, ...audioBooks]);
-      return newAudioBook;
     } catch (error) {
       console.error("Error adding audio book:", error);
-      throw error;
     }
   };
 
@@ -267,25 +249,15 @@ export const DataProvider = ({ children }) => {
   // Study Materials CRUD
   const addStudyMaterial = async (material) => {
     try {
-      console.log('Sending study material data:', material);
       const res = await fetch(`${API_URL}/study-materials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(material)
       });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
-      }
-
       const newMaterial = await res.json();
-      console.log('Study material added successfully:', newMaterial);
       setStudyMaterials([newMaterial, ...studyMaterials]);
-      return newMaterial;
     } catch (error) {
       console.error("Error adding study material:", error);
-      throw error;
     }
   };
 
@@ -317,25 +289,15 @@ export const DataProvider = ({ children }) => {
   // Magazines CRUD
   const addMagazine = async (magazine) => {
     try {
-      console.log('Sending magazine data:', magazine);
       const res = await fetch(`${API_URL}/magazines`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(magazine)
       });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
-      }
-
       const newMagazine = await res.json();
-      console.log('Magazine added successfully:', newMagazine);
       setMagazines([newMagazine, ...magazines]);
-      return newMagazine;
     } catch (error) {
       console.error("Error adding magazine:", error);
-      throw error;
     }
   };
 
@@ -365,11 +327,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const login = (username, password) => {
-    // Get stored credentials or use defaults
-    const storedUsername = localStorage.getItem('admin_username') || 'admin';
-    const storedPassword = localStorage.getItem('admin_password') || 'admin123';
-
-    if (username === storedUsername && password === storedPassword) {
+    if (username === 'admin' && password === 'admin123') {
       setIsAdmin(true);
       // Fetch enquiries and contacts immediately after login
       fetchEnquiriesAndContacts();
@@ -380,59 +338,15 @@ export const DataProvider = ({ children }) => {
 
   const fetchEnquiriesAndContacts = async () => {
     try {
-      const adminRes = await fetch(`${API_URL}/bulk/admin`);
-      const adminData = await adminRes.json();
+      const enquiriesRes = await fetch(`${API_URL}/enquiries`);
+      const enquiriesData = await enquiriesRes.json();
+      setEnquiries(enquiriesData);
 
-      setEnquiries(adminData.enquiries || []);
-      setContacts(adminData.contacts || []);
-      setMeetingRequests(adminData.meetingRequests || []);
+      const contactsRes = await fetch(`${API_URL}/contacts`);
+      const contactsData = await contactsRes.json();
+      setContacts(contactsData);
     } catch (error) {
-      console.error("Error fetching admin data:", error);
-    }
-  };
-
-  // Webinar Settings Management
-  const updateWebinarSettings = (settings) => {
-    setWebinarSettings(settings);
-    localStorage.setItem('webinarSettings', JSON.stringify(settings));
-  };
-
-  // Meeting Requests Management
-  const addMeetingRequest = async (request) => {
-    try {
-      const requestData = {
-        ...request,
-        status: 'pending',
-        submittedAt: new Date().toISOString()
-      };
-
-      const res = await fetch(`${API_URL}/meeting-requests`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData)
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const newRequest = await res.json();
-      setMeetingRequests([newRequest, ...meetingRequests]);
-      return newRequest;
-    } catch (error) {
-      console.error("Error adding meeting request:", error);
-      throw error;
-    }
-  };
-
-  const deleteMeetingRequest = async (id) => {
-    try {
-      await fetch(`${API_URL}/meeting-requests/${id}`, {
-        method: 'DELETE'
-      });
-      setMeetingRequests(meetingRequests.filter(r => r._id !== id));
-    } catch (error) {
-      console.error("Error deleting meeting request:", error);
+      console.error("Error fetching enquiries and contacts:", error);
     }
   };
 
@@ -467,11 +381,6 @@ export const DataProvider = ({ children }) => {
       addMagazine,
       updateMagazine,
       deleteMagazine,
-      meetingRequests,
-      addMeetingRequest,
-      deleteMeetingRequest,
-      webinarSettings,
-      updateWebinarSettings,
       login,
       logout
     }}>

@@ -6,13 +6,7 @@ import ManageVideos from './ManageVideos';
 import ManageAudioBooks from './ManageAudioBooks';
 import ManageStudyMaterials from './ManageStudyMaterials';
 import ManageMagazines from './ManageMagazines';
-import ManageWebinarCards from './ManageWebinarCards';
-import ManageDoubts from './ManageDoubts';
-import ManageFeedback from './ManageFeedback';
-import ManageCrosswords from './ManageCrosswords';
-import ManagePuzzleSets from './ManagePuzzleSets';
 import Enquiries from './Enquiries';
-import AdminSettings from './AdminSettings';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('courses');
@@ -68,47 +62,10 @@ const AdminDashboard = () => {
               <i className="fas fa-book-open mr-2"></i> Manage Magazines
             </button>
             <button
-              onClick={() => setActiveTab('crosswords')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'crosswords' ? 'bg-cyan-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-th mr-2"></i> Manage Crosswords
-            </button>
-            <button
-              onClick={() => setActiveTab('puzzle-sets')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'puzzle-sets' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-puzzle-piece mr-2"></i> Manage Puzzle Sets
-            </button>
-            <button
-              onClick={() => setActiveTab('webinar-cards')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'webinar-cards' ? 'bg-purple-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-th-large mr-2"></i> Webinar Cards
-            </button>
-
-            <button
-              onClick={() => setActiveTab('doubts')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'doubts' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-question-circle mr-2"></i> Manage Doubts
-            </button>
-            <button
-              onClick={() => setActiveTab('feedback')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'feedback' ? 'bg-blue-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-comments mr-2"></i> User Feedback
-            </button>
-            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
               <i className="fas fa-envelope mr-2"></i> Enquiries & Contacts
-            </button>
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'settings' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-cog mr-2"></i> Settings
             </button>
           </div>
         </div>
@@ -120,13 +77,7 @@ const AdminDashboard = () => {
           {activeTab === 'audiobooks' && <ManageAudioBooks />}
           {activeTab === 'materials' && <ManageStudyMaterials />}
           {activeTab === 'magazines' && <ManageMagazines />}
-          {activeTab === 'crosswords' && <ManageCrosswords />}
-          {activeTab === 'puzzle-sets' && <ManagePuzzleSets />}
-          {activeTab === 'webinar-cards' && <ManageWebinarCards />}
-          {activeTab === 'doubts' && <ManageDoubts />}
-          {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'enquiries' && <Enquiries />}
-          {activeTab === 'settings' && <AdminSettings />}
         </div>
       </div>
     </div>
