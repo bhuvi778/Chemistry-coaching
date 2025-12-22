@@ -165,20 +165,6 @@ const AppDownload = () => {
                 </div>
               )}
             </form>
-
-            {/* Play Store Button */}
-            <a
-              href="https://play.google.com/store/apps/details?id=com.ace2examzapp.android&hl=en_IN"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block hover:scale-105 transition-transform duration-300"
-            >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                alt="Get it on Google Play"
-                className="h-14 w-auto"
-              />
-            </a>
           </div>
 
           {/* Right Side - Overlapping Images */}
