@@ -12,6 +12,7 @@ import ManageDoubts from './ManageDoubts';
 import ManageWebinar from './ManageWebinar';
 import ManageFeedback from './ManageFeedback';
 import Enquiries from './Enquiries';
+import AdminSettings from './AdminSettings';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('courses');
@@ -102,6 +103,13 @@ const AdminDashboard = () => {
             >
               <i className="fas fa-envelope mr-2"></i> Enquiries & Contacts
             </button>
+            <div className="border-t border-gray-700 my-2"></div>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'settings' ? 'bg-gray-700 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-cog mr-2"></i> Admin Settings
+            </button>
           </div>
         </div>
 
@@ -118,6 +126,7 @@ const AdminDashboard = () => {
           {activeTab === 'webinars' && <ManageWebinar />}
           {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'enquiries' && <Enquiries />}
+          {activeTab === 'settings' && <AdminSettings />}
         </div>
       </div>
     </div>
