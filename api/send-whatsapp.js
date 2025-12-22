@@ -54,18 +54,15 @@ export default async function handler(req, res) {
         formData.append('template_id', TEMPLATE_ID);
         formData.append('phone_number', phone);
 
-        // Try indexed variables: variable_1, variable_2, etc.
-        formData.append('variable_1', name);
-        
-        // Also try array format
-        formData.append('variables', JSON.stringify([name]));
+        // Try body_variables format for template {{1}}, {{2}}
+        const bodyVariables = [{ "text": name }];
+        formData.append('body_variables', JSON.stringify(bodyVariables));
 
         console.log('API URL:', apiUrl);
         console.log('Sending variables:');
         console.log('  - template_id:', TEMPLATE_ID);
         console.log('  - phone_number:', phone);
-        console.log('  - variable_1:', name);
-        console.log('  - variables:', JSON.stringify([name]));
+        console.log('  - body_variables:', JSON.stringify(bodyVariables));
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)

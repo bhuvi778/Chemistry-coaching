@@ -43,19 +43,18 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         whatsappPayload.append('template_id', '280021');
         whatsappPayload.append('phone_number', phoneNumber);
         
-        // Try indexed variables format: variable_1, variable_2
-        whatsappPayload.append('variable_1', formData.name);
-        whatsappPayload.append('variable_2', course.title);
-        
-        // Also try array format
-        whatsappPayload.append('variables', JSON.stringify([formData.name, course.title]));
+        // Use body_variables format with text objects
+        const bodyVariables = [
+          { "text": formData.name },
+          { "text": course.title }
+        ];
+        whatsappPayload.append('body_variables', JSON.stringify(bodyVariables));
 
         console.log('Sending WhatsApp for enquiry:', {
           name: formData.name,
           course: course.title,
           phone: phoneNumber,
-          variable_1: formData.name,
-          variable_2: course.title
+          body_variables: bodyVariables
         });
 
         const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
