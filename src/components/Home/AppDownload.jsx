@@ -53,7 +53,12 @@ const AppDownload = () => {
       let responseData;
       try {
         responseData = await response.json();
-        console.log('API response data:', responseData); // Debug log
+        console.log('=== FULL API RESPONSE ===');
+        console.log('Success:', responseData?.success);
+        console.log('Error:', responseData?.error);
+        console.log('Details:', responseData?.details);
+        console.log('Full Response:', JSON.stringify(responseData, null, 2));
+        console.log('========================');
       } catch (e) {
         console.log('Could not parse response as JSON');
       }
