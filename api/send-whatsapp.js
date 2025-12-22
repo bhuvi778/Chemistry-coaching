@@ -54,15 +54,27 @@ export default async function handler(req, res) {
         formData.append('template_id', TEMPLATE_ID);
         formData.append('phone_number', phone);
 
-        // BotBiz custom fields - try bracket notation format
-        // For template with #User-Name#, send as custom_fields[User-Name]
+        // Try multiple formats simultaneously
+        // Format 1: Direct parameter name (without brackets or special syntax)
+        formData.append('User-Name', name);
+        
+        // Format 2: Bracket notation
         formData.append('custom_fields[User-Name]', name);
+        
+        // Format 3: JSON object as string
+        formData.append('custom_fields', JSON.stringify({ "User-Name": name }));
+        
+        // Format 4: Array format (in case it expects variables)
+        formData.append('variables', JSON.stringify([name]));
 
         console.log('API URL:', apiUrl);
-        console.log('Sending template with custom field:');
+        console.log('=== Sending ALL possible formats ===');
         console.log('  - template_id:', TEMPLATE_ID);
         console.log('  - phone_number:', phone);
+        console.log('  - User-Name:', name);
         console.log('  - custom_fields[User-Name]:', name);
+        console.log('  - custom_fields:', JSON.stringify({ "User-Name": name }));
+        console.log('  - variables:', JSON.stringify([name]));
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
