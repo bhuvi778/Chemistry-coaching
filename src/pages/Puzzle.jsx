@@ -85,67 +85,46 @@ const Puzzle = () => {
 
                 {/* Filters */}
                 <div className="glass-panel rounded-2xl p-6 mb-8">
-                    {/* Exam Filter Tiles */}
-                    <div className="mb-6">
-                        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                            <i className="fas fa-graduation-cap text-cyan-400"></i>
-                            Filter by Exam
-                        </h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {[
-                                { id: 'all', name: 'All Exams', icon: 'fa-globe' },
-                                { id: 'JEE', name: 'JEE', icon: 'fa-cog' },
-                                { id: 'NEET', name: 'NEET', icon: 'fa-heartbeat' },
-                                { id: 'BOARDS', name: 'Boards', icon: 'fa-chalkboard-teacher' }
-                            ].map((exam) => (
-                                <button
-                                    key={exam.id}
-                                    onClick={() => setSelectedExam(exam.id)}
-                                    className={`p-3 rounded-lg border-2 transition-all transform hover:scale-105 ${
-                                        selectedExam === exam.id
-                                            ? 'bg-gradient-to-r from-cyan-500 to-blue-500 border-cyan-400 text-white shadow-lg shadow-cyan-500/50'
-                                            : 'bg-gray-800/50 border-gray-700 text-gray-300 hover:border-cyan-400 hover:bg-gray-700'
-                                    }`}
-                                >
-                                    <i className={`fas ${exam.icon} text-xl mb-1 block`}></i>
-                                    <span className="text-sm font-semibold">{exam.name}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <i className="fas fa-filter text-cyan-400"></i>
+                        Filter Puzzles
+                    </h3>
 
-                    {/* Chapter Filter Tiles */}
-                    <div>
-                        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                            <i className="fas fa-book text-blue-400"></i>
-                            Filter by Chapter
-                        </h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                            <button
-                                onClick={() => setSelectedChapter('all')}
-                                className={`p-3 rounded-lg border-2 transition-all transform hover:scale-105 ${
-                                    selectedChapter === 'all'
-                                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 border-blue-400 text-white shadow-lg shadow-blue-500/50'
-                                        : 'bg-gray-800/50 border-gray-700 text-gray-300 hover:border-blue-400 hover:bg-gray-700'
-                                }`}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Exam Filter */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-400 mb-3">
+                                <i className="fas fa-graduation-cap mr-2 text-cyan-400"></i>
+                                Filter by Exam
+                            </label>
+                            <select
+                                value={selectedExam}
+                                onChange={(e) => setSelectedExam(e.target.value)}
+                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
                             >
-                                <i className="fas fa-th-large text-xl mb-1 block"></i>
-                                <span className="text-sm font-semibold">All Chapters</span>
-                            </button>
-                            {chapters.filter(c => c !== 'all').map((chapter) => (
-                                <button
-                                    key={chapter}
-                                    onClick={() => setSelectedChapter(chapter)}
-                                    className={`p-3 rounded-lg border-2 transition-all transform hover:scale-105 ${
-                                        selectedChapter === chapter
-                                            ? 'bg-gradient-to-r from-blue-500 to-indigo-500 border-blue-400 text-white shadow-lg shadow-blue-500/50'
-                                            : 'bg-gray-800/50 border-gray-700 text-gray-300 hover:border-blue-400 hover:bg-gray-700'
-                                    }`}
-                                >
-                                    <i className="fas fa-flask text-xl mb-1 block"></i>
-                                    <span className="text-sm font-semibold">{chapter}</span>
-                                </button>
-                            ))}
+                                <option value="all">All Exams</option>
+                                <option value="JEE">JEE</option>
+                                <option value="NEET">NEET</option>
+                                <option value="BOARDS">BOARDS</option>
+                            </select>
+                        </div>
+
+                        {/* Chapter Filter */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-400 mb-3">
+                                <i className="fas fa-book mr-2 text-blue-400"></i>
+                                Filter by Chapter
+                            </label>
+                            <select
+                                value={selectedChapter}
+                                onChange={(e) => setSelectedChapter(e.target.value)}
+                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-blue-400 transition"
+                            >
+                                <option value="all">All Chapters</option>
+                                {chapters.filter(c => c !== 'all').map(chapter => (
+                                    <option key={chapter} value={chapter}>{chapter}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                 </div>
