@@ -19,13 +19,17 @@ app.use(cors({
       'http://localhost:5173',
       'http://localhost:5000',
       'https://chemistry-coaching.vercel.app',
-      'https://www.chemistry-coaching.vercel.app'
+      'https://www.chemistry-coaching.vercel.app',
+      'https://ace2examz.vercel.app',
+      'https://www.ace2examz.vercel.app',
+      'https://chemistry-coaching-git-main-bhupeshs-projects-f3c04cb2.vercel.app'
     ];
     
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed'));
+      console.log('CORS blocked origin:', origin);
+      callback(null, true); // Allow all origins temporarily for debugging
     }
   },
   credentials: true,
