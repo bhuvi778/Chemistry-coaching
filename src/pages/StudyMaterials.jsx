@@ -33,44 +33,122 @@ const StudyMaterials = () => {
         </div>
 
         {/* Filters */}
-        <div className="mb-8 space-y-4">
-          <div>
-            <h3 className="text-white font-semibold mb-3">Filter by Exam:</h3>
-            <div className="flex gap-3 flex-wrap">
-              {['all', 'JEE', 'NEET', 'GATE', 'CSIR NET', 'IIT JAM'].map(exam => (
-                <button 
-                  key={exam}
-                  onClick={() => setSelectedExam(exam)}
-                  className={`px-6 py-2 rounded-full transition ${
-                    selectedExam === exam 
-                      ? 'bg-green-500 text-white' 
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
-                  {exam === 'all' ? 'All Exams' : exam}
-                </button>
-              ))}
+        <div className="glass-panel rounded-2xl p-6 mb-8">
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <i className="fas fa-filter text-green-400"></i>
+            Filter Study Materials
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Exam Type Dropdown */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-3">
+                <i className="fas fa-graduation-cap mr-2 text-green-400"></i>
+                Filter by Exam
+              </label>
+              <select
+                value={selectedExam}
+                onChange={(e) => setSelectedExam(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-green-400 transition"
+              >
+                <option value="all">All Exams</option>
+                <optgroup label="Engineering Entrance">
+                  <option value="JEE">JEE (Main & Advanced)</option>
+                  <option value="GATE">GATE</option>
+                </optgroup>
+                <optgroup label="Medical Entrance">
+                  <option value="NEET">NEET</option>
+                  <option value="AIIMS">AIIMS</option>
+                </optgroup>
+                <optgroup label="Science Entrance">
+                  <option value="IAT">IAT (IISER Aptitude Test)</option>
+                  <option value="NEST">NEST (National Entrance Screening Test)</option>
+                  <option value="KVPY">KVPY (Kishore Vaigyanik Protsahan Yojana)</option>
+                  <option value="TIFR">TIFR (Tata Institute)</option>
+                </optgroup>
+                <optgroup label="Post Graduate">
+                  <option value="CSIR NET">CSIR NET</option>
+                  <option value="IIT JAM">IIT JAM</option>
+                </optgroup>
+                <optgroup label="Other Competitive">
+                  <option value="OLYMPIAD">Olympiad (Chemistry/Physics/Math)</option>
+                  <option value="CUET">CUET (Common University Entrance Test)</option>
+                </optgroup>
+                <optgroup label="School Level">
+                  <option value="BOARDS">Board Exams (CBSE/State - 11th/12th)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            {/* Material Type Dropdown */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-3">
+                <i className="fas fa-book mr-2 text-blue-400"></i>
+                Filter by Type
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-blue-400 transition"
+              >
+                <option value="all">All Types</option>
+                <optgroup label="General Categories">
+                  <option value="Notes">Notes</option>
+                  <option value="Handwritten Notes">Handwritten Notes</option>
+                  <option value="Formula Sheets">Formula Sheets</option>
+                  <option value="Revision Notes">Revision Notes</option>
+                  <option value="Question Banks">Question Banks</option>
+                  <option value="Practice Problems">Practice Problems</option>
+                  <option value="Solutions">Solutions</option>
+                  <option value="Previous Year Papers">Previous Year Papers</option>
+                  <option value="Sample Papers">Sample Papers</option>
+                  <option value="Mock Tests">Mock Tests</option>
+                  <option value="Study Guides">Study Guides</option>
+                  <option value="Reference Materials">Reference Materials</option>
+                  <option value="Puzzle">Puzzle</option>
+                </optgroup>
+                <optgroup label="Chemistry Topics">
+                  <option value="Physical Chemistry">Physical Chemistry</option>
+                  <option value="Organic Chemistry">Organic Chemistry</option>
+                  <option value="Inorganic Chemistry">Inorganic Chemistry</option>
+                  <option value="Analytical Chemistry">Analytical Chemistry</option>
+                  <option value="Biochemistry">Biochemistry</option>
+                </optgroup>
+              </select>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-white font-semibold mb-3">Filter by Type:</h3>
-            <div className="flex gap-3 flex-wrap">
-              {['all', 'Notes', 'Question Banks', 'Previous Year Papers', 'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry'].map(cat => (
-                <button 
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-6 py-2 rounded-full transition ${
-                    selectedCategory === cat 
-                      ? 'bg-blue-500 text-white' 
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
-                  {cat === 'all' ? 'All Types' : cat}
-                </button>
-              ))}
+          {/* Active Filters Display */}
+          {(selectedExam !== 'all' || selectedCategory !== 'all') && (
+            <div className="mt-4 flex items-center gap-3 flex-wrap">
+              <span className="text-sm text-gray-400">Active filters:</span>
+              {selectedExam !== 'all' && (
+                <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-2">
+                  {selectedExam}
+                  <button onClick={() => setSelectedExam('all')} className="hover:text-white">
+                    <i className="fas fa-times"></i>
+                  </button>
+                </span>
+              )}
+              {selectedCategory !== 'all' && (
+                <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm flex items-center gap-2">
+                  {selectedCategory}
+                  <button onClick={() => setSelectedCategory('all')} className="hover:text-white">
+                    <i className="fas fa-times"></i>
+                  </button>
+                </span>
+              )}
+              <button
+                onClick={() => {
+                  setSelectedExam('all');
+                  setSelectedCategory('all');
+                }}
+                className="text-sm text-gray-400 hover:text-white underline"
+              >
+                Clear all
+              </button>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Study Materials Grid */}
@@ -81,47 +159,51 @@ const StudyMaterials = () => {
             <p className="text-gray-400">Study materials will be available soon!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {filteredMaterials.map((material) => (
-              <div key={material._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] transition-all duration-300">
+              <div key={material._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] transition-all duration-300">
                 {material.thumbnailUrl && (
-                  <img 
-                    src={material.thumbnailUrl} 
-                    alt={material.title}
-                    className="w-full h-48 object-cover rounded-lg mb-4"
-                  />
+                  <div className="w-full aspect-[1/1.414] overflow-hidden">
+                    <img
+                      src={material.thumbnailUrl}
+                      alt={material.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 )}
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-bold text-white flex-1">{material.title}</h3>
-                  <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
-                    {material.fileType}
-                  </span>
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-xl font-bold text-white flex-1">{material.title}</h3>
+                    <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
+                      {material.fileType}
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-sm mb-4">{material.description}</p>
+                  <div className="flex gap-2 mb-4">
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
+                      {material.category}
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
+                      {material.examType}
+                    </span>
+                  </div>
+                  {material.fileSize && (
+                    <p className="text-gray-500 text-sm mb-4">
+                      <i className="fas fa-file mr-2"></i>
+                      Size: {material.fileSize}
+                    </p>
+                  )}
+                  <a
+                    href={material.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:from-green-600 hover:to-blue-600 transition font-semibold"
+                  >
+                    <i className="fas fa-download"></i>
+                    Download Free
+                  </a>
                 </div>
-                <p className="text-gray-400 text-sm mb-4">{material.description}</p>
-                <div className="flex gap-2 mb-4">
-                  <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
-                    {material.category}
-                  </span>
-                  <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
-                    {material.examType}
-                  </span>
-                </div>
-                {material.fileSize && (
-                  <p className="text-gray-500 text-sm mb-4">
-                    <i className="fas fa-file mr-2"></i>
-                    Size: {material.fileSize}
-                  </p>
-                )}
-                <a 
-                  href={material.fileUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  download
-                  className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:from-green-600 hover:to-blue-600 transition font-semibold"
-                >
-                  <i className="fas fa-download"></i>
-                  Download Free
-                </a>
               </div>
             ))}
           </div>
