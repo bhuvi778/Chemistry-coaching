@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 
 const AppDownload = () => {
-  const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
   const [mobileNumber, setMobileNumber] = useState('');
   const [message, setMessage] = useState('');
@@ -10,12 +9,6 @@ const AppDownload = () => {
 
   const handleGetLink = async (e) => {
     e.preventDefault();
-
-    if (!name || name.trim() === '') {
-      setMessage('Please enter your name');
-      setTimeout(() => setMessage(''), 3000);
-      return;
-    }
 
     if (mobileNumber.length < 10) {
       setMessage('Please enter a valid 10-digit mobile number');
@@ -30,7 +23,6 @@ const AppDownload = () => {
       const fullPhoneNumber = `${countryCode.replace('+', '')}${mobileNumber}`;
 
       console.log('=== WhatsApp Template Send ===');
-      console.log('Name:', name);
       console.log('Phone:', fullPhoneNumber);
       console.log('API Endpoint: /api/send-whatsapp');
       console.log('========================');
@@ -42,8 +34,7 @@ const AppDownload = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phone: fullPhoneNumber,
-          name: name  // Name will be used in template as {{username}}
+          phone: fullPhoneNumber
         })
       });
 
@@ -65,7 +56,6 @@ const AppDownload = () => {
 
       if (response.ok && responseData?.success) {
         setMessage('✓ App download link sent to your WhatsApp!');
-        setName('');
         setMobileNumber('');
       } else {
         // Extract detailed error information
@@ -117,18 +107,6 @@ const AppDownload = () => {
 
             {/* Mobile Number Input Form */}
             <form onSubmit={handleGetLink} className="mb-6">
-              {/* Name Input - Full Width */}
-              <div className="mb-3">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                  required
-                />
-              </div>
-
               <div className="flex flex-col sm:flex-row gap-3">
                 {/* Country Code Dropdown */}
                 <div className="relative">
