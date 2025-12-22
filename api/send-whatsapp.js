@@ -54,18 +54,31 @@ export default async function handler(req, res) {
         formData.append('template_id', TEMPLATE_ID);
         formData.append('phone_number', phone);
 
-        // IMPORTANT: BotBiz/WhatsApp templates use {{1}}, {{2}}, etc. for variables
-        // Your template should have {{1}} where you want the name to appear
-        // Example template: "Hello {{1}}, welcome to Ace2Examz!"
-        // This will send the name as the first variable
+        // Try ALL possible formats that BotBiz might accept for custom fields
+        // Standard WhatsApp variables {{1}}
         formData.append('variables', JSON.stringify([name]));
+        
+        // Custom fields with bracket notation
+        formData.append('custom_fields[User-Name]', name);
+        
+        // Direct field name
+        formData.append('User-Name', name);
+        
+        // Custom data object
+        formData.append('custom_data', JSON.stringify({ "User-Name": name }));
+        
+        // Alternative custom fields format
+        formData.append('template_data', JSON.stringify({ "User-Name": name }));
 
         console.log('API URL:', apiUrl);
-        console.log('Form Data:');
+        console.log('Sending ALL variable formats:');
         console.log('  - template_id:', TEMPLATE_ID);
         console.log('  - phone_number:', phone);
-        console.log('  - variables ({{1}}):', JSON.stringify([name]));
-        console.log('  Note: Your BotBiz template must use {{1}} for the name variable');
+        console.log('  - variables:', JSON.stringify([name]));
+        console.log('  - custom_fields[User-Name]:', name);
+        console.log('  - User-Name:', name);
+        console.log('  - custom_data:', JSON.stringify({ "User-Name": name }));
+        console.log('  - template_data:', JSON.stringify({ "User-Name": name }));
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
