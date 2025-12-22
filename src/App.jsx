@@ -13,6 +13,9 @@ import Lectures from './pages/Lectures';
 import AudioBooks from './pages/AudioBooks';
 import StudyMaterials from './pages/StudyMaterials';
 import Magazines from './pages/Magazines';
+import Puzzle from './pages/Puzzle';
+import Doubts from './pages/Doubts';
+import BookMeeting from './pages/BookMeeting';
 import AIAssistantPage from './pages/AIAssistantPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
@@ -44,6 +47,9 @@ function AppContent() {
           <Route path="/audiobooks" element={<AudioBooks />} />
           <Route path="/study-materials" element={<StudyMaterials />} />
           <Route path="/magazines" element={<Magazines />} />
+          <Route path="/puzzles" element={<Puzzle />} />
+          <Route path="/doubts" element={<Doubts />} />
+          <Route path="/book-meeting" element={<BookMeeting />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
