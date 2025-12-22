@@ -36,8 +36,6 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         if (phoneNumber.length === 10) {
           phoneNumber = '91' + phoneNumber; // Add India country code if 10 digits
         }
-
-        const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
         
         // Build message text manually with name and course
         const messageText = `Dear *${formData.name}*,
