@@ -237,6 +237,24 @@ const Lectures = () => {
                       <i className="fab fa-youtube mr-2"></i>
                       Watch Now
                     </a>
+
+                    {/* Class Notes Button */}
+                    {video.classNotes && video.classNotes.data && (
+                      <button
+                        onClick={() => {
+                          // Create a download link for the PDF
+                          const linkSource = video.classNotes.data;
+                          const downloadLink = document.createElement('a');
+                          downloadLink.href = linkSource;
+                          downloadLink.download = video.classNotes.filename || `${video.title}-notes.pdf`;
+                          downloadLink.click();
+                        }}
+                        className="block w-full text-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
+                      >
+                        <i className="fas fa-file-pdf mr-2"></i>
+                        Download Class Notes
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

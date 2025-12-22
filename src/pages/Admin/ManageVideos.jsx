@@ -12,7 +12,8 @@ const ManageVideos = () => {
     instructor: '',
     category: 'general',
     duration: '',
-    isActive: true
+    isActive: true,
+    classNotes: null  // Will store {data: base64, filename: string}
   });
 
   const categories = [
@@ -38,7 +39,8 @@ const ManageVideos = () => {
       instructor: '',
       category: 'general',
       duration: '',
-      isActive: true
+      isActive: true,
+      classNotes: null
     });
     setIsAdding(false);
   };
@@ -52,7 +54,8 @@ const ManageVideos = () => {
       instructor: video.instructor,
       category: video.category || 'general',
       duration: video.duration || '',
-      isActive: video.isActive !== false
+      isActive: video.isActive !== false,
+      classNotes: video.classNotes || null
     });
     setIsAdding(true);
   };
@@ -73,7 +76,8 @@ const ManageVideos = () => {
       instructor: '',
       category: 'general',
       duration: '',
-      isActive: true
+      isActive: true,
+      classNotes: null
     });
   };
 
@@ -110,7 +114,7 @@ const ManageVideos = () => {
                   type="text"
                   required
                   value={formData.title}
-                  onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none"
                   placeholder="e.g., Organic Chemistry Basics"
                 />
@@ -122,7 +126,7 @@ const ManageVideos = () => {
                   type="text"
                   required
                   value={formData.instructor}
-                  onChange={(e) => setFormData({...formData, instructor: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, instructor: e.target.value })}
                   className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none"
                   placeholder="e.g., Dr. Rajesh Kumar"
                 />
@@ -135,7 +139,7 @@ const ManageVideos = () => {
                 type="text"
                 required
                 value={formData.youtubeId}
-                onChange={(e) => setFormData({...formData, youtubeId: extractYoutubeId(e.target.value)})}
+                onChange={(e) => setFormData({ ...formData, youtubeId: extractYoutubeId(e.target.value) })}
                 className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none"
                 placeholder="https://www.youtube.com/watch?v=VIDEO_ID or just VIDEO_ID"
               />
@@ -149,7 +153,7 @@ const ManageVideos = () => {
               <textarea
                 required
                 value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none h-24 resize-none"
                 placeholder="Brief description of the video content"
               />
@@ -160,7 +164,7 @@ const ManageVideos = () => {
                 <label className="block text-gray-400 mb-2">Category *</label>
                 <select
                   value={formData.category}
-                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none"
                 >
                   {categories.map(cat => (
@@ -174,11 +178,64 @@ const ManageVideos = () => {
                 <input
                   type="text"
                   value={formData.duration}
-                  onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                   className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none"
                   placeholder="e.g., 45:30 or 1h 30m"
                 />
               </div>
+            </div>
+
+            {/* Class Notes PDF Upload */}
+            <div>
+              <label className="block text-gray-400 mb-2">
+                <i className="fas fa-file-pdf mr-2 text-blue-400"></i>
+                Class Notes PDF (optional)
+              </label>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    if (file.size > 10 * 1024 * 1024) {  // 10MB limit
+                      alert('File size must be less than 10MB');
+                      e.target.value = '';
+                      return;
+                    }
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setFormData({
+                        ...formData,
+                        classNotes: {
+                          data: reader.result,
+                          filename: file.name,
+                          uploadedAt: new Date()
+                        }
+                      });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+              />
+              {formData.classNotes && (
+                <div className="mt-2 flex items-center justify-between bg-gray-900 border border-gray-700 rounded p-3">
+                  <div className="flex items-center gap-2 text-green-400">
+                    <i className="fas fa-check-circle"></i>
+                    <span className="text-sm">{formData.classNotes.filename}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, classNotes: null })}
+                    className="text-red-400 hover:text-red-300 text-sm"
+                  >
+                    <i className="fas fa-times"></i> Remove
+                  </button>
+                </div>
+              )}
+              <p className="text-xs text-gray-500 mt-1">
+                Upload PDF class notes for this lecture (Max 10MB)
+              </p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -186,7 +243,7 @@ const ManageVideos = () => {
                 type="checkbox"
                 id="isActive"
                 checked={formData.isActive}
-                onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                 className="w-5 h-5 rounded border-gray-700 bg-gray-900 text-cyan-500 focus:ring-cyan-400"
               />
               <label htmlFor="isActive" className="text-gray-400">
@@ -198,7 +255,7 @@ const ManageVideos = () => {
               <div className="mt-4">
                 <label className="block text-gray-400 mb-2">Preview:</label>
                 <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
-                  <img 
+                  <img
                     src={`https://img.youtube.com/vi/${formData.youtubeId}/maxresdefault.jpg`}
                     alt="Video preview"
                     className="w-full h-full object-cover"
@@ -241,7 +298,7 @@ const ManageVideos = () => {
             <div key={video._id} className="glass-panel rounded-xl overflow-hidden border border-gray-700">
               {/* Video Thumbnail */}
               <div className="relative aspect-video bg-gray-900">
-                <img 
+                <img
                   src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
                   alt={video.title}
                   className="w-full h-full object-cover"
@@ -249,7 +306,7 @@ const ManageVideos = () => {
                     e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
                   }}
                 />
-                <a 
+                <a
                   href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -279,7 +336,7 @@ const ManageVideos = () => {
                   <i className="fas fa-chalkboard-teacher"></i>
                   <span>{video.instructor}</span>
                 </div>
-                
+
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   <button

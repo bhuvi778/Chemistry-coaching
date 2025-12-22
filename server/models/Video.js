@@ -27,6 +27,11 @@ const videoSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  classNotes: {
+    data: String,  // Base64 encoded PDF
+    filename: String,
+    uploadedAt: Date
+  },
   isActive: {
     type: Boolean,
     default: true
