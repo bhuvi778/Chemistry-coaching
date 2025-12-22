@@ -57,6 +57,7 @@ export default async function handler(req, res) {
         console.log('  - phone_number (RECIPIENT):', phone);
         console.log('  - phone_number_id (BUSINESS):', PHONE_NUMBER_ID);
         console.log('  - template_id:', TEMPLATE_ID);
+        console.log('  - Full Form Data:', formData.toString());
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
@@ -70,6 +71,7 @@ export default async function handler(req, res) {
         });
 
         console.log('API response status:', apiResponse.status);
+        console.log('API response headers:', Object.fromEntries(apiResponse.headers.entries()));
 
         // Get response data
         let apiData;
