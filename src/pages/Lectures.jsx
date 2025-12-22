@@ -255,6 +255,17 @@ const Lectures = () => {
                         Download Class Notes
                       </button>
                     )}
+
+                    {/* TEMPORARY: Test button - remove after testing */}
+                    {!video.classNotes && (
+                      <button
+                        disabled
+                        className="block w-full text-center bg-gray-600 text-gray-400 font-semibold py-2.5 px-4 rounded-lg mt-2 cursor-not-allowed opacity-50"
+                      >
+                        <i className="fas fa-file-pdf mr-2"></i>
+                        No Class Notes Available
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
