@@ -105,7 +105,6 @@ const Navbar = () => {
                     <i className="fas fa-question-circle text-orange-500"></i>
                     <span>Ask Your Doubts</span>
                   </Link>
-                  </Link>
                 </div>
               </div>
               
