@@ -37,23 +37,33 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
           phoneNumber = '91' + phoneNumber; // Add India country code if 10 digits
         }
 
-        const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
-        const whatsappPayload = {
-          apiToken: '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26',
-          phone_number_id: '884991348021443',
-          template_id: '280021',
-          templateVariable: {
-            'coursename-2': course.title
-          },
-          phone_number: phoneNumber
-        };
+        const whatsappPayload = new URLSearchParams();
+        whatsappPayload.append('apiToken', '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26');
+        whatsappPayload.append('phone_number_id', '884991348021443');
+        whatsappPayload.append('template_id', '280021');
+        whatsappPayload.append('phone_number', phoneNumber);
+        
+        // Send custom fields in all formats for template variables
+        whatsappPayload.append('User-Name', formData.name);
+        whatsappPayload.append('custom_fields[User-Name]', formData.name);
+        whatsappPayload.append('custom_fields', JSON.stringify({ "User-Name": formData.name, "coursename-2": course.title }));
+        whatsappPayload.append('variables', JSON.stringify([formData.name, course.title]));
+        whatsappPayload.append('coursename-2', course.title);
+        whatsappPayload.append('custom_fields[coursename-2]', course.title);
 
+        console.log('Sending WhatsApp for enquiry:', {
+          name: formData.name,
+          course: course.title,
+          phone: phoneNumber
+        });
+
+        const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
         const response = await fetch(whatsappApiUrl, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: JSON.stringify(whatsappPayload)
+          body: whatsappPayload.toString()
         });
 
         const result = await response.json();
