@@ -39,25 +39,48 @@ export default async function handler(req, res) {
             });
         }
 
-        // Build the API request for TEMPLATE message
-        console.log('=== Building Template API Request ===');
-        console.log('Using template endpoint...');
+        // Build the API request for REGULAR message (better delivery)
+        console.log('=== Building Regular Message API Request ===');
+        console.log('Using regular message endpoint for better delivery...');
 
-        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
+        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
+
+        // Build the message text
+        const messageText = `*Welcome to Ace2Examz!* 🎉
+
+Your all-in-one *Chemistry Learning Hub* for every major exam.
+
+📱 *Download the app now:*
+https://play.google.com/store/apps/details?id=com.ace2examz.app
+
+Inside the app you get:
+💯 Free Quiz (All Exams)
+📝 Free Notes
+📚 Free E-Books
+📖 Free Chemistry Today Magazine
+🎯 Daily Target-Based Quiz
+✅ Weekly Tests
+📋 Previous Year Questions (2002-2025)
+
+📝 *We Cover All Major Exams - Only Chemistry* ⚗️
+
+Stay committed. Your success story is already in motion 🚀
+
+*Warm regards,*
+*Reaction Lab*`;
 
         // Build form data
         const formData = new URLSearchParams();
         formData.append('apiToken', BOTBIZ_API_KEY);
         formData.append('phone_number_id', PHONE_NUMBER_ID);
-        formData.append('template_id', TEMPLATE_ID);
+        formData.append('message', messageText);
         formData.append('phone_number', phone);
 
         console.log('API URL:', apiUrl);
-        console.log('=== SENDING TEMPLATE MESSAGE ===');
+        console.log('=== SENDING MESSAGE ===');
         console.log('  - phone_number (RECIPIENT):', phone);
         console.log('  - phone_number_id (BUSINESS):', PHONE_NUMBER_ID);
-        console.log('  - template_id:', TEMPLATE_ID);
-        console.log('  - Full Form Data:', formData.toString());
+        console.log('  - Full Form Data:', formData.toString().substring(0, 200) + '...');
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
