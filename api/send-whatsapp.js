@@ -6,25 +6,23 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { phone, name } = req.body;
+        const { phone } = req.body;
 
         // Validate input
-        if (!phone || !name) {
+        if (!phone) {
             return res.status(400).json({
                 error: 'Missing required fields',
-                details: 'Both phone and name are required'
+                details: 'Phone number is required'
             });
         }
 
         console.log('=== BotBiz WhatsApp Template API ===');
         console.log('Phone:', phone);
-        console.log('Name:', name);
 
         // BotBiz API Configuration
         const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
         const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || '884991348021443';
-        const TEMPLATE_ID = process.env.BOTBIZ_TEMPLATE_ID || '277083'; // Correct template ID
-        const TEMPLATE_NAME = 'get_link'; // Correct template name
+        const TEMPLATE_ID = '286421'; // New template ID for app download
 
         console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
         console.log('Phone Number ID:', PHONE_NUMBER_ID);
@@ -41,47 +39,24 @@ export default async function handler(req, res) {
             });
         }
 
-        // Build the API request for REGULAR message (not template)
-        console.log('=== Building API Request ===');
-        console.log('Sending WhatsApp message with name filled in...');
+        // Build the API request for TEMPLATE message
+        console.log('=== Building Template API Request ===');
+        console.log('Using template endpoint...');
 
-        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
-
-        // Build the message text manually with the name
-        const messageText = `Dear *${name}*,
-
-*Welcome to Ace2Examz!* 🎉
-
-Your all-in-one *Chemistry Learning Hub* for every major exam — all in one app.
-
-Inside the app you get:
-💯 Free Quiz (All Exams)
-📝 Free Notes
-📚 Free E-Books
-📖 Free Chemistry Today Magazine
-🎯 Daily Target-Based Quiz
-✅ Weekly Tests
-📋 Previous Year Questions (2002-2025)
-
-📝 *We Cover All Major Exams But Only One Subject: Chemistry* ⚗️
-
-Stay committed. Your success story is already in motion 🚀
-
-*Warm regards,*
-*Reaction Lab*`;
+        const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
 
         // Build form data
         const formData = new URLSearchParams();
         formData.append('apiToken', BOTBIZ_API_KEY);
         formData.append('phone_number_id', PHONE_NUMBER_ID);
-        formData.append('message', messageText);
+        formData.append('template_id', TEMPLATE_ID);
         formData.append('phone_number', phone);
 
         console.log('API URL:', apiUrl);
-        console.log('=== SENDING MESSAGE ===');
+        console.log('=== SENDING TEMPLATE MESSAGE ===');
         console.log('  - phone_number (RECIPIENT):', phone);
         console.log('  - phone_number_id (BUSINESS):', PHONE_NUMBER_ID);
-        console.log('  - message preview:', messageText.substring(0, 100) + '...');
+        console.log('  - template_id:', TEMPLATE_ID);
         console.log('========================');
 
         // Make POST request with form data (as shown in BotBiz curl example)
