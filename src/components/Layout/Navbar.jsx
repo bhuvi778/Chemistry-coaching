@@ -5,6 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isStudyMaterialOpen, setIsStudyMaterialOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
 
@@ -99,6 +100,66 @@ const Navbar = () => {
               <Link to="/contact" className={getNavLinkClass('/contact')}>Contact Us</Link>
             </div>
             
+            {/* Notification Bell Icon */}
+            <div className="relative">
+              <button
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                className="relative text-gray-300 hover:text-cyan-400 transition p-2"
+                aria-label="Notifications"
+              >
+                <i className="fas fa-bell fa-lg"></i>
+                {/* Notification Badge */}
+                <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>
+
+              {/* Notification Panel - Only opens when bell is clicked */}
+              {isNotificationOpen && (
+                <div className="absolute right-0 top-full mt-2 w-80 glass-panel rounded-lg border border-gray-700 shadow-xl overflow-hidden">
+                  <div className="p-4 border-b border-gray-700">
+                    <h3 className="text-white font-semibold text-lg">Notifications</h3>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    {/* Sample Notifications */}
+                    <div className="p-4 border-b border-gray-700 hover:bg-cyan-500/10 cursor-pointer transition">
+                      <div className="flex items-start gap-3">
+                        <i className="fas fa-book text-cyan-400 mt-1"></i>
+                        <div>
+                          <p className="text-white text-sm">New course available: Advanced Chemistry</p>
+                          <p className="text-gray-400 text-xs mt-1">2 hours ago</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 border-b border-gray-700 hover:bg-cyan-500/10 cursor-pointer transition">
+                      <div className="flex items-start gap-3">
+                        <i className="fas fa-video text-purple-400 mt-1"></i>
+                        <div>
+                          <p className="text-white text-sm">New lecture uploaded in Organic Chemistry</p>
+                          <p className="text-gray-400 text-xs mt-1">5 hours ago</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 border-b border-gray-700 hover:bg-cyan-500/10 cursor-pointer transition">
+                      <div className="flex items-start gap-3">
+                        <i className="fas fa-file-pdf text-green-400 mt-1"></i>
+                        <div>
+                          <p className="text-white text-sm">New study material added</p>
+                          <p className="text-gray-400 text-xs mt-1">1 day ago</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-gray-800/50 text-center">
+                    <button 
+                      className="text-cyan-400 hover:text-cyan-300 text-sm"
+                      onClick={() => setIsNotificationOpen(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
@@ -120,6 +181,18 @@ const Navbar = () => {
           </div>
 
           <div className="-mr-2 flex md:hidden gap-3 items-center">
+            {/* Mobile Notification Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                className="text-gray-300 hover:text-white p-2 relative"
+                aria-label="Notifications"
+              >
+                <i className="fas fa-bell fa-lg"></i>
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>
+            </div>
+            
             {/* Mobile Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -157,6 +230,55 @@ const Navbar = () => {
               <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
             </Link>
             <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Contact Us</Link>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Notification Panel - Only opens when bell is clicked */}
+      {isNotificationOpen && (
+        <div className="md:hidden fixed inset-0 bg-black/50 z-50" onClick={() => setIsNotificationOpen(false)}>
+          <div className="absolute top-20 right-4 left-4 glass-panel rounded-lg border border-gray-700 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-4 border-b border-gray-700">
+              <div className="flex items-center justify-between">
+                <h3 className="text-white font-semibold text-lg">Notifications</h3>
+                <button 
+                  onClick={() => setIsNotificationOpen(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div className="max-h-96 overflow-y-auto">
+              {/* Sample Notifications */}
+              <div className="p-4 border-b border-gray-700 hover:bg-cyan-500/10 cursor-pointer transition">
+                <div className="flex items-start gap-3">
+                  <i className="fas fa-book text-cyan-400 mt-1"></i>
+                  <div>
+                    <p className="text-white text-sm">New course available: Advanced Chemistry</p>
+                    <p className="text-gray-400 text-xs mt-1">2 hours ago</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4 border-b border-gray-700 hover:bg-cyan-500/10 cursor-pointer transition">
+                <div className="flex items-start gap-3">
+                  <i className="fas fa-video text-purple-400 mt-1"></i>
+                  <div>
+                    <p className="text-white text-sm">New lecture uploaded in Organic Chemistry</p>
+                    <p className="text-gray-400 text-xs mt-1">5 hours ago</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4 border-b border-gray-700 hover:bg-cyan-500/10 cursor-pointer transition">
+                <div className="flex items-start gap-3">
+                  <i className="fas fa-file-pdf text-green-400 mt-1"></i>
+                  <div>
+                    <p className="text-white text-sm">New study material added</p>
+                    <p className="text-gray-400 text-xs mt-1">1 day ago</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
