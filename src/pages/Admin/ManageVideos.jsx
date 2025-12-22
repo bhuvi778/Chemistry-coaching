@@ -197,8 +197,8 @@ const ManageVideos = () => {
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file) {
-                    if (file.size > 10 * 1024 * 1024) {  // 10MB limit
-                      alert('File size must be less than 10MB');
+                    if (file.size > 50 * 1024 * 1024) {  // 50MB limit
+                      alert('File size must be less than 50MB');
                       e.target.value = '';
                       return;
                     }
@@ -234,7 +234,7 @@ const ManageVideos = () => {
                 </div>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                Upload PDF class notes for this lecture (Max 10MB)
+                Upload PDF class notes for this lecture (Max 50MB)
               </p>
             </div>
 
