@@ -36,34 +36,40 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         if (phoneNumber.length === 10) {
           phoneNumber = '91' + phoneNumber; // Add India country code if 10 digits
         }
-        
-        // Build message text manually with name and course
-        const messageText = `Dear *${formData.name}*,
-
-Thank you for showing interest in *${course.title}*! 😊
-
-Your ambition to excel matters to us, and Ace2Examz is here to guide you with precision and purpose.
-
-Whether it's NEET, JEE, JAT, NFST, CSIR NET, GATE, IIT JAM, or TIFR Chemistry— we help you learn smarter, perform stronger, and achieve bigger! 💯
-
-Stay committed. Your success story is already in motion 🚀
-
-*Warm regards,*
-*Reaction Lab*`;
 
         const whatsappPayload = new URLSearchParams();
         whatsappPayload.append('apiToken', '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26');
         whatsappPayload.append('phone_number_id', '884991348021443');
-        whatsappPayload.append('message', messageText);
+        whatsappPayload.append('template_id', '280021');
         whatsappPayload.append('phone_number', phoneNumber);
+        
+        // Send variables as components (standard WhatsApp API format)
+        const components = [
+          {
+            "type": "body",
+            "parameters": [
+              {
+                "type": "text",
+                "text": formData.name
+              },
+              {
+                "type": "text",
+                "text": course.title
+              }
+            ]
+          }
+        ];
+        whatsappPayload.append('components', JSON.stringify(components));
 
-        console.log('Sending WhatsApp for enquiry:', {
+        console.log('Sending WhatsApp template for enquiry:', {
           name: formData.name,
           course: course.title,
-          phone: phoneNumber
+          phone: phoneNumber,
+          template_id: '280021',
+          components: components
         });
 
-        const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send';
+        const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
         const response = await fetch(whatsappApiUrl, {
           method: 'POST',
           headers: {
