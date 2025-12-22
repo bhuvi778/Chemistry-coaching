@@ -6,6 +6,11 @@ import ManageVideos from './ManageVideos';
 import ManageAudioBooks from './ManageAudioBooks';
 import ManageStudyMaterials from './ManageStudyMaterials';
 import ManageMagazines from './ManageMagazines';
+import ManagePuzzleSets from './ManagePuzzleSets';
+import ManageCrosswords from './ManageCrosswords';
+import ManageDoubts from './ManageDoubts';
+import ManageWebinar from './ManageWebinar';
+import ManageFeedback from './ManageFeedback';
 import Enquiries from './Enquiries';
 
 const AdminDashboard = () => {
@@ -62,6 +67,36 @@ const AdminDashboard = () => {
               <i className="fas fa-book-open mr-2"></i> Manage Magazines
             </button>
             <button
+              onClick={() => setActiveTab('puzzles')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'puzzles' ? 'bg-yellow-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-puzzle-piece mr-2"></i> Manage Puzzles
+            </button>
+            <button
+              onClick={() => setActiveTab('crosswords')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'crosswords' ? 'bg-blue-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-th mr-2"></i> Manage Crosswords
+            </button>
+            <button
+              onClick={() => setActiveTab('doubts')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'doubts' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-question-circle mr-2"></i> Manage Doubts
+            </button>
+            <button
+              onClick={() => setActiveTab('webinars')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'webinars' ? 'bg-indigo-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-video mr-2"></i> Manage Webinars
+            </button>
+            <button
+              onClick={() => setActiveTab('feedback')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'feedback' ? 'bg-teal-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-comment mr-2"></i> Manage Feedback
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -77,6 +112,11 @@ const AdminDashboard = () => {
           {activeTab === 'audiobooks' && <ManageAudioBooks />}
           {activeTab === 'materials' && <ManageStudyMaterials />}
           {activeTab === 'magazines' && <ManageMagazines />}
+          {activeTab === 'puzzles' && <ManagePuzzleSets />}
+          {activeTab === 'crosswords' && <ManageCrosswords />}
+          {activeTab === 'doubts' && <ManageDoubts />}
+          {activeTab === 'webinars' && <ManageWebinar />}
+          {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'enquiries' && <Enquiries />}
         </div>
       </div>
