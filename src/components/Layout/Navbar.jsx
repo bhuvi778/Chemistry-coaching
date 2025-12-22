@@ -43,8 +43,7 @@ const Navbar = () => {
                 <button className={`px-3 py-2 transition relative ${
                   location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') || 
                   location.pathname.includes('/study-materials') || location.pathname.includes('/magazines') ||
-                  location.pathname.includes('/puzzles') || location.pathname.includes('/doubts') || 
-                  location.pathname.includes('/book-meeting')
+                  location.pathname.includes('/puzzles') || location.pathname.includes('/doubts')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                 }`}>
                   <span className="flex items-center gap-2">
@@ -106,17 +105,16 @@ const Navbar = () => {
                     <i className="fas fa-question-circle text-orange-500"></i>
                     <span>Ask Your Doubts</span>
                   </Link>
-                  <Link 
-                    to="/book-meeting" 
-                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
-                    onClick={() => setIsStudyMaterialOpen(false)}
-                  >
-                    <i className="fas fa-calendar-alt text-blue-500"></i>
-                    <span>Book Meeting</span>
                   </Link>
                 </div>
               </div>
               
+              <Link to="/book-meeting" className={getNavLinkClass('/book-meeting')}>
+                <span className="flex items-center gap-2">
+                  <i className="fas fa-calendar-alt"></i>
+                  Book Meeting
+                </span>
+              </Link>
               <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
                 <span className="flex items-center gap-2">
                   <i className="fas fa-robot text-cyan-400"></i>
