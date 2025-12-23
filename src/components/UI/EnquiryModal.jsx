@@ -46,12 +46,12 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         // Add template variable for course name (as shown in BotBiz example)
         whatsappPayload.append('templateVariable-coursename-2', course.title);
 
-        console.log('Sending WhatsApp template for enquiry:', {
-          name: formData.name,
-          course: course.title,
-          phone: phoneNumber,
-          fullPayload: whatsappPayload.toString()
-        });
+        console.log('=== ENQUIRY WHATSAPP TEMPLATE ===');
+        console.log('Phone:', phoneNumber);
+        console.log('Course:', course.title);
+        console.log('Template ID:', '280021');
+        console.log('Full Payload:', whatsappPayload.toString());
+        console.log('================================');
 
         const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
         const response = await fetch(whatsappApiUrl, {
@@ -63,11 +63,17 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         });
 
         const result = await response.json();
-        console.log('WhatsApp API Response:', result);
+        console.log('=== BOTBIZ API RESPONSE ===');
+        console.log('Status:', response.status);
+        console.log('Response:', JSON.stringify(result, null, 2));
+        console.log('===========================');
 
-        if (!response.ok) {
-          console.error('WhatsApp API Error:', result);
+        if (!response.ok || result.status !== "1") {
+          console.error('❌ WhatsApp Send Failed:', result);
+          console.error('Error Details:', result.message || result.error || 'Unknown error');
           // Don't fail the entire submission if WhatsApp fails
+        } else {
+          console.log('✅ WhatsApp message sent! Message ID:', result.wa_message_id);
         }
       } catch (whatsappError) {
         console.error('Error sending WhatsApp message:', whatsappError);
