@@ -382,6 +382,17 @@ app.delete('/api/webinar-cards/:id', async (req, res) => {
 });
 
 // Doubts
+// Get published doubts only (for public display) - MUST come before /api/doubts
+app.get('/api/doubts/published', async (req, res) => {
+  try {
+    const doubts = await Doubt.find({ isPublished: true, status: 'answered' })
+      .sort({ createdAt: -1 });
+    res.json(doubts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.get('/api/doubts', async (req, res) => {
   try {
     const doubts = await Doubt.find().sort({ createdAt: -1 });
@@ -393,11 +404,14 @@ app.get('/api/doubts', async (req, res) => {
 
 app.post('/api/doubts', async (req, res) => {
   try {
+    console.log('Received doubt data:', req.body);
     const doubt = new Doubt(req.body);
     await doubt.save();
+    console.log('Doubt saved successfully:', doubt);
     res.json(doubt);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error saving doubt:', error);
+    res.status(500).json({ message: error.message, details: error.errors });
   }
 });
 
