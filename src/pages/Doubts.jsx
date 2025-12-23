@@ -286,7 +286,7 @@ const Doubts = () => {
                                 {/* Phone */}
                                 <div>
                                     <label className={`block text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                                        Phone Number <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>(Optional)</span>
+                                        Phone Number <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="tel"
@@ -294,6 +294,7 @@ const Doubts = () => {
                                         value={formData.studentPhone}
                                         onChange={handleFormChange}
                                         placeholder="+91 XXXXX XXXXX"
+                                        required
                                         className={`w-full px-4 py-3 ${isDark
                                             ? 'bg-gray-800 border-gray-700 text-white'
                                             : 'bg-white border-gray-300 text-gray-900'
