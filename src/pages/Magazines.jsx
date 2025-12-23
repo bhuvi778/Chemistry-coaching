@@ -98,11 +98,13 @@ const Magazines = () => {
             {filteredMagazines.map((magazine) => (
               <div key={magazine._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(236,72,153,0.3)] transition-all duration-300">
                 {magazine.coverImageUrl && (
-                  <img
-                    src={magazine.coverImageUrl}
-                    alt={magazine.title}
-                    className="w-full h-80 object-cover"
-                  />
+                  <div className="w-full aspect-[0.707/1] bg-gray-900">
+                    <img
+                      src={magazine.coverImageUrl}
+                      alt={magazine.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 )}
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-3">
