@@ -111,6 +111,18 @@ app.post('/api/enquiries', async (req, res) => {
   }
 });
 
+app.delete('/api/enquiries/:id', async (req, res) => {
+  try {
+    const enquiry = await Enquiry.findByIdAndDelete(req.params.id);
+    if (!enquiry) {
+      return res.status(404).json({ message: 'Enquiry not found' });
+    }
+    res.json({ message: 'Enquiry deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Contacts
 app.get('/api/contacts', async (req, res) => {
   try {

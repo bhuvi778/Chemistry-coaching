@@ -103,6 +103,24 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const deleteEnquiry = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/enquiries/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      setEnquiries(enquiries.filter(enq => enq._id !== id));
+      console.log('Enquiry deleted successfully');
+    } catch (error) {
+      console.error("Error deleting enquiry:", error);
+      throw error;
+    }
+  };
+
   const addContact = async (data) => {
     try {
       const res = await fetch(`${API_URL}/contacts`, {
@@ -365,6 +383,7 @@ export const DataProvider = ({ children }) => {
       magazines,
       isAdmin,
       addEnquiry,
+      deleteEnquiry,
       addContact,
       addCourse,
       updateCourse,
