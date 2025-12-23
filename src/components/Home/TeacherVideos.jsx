@@ -74,16 +74,25 @@ const TeacherVideos = () => {
                     )}
                   </div>
 
-                  {/* Learn & Check Button */}
-                  <a
-                    href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full text-center bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
-                  >
-                    <i className="fab fa-youtube mr-2"></i>
-                    Learn & Crack
-                  </a>
+                  {/* Buttons */}
+                  <div className="space-y-2">
+                    <a
+                      href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full text-center bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                    >
+                      <i className="fab fa-youtube mr-2"></i>
+                      Learn & Crack
+                    </a>
+                    <Link
+                      to="/study-materials"
+                      className="block w-full text-center bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                    >
+                      <i className="fas fa-sticky-note mr-2"></i>
+                      Class Notes
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
