@@ -28,7 +28,8 @@ const Resources = () => {
       items: ["Concept Videos", "Problem Solving", "Revision Sessions", "Doubt Clearing"],
       color: "purple",
       image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500",
-      lecturesLink: "/lectures" // Internal link to lectures page
+      lecturesLink: "/lectures", // Internal link to lectures page
+      notesLink: "/study-materials" // Link to class notes
     },
     {
       title: "Test Series",
@@ -121,13 +122,24 @@ const Resources = () => {
                   {resource.title === 'Test Series' ? 'Test Now' : 'Practice Now'}
                 </a>
               ) : resource.lecturesLink ? (
-                <Link
-                  to={resource.lecturesLink}
-                  className={`mt-6 px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
-                >
-                  <i className="fab fa-youtube mr-2"></i>
-                  Watch Videos Now
-                </Link>
+                <div className="space-y-3 mt-6">
+                  <Link
+                    to={resource.lecturesLink}
+                    className={`px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
+                  >
+                    <i className="fab fa-youtube mr-2"></i>
+                    Watch Videos Now
+                  </Link>
+                  {resource.notesLink && (
+                    <Link
+                      to={resource.notesLink}
+                      className={`px-6 py-3 bg-${resource.color}-500/20 border border-${resource.color}-400 text-${resource.color}-400 rounded-lg hover:bg-${resource.color}-500 hover:text-black transition font-bold w-full block text-center`}
+                    >
+                      <i className="fas fa-sticky-note mr-2"></i>
+                      Class Notes
+                    </Link>
+                  )}
+                </div>
               ) : resource.magazinesLink ? (
                 <Link
                   to={resource.magazinesLink}

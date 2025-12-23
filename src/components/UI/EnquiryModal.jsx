@@ -165,14 +165,15 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2">
                 <i className="fas fa-envelope mr-2 text-cyan-400"></i>
-                Email Address
+                Email Address *
               </label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400 transition"
-                placeholder="Enter your email (optional)"
+                placeholder="Enter your email"
+                required
               />
             </div>
 
@@ -180,14 +181,15 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2">
                 <i className="fas fa-comment mr-2 text-cyan-400"></i>
-                Message
+                Message *
               </label>
               <textarea
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-cyan-400 transition resize-none"
-                placeholder="Any specific questions? (optional)"
+                placeholder="Any specific questions?"
                 rows="4"
+                required
               ></textarea>
             </div>
 
