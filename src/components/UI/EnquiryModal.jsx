@@ -43,42 +43,14 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         whatsappPayload.append('template_id', '280021');
         whatsappPayload.append('phone_number', phoneNumber);
         
-        // Try ALL possible parameter formats simultaneously
-        // Format 1: components (WhatsApp standard)
-        const components = [
-          {
-            "type": "body",
-            "parameters": [
-              { "type": "text", "text": formData.name },
-              { "type": "text", "text": course.title }
-            ]
-          }
-        ];
-        whatsappPayload.append('components', JSON.stringify(components));
-        
-        // Format 2: variables array
-        whatsappPayload.append('variables', JSON.stringify([formData.name, course.title]));
-        
-        // Format 3: body_variables
-        whatsappPayload.append('body_variables', JSON.stringify([
-          { "text": formData.name },
-          { "text": course.title }
-        ]));
-        
-        // Format 4: templateVariable (BotBiz custom)
-        whatsappPayload.append('templateVariable', JSON.stringify({
-          "User-Name": formData.name,
-          "coursename-2": course.title
-        }));
-        
-        // Format 5: indexed variables
-        whatsappPayload.append('variable_1', formData.name);
-        whatsappPayload.append('variable_2', course.title);
+        // Add template variable for course name (as shown in BotBiz example)
+        whatsappPayload.append('templateVariable-coursename-2', course.title);
 
-        console.log('Sending WhatsApp template for enquiry (ALL FORMATS):', {
+        console.log('Sending WhatsApp template for enquiry:', {
           name: formData.name,
           course: course.title,
-          phone: phoneNumber
+          phone: phoneNumber,
+          fullPayload: whatsappPayload.toString()
         });
 
         const whatsappApiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
