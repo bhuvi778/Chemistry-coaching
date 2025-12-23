@@ -86,7 +86,7 @@ const TeacherVideos = () => {
                       Learn & Crack
                     </a>
                     <Link
-                      to="/study-materials"
+                      to="/lectures"
                       className="block w-full text-center bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                     >
                       <i className="fas fa-sticky-note mr-2"></i>
