@@ -40,7 +40,7 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         const whatsappPayload = new URLSearchParams();
         whatsappPayload.append('apiToken', '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26');
         whatsappPayload.append('phone_number_id', '884991348021443');
-        whatsappPayload.append('template_id', '280021');
+        whatsappPayload.append('template_id', '286419');
         whatsappPayload.append('phone_number', phoneNumber);
         
         // Add template variable for course name (as shown in BotBiz example)
@@ -49,7 +49,7 @@ const EnquiryModal = ({ isOpen, onClose, course }) => {
         console.log('=== ENQUIRY WHATSAPP TEMPLATE ===');
         console.log('Phone:', phoneNumber);
         console.log('Course:', course.title);
-        console.log('Template ID:', '280021');
+        console.log('Template ID:', '286419');
         console.log('Full Payload:', whatsappPayload.toString());
         console.log('================================');
 
