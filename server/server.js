@@ -8,6 +8,11 @@ const Video = require('./models/Video');
 const AudioBook = require('./models/AudioBook');
 const StudyMaterial = require('./models/StudyMaterial');
 const Magazine = require('./models/Magazine');
+const Feedback = require('./models/Feedback');
+const WebinarCard = require('./models/WebinarCard');
+const Doubt = require('./models/Doubt');
+const Crossword = require('./models/Crossword');
+const PuzzleSet = require('./models/PuzzleSet');
 
 const app = express();
 
@@ -290,6 +295,187 @@ app.delete('/api/magazines/:id', async (req, res) => {
   try {
     await Magazine.findByIdAndDelete(req.params.id);
     res.json({ message: 'Magazine deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feedback
+app.get('/api/feedback', async (req, res) => {
+  try {
+    const feedback = await Feedback.find().sort({ createdAt: -1 });
+    res.json(feedback);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const feedback = new Feedback(req.body);
+    await feedback.save();
+    res.json(feedback);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/feedback/:id', async (req, res) => {
+  try {
+    await Feedback.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Feedback deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Webinar Cards
+app.get('/api/webinar-cards', async (req, res) => {
+  try {
+    const cards = await WebinarCard.find().sort({ order: 1 });
+    res.json(cards);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/webinar-cards', async (req, res) => {
+  try {
+    const card = new WebinarCard(req.body);
+    await card.save();
+    res.json(card);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/webinar-cards/:id', async (req, res) => {
+  try {
+    const card = await WebinarCard.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(card);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/webinar-cards/:id', async (req, res) => {
+  try {
+    await WebinarCard.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Webinar card deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Doubts
+app.get('/api/doubts', async (req, res) => {
+  try {
+    const doubts = await Doubt.find().sort({ createdAt: -1 });
+    res.json(doubts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/doubts', async (req, res) => {
+  try {
+    const doubt = new Doubt(req.body);
+    await doubt.save();
+    res.json(doubt);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/doubts/:id', async (req, res) => {
+  try {
+    const doubt = await Doubt.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(doubt);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/doubts/:id', async (req, res) => {
+  try {
+    await Doubt.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Doubt deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Crosswords
+app.get('/api/crosswords', async (req, res) => {
+  try {
+    const crosswords = await Crossword.find().sort({ createdAt: -1 });
+    res.json(crosswords);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/crosswords', async (req, res) => {
+  try {
+    const crossword = new Crossword(req.body);
+    await crossword.save();
+    res.json(crossword);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/crosswords/:id', async (req, res) => {
+  try {
+    const crossword = await Crossword.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(crossword);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/crosswords/:id', async (req, res) => {
+  try {
+    await Crossword.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Crossword deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Puzzle Sets
+app.get('/api/puzzle-sets', async (req, res) => {
+  try {
+    const puzzleSets = await PuzzleSet.find().sort({ setNumber: 1 });
+    res.json(puzzleSets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/puzzle-sets', async (req, res) => {
+  try {
+    const puzzleSet = new PuzzleSet(req.body);
+    await puzzleSet.save();
+    res.json(puzzleSet);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/puzzle-sets/:id', async (req, res) => {
+  try {
+    const puzzleSet = await PuzzleSet.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(puzzleSet);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/api/puzzle-sets/:id', async (req, res) => {
+  try {
+    await PuzzleSet.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Puzzle set deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
