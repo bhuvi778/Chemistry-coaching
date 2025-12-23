@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const compression = require('compression');
 const Course = require('./models/Course');
 const Enquiry = require('./models/Enquiry');
 const Contact = require('./models/Contact');
@@ -15,6 +16,37 @@ const Crossword = require('./models/Crossword');
 const PuzzleSet = require('./models/PuzzleSet');
 
 const app = express();
+
+// In-memory cache
+const cache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// Cache middleware
+const cacheMiddleware = (key, ttl = CACHE_TTL) => {
+  return (req, res, next) => {
+    const cached = cache.get(key);
+    if (cached && Date.now() - cached.timestamp < ttl) {
+      return res.json(cached.data);
+    }
+    res.sendResponse = res.json;
+    res.json = (data) => {
+      cache.set(key, { data, timestamp: Date.now() });
+      res.sendResponse(data);
+    };
+    next();
+  };
+};
+
+// Clear cache function
+const clearCache = (pattern) => {
+  if (pattern) {
+    for (const key of cache.keys()) {
+      if (key.includes(pattern)) cache.delete(key);
+    }
+  } else {
+    cache.clear();
+  }
+};
 
 // CORS configuration for production - Allow specific origins
 app.use(cors({
@@ -46,6 +78,9 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// Enable GZIP compression
+app.use(compression());
+
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/test?appName=Ace2Examz-Cluster';
 
@@ -58,7 +93,7 @@ mongoose.connect(MONGODB_URI, {
 // Routes
 
 // Courses
-app.get('/api/courses', async (req, res) => {
+app.get('/api/courses', cacheMiddleware('courses'), async (req, res) => {
   try {
     const courses = await Course.find();
     res.json(courses);
@@ -72,6 +107,7 @@ app.post('/api/courses', async (req, res) => {
     console.log('Received course data:', req.body);
     const course = new Course(req.body);
     await course.save();
+    clearCache('courses');
     console.log('Course saved successfully:', course);
     res.json(course);
   } catch (error) {
@@ -83,6 +119,7 @@ app.post('/api/courses', async (req, res) => {
 app.put('/api/courses/:id', async (req, res) => {
   try {
     const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    clearCache('courses');
     res.json(course);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -92,6 +129,7 @@ app.put('/api/courses/:id', async (req, res) => {
 app.delete('/api/courses/:id', async (req, res) => {
   try {
     await Course.findByIdAndDelete(req.params.id);
+    clearCache('courses');
     res.json({ message: 'Deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -163,7 +201,7 @@ app.delete('/api/contacts/:id', async (req, res) => {
 });
 
 // Videos
-app.get('/api/videos', async (req, res) => {
+app.get('/api/videos', cacheMiddleware('videos'), async (req, res) => {
   try {
     const videos = await Video.find({ isActive: true }).sort({ createdAt: -1 });
     res.json(videos);
@@ -201,7 +239,7 @@ app.delete('/api/videos/:id', async (req, res) => {
 });
 
 // Audio Books Routes
-app.get('/api/audiobooks', async (req, res) => {
+app.get('/api/audiobooks', cacheMiddleware('audiobooks'), async (req, res) => {
   try {
     const audioBooks = await AudioBook.find({ isActive: true }).sort({ createdAt: -1 });
     res.json(audioBooks);
@@ -239,7 +277,7 @@ app.delete('/api/audiobooks/:id', async (req, res) => {
 });
 
 // Study Materials Routes
-app.get('/api/study-materials', async (req, res) => {
+app.get('/api/study-materials', cacheMiddleware('study-materials'), async (req, res) => {
   try {
     const materials = await StudyMaterial.find({ isActive: true }).sort({ createdAt: -1 });
     res.json(materials);
@@ -277,7 +315,7 @@ app.delete('/api/study-materials/:id', async (req, res) => {
 });
 
 // Magazines Routes
-app.get('/api/magazines', async (req, res) => {
+app.get('/api/magazines', cacheMiddleware('magazines'), async (req, res) => {
   try {
     const magazines = await Magazine.find({ isActive: true }).sort({ createdAt: -1 });
     res.json(magazines);

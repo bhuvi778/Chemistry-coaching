@@ -33,40 +33,70 @@ export const DataProvider = ({ children }) => {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-  // Fetch data from backend
+  // Cache management
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  const getCachedData = (key) => {
+    const cached = localStorage.getItem(`cache_${key}`);
+    if (!cached) return null;
+    
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp > CACHE_DURATION) {
+      localStorage.removeItem(`cache_${key}`);
+      return null;
+    }
+    return data;
+  };
+
+  const setCachedData = (key, data) => {
+    localStorage.setItem(`cache_${key}`, JSON.stringify({
+      data,
+      timestamp: Date.now()
+    }));
+  };
+
+  // Fetch data from backend with caching and parallel requests
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Seed data first if needed
-        await fetch(`${API_URL}/seed`);
+        // Try to load from cache first
+        const cachedCourses = getCachedData('courses');
+        const cachedVideos = getCachedData('videos');
+        const cachedAudioBooks = getCachedData('audiobooks');
+        const cachedStudyMaterials = getCachedData('study-materials');
+        const cachedMagazines = getCachedData('magazines');
 
-        const coursesRes = await fetch(`${API_URL}/courses`);
-        const coursesData = await coursesRes.json();
+        if (cachedCourses) setCourses(cachedCourses);
+        if (cachedVideos) setVideos(cachedVideos);
+        if (cachedAudioBooks) setAudioBooks(cachedAudioBooks);
+        if (cachedStudyMaterials) setStudyMaterials(cachedStudyMaterials);
+        if (cachedMagazines) setMagazines(cachedMagazines);
+
+        // Fetch all data in parallel
+        const [coursesData, videosData, audioBooksData, studyMaterialsData, magazinesData, enquiriesData, contactsData] = await Promise.all([
+          fetch(`${API_URL}/courses`).then(r => r.json()).catch(() => cachedCourses || []),
+          fetch(`${API_URL}/videos`).then(r => r.json()).catch(() => cachedVideos || []),
+          fetch(`${API_URL}/audiobooks`).then(r => r.json()).catch(() => cachedAudioBooks || []),
+          fetch(`${API_URL}/study-materials`).then(r => r.json()).catch(() => cachedStudyMaterials || []),
+          fetch(`${API_URL}/magazines`).then(r => r.json()).catch(() => cachedMagazines || []),
+          isAdmin ? fetch(`${API_URL}/enquiries`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
+          isAdmin ? fetch(`${API_URL}/contacts`).then(r => r.json()).catch(() => []) : Promise.resolve([])
+        ]);
+
+        // Update state and cache
         setCourses(coursesData);
-
-        const videosRes = await fetch(`${API_URL}/videos`);
-        const videosData = await videosRes.json();
         setVideos(videosData);
-
-        const audioBooksRes = await fetch(`${API_URL}/audiobooks`);
-        const audioBooksData = await audioBooksRes.json();
         setAudioBooks(audioBooksData);
-
-        const studyMaterialsRes = await fetch(`${API_URL}/study-materials`);
-        const studyMaterialsData = await studyMaterialsRes.json();
         setStudyMaterials(studyMaterialsData);
-
-        const magazinesRes = await fetch(`${API_URL}/magazines`);
-        const magazinesData = await magazinesRes.json();
         setMagazines(magazinesData);
+        
+        setCachedData('courses', coursesData);
+        setCachedData('videos', videosData);
+        setCachedData('audiobooks', audioBooksData);
+        setCachedData('study-materials', studyMaterialsData);
+        setCachedData('magazines', magazinesData);
 
         if (isAdmin) {
-          const enquiriesRes = await fetch(`${API_URL}/enquiries`);
-          const enquiriesData = await enquiriesRes.json();
           setEnquiries(enquiriesData);
-
-          const contactsRes = await fetch(`${API_URL}/contacts`);
-          const contactsData = await contactsRes.json();
           setContacts(contactsData);
         }
       } catch (error) {
