@@ -448,6 +448,29 @@ app.delete('/api/doubts/:id', async (req, res) => {
   }
 });
 
+// Doubt reaction endpoint (like/dislike)
+app.post('/api/doubts/:id/reaction', async (req, res) => {
+  try {
+    const { reactionType } = req.body;
+    const doubt = await Doubt.findById(req.params.id);
+    
+    if (!doubt) {
+      return res.status(404).json({ message: 'Doubt not found' });
+    }
+    
+    if (reactionType === 'like') {
+      doubt.likes += 1;
+    } else if (reactionType === 'dislike') {
+      doubt.dislikes += 1;
+    }
+    
+    await doubt.save();
+    res.json(doubt);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Crosswords
 app.get('/api/crosswords', async (req, res) => {
   try {
