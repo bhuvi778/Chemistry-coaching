@@ -34,10 +34,8 @@ const ManagePuzzleSets = () => {
 
     const fetchPuzzleSets = async () => {
         try {
-            // Normalize API URL - remove /api if it's already included
-            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
-            const response = await fetch(`${API_URL}/api/puzzle-sets`);
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${API_URL}/puzzle-sets`);
             const data = await response.json();
             setPuzzleSets(data);
             setLoading(false);
@@ -144,13 +142,11 @@ const ManagePuzzleSets = () => {
         }
 
         try {
-            // Normalize API URL - remove /api if it's already included
-            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
             const method = isEditing ? 'PUT' : 'POST';
             const url = isEditing
-                ? `${API_URL}/api/puzzle-sets/${currentPuzzleSet._id}`
-                : `${API_URL}/api/puzzle-sets`;
+                ? `${API_URL}/puzzle-sets/${currentPuzzleSet._id}`
+                : `${API_URL}/puzzle-sets`;
 
             const response = await fetch(url, {
                 method,
@@ -189,10 +185,8 @@ const ManagePuzzleSets = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this puzzle set?')) {
             try {
-                // Normalize API URL - remove /api if it's already included
-                let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-                API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
-                await fetch(`${API_URL}/api/puzzle-sets/${id}`, { method: 'DELETE' });
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                await fetch(`${API_URL}/puzzle-sets/${id}`, { method: 'DELETE' });
                 fetchPuzzleSets();
                 alert('Puzzle set deleted successfully!');
             } catch (error) {

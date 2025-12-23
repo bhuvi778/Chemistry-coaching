@@ -9,7 +9,7 @@ import ManageMagazines from './ManageMagazines';
 import ManagePuzzleSets from './ManagePuzzleSets';
 import ManageCrosswords from './ManageCrosswords';
 import ManageDoubts from './ManageDoubts';
-import ManageWebinar from './ManageWebinar';
+import ManageWebinarCards from './ManageWebinarCards';
 import ManageFeedback from './ManageFeedback';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
@@ -123,7 +123,7 @@ const AdminDashboard = () => {
           {activeTab === 'puzzles' && <ManagePuzzleSets />}
           {activeTab === 'crosswords' && <ManageCrosswords />}
           {activeTab === 'doubts' && <ManageDoubts />}
-          {activeTab === 'webinars' && <ManageWebinar />}
+          {activeTab === 'webinars' && <ManageWebinarCards />}
           {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}

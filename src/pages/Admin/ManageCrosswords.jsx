@@ -28,10 +28,8 @@ const ManageCrosswords = () => {
 
     const fetchCrosswords = async () => {
         try {
-            // Normalize API URL - remove /api if it's already included
-            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
-            const response = await fetch(`${API_URL}/api/crosswords`);
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${API_URL}/crosswords`);
             const data = await response.json();
             setCrosswords(data);
             setLoading(false);
@@ -51,10 +49,8 @@ const ManageCrosswords = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this crossword?')) {
             try {
-                // Normalize API URL - remove /api if it's already included
-                let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-                API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
-                await fetch(`${API_URL}/api/crosswords/${id}`, {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                await fetch(`${API_URL}/crosswords/${id}`, {
                     method: 'DELETE'
                 });
                 fetchCrosswords();
@@ -152,13 +148,11 @@ const ManageCrosswords = () => {
         }
 
         try {
-            // Normalize API URL - remove /api if it's already included
-            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
             const method = isEditing ? 'PUT' : 'POST';
             const url = isEditing
-                ? `${API_URL}/api/crosswords/${currentCrossword._id}`
-                : `${API_URL}/api/crosswords`;
+                ? `${API_URL}/crosswords/${currentCrossword._id}`
+                : `${API_URL}/crosswords`;
 
             console.log('Submitting to:', url);
             console.log('Form data:', formData);
