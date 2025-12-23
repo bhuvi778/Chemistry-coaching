@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { DataProvider, useData } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ScrollToTop from './components/ScrollToTop';
+import ScrollToTopButton from './components/UI/ScrollToTopButton';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import ParticleCanvas from './components/UI/ParticleCanvas';
@@ -68,6 +69,7 @@ function AppContent() {
       </div>
 
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 }

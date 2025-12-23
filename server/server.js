@@ -17,20 +17,25 @@ const PuzzleSet = require('./models/PuzzleSet');
 
 const app = express();
 
-// In-memory cache
+// In-memory cache with aggressive settings
 const cache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour for public data
 
 // Cache middleware
 const cacheMiddleware = (key, ttl = CACHE_TTL) => {
   return (req, res, next) => {
     const cached = cache.get(key);
     if (cached && Date.now() - cached.timestamp < ttl) {
+      // Set HTTP cache headers for browser caching
+      res.set('Cache-Control', 'public, max-age=3600'); // 1 hour browser cache
+      res.set('ETag', `"${cached.timestamp}"`);
       return res.json(cached.data);
     }
     res.sendResponse = res.json;
     res.json = (data) => {
       cache.set(key, { data, timestamp: Date.now() });
+      res.set('Cache-Control', 'public, max-age=3600');
+      res.set('ETag', `"${Date.now()}"`);
       res.sendResponse(data);
     };
     next();
@@ -81,21 +86,35 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Enable GZIP compression
 app.use(compression());
 
-// Connect to MongoDB
+// Connect to MongoDB with optimized settings
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/test?appName=Ace2Examz-Cluster';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB', err));
+  useUnifiedTopology: true,
+  maxPoolSize: 50, // Increase connection pool
+  minPoolSize: 10,
+  socketTimeoutMS: 45000,
+  serverSelectionTimeoutMS: 10000,
+  family: 4, // Use IPv4, skip IPv6
+  compressors: ['zlib'], // Enable compression
+  readPreference: 'secondaryPreferred' // Read from secondary for faster response
+}).then(() => {
+  console.log('✅ Connected to MongoDB with optimized settings');
+  console.log('📊 Connection pool size: 50');
+  console.log('🗜️  Compression enabled');
+}).catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Routes
 
 // Courses
-app.get('/api/courses', cacheMiddleware('courses'), async (req, res) => {
+app.get('/api/courses', cacheMiddleware('courses', 30 * 60 * 1000), async (req, res) => {
   try {
-    const courses = await Course.find();
+    const courses = await Course.find()
+      .select('-__v')
+      .limit(100)
+      .lean()
+      .exec();
     res.json(courses);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -137,9 +156,14 @@ app.delete('/api/courses/:id', async (req, res) => {
 });
 
 // Enquiries
-app.get('/api/enquiries', async (req, res) => {
+app.get('/api/enquiries', cacheMiddleware('enquiries', 5 * 60 * 1000), async (req, res) => {
   try {
-    const enquiries = await Enquiry.find().sort({ date: -1 });
+    const enquiries = await Enquiry.find()
+      .select('-__v')
+      .sort({ date: -1 })
+      .limit(200)
+      .lean()
+      .exec();
     res.json(enquiries);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -169,9 +193,14 @@ app.delete('/api/enquiries/:id', async (req, res) => {
 });
 
 // Contacts
-app.get('/api/contacts', async (req, res) => {
+app.get('/api/contacts', cacheMiddleware('contacts', 5 * 60 * 1000), async (req, res) => {
   try {
-    const contacts = await Contact.find().sort({ date: -1 });
+    const contacts = await Contact.find()
+      .select('-__v')
+      .sort({ date: -1 })
+      .limit(200)
+      .lean()
+      .exec();
     res.json(contacts);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -201,9 +230,14 @@ app.delete('/api/contacts/:id', async (req, res) => {
 });
 
 // Videos
-app.get('/api/videos', cacheMiddleware('videos'), async (req, res) => {
+app.get('/api/videos', cacheMiddleware('videos', 30 * 60 * 1000), async (req, res) => {
   try {
-    const videos = await Video.find({ isActive: true }).sort({ createdAt: -1 });
+    const videos = await Video.find({ isActive: true })
+      .select('title description category thumbnail duration uploadDate createdAt')
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean()
+      .exec();
     res.json(videos);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -239,10 +273,41 @@ app.delete('/api/videos/:id', async (req, res) => {
 });
 
 // Audio Books Routes
-app.get('/api/audiobooks', cacheMiddleware('audiobooks'), async (req, res) => {
+app.get('/api/audiobooks', cacheMiddleware('audiobooks', 30 * 60 * 1000), async (req, res) => {
   try {
-    const audioBooks = await AudioBook.find({ isActive: true }).sort({ createdAt: -1 });
-    res.json(audioBooks);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    const audioBooks = await AudioBook.find({ isActive: true })
+      .select('title description author category createdAt')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean()
+      .exec();
+    
+    const total = await AudioBook.countDocuments({ isActive: true });
+    
+    res.json({
+      audioBooks,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      total
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get single audiobook with full details (for detail page)
+app.get('/api/audiobooks/:id', cacheMiddleware('audiobook'), async (req, res) => {
+  try {
+    const audioBook = await AudioBook.findById(req.params.id).lean().exec();
+    if (!audioBook) {
+      return res.status(404).json({ message: 'Audiobook not found' });
+    }
+    res.json(audioBook);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -277,10 +342,28 @@ app.delete('/api/audiobooks/:id', async (req, res) => {
 });
 
 // Study Materials Routes
-app.get('/api/study-materials', cacheMiddleware('study-materials'), async (req, res) => {
+app.get('/api/study-materials', cacheMiddleware('study-materials', 30 * 60 * 1000), async (req, res) => {
   try {
-    const materials = await StudyMaterial.find({ isActive: true }).sort({ createdAt: -1 });
+    const materials = await StudyMaterial.find({ isActive: true })
+      .select('title description category examType fileType fileSize createdAt')
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .lean()
+      .exec();
     res.json(materials);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get single study material with full details
+app.get('/api/study-materials/:id', cacheMiddleware('study-material'), async (req, res) => {
+  try {
+    const material = await StudyMaterial.findById(req.params.id).lean().exec();
+    if (!material) {
+      return res.status(404).json({ message: 'Study material not found' });
+    }
+    res.json(material);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -315,9 +398,14 @@ app.delete('/api/study-materials/:id', async (req, res) => {
 });
 
 // Magazines Routes
-app.get('/api/magazines', cacheMiddleware('magazines'), async (req, res) => {
+app.get('/api/magazines', cacheMiddleware('magazines', 30 * 60 * 1000), async (req, res) => {
   try {
-    const magazines = await Magazine.find({ isActive: true }).sort({ createdAt: -1 });
+    const magazines = await Magazine.find({ isActive: true })
+      .select('title description month year category createdAt')
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean()
+      .exec();
     res.json(magazines);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -355,7 +443,7 @@ app.delete('/api/magazines/:id', async (req, res) => {
 // Feedback
 app.get('/api/feedback', async (req, res) => {
   try {
-    const feedback = await Feedback.find().sort({ createdAt: -1 });
+    const feedback = await Feedback.find().sort({ createdAt: -1 }).lean();
     res.json(feedback);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -510,10 +598,28 @@ app.post('/api/doubts/:id/reaction', async (req, res) => {
 });
 
 // Crosswords
-app.get('/api/crosswords', async (req, res) => {
+app.get('/api/crosswords', cacheMiddleware('crosswords', 30 * 60 * 1000), async (req, res) => {
   try {
-    const crosswords = await Crossword.find().sort({ createdAt: -1 });
+    const crosswords = await Crossword.find()
+      .select('title description chapter topic examType difficulty createdAt')
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .lean()
+      .exec();
     res.json(crosswords);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get single crossword with full details
+app.get('/api/crosswords/:id', cacheMiddleware('crossword'), async (req, res) => {
+  try {
+    const crossword = await Crossword.findById(req.params.id).lean().exec();
+    if (!crossword) {
+      return res.status(404).json({ message: 'Crossword not found' });
+    }
+    res.json(crossword);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -548,9 +654,14 @@ app.delete('/api/crosswords/:id', async (req, res) => {
 });
 
 // Puzzle Sets
-app.get('/api/puzzle-sets', async (req, res) => {
+app.get('/api/puzzle-sets', cacheMiddleware('puzzle-sets', 30 * 60 * 1000), async (req, res) => {
   try {
-    const puzzleSets = await PuzzleSet.find().sort({ setNumber: 1 });
+    const puzzleSets = await PuzzleSet.find()
+      .select('setNumber title description chapter topic examType difficulty createdAt')
+      .sort({ setNumber: 1 })
+      .limit(100)
+      .lean()
+      .exec();
     res.json(puzzleSets);
   } catch (error) {
     res.status(500).json({ message: error.message });

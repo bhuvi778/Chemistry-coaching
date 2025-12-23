@@ -33,8 +33,8 @@ export const DataProvider = ({ children }) => {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-  // Cache management
-  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  // Cache management - 1 hour cache
+  const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
   const getCachedData = (key) => {
     const cached = localStorage.getItem(`cache_${key}`);
     if (!cached) return null;
@@ -54,6 +54,16 @@ export const DataProvider = ({ children }) => {
     }));
   };
 
+  // Fetch with timeout
+  const fetchWithTimeout = (url, timeout = 10000) => {
+    return Promise.race([
+      fetch(url),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), timeout)
+      )
+    ]);
+  };
+
   // Fetch data from backend with caching and parallel requests
   useEffect(() => {
     const fetchData = async () => {
@@ -71,16 +81,19 @@ export const DataProvider = ({ children }) => {
         if (cachedStudyMaterials) setStudyMaterials(cachedStudyMaterials);
         if (cachedMagazines) setMagazines(cachedMagazines);
 
-        // Fetch all data in parallel
-        const [coursesData, videosData, audioBooksData, studyMaterialsData, magazinesData, enquiriesData, contactsData] = await Promise.all([
-          fetch(`${API_URL}/courses`).then(r => r.json()).catch(() => cachedCourses || []),
-          fetch(`${API_URL}/videos`).then(r => r.json()).catch(() => cachedVideos || []),
-          fetch(`${API_URL}/audiobooks`).then(r => r.json()).catch(() => cachedAudioBooks || []),
-          fetch(`${API_URL}/study-materials`).then(r => r.json()).catch(() => cachedStudyMaterials || []),
-          fetch(`${API_URL}/magazines`).then(r => r.json()).catch(() => cachedMagazines || []),
-          isAdmin ? fetch(`${API_URL}/enquiries`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
-          isAdmin ? fetch(`${API_URL}/contacts`).then(r => r.json()).catch(() => []) : Promise.resolve([])
+        // Fetch all data in parallel with timeout
+        const [coursesData, videosData, audioBooksResponse, studyMaterialsData, magazinesData, enquiriesData, contactsData] = await Promise.all([
+          fetchWithTimeout(`${API_URL}/courses`).then(r => r.json()).catch(() => cachedCourses || []),
+          fetchWithTimeout(`${API_URL}/videos`).then(r => r.json()).catch(() => cachedVideos || []),
+          fetchWithTimeout(`${API_URL}/audiobooks?limit=100`).then(r => r.json()).catch(() => ({ audioBooks: cachedAudioBooks || [] })),
+          fetchWithTimeout(`${API_URL}/study-materials`).then(r => r.json()).catch(() => cachedStudyMaterials || []),
+          fetchWithTimeout(`${API_URL}/magazines`).then(r => r.json()).catch(() => cachedMagazines || []),
+          isAdmin ? fetchWithTimeout(`${API_URL}/enquiries`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
+          isAdmin ? fetchWithTimeout(`${API_URL}/contacts`).then(r => r.json()).catch(() => []) : Promise.resolve([])
         ]);
+
+        // Handle audiobooks response (might be paginated)
+        const audioBooksData = audioBooksResponse.audioBooks || audioBooksResponse;
 
         // Update state and cache
         setCourses(coursesData);
