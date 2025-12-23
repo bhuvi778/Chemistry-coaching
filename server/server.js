@@ -405,13 +405,28 @@ app.get('/api/doubts', async (req, res) => {
 app.post('/api/doubts', async (req, res) => {
   try {
     console.log('Received doubt data:', req.body);
+    
+    // Validate required fields
+    const { question, studentName, studentEmail, studentPhone } = req.body;
+    if (!question || !studentName || !studentEmail || !studentPhone) {
+      return res.status(400).json({ 
+        message: 'Missing required fields',
+        required: ['question', 'studentName', 'studentEmail', 'studentPhone'],
+        received: Object.keys(req.body)
+      });
+    }
+    
     const doubt = new Doubt(req.body);
     await doubt.save();
     console.log('Doubt saved successfully:', doubt);
     res.json(doubt);
   } catch (error) {
     console.error('Error saving doubt:', error);
-    res.status(500).json({ message: error.message, details: error.errors });
+    res.status(500).json({ 
+      message: error.message, 
+      details: error.errors,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
