@@ -135,6 +135,24 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const deleteContact = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/contacts/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      setContacts(contacts.filter(contact => contact._id !== id));
+      console.log('Contact deleted successfully');
+    } catch (error) {
+      console.error("Error deleting contact:", error);
+      throw error;
+    }
+  };
+
   const addCourse = async (course) => {
     try {
       console.log('Sending course data:', course);
@@ -385,6 +403,7 @@ export const DataProvider = ({ children }) => {
       addEnquiry,
       deleteEnquiry,
       addContact,
+      deleteContact,
       addCourse,
       updateCourse,
       deleteCourse,

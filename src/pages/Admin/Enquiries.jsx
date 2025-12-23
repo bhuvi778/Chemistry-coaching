@@ -3,7 +3,7 @@ import { useData } from '../../context/DataContext';
 import Pagination from '../../components/UI/Pagination';
 
 const Enquiries = () => {
-  const { enquiries, contacts, deleteEnquiry } = useData();
+  const { enquiries, contacts, deleteEnquiry, deleteContact } = useData();
   const [currentPage, setCurrentPage] = useState(1);
   const [contactsPage, setContactsPage] = useState(1);
   const itemsPerPage = 10;
@@ -23,6 +23,12 @@ const Enquiries = () => {
   const handleDeleteEnquiry = async (id) => {
     if (window.confirm('Are you sure you want to delete this enquiry?')) {
       await deleteEnquiry(id);
+    }
+  };
+
+  const handleDeleteContact = async (id) => {
+    if (window.confirm('Are you sure you want to delete this contact?')) {
+      await deleteContact(id);
     }
   };
 
@@ -105,12 +111,13 @@ const Enquiries = () => {
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Phone</th>
                 <th className="px-4 py-3">Target Exam</th>
+                <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
               {currentContacts.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-4 py-4 text-center text-gray-500">No contact submissions yet</td>
+                  <td colSpan="5" className="px-4 py-4 text-center text-gray-500">No contact submissions yet</td>
                 </tr>
               ) : (
                 currentContacts.map(contact => (
@@ -119,6 +126,15 @@ const Enquiries = () => {
                     <td className="px-4 py-3 font-bold text-white">{contact.name}</td>
                     <td className="px-4 py-3 text-cyan-400">{contact.phone}</td>
                     <td className="px-4 py-3 text-sm">{contact.exam}</td>
+                    <td className="px-4 py-3 text-center">
+                      <button
+                        onClick={() => handleDeleteContact(contact._id)}
+                        className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500 hover:text-white transition text-sm"
+                        title="Delete contact"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
