@@ -16,9 +16,10 @@ const AudioBooks = () => {
     setCurrentPage(1);
   }, [selectedCategory]);
 
+  const safeAudioBooks = Array.isArray(audioBooks) ? audioBooks : [];
   const filteredAudioBooks = selectedCategory === 'all'
-    ? audioBooks
-    : audioBooks.filter(book => book.category === selectedCategory);
+    ? safeAudioBooks
+    : safeAudioBooks.filter(book => book.category === selectedCategory);
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredAudioBooks.length / booksPerPage);
@@ -146,7 +147,7 @@ const AudioBooks = () => {
                   </button>
 
                   {/* Chapters List - Expandable */}
-                  {expandedBooks[book._id] && book.chapters && book.chapters.length > 0 && (
+                  {expandedBooks[book._id] && book.chapters && Array.isArray(book.chapters) && book.chapters.length > 0 && (
                     <div className="border-t border-gray-700 bg-gray-900/30 p-4">
                       <div className="space-y-3">
                         {book.chapters.map((chapter, chapterIndex) => {
@@ -171,7 +172,7 @@ const AudioBooks = () => {
                               </button>
 
                               {/* Topics List with Audio Players */}
-                              {expandedChapters[chapterId] && chapter.topics && chapter.topics.length > 0 && (
+                              {expandedChapters[chapterId] && chapter.topics && Array.isArray(chapter.topics) && chapter.topics.length > 0 && (
                                 <div className="bg-gray-900/50 p-4 space-y-3">
                                   {chapter.topics.map((topic, topicIndex) => (
                                     <div key={topicIndex} className="bg-gray-800 rounded-lg p-4">

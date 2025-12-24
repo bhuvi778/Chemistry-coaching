@@ -9,16 +9,18 @@ const Enquiries = () => {
   const itemsPerPage = 10;
 
   // Calculate pagination for enquiries
+  const safeEnquiries = Array.isArray(enquiries) ? enquiries : [];
+  const safeContacts = Array.isArray(contacts) ? contacts : [];
   const indexOfLastEnquiry = currentPage * itemsPerPage;
   const indexOfFirstEnquiry = indexOfLastEnquiry - itemsPerPage;
-  const currentEnquiries = enquiries.slice(indexOfFirstEnquiry, indexOfLastEnquiry);
-  const totalEnquiryPages = Math.ceil(enquiries.length / itemsPerPage);
+  const currentEnquiries = safeEnquiries.slice(indexOfFirstEnquiry, indexOfLastEnquiry);
+  const totalEnquiryPages = Math.ceil(safeEnquiries.length / itemsPerPage);
 
   // Calculate pagination for contacts
   const indexOfLastContact = contactsPage * itemsPerPage;
   const indexOfFirstContact = indexOfLastContact - itemsPerPage;
-  const currentContacts = contacts.slice(indexOfFirstContact, indexOfLastContact);
-  const totalContactPages = Math.ceil(contacts.length / itemsPerPage);
+  const currentContacts = safeContacts.slice(indexOfFirstContact, indexOfLastContact);
+  const totalContactPages = Math.ceil(safeContacts.length / itemsPerPage);
 
   const handleDeleteEnquiry = async (id) => {
     if (window.confirm('Are you sure you want to delete this enquiry?')) {

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useData } from '../../context/DataContext';
+import Pagination from '../../components/UI/Pagination';
 
 const ManageMagazines = () => {
   const { magazines, addMagazine, updateMagazine, deleteMagazine } = useData();
   const [isEditing, setIsEditing] = useState(false);
   const [currentMagazine, setCurrentMagazine] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
   const [pdfFileName, setPdfFileName] = useState('');
   const [coverFileName, setCoverFileName] = useState('');
   const [isDraggingPdf, setIsDraggingPdf] = useState(false);
@@ -214,6 +217,12 @@ const ManageMagazines = () => {
     }
   };
 
+  // Pagination calculations
+  const totalPages = Math.ceil(magazines.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMagazines = magazines.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <div className="space-y-8">
       <div className="glass-panel p-6 rounded-xl">
@@ -387,8 +396,14 @@ const ManageMagazines = () => {
         </form>
       </div>
 
+      {magazines.length > 0 && (
+        <div className="mb-4 text-gray-400">
+          Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, magazines.length)} of {magazines.length} magazines
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4">
-        {magazines.map(magazine => (
+        {currentMagazines.map(magazine => (
           <div key={magazine._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
             <div className="flex-1">
               <h3 className="text-lg font-bold text-white">{magazine.title}</h3>
@@ -417,6 +432,19 @@ const ManageMagazines = () => {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

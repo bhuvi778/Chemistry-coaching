@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import Pagination from '../../components/UI/Pagination';
 
 // Quill editor configuration
 const quillModules = {
@@ -36,6 +37,8 @@ const ManageDoubts = () => {
     const [filter, setFilter] = useState('all');
     const [answeringDoubt, setAnsweringDoubt] = useState(null);
     const [answerText, setAnswerText] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 7;
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -47,11 +50,14 @@ const ManageDoubts = () => {
         try {
             const res = await fetch(`${API_URL}/doubts`);
             const data = await res.json();
-            setDoubts(data);
+            // Ensure data is always an array
+            setDoubts(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching doubts:', error);
+            setDoubts([]);
         }
     };
+
 
     const filteredDoubts = filter === 'all'
         ? doubts
@@ -136,6 +142,12 @@ const ManageDoubts = () => {
             }
         }
     };
+
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredDoubts.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentDoubts = filteredDoubts.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <div className="p-6">
@@ -242,6 +254,12 @@ const ManageDoubts = () => {
 
             {/* Doubts List */}
             <div className="space-y-4">
+                {filteredDoubts.length > 0 && (
+                    <div className="mb-4 text-gray-400">
+                        Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredDoubts.length)} of {filteredDoubts.length} questions
+                    </div>
+                )}
+
                 {filteredDoubts.length === 0 ? (
                     <div className="glass-panel rounded-xl p-12 text-center">
                         <i className="fas fa-inbox text-6xl text-gray-600 mb-4"></i>
@@ -253,7 +271,7 @@ const ManageDoubts = () => {
                         </p>
                     </div>
                 ) : (
-                    filteredDoubts.map((doubt) => (
+                    currentDoubts.map((doubt) => (
                         <div key={doubt._id} className="glass-panel rounded-xl p-6">
                             <div className="flex items-start justify-between gap-4 mb-4">
                                 <div className="flex-1">
@@ -334,6 +352,19 @@ const ManageDoubts = () => {
                             </div>
                         </div>
                     ))
+                )}
+
+                {totalPages > 1 && (
+                    <div className="mt-6">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={(page) => {
+                                setCurrentPage(page);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                        />
+                    </div>
                 )}
             </div>
         </div>

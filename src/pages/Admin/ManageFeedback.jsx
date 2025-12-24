@@ -16,23 +16,27 @@ const ManageFeedback = () => {
             setLoading(true);
             const res = await fetch(`${API_URL}/feedback`);
             const data = await res.json();
-            setFeedbackList(data);
+            // Ensure data is always an array
+            setFeedbackList(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching feedback:', error);
+            setFeedbackList([]);
         } finally {
             setLoading(false);
         }
     };
 
-    const filteredFeedback = feedbackList.filter(item => {
+    const safeFeedbackList = Array.isArray(feedbackList) ? feedbackList : [];
+
+    const filteredFeedback = safeFeedbackList.filter(item => {
         if (filter === 'all') return true;
         return item.reactionType === filter;
     });
 
     const stats = {
-        total: feedbackList.length,
-        likes: feedbackList.filter(f => f.reactionType === 'like').length,
-        dislikes: feedbackList.filter(f => f.reactionType === 'dislike').length
+        total: safeFeedbackList.length,
+        likes: safeFeedbackList.filter(f => f.reactionType === 'like').length,
+        dislikes: safeFeedbackList.filter(f => f.reactionType === 'dislike').length
     };
 
     if (loading) {

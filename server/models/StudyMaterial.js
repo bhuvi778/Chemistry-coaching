@@ -20,7 +20,7 @@ const studyMaterialSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry', 'Notes', 'Question Banks', 'Previous Year Papers'],
+    enum: ['Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry', 'Notes', 'Question Banks', 'Previous Year Papers', 'Revision Notes', 'Study Material', 'Practice Sets', 'Reference Books'],
     default: 'Notes'
   },
   examType: {

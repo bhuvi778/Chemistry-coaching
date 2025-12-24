@@ -22,11 +22,6 @@ const AppDownload = () => {
       // Format phone number with country code (remove + sign for API)
       const fullPhoneNumber = `${countryCode.replace('+', '')}${mobileNumber}`;
 
-      console.log('=== WhatsApp Template Send ===');
-      console.log('Phone:', fullPhoneNumber);
-      console.log('API Endpoint: /api/send-whatsapp');
-      console.log('========================');
-
       // Call backend API which will use WhatsApp template
       const response = await fetch('/api/send-whatsapp', {
         method: 'POST',

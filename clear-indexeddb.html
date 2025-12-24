@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear IndexedDB Storage</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+        .success { color: green; } .error { color: red; }
+        #log { background: #f0f0f0; padding: 10px; margin-top: 20px; min-height: 100px; }
+    </style>
+</head>
+<body>
+    <h1>Clear IndexedDB Storage</h1>
+    <p>This will clear all IndexedDB databases for this domain.</p>
+    
+    <button onclick="clearAllIndexedDB()">Clear All IndexedDB</button>
+    <button onclick="clearCache()">Clear Cache</button>
+    <button onclick="clearAll()">Clear Everything</button>
+    
+    <div id="log"></div>
+    
+    <script>
+        function log(msg, isError = false) {
+            const div = document.getElementById('log');
+            const p = document.createElement('p');
+            p.className = isError ? 'error' : 'success';
+            p.textContent = msg;
+            div.appendChild(p);
+        }
+        
+        async function clearAllIndexedDB() {
+            try {
+                const databases = await indexedDB.databases();
+                log(`Found ${databases.length} databases`);
+                
+                for (const db of databases) {
+                    indexedDB.deleteDatabase(db.name);
+                    log(`✓ Deleted database: ${db.name}`);
+                }
+                
+                log('✓ All IndexedDB databases cleared!', false);
+                setTimeout(() => location.reload(), 2000);
+            } catch (err) {
+                log(`✗ Error: ${err.message}`, true);
+            }
+        }
+        
+        function clearCache() {
+            if ('caches' in window) {
+                caches.keys().then(keys => {
+                    keys.forEach(key => caches.delete(key));
+                    log(`✓ Cleared ${keys.length} cache entries`);
+                });
+            }
+            localStorage.clear();
+            sessionStorage.clear();
+            log('✓ Cleared localStorage and sessionStorage');
+        }
+        
+        async function clearAll() {
+            await clearAllIndexedDB();
+            clearCache();
+            log('✓ Everything cleared! Page will reload...');
+            setTimeout(() => location.reload(), 2000);
+        }
+    </script>
+</body>
+</html>

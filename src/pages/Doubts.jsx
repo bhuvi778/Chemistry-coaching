@@ -34,14 +34,16 @@ const Doubts = () => {
 
     useEffect(() => {
         // Filter doubts based on search query
+        // Ensure publishedDoubts is an array
+        const safeDoubts = Array.isArray(publishedDoubts) ? publishedDoubts : [];
         if (searchQuery.trim()) {
-            const filtered = publishedDoubts.filter(doubt =>
+            const filtered = safeDoubts.filter(doubt =>
                 doubt.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 doubt.answer.toLowerCase().includes(searchQuery.toLowerCase())
             );
             setFilteredDoubts(filtered);
         } else {
-            setFilteredDoubts(publishedDoubts);
+            setFilteredDoubts(safeDoubts);
         }
     }, [searchQuery, publishedDoubts]);
 
@@ -49,10 +51,14 @@ const Doubts = () => {
         try {
             const res = await fetch(`${API_URL}/doubts/published`);
             const data = await res.json();
-            setPublishedDoubts(data);
-            setFilteredDoubts(data);
+            // Ensure data is always an array
+            const doubtsArray = Array.isArray(data) ? data : [];
+            setPublishedDoubts(doubtsArray);
+            setFilteredDoubts(doubtsArray);
         } catch (error) {
             console.error('Error fetching doubts:', error);
+            setPublishedDoubts([]);
+            setFilteredDoubts([]);
         }
     };
 

@@ -1,10 +1,24 @@
 import { useState } from 'react';
 import { useData } from '../../context/DataContext';
+import Pagination from '../../components/UI/Pagination';
 
 const ManageVideos = () => {
   const { videos, addVideo, updateVideo, deleteVideo } = useData();
   const [isAdding, setIsAdding] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const videosPerPage = 9;
+  
+  // Filter valid videos with youtubeId
+  const validVideos = Array.isArray(videos) ? videos.filter(v => v?.youtubeId) : [];
+  
+  // Pagination calculations
+  const totalPages = Math.ceil(validVideos.length / videosPerPage);
+  const indexOfLastVideo = currentPage * videosPerPage;
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+  const currentVideos = validVideos.slice(indexOfFirstVideo, indexOfLastVideo);
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -15,6 +29,8 @@ const ManageVideos = () => {
     isActive: true,
     classNotes: null  // Will store {data: base64, filename: string}
   });
+  
+  const [youtubeInput, setYoutubeInput] = useState('');
 
   const categories = [
     { value: 'organic', label: 'Organic Chemistry' },
@@ -26,27 +42,53 @@ const ManageVideos = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingVideo) {
-      await updateVideo(editingVideo._id, formData);
-      setEditingVideo(null);
-    } else {
-      await addVideo(formData);
+    
+    // Log the data being submitted
+    console.log('=== VIDEO SUBMIT DATA ===');
+    console.log('Form Data:', formData);
+    console.log('YouTube ID:', formData.youtubeId);
+    console.log('========================');
+    
+    // Validate YouTube ID
+    if (!formData.youtubeId || formData.youtubeId.length !== 11) {
+      alert('Please enter a valid YouTube URL or ID (11 characters)');
+      return;
     }
-    setFormData({
-      title: '',
-      description: '',
-      youtubeId: '',
-      instructor: '',
-      category: 'general',
-      duration: '',
-      isActive: true,
-      classNotes: null
-    });
-    setIsAdding(false);
+    
+    setIsSubmitting(true);
+    
+    try {
+      if (editingVideo) {
+        await updateVideo(editingVideo._id, formData);
+        setEditingVideo(null);
+      } else {
+        await addVideo(formData);
+      }
+      
+      // Reset form after successful submission
+      setYoutubeInput('');
+      setFormData({
+        title: '',
+        description: '',
+        youtubeId: '',
+        instructor: '',
+        category: 'general',
+        duration: '',
+        isActive: true,
+        classNotes: null
+      });
+      setIsAdding(false);
+    } catch (error) {
+      console.error('Error submitting video:', error);
+      alert('Failed to save video. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEdit = (video) => {
     setEditingVideo(video);
+    setYoutubeInput(video.youtubeId);
     setFormData({
       title: video.title,
       description: video.description,
@@ -69,6 +111,7 @@ const ManageVideos = () => {
   const handleCancel = () => {
     setIsAdding(false);
     setEditingVideo(null);
+    setYoutubeInput('');
     setFormData({
       title: '',
       description: '',
@@ -82,10 +125,26 @@ const ManageVideos = () => {
   };
 
   const extractYoutubeId = (url) => {
+    if (!url || typeof url !== 'string') return '';
+    
+    // If already just an ID (11 characters, alphanumeric, -, _)
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) {
+      return url.trim();
+    }
+    
     // Extract YouTube ID from various URL formats
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : url;
+    
+    if (match && match[2]) {
+      // Extract exactly 11 characters
+      const id = match[2].substring(0, 11);
+      if (/^[a-zA-Z0-9_-]{11}$/.test(id)) {
+        return id;
+      }
+    }
+    
+    return '';
   };
 
   return (
@@ -138,11 +197,26 @@ const ManageVideos = () => {
               <input
                 type="text"
                 required
-                value={formData.youtubeId}
-                onChange={(e) => setFormData({ ...formData, youtubeId: extractYoutubeId(e.target.value) })}
+                value={youtubeInput}
+                onChange={(e) => {
+                  const input = e.target.value;
+                  setYoutubeInput(input);
+                  const extractedId = extractYoutubeId(input);
+                  setFormData({ ...formData, youtubeId: extractedId });
+                }}
                 className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none"
                 placeholder="https://www.youtube.com/watch?v=VIDEO_ID or just VIDEO_ID"
               />
+              {formData.youtubeId && formData.youtubeId !== youtubeInput && (
+                <p className="text-xs text-green-400 mt-1">
+                  ✓ Video ID extracted: {formData.youtubeId}
+                </p>
+              )}
+              {youtubeInput && !formData.youtubeId && (
+                <p className="text-xs text-red-400 mt-1">
+                  ✗ Invalid YouTube URL or ID
+                </p>
+              )}
               <p className="text-xs text-gray-500 mt-1">
                 Enter full YouTube URL or just the video ID (11 characters)
               </p>
@@ -238,46 +312,115 @@ const ManageVideos = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 bg-gray-800 border border-gray-700 rounded p-4">
               <input
                 type="checkbox"
                 id="isActive"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="w-5 h-5 rounded border-gray-700 bg-gray-900 text-cyan-500 focus:ring-cyan-400"
+                className="w-6 h-6 rounded border-2 border-gray-600 bg-gray-900 text-cyan-500 focus:ring-2 focus:ring-cyan-400 cursor-pointer accent-cyan-500"
               />
-              <label htmlFor="isActive" className="text-gray-400">
-                Active (Show on website)
+              <label htmlFor="isActive" className="text-white font-medium cursor-pointer flex items-center gap-2">
+                <span className={formData.isActive ? 'text-green-400' : 'text-red-400'}>
+                  {formData.isActive ? (
+                    <><i className="fas fa-eye"></i> Active - Video will be shown on website</>
+                  ) : (
+                    <><i className="fas fa-eye-slash"></i> Inactive - Video will be hidden</>
+                  )}
+                </span>
               </label>
             </div>
 
             {formData.youtubeId && formData.youtubeId.length === 11 && (
               <div className="mt-4">
-                <label className="block text-gray-400 mb-2">Preview:</label>
-                <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
+                <label className="block text-gray-400 mb-2">
+                  <i className="fab fa-youtube text-red-500 mr-2"></i>
+                  Thumbnail Preview:
+                </label>
+                <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden border border-gray-700 relative group">
                   <img
-                    src={`https://img.youtube.com/vi/${formData.youtubeId}/maxresdefault.jpg`}
+                    key={formData.youtubeId}
+                    src={`https://img.youtube.com/vi/${formData.youtubeId}/hqdefault.jpg`}
                     alt="Video preview"
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.target.src = `https://img.youtube.com/vi/${formData.youtubeId}/hqdefault.jpg`;
+                      e.target.onerror = null;
+                      e.target.src = `https://img.youtube.com/vi/${formData.youtubeId}/default.jpg`;
                     }}
                   />
+                  {/* Test Video Button Overlay */}
+                  <a
+                    href={`https://www.youtube.com/watch?v=${formData.youtubeId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i className="fas fa-play text-white text-xl ml-1"></i>
+                      </div>
+                      <span className="text-white font-bold">Test Video on YouTube</span>
+                    </div>
+                  </a>
                 </div>
+                <div className="mt-3 flex gap-2">
+                  <a
+                    href={`https://www.youtube.com/watch?v=${formData.youtubeId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 text-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+                  >
+                    <i className="fab fa-youtube mr-2"></i>
+                    Test Video on YouTube
+                  </a>
+                  <a
+                    href={`https://www.youtube.com/embed/${formData.youtubeId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 text-center px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition font-medium"
+                  >
+                    <i className="fas fa-external-link-alt mr-2"></i>
+                    Test Embed
+                  </a>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  <i className="fas fa-info-circle mr-1"></i>
+                  Click "Test Video" to verify it plays correctly before saving
+                </p>
               </div>
             )}
 
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="px-6 py-3 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 transition"
+                disabled={isSubmitting}
+                className={`px-6 py-3 font-bold rounded-lg transition flex items-center gap-2 ${
+                  isSubmitting 
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                    : 'bg-cyan-500 text-black hover:bg-cyan-400'
+                }`}
               >
-                {editingVideo ? 'Update Video' : 'Add Video'}
+                {isSubmitting ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    {editingVideo ? 'Updating...' : 'Adding...'}
+                  </>
+                ) : (
+                  <>
+                    <i className={editingVideo ? "fas fa-save" : "fas fa-plus"}></i>
+                    {editingVideo ? 'Update Video' : 'Add Video'}
+                  </>
+                )}
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-6 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-600 transition"
+                disabled={isSubmitting}
+                className={`px-6 py-3 font-bold rounded-lg transition ${
+                  isSubmitting
+                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                    : 'bg-gray-700 text-white hover:bg-gray-600'
+                }`}
               >
                 Cancel
               </button>
@@ -287,23 +430,38 @@ const ManageVideos = () => {
       )}
 
       {/* Videos List */}
+      {validVideos.length > 0 && (
+        <div className="mb-6 flex justify-between items-center">
+          <div className="text-gray-400">
+            <i className="fas fa-video mr-2"></i>
+            Showing {indexOfFirstVideo + 1}-{Math.min(indexOfLastVideo, validVideos.length)} of {validVideos.length} {validVideos.length === 1 ? 'video' : 'videos'}
+          </div>
+          {totalPages > 1 && (
+            <div className="text-gray-400 text-sm">
+              Page {currentPage} of {totalPages}
+            </div>
+          )}
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {videos.length === 0 ? (
+        {validVideos.length === 0 ? (
           <div className="col-span-full text-center py-12 glass-panel rounded-xl">
             <i className="fab fa-youtube text-6xl text-gray-600 mb-4"></i>
             <p className="text-gray-400 text-lg">No videos added yet. Click "Add New Video" to get started!</p>
           </div>
         ) : (
-          videos.map((video) => (
+          currentVideos.map((video) => (
             <div key={video._id} className="glass-panel rounded-xl overflow-hidden border border-gray-700">
               {/* Video Thumbnail */}
               <div className="relative aspect-video bg-gray-900">
                 <img
-                  src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+                  src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
                   alt={video.title}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                   onError={(e) => {
-                    e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                    e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/default.jpg`;
                   }}
                 />
                 <a
@@ -357,6 +515,20 @@ const ManageVideos = () => {
           ))
         )}
       </div>
+      
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-8">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

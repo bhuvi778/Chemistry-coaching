@@ -6,16 +6,18 @@ const Magazines = () => {
   const { magazines } = useData();
   const [selectedYear, setSelectedYear] = useState('all');
 
+  const safeMagazines = Array.isArray(magazines) ? magazines : [];
+
   // Extract unique years from magazines and sort them
   const availableYears = useMemo(() => {
-    const years = [...new Set(magazines.map(mag => mag.year).filter(year => year))];
+    const years = [...new Set(safeMagazines.map(mag => mag.year).filter(year => year))];
     return years.sort((a, b) => b - a); // Sort descending (newest first)
-  }, [magazines]);
+  }, [safeMagazines]);
 
   // Filter magazines by selected year
   const filteredMagazines = selectedYear === 'all'
-    ? magazines
-    : magazines.filter(mag => mag.year === parseInt(selectedYear));
+    ? safeMagazines
+    : safeMagazines.filter(mag => mag.year === parseInt(selectedYear));
 
   const getYearClass = (year) => {
     const isActive = selectedYear === year;
@@ -122,7 +124,7 @@ const Magazines = () => {
                   <h3 className="text-2xl font-bold text-white mb-3">{magazine.title}</h3>
                   <p className="text-gray-400 text-sm mb-4">{magazine.description}</p>
 
-                  {magazine.topics && magazine.topics.length > 0 && (
+                  {magazine.topics && Array.isArray(magazine.topics) && magazine.topics.length > 0 && (
                     <div className="mb-4">
                       <h4 className="text-white font-semibold text-sm mb-2">Topics Covered:</h4>
                       <div className="flex flex-wrap gap-2">

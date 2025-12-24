@@ -28,9 +28,11 @@ const ManageWebinarCards = () => {
         try {
             const res = await fetch(`${API_URL}/webinar-cards`);
             const data = await res.json();
-            setCards(data);
+            // Ensure data is always an array
+            setCards(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching cards:', error);
+            setCards([]);
         }
     };
 

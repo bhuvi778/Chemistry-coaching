@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Pagination from '../../components/UI/Pagination';
 
 const ManageCrosswords = () => {
     const [crosswords, setCrosswords] = useState([]);
@@ -7,6 +8,8 @@ const ManageCrosswords = () => {
     const [thumbnailFileName, setThumbnailFileName] = useState('');
     const [isDraggingThumbnail, setIsDraggingThumbnail] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 7;
 
     const initialFormState = {
         title: '',
@@ -31,10 +34,12 @@ const ManageCrosswords = () => {
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
             const response = await fetch(`${API_URL}/crosswords`);
             const data = await response.json();
-            setCrosswords(data);
+            // Ensure data is always an array
+            setCrosswords(Array.isArray(data) ? data : []);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching crosswords:', error);
+            setCrosswords([]);
             setLoading(false);
         }
     };
@@ -195,6 +200,12 @@ const ManageCrosswords = () => {
         }
     };
 
+    // Pagination calculations
+    const totalPages = Math.ceil(crosswords.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentCrosswords = crosswords.slice(indexOfFirstItem, indexOfLastItem);
+
     return (
         <div className="space-y-8">
             <div className="glass-panel p-6 rounded-xl">
@@ -351,6 +362,13 @@ const ManageCrosswords = () => {
 
             <div className="grid grid-cols-1 gap-4">
                 <h3 className="text-xl font-bold text-white">All Interactive Crosswords ({crosswords.length})</h3>
+                
+                {crosswords.length > 0 && (
+                    <div className="mb-4 text-gray-400">
+                        Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, crosswords.length)} of {crosswords.length} crosswords
+                    </div>
+                )}
+
                 {loading ? (
                     <div className="text-center py-10">
                         <i className="fas fa-spinner fa-spin text-4xl text-cyan-400"></i>
@@ -362,7 +380,7 @@ const ManageCrosswords = () => {
                         <p className="text-gray-400">No crosswords added yet</p>
                     </div>
                 ) : (
-                    crosswords.map(crossword => (
+                    currentCrosswords.map(crossword => (
                         <div key={crossword._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
                             <div className="flex-1">
                                 <h3 className="text-lg font-bold text-white">{crossword.title}</h3>
@@ -404,6 +422,19 @@ const ManageCrosswords = () => {
                             </div>
                         </div>
                     ))
+                )}
+
+                {totalPages > 1 && (
+                    <div className="mt-6">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={(page) => {
+                                setCurrentPage(page);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                        />
+                    </div>
                 )}
             </div>
         </div>

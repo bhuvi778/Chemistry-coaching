@@ -15,7 +15,9 @@ const magazineSchema = new mongoose.Schema({
   coverImageUrl: String,
   pdfUrl: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
+    index: true
   },
   topics: [String],
   isActive: {

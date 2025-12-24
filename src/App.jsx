@@ -1,6 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { DataProvider, useData } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { useEffect } from 'react';
 import ScrollToTop from './components/ScrollToTop';
 import ScrollToTopButton from './components/UI/ScrollToTopButton';
 import Navbar from './components/Layout/Navbar';
@@ -33,6 +34,68 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function AppContent() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  useEffect(() => {
+    // Disable right-click, copy, cut, paste for non-admin pages
+    const handleContextMenu = (e) => {
+      if (!isAdminRoute) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const handleCopy = (e) => {
+      if (!isAdminRoute) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const handleCut = (e) => {
+      if (!isAdminRoute) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const handlePaste = (e) => {
+      if (!isAdminRoute) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    // Disable text selection via CSS for non-admin pages
+    if (!isAdminRoute) {
+      document.body.style.userSelect = 'none';
+      document.body.style.webkitUserSelect = 'none';
+      document.body.style.msUserSelect = 'none';
+    } else {
+      document.body.style.userSelect = 'auto';
+      document.body.style.webkitUserSelect = 'auto';
+      document.body.style.msUserSelect = 'auto';
+    }
+
+    // Add event listeners
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('copy', handleCopy);
+    document.addEventListener('cut', handleCut);
+    document.addEventListener('paste', handlePaste);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('copy', handleCopy);
+      document.removeEventListener('cut', handleCut);
+      document.removeEventListener('paste', handlePaste);
+      document.body.style.userSelect = 'auto';
+      document.body.style.webkitUserSelect = 'auto';
+      document.body.style.msUserSelect = 'auto';
+    };
+  }, [isAdminRoute]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />

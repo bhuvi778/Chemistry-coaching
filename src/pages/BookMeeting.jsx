@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import ParticleCanvas from '../components/UI/ParticleCanvas';
+import Pagination from '../components/UI/Pagination';
 
 const BookMeeting = () => {
     const { isDark } = useTheme();
     const [webinarCards, setWebinarCards] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
     useEffect(() => {
@@ -16,9 +19,11 @@ const BookMeeting = () => {
         try {
             const res = await fetch(`${API_URL}/webinar-cards`);
             const data = await res.json();
-            setWebinarCards(data);
+            // Ensure data is always an array
+            setWebinarCards(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching webinar cards:', error);
+            setWebinarCards([]);
         }
     };
 
@@ -67,9 +72,23 @@ const BookMeeting = () => {
                             <i className="fas fa-graduation-cap text-blue-600 mr-3"></i>
                             Upcoming Webinars
                         </h2>
+                        
+                        {webinarCards.length > 0 && (
+                            <div className="mb-4 text-gray-400">
+                                Showing {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, webinarCards.length)} of {webinarCards.length} webinars
+                            </div>
+                        )}
+
                         <div className="space-y-6">
-                            {webinarCards.length > 0 ? (
-                                webinarCards.map((card) => (
+                            {(() => {
+                                const totalPages = Math.ceil(webinarCards.length / itemsPerPage);
+                                const indexOfLastItem = currentPage * itemsPerPage;
+                                const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+                                const currentWebinars = webinarCards.slice(indexOfFirstItem, indexOfLastItem);
+                                
+                                return webinarCards.length > 0 ? (
+                                    <>
+                                        {currentWebinars.map((card) => (
                                     <div key={card._id} className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-lg overflow-hidden hover:shadow-xl transition-shadow`}>
                                         <div className="flex flex-col sm:flex-row">
                                             {/* Card Image */}
@@ -123,13 +142,28 @@ const BookMeeting = () => {
                                             </div>
                                         </div>
                                     </div>
-                                ))
-                            ) : (
-                                <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-lg p-12 text-center`}>
-                                    <i className={`fas fa-inbox text-6xl ${isDark ? 'text-gray-700' : 'text-gray-300'} mb-4`}></i>
-                                    <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No programs available at the moment</p>
-                                </div>
-                            )}
+                                        ))}
+                                        
+                                        {totalPages > 1 && (
+                                            <div className="mt-6">
+                                                <Pagination
+                                                    currentPage={currentPage}
+                                                    totalPages={totalPages}
+                                                    onPageChange={(page) => {
+                                                        setCurrentPage(page);
+                                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-lg p-12 text-center`}>
+                                        <i className={`fas fa-inbox text-6xl ${isDark ? 'text-gray-700' : 'text-gray-300'} mb-4`}></i>
+                                        <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No programs available at the moment</p>
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>

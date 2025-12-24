@@ -1,20 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const ScrollToTopButton = () => {
-    useEffect(() => {
-        console.log('✅ ScrollToTopButton component mounted!');
-        console.log('Button element:', document.querySelector('[aria-label="Scroll to top"]'));
-    }, []);
-
     const scrollToTop = () => {
-        console.log('🔝 Scroll to top clicked!');
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
     };
-
-    console.log('🔄 ScrollToTopButton rendering...');
 
     return (
         <div 
@@ -22,28 +14,24 @@ const ScrollToTopButton = () => {
                 position: 'fixed',
                 bottom: '150px',
                 right: '20px',
-                zIndex: 999999,
-                backgroundColor: 'red', // Temporary - to see if it renders
-                width: '100px',
-                height: '100px',
-                display: 'block'
+                zIndex: 999999
             }}
         >
             <button
                 onClick={scrollToTop}
                 style={{ 
                     position: 'relative',
-                    width: '100%',
-                    height: '100%',
+                    width: '60px',
+                    height: '60px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: '50%',
                     background: 'linear-gradient(to right, #06b6d4, #3b82f6)',
                     color: 'white',
-                    border: '3px solid yellow',
+                    border: 'none',
                     cursor: 'pointer',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
                     transition: 'all 0.3s ease'
                 }}
                 onMouseEnter={(e) => {
@@ -59,8 +47,8 @@ const ScrollToTopButton = () => {
             >
                 <svg
                     style={{
-                        width: '32px',
-                        height: '32px'
+                        width: '24px',
+                        height: '24px'
                     }}
                     fill="none"
                     stroke="currentColor"

@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 
 const TeacherVideos = () => {
   const { videos } = useData();
+  
+  // Filter videos with valid youtubeId and isActive status, limit to 4 for one row
+  const validVideos = Array.isArray(videos) 
+    ? videos.filter(video => video?.youtubeId && video?.isActive !== false).slice(0, 4)
+    : [];
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-20">
@@ -15,7 +20,7 @@ const TeacherVideos = () => {
         </p>
       </div>
 
-      {videos.length === 0 ? (
+      {validVideos.length === 0 ? (
         <div className="text-center text-gray-400 py-12">
           <i className="fas fa-video text-6xl mb-4 opacity-50"></i>
           <p className="text-xl">No videos available yet. Check back soon!</p>
@@ -23,7 +28,7 @@ const TeacherVideos = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {videos.map((video, index) => (
+            {validVideos.map((video, index) => (
               <div 
                 key={video._id || index}
                 className="group glass-panel rounded-2xl overflow-hidden hover:shadow-[0_0_30px_rgba(0,243,255,0.2)] transition-all duration-300 cursor-pointer"
@@ -31,11 +36,12 @@ const TeacherVideos = () => {
                 {/* YouTube Thumbnail with Play Button */}
                 <div className="relative aspect-video bg-gray-900">
                   <img 
-                    src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+                    src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
                     alt={video.title}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                     onError={(e) => {
-                      e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                      e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/default.jpg`;
                     }}
                   />
                   {/* Play Button Overlay */}

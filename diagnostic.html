@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Database Diagnostic - Ace2Examz</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            margin: 0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #00d4ff; text-align: center; margin-bottom: 30px; }
+        .status { 
+            background: rgba(0, 0, 0, 0.5); 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px;
+            border-left: 4px solid #00d4ff;
+        }
+        .video-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 3px solid #e74c3c;
+        }
+        .video-card h3 { color: #e74c3c; margin-top: 0; }
+        .video-card p { margin: 5px 0; color: #bbb; }
+        .thumbnail { 
+            width: 200px; 
+            height: auto; 
+            border-radius: 5px; 
+            margin: 10px 0;
+        }
+        button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover { background: #c0392b; }
+        .loading { text-align: center; font-size: 24px; color: #00d4ff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Ace2Examz Database Diagnostic</h1>
+        <div class="status" id="status">
+            <div class="loading">⏳ Loading data from database...</div>
+        </div>
+        <button onclick="loadData()">🔄 Reload Data</button>
+        <button onclick="window.location.href='/'">🏠 Back to Main Site</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function loadData() {
+            const status = document.getElementById('status');
+            const results = document.getElementById('results');
+            
+            status.innerHTML = '<div class="loading">⏳ Fetching from API...</div>';
+            results.innerHTML = '';
+
+            try {
+                // Fetch Videos
+                const videosRes = await fetch('/api/videos?_t=' + Date.now());
+                const videos = await videosRes.json();
+                
+                // Fetch Audiobooks
+                const audiobooksRes = await fetch('/api/audiobooks?limit=100&_t=' + Date.now());
+                const audiobooksData = await audiobooksRes.json();
+                const audiobooks = audiobooksData.audioBooks || audiobooksData;
+                
+                // Fetch Study Materials
+                const materialsRes = await fetch('/api/study-materials?_t=' + Date.now());
+                const materials = await materialsRes.json();
+
+                // Show Status
+                status.innerHTML = `
+                    <h2>✅ Database Connection Successful!</h2>
+                    <p><strong>📹 Videos:</strong> ${videos.length} in database</p>
+                    <p><strong>🎧 Audiobooks:</strong> ${audiobooks.length} in database</p>
+                    <p><strong>📚 Study Materials:</strong> ${materials.length} in database</p>
+                    <p><strong>Last Updated:</strong> ${new Date().toLocaleString()}</p>
+                `;
+
+                // Show Videos
+                if (videos.length > 0) {
+                    results.innerHTML = '<h2 style="color: #00d4ff; margin-top: 30px;">📹 Videos in Database:</h2>';
+                    videos.forEach((video, index) => {
+                        const thumbnailUrl = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                        const watchUrl = `https://www.youtube.com/watch?v=${video.youtubeId}`;
+                        
+                        results.innerHTML += `
+                            <div class="video-card">
+                                <h3>${index + 1}. ${video.title}</h3>
+                                <p><strong>YouTube ID:</strong> ${video.youtubeId}</p>
+                                <p><strong>Category:</strong> ${video.category || 'N/A'}</p>
+                                <p><strong>Exam Type:</strong> ${video.examType || 'N/A'}</p>
+                                <p><strong>Instructor:</strong> ${video.instructor || 'N/A'}</p>
+                                <p><strong>Active:</strong> ${video.isActive ? '✅ Yes' : '❌ No'}</p>
+                                <p><strong>Description:</strong> ${video.description || 'N/A'}</p>
+                                <a href="${watchUrl}" target="_blank">
+                                    <img src="${thumbnailUrl}" class="thumbnail" alt="${video.title}">
+                                </a>
+                                <br>
+                                <a href="${watchUrl}" target="_blank" style="color: #00d4ff;">▶️ Watch on YouTube</a>
+                            </div>
+                        `;
+                    });
+                } else {
+                    results.innerHTML = '<p style="color: #e74c3c; font-size: 18px;">❌ No videos found in database!</p>';
+                }
+
+            } catch (error) {
+                status.innerHTML = `
+                    <h2 style="color: #e74c3c;">❌ Error Loading Data</h2>
+                    <p>${error.message}</p>
+                    <p>Make sure the backend server is running on port 5000.</p>
+                `;
+            }
+        }
+
+        // Auto-load on page load
+        window.onload = loadData;
+    </script>
+</body>
+</html>

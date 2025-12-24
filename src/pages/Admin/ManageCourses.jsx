@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useData } from '../../context/DataContext';
+import Pagination from '../../components/UI/Pagination';
 
 const ManageCourses = () => {
   const { courses, addCourse, updateCourse, deleteCourse } = useData();
   const [isEditing, setIsEditing] = useState(false);
   const [currentCourse, setCurrentCourse] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
   
   const initialFormState = {
     title: '',
@@ -76,6 +79,12 @@ const ManageCourses = () => {
       setFormData({ ...formData, categories: [...cats, cat] });
     }
   };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(courses.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCourses = courses.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="space-y-8">
@@ -245,8 +254,14 @@ const ManageCourses = () => {
         </form>
       </div>
 
+      {courses.length > 0 && (
+        <div className="mb-4 text-gray-400">
+          Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, courses.length)} of {courses.length} courses
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4">
-        {courses.map(course => (
+        {currentCourses.map(course => (
           <div key={course._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
             <div className="flex-1">
               <h3 className="text-lg font-bold text-white">{course.title}</h3>
@@ -276,6 +291,19 @@ const ManageCourses = () => {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

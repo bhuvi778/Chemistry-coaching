@@ -7,7 +7,7 @@ const Lectures = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedExam, setSelectedExam] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = 12;
+  const videosPerPage = 12; // 3 rows × 4 columns
 
   const categories = [
     { id: 'all', name: 'All Videos', icon: 'fa-video' },
@@ -23,7 +23,12 @@ const Lectures = () => {
     setCurrentPage(1);
   }, [selectedCategory, selectedExam]);
 
-  const filteredVideos = videos.filter(video => {
+  const safeVideos = Array.isArray(videos) ? videos : [];
+  
+  // Filter videos: must have valid youtubeId AND be active
+  const validVideos = safeVideos.filter(video => video?.youtubeId && video?.isActive !== false);
+  
+  const filteredVideos = validVideos.filter(video => {
     const categoryMatch = selectedCategory === 'all' || video.category === selectedCategory;
     const examMatch = selectedExam === 'all' || video.examType === selectedExam;
     return categoryMatch && examMatch;
@@ -168,26 +173,38 @@ const Lectures = () => {
                 >
                   {/* YouTube Thumbnail */}
                   <div className="relative aspect-video bg-gray-900">
-                    <img
-                      src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
-                      alt={video.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
-                      }}
-                    />
-
-                    {/* Play Button Overlay */}
-                    <a
-                      href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all"
-                    >
-                      <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                        <i className="fas fa-play text-white text-xl ml-1"></i>
+                    {video.youtubeId ? (
+                      <>
+                        <img
+                          src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                          alt={video.title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/default.jpg`;
+                          }}
+                        />
+                        {/* Play Button Overlay */}
+                        <a
+                          href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all"
+                        >
+                          <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                            <i className="fas fa-play text-white text-xl ml-1"></i>
+                          </div>
+                        </a>
+                      </>
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+                        <div className="text-center">
+                          <i className="fab fa-youtube text-gray-600 text-6xl mb-2"></i>
+                          <p className="text-red-400 text-sm">Invalid Video ID</p>
+                        </div>
                       </div>
-                    </a>
+                    )}
 
                     {/* Category Badge */}
                     {video.category && (

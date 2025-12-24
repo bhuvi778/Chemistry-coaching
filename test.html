@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test - Ace2Examz</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #111; color: #fff; }
+        .result { background: #222; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #c0392b; }
+        pre { background: #000; padding: 10px; overflow-x: auto; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Ace2Examz API Test</h1>
+    <button onclick="testAPI()">Test API Connection</button>
+    <div id="results"></div>
+
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="result">⏳ Testing API...</div>';
+
+            try {
+                // Test Videos API
+                const videosResponse = await fetch('/api/videos?_t=' + Date.now());
+                const videos = await videosResponse.json();
+                
+                // Test Audiobooks API
+                const audiobooksResponse = await fetch('/api/audiobooks?limit=100&_t=' + Date.now());
+                const audiobooks = await audiobooksResponse.json();
+                const audiobooksData = audiobooks.audioBooks || audiobooks;
+                
+                // Test Study Materials API
+                const materialsResponse = await fetch('/api/study-materials?_t=' + Date.now());
+                const materials = await materialsResponse.json();
+
+                results.innerHTML = `
+                    <div class="result">
+                        <h2>✅ API is Working!</h2>
+                        <p><strong>Videos:</strong> ${videos.length} found</p>
+                        <p><strong>Audiobooks:</strong> ${audiobooksData.length} found</p>
+                        <p><strong>Study Materials:</strong> ${materials.length} found</p>
+                    </div>
+                    <div class="result">
+                        <h3>Sample Video Data:</h3>
+                        <pre>${JSON.stringify(videos[0], null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="result">
+                        <h2>❌ API Test Failed</h2>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-run test on load
+        window.onload = testAPI;
+    </script>
+</body>
+</html>

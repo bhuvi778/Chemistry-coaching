@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useData } from '../../context/DataContext';
+import Pagination from '../../components/UI/Pagination';
 
 const ManageAudioBooks = () => {
   const { audioBooks, addAudioBook, updateAudioBook, deleteAudioBook } = useData();
   const [isEditing, setIsEditing] = useState(false);
   const [currentAudioBook, setCurrentAudioBook] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
   const initialFormState = {
     title: '',
@@ -247,11 +250,10 @@ const ManageAudioBooks = () => {
     try {
       if (isEditing) {
         await updateAudioBook(currentAudioBook._id, formData);
-        alert('Audio book updated successfully!');
       } else {
         await addAudioBook(formData);
-        alert('Audio book added successfully!');
       }
+      // Reset form immediately after successful save
       setIsEditing(false);
       setCurrentAudioBook(null);
       setFormData(initialFormState);
@@ -260,11 +262,18 @@ const ManageAudioBooks = () => {
       setCurrentTopic({ title: '', description: '', duration: '', audioUrl: '' });
     } catch (error) {
       console.error('Error submitting audio book:', error);
-      alert('Error submitting audio book. Please try again.');
+      alert('Error: ' + (error.message || 'Failed to save audio book. Please try again.'));
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Pagination calculations
+  const safeAudioBooks = Array.isArray(audioBooks) ? audioBooks : [];
+  const totalPages = Math.ceil(safeAudioBooks.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAudioBooks = safeAudioBooks.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="space-y-8">
@@ -489,7 +498,7 @@ const ManageAudioBooks = () => {
               </div>
 
               {/* Topics List */}
-              {currentChapter.topics.length > 0 && (
+              {currentChapter.topics && Array.isArray(currentChapter.topics) && currentChapter.topics.length > 0 && (
                 <div className="space-y-2">
                   <h5 className="text-sm font-semibold text-white">Topics in this Chapter:</h5>
                   {currentChapter.topics.map((topic, index) => (
@@ -533,7 +542,7 @@ const ManageAudioBooks = () => {
             {formData.chapters.length > 0 && (
               <div className="space-y-3">
                 <h4 className="text-md font-semibold text-white">Book Chapters ({formData.chapters.length}):</h4>
-                {formData.chapters.map((chapter, index) => (
+                {formData.chapters && Array.isArray(formData.chapters) && formData.chapters.map((chapter, index) => (
                   <div key={index} className="bg-gray-800 p-4 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h5 className="text-white font-bold">{chapter.title}</h5>
@@ -600,8 +609,14 @@ const ManageAudioBooks = () => {
       </div>
 
       {/* Audio Books List */}
+      {safeAudioBooks.length > 0 && (
+        <div className="mb-4 text-gray-400">
+          Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, safeAudioBooks.length)} of {safeAudioBooks.length} audiobooks
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4">
-        {audioBooks.map(book => (
+        {currentAudioBooks.map(book => (
           <div key={book._id} className="glass-panel p-4 rounded-xl">
             <div className="flex justify-between items-start mb-3">
               <div className="flex-1">
@@ -643,7 +658,7 @@ const ManageAudioBooks = () => {
             {book.chapters && book.chapters.length > 0 && (
               <div className="mt-4 space-y-2 border-t border-gray-700 pt-3">
                 <h4 className="text-sm font-semibold text-gray-400 mb-2">Chapters:</h4>
-                {book.chapters.map((chapter, chapterIndex) => (
+                {book.chapters && Array.isArray(book.chapters) && book.chapters.map((chapter, chapterIndex) => (
                   <div key={chapterIndex} className="bg-gray-800/50 rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleChapter(chapterIndex)}
@@ -661,7 +676,7 @@ const ManageAudioBooks = () => {
                     {/* Topics List */}
                     {expandedChapters[chapterIndex] && chapter.topics && (
                       <div className="bg-gray-900/50 p-3 space-y-2">
-                        {chapter.topics.map((topic, topicIndex) => (
+                        {chapter.topics && Array.isArray(chapter.topics) && chapter.topics.map((topic, topicIndex) => (
                           <div key={topicIndex} className="flex items-center justify-between p-2 bg-gray-800 rounded">
                             <div className="flex items-center gap-3 flex-1">
                               <i className="fas fa-headphones text-purple-400 text-xs"></i>
@@ -696,6 +711,19 @@ const ManageAudioBooks = () => {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

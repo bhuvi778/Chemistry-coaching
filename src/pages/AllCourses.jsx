@@ -27,7 +27,7 @@ const AllCourses = () => {
     }, [activeCategory, activeExam]);
 
     // Filter by both category and exam
-    const filteredCourses = courses.filter(course => {
+    const filteredCourses = (Array.isArray(courses) ? courses : []).filter(course => {
         const categoryMatch = activeCategory === 'all' ||
             (course.categories && course.categories.includes(activeCategory));
 

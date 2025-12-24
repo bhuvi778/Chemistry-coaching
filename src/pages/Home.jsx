@@ -12,7 +12,7 @@ import { useData } from '../context/DataContext';
 
 const Home = () => {
   const { courses, addEnquiry } = useData();
-  const featuredCourses = courses.slice(0, 3);
+  const featuredCourses = Array.isArray(courses) ? courses.slice(0, 3) : [];
 
   const handleEnquirySubmit = (e) => {
     e.preventDefault();

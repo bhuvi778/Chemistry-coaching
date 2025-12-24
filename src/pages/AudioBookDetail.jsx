@@ -135,7 +135,7 @@ const AudioBookDetail = () => {
                                 Chapters
                             </h2>
 
-                            {audioBook.chapters && audioBook.chapters.length > 0 ? (
+                            {audioBook.chapters && Array.isArray(audioBook.chapters) && audioBook.chapters.length > 0 ? (
                                 <div className="space-y-3">
                                     {audioBook.chapters.map((chapter, chapterIndex) => (
                                         <div key={chapter._id || chapterIndex}>
@@ -167,7 +167,7 @@ const AudioBookDetail = () => {
                                             </button>
 
                                             {/* Topics List */}
-                                            {expandedChapter === chapterIndex && chapter.topics && (
+                                            {expandedChapter === chapterIndex && chapter.topics && Array.isArray(chapter.topics) && chapter.topics.length > 0 && (
                                                 <div className="mt-2 ml-4 space-y-2">
                                                     {chapter.topics.map((topic, topicIndex) => (
                                                         <button

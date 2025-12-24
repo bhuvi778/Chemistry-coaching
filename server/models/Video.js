@@ -11,7 +11,9 @@ const videoSchema = new mongoose.Schema({
   },
   youtubeId: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
+    index: true
   },
   instructor: {
     type: String,
@@ -21,6 +23,11 @@ const videoSchema = new mongoose.Schema({
     type: String,
     enum: ['organic', 'inorganic', 'physical', 'general', 'other'],
     default: 'general'
+  },
+  examType: {
+    type: String,
+    enum: ['JEE', 'NEET', 'GATE', 'AIIMS', 'IAT', 'NEST', 'KVPY', 'TIFR', 'CSIR NET', 'IIT JAM', 'OLYMPIAD', 'CUET', 'BOARDS', 'all'],
+    default: 'all'
   },
   duration: String,
   views: {
@@ -40,6 +47,13 @@ const videoSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+}, {
+  strict: true,
+  strictQuery: false
 });
+
+// Add index for sorting by createdAt (newest first)
+videoSchema.index({ createdAt: -1 });
+videoSchema.index({ isActive: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Video', videoSchema);

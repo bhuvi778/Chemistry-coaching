@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useData } from '../../context/DataContext';
+import Pagination from '../../components/UI/Pagination';
 
 const ManageStudyMaterials = () => {
   const { studyMaterials, addStudyMaterial, updateStudyMaterial, deleteStudyMaterial } = useData();
   const [isEditing, setIsEditing] = useState(false);
   const [currentMaterial, setCurrentMaterial] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
   const [fileFileName, setFileFileName] = useState('');
   const [thumbnailFileName, setThumbnailFileName] = useState('');
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -252,6 +255,12 @@ const ManageStudyMaterials = () => {
     }
   };
 
+  // Pagination calculations
+  const totalPages = Math.ceil(studyMaterials.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMaterials = studyMaterials.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <div className="space-y-8">
       <div className="glass-panel p-6 rounded-xl">
@@ -479,8 +488,14 @@ const ManageStudyMaterials = () => {
         </form>
       </div>
 
+      {studyMaterials.length > 0 && (
+        <div className="mb-4 text-gray-400">
+          Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, studyMaterials.length)} of {studyMaterials.length} study materials
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4">
-        {studyMaterials.map(material => (
+        {currentMaterials.map(material => (
           <div key={material._id} className="glass-panel p-4 rounded-xl flex justify-between items-center">
             <div className="flex-1">
               <h3 className="text-lg font-bold text-white">{material.title}</h3>
@@ -508,6 +523,19 @@ const ManageStudyMaterials = () => {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

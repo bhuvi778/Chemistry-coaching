@@ -21,13 +21,20 @@ const app = express();
 const cache = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour for public data
 
-// Cache middleware
+// Cache middleware - DISABLED for videos to prevent caching issues
 const cacheMiddleware = (key, ttl = CACHE_TTL) => {
   return (req, res, next) => {
+    // Skip caching for videos endpoint
+    if (key === 'videos') {
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
+      return next();
+    }
+    
     const cached = cache.get(key);
     if (cached && Date.now() - cached.timestamp < ttl) {
-      // Set HTTP cache headers for browser caching
-      res.set('Cache-Control', 'public, max-age=3600'); // 1 hour browser cache
+      res.set('Cache-Control', 'public, max-age=3600');
       res.set('ETag', `"${cached.timestamp}"`);
       return res.json(cached.data);
     }
@@ -64,6 +71,10 @@ app.use(cors({
       'https://www.chemistry-coaching.vercel.app',
       'https://ace2examz.vercel.app',
       'https://www.ace2examz.vercel.app',
+      'https://ace2examz.com',
+      'https://www.ace2examz.com',
+      'http://ace2examz.com',
+      'http://www.ace2examz.com',
       'https://chemistry-coaching-git-main-bhupeshs-projects-f3c04cb2.vercel.app'
     ];
     
@@ -86,24 +97,43 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Enable GZIP compression
 app.use(compression());
 
-// Connect to MongoDB with optimized settings
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ace2examz_db_user:2UuCZsIDWcWrGXAi@ace2examz-cluster.nmf7peg.mongodb.net/test?appName=Ace2Examz-Cluster';
+// Connect to MongoDB - using local instance
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/test';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  maxPoolSize: 50, // Increase connection pool
-  minPoolSize: 10,
-  socketTimeoutMS: 45000,
-  serverSelectionTimeoutMS: 10000,
-  family: 4, // Use IPv4, skip IPv6
-  compressors: ['zlib'], // Enable compression
-  readPreference: 'secondaryPreferred' // Read from secondary for faster response
+  maxPoolSize: 5,          // Reduced from 10 to avoid connection overhead
+  minPoolSize: 1,          // Reduced from 2
+  socketTimeoutMS: 45000,  // Reduced from 120s to 45s for faster failure detection
+  connectTimeoutMS: 15000, // Reduced from 30s to 15s
+  serverSelectionTimeoutMS: 15000, // Reduced from 30s to 15s
+  family: 4,
+  retryWrites: false,      // Disabled auto-retry to prevent long timeouts
+  retryReads: true,
+  maxIdleTimeMS: 30000,    // Reduced from 60s
+  heartbeatFrequencyMS: 10000, // Monitor connection health
+  writeConcern: {
+    w: 1,                  // Changed from 'majority' to 1 for faster writes
+    wtimeout: 10000        // Reduced from 30s to 10s
+  }
 }).then(() => {
-  console.log('✅ Connected to MongoDB with optimized settings');
-  console.log('📊 Connection pool size: 50');
-  console.log('🗜️  Compression enabled');
-}).catch(err => console.error('❌ MongoDB connection error:', err));
+  console.log('✅ Connected to MongoDB');
+  console.log('📊 Connection state:', mongoose.connection.readyState);
+  console.log('🔗 Connected to:', mongoose.connection.host);
+}).catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
+});
+
+// Handle MongoDB connection errors
+mongoose.connection.on('error', err => {
+  console.error('❌ MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️  MongoDB disconnected');
+});
 
 // Routes
 
@@ -232,14 +262,32 @@ app.delete('/api/contacts/:id', async (req, res) => {
 // Videos
 app.get('/api/videos', cacheMiddleware('videos', 30 * 60 * 1000), async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 50);
+    const skip = (page - 1) * limit;
+
     const videos = await Video.find({ isActive: true })
-      .select('title description category thumbnail duration uploadDate createdAt')
+      .select('title description category examType youtubeId instructor duration isActive createdAt views')
       .sort({ createdAt: -1 })
-      .limit(50)
+      .limit(limit)
+      .skip(skip)
       .lean()
       .exec();
-    res.json(videos);
+    
+    // Return simple array for backward compatibility (unless pagination is explicitly requested)
+    if (!req.query.page && !req.query.limit) {
+      res.json(videos);
+    } else {
+      const total = await Video.countDocuments({ isActive: true });
+      res.json({
+        videos,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+        total
+      });
+    }
   } catch (error) {
+    console.error('Error fetching videos:', error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -248,8 +296,13 @@ app.post('/api/videos', async (req, res) => {
   try {
     const video = new Video(req.body);
     await video.save();
+    
+    // Clear cache so new video shows immediately
+    clearCache('videos');
+    
     res.json(video);
   } catch (error) {
+    console.error('Error saving video:', error.message);
     res.status(500).json({ message: error.message });
   }
 });
@@ -257,6 +310,8 @@ app.post('/api/videos', async (req, res) => {
 app.put('/api/videos/:id', async (req, res) => {
   try {
     const video = await Video.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    // Clear cache so updated video shows immediately
+    clearCache('videos');
     res.json(video);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -266,6 +321,8 @@ app.put('/api/videos/:id', async (req, res) => {
 app.delete('/api/videos/:id', async (req, res) => {
   try {
     await Video.findByIdAndDelete(req.params.id);
+    // Clear cache so deletion reflects immediately
+    clearCache('videos');
     res.json({ message: 'Video deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -276,26 +333,30 @@ app.delete('/api/videos/:id', async (req, res) => {
 app.get('/api/audiobooks', cacheMiddleware('audiobooks', 30 * 60 * 1000), async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = Math.min(parseInt(req.query.limit) || 10, 20);
     const skip = (page - 1) * limit;
 
     const audioBooks = await AudioBook.find({ isActive: true })
       .select('title description author category createdAt')
-      .sort({ createdAt: -1 })
-      .skip(skip)
       .limit(limit)
+      .skip(skip)
       .lean()
       .exec();
     
-    const total = await AudioBook.countDocuments({ isActive: true });
-    
-    res.json({
-      audioBooks,
-      totalPages: Math.ceil(total / limit),
-      currentPage: page,
-      total
-    });
+    // Return simple array for backward compatibility (unless pagination is explicitly requested)
+    if (!req.query.page && !req.query.limit) {
+      res.json(audioBooks);
+    } else {
+      const total = await AudioBook.countDocuments({ isActive: true });
+      res.json({
+        audioBooks,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+        total
+      });
+    }
   } catch (error) {
+    console.error('Error fetching audiobooks:', error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -313,31 +374,143 @@ app.get('/api/audiobooks/:id', cacheMiddleware('audiobook'), async (req, res) =>
   }
 });
 
+// Helper function to wrap save operation with timeout
+const saveWithTimeout = (model, timeoutMs = 45000) => {
+  return Promise.race([
+    model.save(),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error(`Save operation timed out after ${timeoutMs}ms. This may indicate MongoDB Atlas free tier performance issues or large file uploads.`)), timeoutMs)
+    )
+  ]);
+};
+
 app.post('/api/audiobooks', async (req, res) => {
+  const startTime = Date.now();
   try {
+    console.log('=== AUDIOBOOK POST REQUEST ===');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    console.log('Title:', req.body.title);
+    console.log('MongoDB connection state:', mongoose.connection.readyState);
+    
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error('Database not connected. Please try again in a moment.');
+    }
+    
+    const createStart = Date.now();
     const audioBook = new AudioBook(req.body);
-    await audioBook.save();
-    res.json(audioBook);
+    const dataSize = JSON.stringify(req.body).length;
+    console.log(`📝 Model creation: ${Date.now() - createStart}ms`);
+    console.log(`📦 Data size: ${(dataSize / 1024).toFixed(2)} KB`);
+    console.log('Attempting to save with 45s timeout...');
+    
+    const saveStart = Date.now();
+    const savedAudioBook = await saveWithTimeout(audioBook, 45000);
+    console.log(`💾 Database save: ${Date.now() - saveStart}ms`);
+    
+    console.log('✅ Audiobook saved successfully:', savedAudioBook._id);
+    
+    // Clear cache so new audiobook shows immediately
+    const cacheStart = Date.now();
+    clearCache('audiobooks');
+    console.log(`🗑️ Cache clear: ${Date.now() - cacheStart}ms`);
+    
+    console.log(`⏱️ TOTAL TIME: ${Date.now() - startTime}ms`);
+    console.log('================================');
+    
+    // Return streamlined response with success flag
+    const responseData = savedAudioBook.toObject();
+    res.status(201).json({
+      success: true,
+      message: 'Audiobook created successfully',
+      ...responseData
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(`❌ Error creating audiobook (${Date.now() - startTime}ms):`, error);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    if (error.errors) {
+      console.error('Validation errors:', error.errors);
+    }
+    res.status(500).json({ 
+      success: false,
+      message: error.message,
+      errors: error.errors,
+      name: error.name
+    });
   }
 });
 
 app.put('/api/audiobooks/:id', async (req, res) => {
   try {
+    console.log('=== AUDIOBOOK UPDATE REQUEST ===');
+    console.log('Updating audiobook ID:', req.params.id);
+    console.log('Update data:', JSON.stringify(req.body, null, 2));
+    
     const audioBook = await AudioBook.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(audioBook);
+    
+    if (!audioBook) {
+      console.log('❌ Audiobook not found');
+      return res.status(404).json({ 
+        success: false,
+        message: 'Audiobook not found' 
+      });
+    }
+    
+    console.log('✅ Audiobook updated successfully:', req.params.id);
+    console.log('================================');
+    
+    // Clear cache so updated audiobook shows immediately
+    clearCache('audiobooks');
+    
+    res.json({
+      success: true,
+      message: 'Audiobook updated successfully',
+      data: audioBook,
+      ...audioBook.toObject()
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('❌ Error updating audiobook:', error);
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
   }
 });
 
 app.delete('/api/audiobooks/:id', async (req, res) => {
   try {
-    await AudioBook.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Audio book deleted' });
+    console.log('=== AUDIOBOOK DELETE REQUEST ===');
+    console.log('Deleting audiobook ID:', req.params.id);
+    
+    const audioBook = await AudioBook.findByIdAndDelete(req.params.id);
+    
+    if (!audioBook) {
+      console.log('❌ Audiobook not found');
+      return res.status(404).json({ 
+        success: false,
+        message: 'Audiobook not found' 
+      });
+    }
+    
+    console.log('✅ Audiobook deleted successfully:', req.params.id);
+    console.log('================================');
+    
+    // Clear cache so deletion reflects immediately
+    clearCache('audiobooks');
+    
+    res.json({ 
+      success: true,
+      message: 'Audio book deleted successfully', 
+      id: req.params.id,
+      deleted: true
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('❌ Error deleting audiobook:', error);
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
   }
 });
 
@@ -373,6 +546,10 @@ app.post('/api/study-materials', async (req, res) => {
   try {
     const material = new StudyMaterial(req.body);
     await material.save();
+    
+    // Clear cache so new material shows immediately
+    clearCache('study-materials');
+    
     res.json(material);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -382,6 +559,10 @@ app.post('/api/study-materials', async (req, res) => {
 app.put('/api/study-materials/:id', async (req, res) => {
   try {
     const material = await StudyMaterial.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    // Clear cache so updated material shows immediately
+    clearCache('study-materials');
+    
     res.json(material);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -391,6 +572,10 @@ app.put('/api/study-materials/:id', async (req, res) => {
 app.delete('/api/study-materials/:id', async (req, res) => {
   try {
     await StudyMaterial.findByIdAndDelete(req.params.id);
+    
+    // Clear cache so deletion reflects immediately
+    clearCache('study-materials');
+    
     res.json({ message: 'Study material deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -416,6 +601,10 @@ app.post('/api/magazines', async (req, res) => {
   try {
     const magazine = new Magazine(req.body);
     await magazine.save();
+    
+    // Clear cache so new magazine shows immediately
+    clearCache('magazines');
+    
     res.json(magazine);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -425,6 +614,10 @@ app.post('/api/magazines', async (req, res) => {
 app.put('/api/magazines/:id', async (req, res) => {
   try {
     const magazine = await Magazine.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    // Clear cache so updated magazine shows immediately
+    clearCache('magazines');
+    
     res.json(magazine);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -434,6 +627,10 @@ app.put('/api/magazines/:id', async (req, res) => {
 app.delete('/api/magazines/:id', async (req, res) => {
   try {
     await Magazine.findByIdAndDelete(req.params.id);
+    
+    // Clear cache so deletion reflects immediately
+    clearCache('magazines');
+    
     res.json({ message: 'Magazine deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -629,6 +826,10 @@ app.post('/api/crosswords', async (req, res) => {
   try {
     const crossword = new Crossword(req.body);
     await crossword.save();
+    
+    // Clear cache so new crossword shows immediately
+    clearCache('crosswords');
+    
     res.json(crossword);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -638,6 +839,10 @@ app.post('/api/crosswords', async (req, res) => {
 app.put('/api/crosswords/:id', async (req, res) => {
   try {
     const crossword = await Crossword.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    // Clear cache so updated crossword shows immediately
+    clearCache('crosswords');
+    
     res.json(crossword);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -647,6 +852,10 @@ app.put('/api/crosswords/:id', async (req, res) => {
 app.delete('/api/crosswords/:id', async (req, res) => {
   try {
     await Crossword.findByIdAndDelete(req.params.id);
+    
+    // Clear cache so deletion reflects immediately
+    clearCache('crosswords');
+    
     res.json({ message: 'Crossword deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -672,6 +881,10 @@ app.post('/api/puzzle-sets', async (req, res) => {
   try {
     const puzzleSet = new PuzzleSet(req.body);
     await puzzleSet.save();
+    
+    // Clear cache so new puzzle shows immediately
+    clearCache('puzzle-sets');
+    
     res.json(puzzleSet);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -681,12 +894,20 @@ app.post('/api/puzzle-sets', async (req, res) => {
 app.put('/api/puzzle-sets/:id', async (req, res) => {
   try {
     const puzzleSet = await PuzzleSet.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    // Clear cache so updated puzzle shows immediately
+    clearCache('puzzle-sets');
+    
     res.json(puzzleSet);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
+    // Clear cache so deletion reflects immediately
+    clearCache('puzzle-sets');
+    
+    
 app.delete('/api/puzzle-sets/:id', async (req, res) => {
   try {
     await PuzzleSet.findByIdAndDelete(req.params.id);

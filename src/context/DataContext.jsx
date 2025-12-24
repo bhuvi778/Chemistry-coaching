@@ -33,26 +33,15 @@ export const DataProvider = ({ children }) => {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-  // Cache management - 1 hour cache
-  const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
-  const getCachedData = (key) => {
-    const cached = localStorage.getItem(`cache_${key}`);
-    if (!cached) return null;
-    
-    const { data, timestamp } = JSON.parse(cached);
-    if (Date.now() - timestamp > CACHE_DURATION) {
-      localStorage.removeItem(`cache_${key}`);
-      return null;
-    }
-    return data;
-  };
-
-  const setCachedData = (key, data) => {
-    localStorage.setItem(`cache_${key}`, JSON.stringify({
-      data,
-      timestamp: Date.now()
-    }));
-  };
+  // Clear all cache on mount
+  useEffect(() => {
+    const clearAllCache = () => {
+      const cacheKeys = ['cache_version', 'cache_courses', 'cache_videos', 'cache_audiobooks', 'cache_study-materials', 'cache_magazines'];
+      cacheKeys.forEach(key => localStorage.removeItem(key));
+      console.log('✅ All cache cleared - fetching fresh data from API');
+    };
+    clearAllCache();
+  }, []);
 
   // Fetch with timeout
   const fetchWithTimeout = (url, timeout = 10000) => {
@@ -64,53 +53,49 @@ export const DataProvider = ({ children }) => {
     ]);
   };
 
-  // Fetch data from backend with caching and parallel requests
+  // Fetch data from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Try to load from cache first
-        const cachedCourses = getCachedData('courses');
-        const cachedVideos = getCachedData('videos');
-        const cachedAudioBooks = getCachedData('audiobooks');
-        const cachedStudyMaterials = getCachedData('study-materials');
-        const cachedMagazines = getCachedData('magazines');
-
-        if (cachedCourses) setCourses(cachedCourses);
-        if (cachedVideos) setVideos(cachedVideos);
-        if (cachedAudioBooks) setAudioBooks(cachedAudioBooks);
-        if (cachedStudyMaterials) setStudyMaterials(cachedStudyMaterials);
-        if (cachedMagazines) setMagazines(cachedMagazines);
-
+        // Add cache-busting timestamp to force fresh data
+        const cacheBuster = `?_t=${Date.now()}`;
+        
         // Fetch all data in parallel with timeout
         const [coursesData, videosData, audioBooksResponse, studyMaterialsData, magazinesData, enquiriesData, contactsData] = await Promise.all([
-          fetchWithTimeout(`${API_URL}/courses`).then(r => r.json()).catch(() => cachedCourses || []),
-          fetchWithTimeout(`${API_URL}/videos`).then(r => r.json()).catch(() => cachedVideos || []),
-          fetchWithTimeout(`${API_URL}/audiobooks?limit=100`).then(r => r.json()).catch(() => ({ audioBooks: cachedAudioBooks || [] })),
-          fetchWithTimeout(`${API_URL}/study-materials`).then(r => r.json()).catch(() => cachedStudyMaterials || []),
-          fetchWithTimeout(`${API_URL}/magazines`).then(r => r.json()).catch(() => cachedMagazines || []),
-          isAdmin ? fetchWithTimeout(`${API_URL}/enquiries`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
-          isAdmin ? fetchWithTimeout(`${API_URL}/contacts`).then(r => r.json()).catch(() => []) : Promise.resolve([])
+          fetchWithTimeout(`${API_URL}/courses${cacheBuster}`).then(r => r.json()).catch(err => {
+            console.error('❌ Courses fetch error:', err);
+            return [];
+          }),
+          fetchWithTimeout(`${API_URL}/videos${isAdmin ? '?all=true&' : '?'}_t=${Date.now()}`).then(r => r.json()).catch(err => {
+            console.error('❌ Videos fetch error:', err);
+            return [];
+          }),
+          fetchWithTimeout(`${API_URL}/audiobooks?limit=100&_t=${Date.now()}`).then(r => r.json()).catch(err => {
+            console.error('❌ Audiobooks fetch error:', err);
+            return { audioBooks: [] };
+          }),
+          fetchWithTimeout(`${API_URL}/study-materials${cacheBuster}`).then(r => r.json()).catch(() => []),
+          fetchWithTimeout(`${API_URL}/magazines${cacheBuster}`).then(r => r.json()).catch(() => []),
+          isAdmin ? fetchWithTimeout(`${API_URL}/enquiries${cacheBuster}`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
+          isAdmin ? fetchWithTimeout(`${API_URL}/contacts${cacheBuster}`).then(r => r.json()).catch(() => []) : Promise.resolve([])
         ]);
+
+        // Ensure array helper
+        const ensureArray = (data) => Array.isArray(data) ? data : [];
 
         // Handle audiobooks response (might be paginated)
         const audioBooksData = audioBooksResponse.audioBooks || audioBooksResponse;
 
-        // Update state and cache
-        setCourses(coursesData);
-        setVideos(videosData);
-        setAudioBooks(audioBooksData);
-        setStudyMaterials(studyMaterialsData);
-        setMagazines(magazinesData);
-        
-        setCachedData('courses', coursesData);
-        setCachedData('videos', videosData);
-        setCachedData('audiobooks', audioBooksData);
-        setCachedData('study-materials', studyMaterialsData);
-        setCachedData('magazines', magazinesData);
+        // Update state - ensure all are arrays
+        setCourses(ensureArray(coursesData));
+        setVideos(ensureArray(videosData));
+        setAudioBooks(ensureArray(audioBooksData));
+        setStudyMaterials(ensureArray(studyMaterialsData));
+        setMagazines(ensureArray(magazinesData));
 
         if (isAdmin) {
-          setEnquiries(enquiriesData);
-          setContacts(contactsData);
+          setEnquiries(ensureArray(enquiriesData));
+          setContacts(ensureArray(contactsData));
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -156,7 +141,7 @@ export const DataProvider = ({ children }) => {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       
-      setEnquiries(enquiries.filter(enq => enq._id !== id));
+      setEnquiries((Array.isArray(enquiries) ? enquiries : []).filter(enq => enq._id !== id));
       console.log('Enquiry deleted successfully');
     } catch (error) {
       console.error("Error deleting enquiry:", error);
@@ -172,7 +157,7 @@ export const DataProvider = ({ children }) => {
         body: JSON.stringify(data)
       });
       const newContact = await res.json();
-      setContacts([newContact, ...contacts]);
+      setContacts([newContact, ...(Array.isArray(contacts) ? contacts : [])]);
     } catch (error) {
       console.error("Error adding contact:", error);
     }
@@ -188,7 +173,7 @@ export const DataProvider = ({ children }) => {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       
-      setContacts(contacts.filter(contact => contact._id !== id));
+      setContacts((Array.isArray(contacts) ? contacts : []).filter(contact => contact._id !== id));
       console.log('Contact deleted successfully');
     } catch (error) {
       console.error("Error deleting contact:", error);
@@ -212,7 +197,7 @@ export const DataProvider = ({ children }) => {
       
       const newCourse = await res.json();
       console.log('Course added successfully:', newCourse);
-      setCourses([...courses, newCourse]);
+      setCourses([...(Array.isArray(courses) ? courses : []), newCourse]);
       return newCourse;
     } catch (error) {
       console.error("Error adding course:", error);
@@ -229,7 +214,7 @@ export const DataProvider = ({ children }) => {
         body: JSON.stringify(updatedCourse)
       });
       const data = await res.json();
-      setCourses(courses.map(c => c._id === id ? data : c));
+      setCourses((Array.isArray(courses) ? courses : []).map(c => c._id === id ? data : c));
     } catch (error) {
       console.error("Error updating course:", error);
     }
@@ -240,7 +225,7 @@ export const DataProvider = ({ children }) => {
       await fetch(`${API_URL}/courses/${id}`, {
         method: 'DELETE'
       });
-      setCourses(courses.filter(c => c._id !== id));
+      setCourses((Array.isArray(courses) ? courses : []).filter(c => c._id !== id));
     } catch (error) {
       console.error("Error deleting course:", error);
     }
@@ -253,10 +238,26 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(video)
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
+        
+        // Handle duplicate video error
+        if (res.status === 400 && errorData.error === 'Duplicate video') {
+          throw new Error('⚠️ This YouTube video has already been added to the database!');
+        }
+        
+        throw new Error(errorData.message || `Server error: ${res.status}`);
+      }
+      
       const newVideo = await res.json();
-      setVideos([newVideo, ...videos]);
+      
+      const updatedVideos = [newVideo, ...(Array.isArray(videos) ? videos : [])];
+      setVideos(updatedVideos);
     } catch (error) {
       console.error("Error adding video:", error);
+      alert(error.message);
+      throw error; // Re-throw so the component can handle it
     }
   };
 
@@ -268,7 +269,8 @@ export const DataProvider = ({ children }) => {
         body: JSON.stringify(updatedVideo)
       });
       const data = await res.json();
-      setVideos(videos.map(v => v._id === id ? data : v));
+      const updatedVideos = (Array.isArray(videos) ? videos : []).map(v => v._id === id ? data : v);
+      setVideos(updatedVideos);
     } catch (error) {
       console.error("Error updating video:", error);
     }
@@ -279,7 +281,8 @@ export const DataProvider = ({ children }) => {
       await fetch(`${API_URL}/videos/${id}`, {
         method: 'DELETE'
       });
-      setVideos(videos.filter(v => v._id !== id));
+      const updatedVideos = (Array.isArray(videos) ? videos : []).filter(v => v._id !== id);
+      setVideos(updatedVideos);
     } catch (error) {
       console.error("Error deleting video:", error);
     }
@@ -293,10 +296,24 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(audioBook)
       });
-      const newAudioBook = await res.json();
-      setAudioBooks([newAudioBook, ...audioBooks]);
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+      
+      const response = await res.json();
+      
+      // Handle response - remove success/message fields if present
+      const { success, message, ...newAudioBook } = response;
+      
+      // Immediately update state with new audiobook
+      setAudioBooks(prev => [newAudioBook, ...(Array.isArray(prev) ? prev : [])]);
+      
+      return newAudioBook;
     } catch (error) {
       console.error("Error adding audio book:", error);
+      throw error;
     }
   };
 
@@ -307,21 +324,41 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedAudioBook)
       });
-      const data = await res.json();
-      setAudioBooks(audioBooks.map(a => a._id === id ? data : a));
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+      
+      const response = await res.json();
+      const { success, message, ...data } = response;
+      
+      // Immediately update state
+      setAudioBooks(prev => (Array.isArray(prev) ? prev : []).map(a => a._id === id ? data : a));
+      
+      return data;
     } catch (error) {
       console.error("Error updating audio book:", error);
+      throw error;
     }
   };
 
   const deleteAudioBook = async (id) => {
     try {
-      await fetch(`${API_URL}/audiobooks/${id}`, {
+      const res = await fetch(`${API_URL}/audiobooks/${id}`, {
         method: 'DELETE'
       });
-      setAudioBooks(audioBooks.filter(a => a._id !== id));
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+      
+      // Immediately update state by removing the deleted item
+      setAudioBooks(prev => (Array.isArray(prev) ? prev : []).filter(a => a._id !== id));
     } catch (error) {
       console.error("Error deleting audio book:", error);
+      throw error;
     }
   };
 
@@ -334,7 +371,8 @@ export const DataProvider = ({ children }) => {
         body: JSON.stringify(material)
       });
       const newMaterial = await res.json();
-      setStudyMaterials([newMaterial, ...studyMaterials]);
+      const updatedMaterials = [newMaterial, ...(Array.isArray(studyMaterials) ? studyMaterials : [])];
+      setStudyMaterials(updatedMaterials);
     } catch (error) {
       console.error("Error adding study material:", error);
     }
@@ -348,7 +386,8 @@ export const DataProvider = ({ children }) => {
         body: JSON.stringify(updatedMaterial)
       });
       const data = await res.json();
-      setStudyMaterials(studyMaterials.map(m => m._id === id ? data : m));
+      const updatedMaterials = (Array.isArray(studyMaterials) ? studyMaterials : []).map(m => m._id === id ? data : m);
+      setStudyMaterials(updatedMaterials);
     } catch (error) {
       console.error("Error updating study material:", error);
     }
@@ -359,7 +398,8 @@ export const DataProvider = ({ children }) => {
       await fetch(`${API_URL}/study-materials/${id}`, {
         method: 'DELETE'
       });
-      setStudyMaterials(studyMaterials.filter(m => m._id !== id));
+      const updatedMaterials = (Array.isArray(studyMaterials) ? studyMaterials : []).filter(m => m._id !== id);
+      setStudyMaterials(updatedMaterials);
     } catch (error) {
       console.error("Error deleting study material:", error);
     }
@@ -374,7 +414,8 @@ export const DataProvider = ({ children }) => {
         body: JSON.stringify(magazine)
       });
       const newMagazine = await res.json();
-      setMagazines([newMagazine, ...magazines]);
+      const updatedMagazines = [newMagazine, ...(Array.isArray(magazines) ? magazines : [])];
+      setMagazines(updatedMagazines);
     } catch (error) {
       console.error("Error adding magazine:", error);
     }
@@ -388,7 +429,8 @@ export const DataProvider = ({ children }) => {
         body: JSON.stringify(updatedMagazine)
       });
       const data = await res.json();
-      setMagazines(magazines.map(m => m._id === id ? data : m));
+      const updatedMagazines = (Array.isArray(magazines) ? magazines : []).map(m => m._id === id ? data : m);
+      setMagazines(updatedMagazines);
     } catch (error) {
       console.error("Error updating magazine:", error);
     }
@@ -399,7 +441,8 @@ export const DataProvider = ({ children }) => {
       await fetch(`${API_URL}/magazines/${id}`, {
         method: 'DELETE'
       });
-      setMagazines(magazines.filter(m => m._id !== id));
+      const updatedMagazines = (Array.isArray(magazines) ? magazines : []).filter(m => m._id !== id);
+      setMagazines(updatedMagazines);
     } catch (error) {
       console.error("Error deleting magazine:", error);
     }

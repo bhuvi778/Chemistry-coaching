@@ -7,7 +7,8 @@ const StudyMaterials = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedExam, setSelectedExam] = useState('all');
 
-  const filteredMaterials = studyMaterials.filter(material => {
+  const safeMaterials = Array.isArray(studyMaterials) ? studyMaterials : [];
+  const filteredMaterials = safeMaterials.filter(material => {
     const categoryMatch = selectedCategory === 'all' || material.category === selectedCategory;
     const examMatch = selectedExam === 'all' || material.examType === selectedExam;
     return categoryMatch && examMatch;
