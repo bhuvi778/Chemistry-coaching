@@ -38,8 +38,14 @@ const ManagePuzzleSets = () => {
     const fetchPuzzleSets = async () => {
         try {
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-            const response = await fetch(`${API_URL}/puzzle-sets`);
+            const response = await fetch(`${API_URL}/puzzle-sets?_t=${Date.now()}`, {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            });
             const data = await response.json();
+            console.log('Fetched puzzle sets:', data.length);
             // Ensure data is always an array
             setPuzzleSets(Array.isArray(data) ? data : []);
             setLoading(false);
@@ -62,6 +68,8 @@ const ManagePuzzleSets = () => {
     const handleThumbnailUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
+            console.log('Thumbnail file selected:', file.name, 'Size:', file.size, 'Type:', file.type);
+            
             if (!file.type.startsWith('image/')) {
                 alert('Please upload an image file');
                 return;
@@ -73,11 +81,23 @@ const ManagePuzzleSets = () => {
 
             try {
                 const base64 = await convertToBase64(file);
-                setFormData({ ...formData, thumbnailUrl: base64 });
-                setFileNames({ ...fileNames, thumbnail: file.name });
+                console.log('Thumbnail converted to base64, length:', base64.length);
+                
+                // Use functional update to ensure we have the latest state
+                setFormData(prevData => ({
+                    ...prevData,
+                    thumbnailUrl: base64
+                }));
+                
+                setFileNames(prev => ({
+                    ...prev,
+                    thumbnail: file.name
+                }));
+                
+                console.log('Thumbnail saved to formData');
             } catch (error) {
                 console.error('Error uploading thumbnail:', error);
-                alert('Error uploading thumbnail');
+                alert('Error uploading thumbnail: ' + error.message);
             }
         }
     };
@@ -97,12 +117,12 @@ const ManagePuzzleSets = () => {
             try {
                 const base64 = await convertToBase64(file);
                 const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-                setFormData({
-                    ...formData,
+                setFormData(prevData => ({
+                    ...prevData,
                     setPdfUrl: base64,
                     setPdfSize: `${sizeInMB} MB`
-                });
-                setFileNames({ ...fileNames, setPdf: file.name });
+                }));
+                setFileNames(prev => ({ ...prev, setPdf: file.name }));
             } catch (error) {
                 console.error('Error uploading PDF:', error);
                 alert('Error uploading PDF');
@@ -125,12 +145,12 @@ const ManagePuzzleSets = () => {
             try {
                 const base64 = await convertToBase64(file);
                 const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-                setFormData({
-                    ...formData,
+                setFormData(prevData => ({
+                    ...prevData,
                     answerPdfUrl: base64,
                     answerPdfSize: `${sizeInMB} MB`
-                });
-                setFileNames({ ...fileNames, answerPdf: file.name });
+                }));
+                setFileNames(prev => ({ ...prev, answerPdf: file.name }));
             } catch (error) {
                 console.error('Error uploading PDF:', error);
                 alert('Error uploading PDF');
@@ -141,8 +161,21 @@ const ManagePuzzleSets = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        console.log('=== FORM SUBMIT STARTED ===');
+        console.log('Current formData state:', {
+            setNumber: formData.setNumber,
+            title: formData.title,
+            hasThumbnail: !!formData.thumbnailUrl,
+            thumbnailLength: formData.thumbnailUrl?.length || 0,
+            hasPdf: !!formData.setPdfUrl,
+            pdfLength: formData.setPdfUrl?.length || 0,
+            hasAnswer: !!formData.answerPdfUrl,
+            answerLength: formData.answerPdfUrl?.length || 0
+        });
+
         if (!formData.setPdfUrl || !formData.answerPdfUrl) {
             alert('Please upload both puzzle PDF and answer PDF');
+            console.error('Missing PDFs - setPdf:', !!formData.setPdfUrl, 'answerPdf:', !!formData.answerPdfUrl);
             return;
         }
 
@@ -153,13 +186,20 @@ const ManagePuzzleSets = () => {
                 ? `${API_URL}/puzzle-sets/${currentPuzzleSet._id}`
                 : `${API_URL}/puzzle-sets`;
 
+            console.log('Sending to:', url);
+            console.log('Method:', method);
+
             const response = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
 
+            console.log('Response status:', response.status);
+
             if (response.ok) {
+                const result = await response.json();
+                console.log('✅ Success! Saved puzzle:', result);
                 alert(isEditing ? 'Puzzle set updated successfully!' : 'Puzzle set added successfully!');
                 setIsEditing(false);
                 setCurrentPuzzleSet(null);
@@ -168,11 +208,12 @@ const ManagePuzzleSets = () => {
                 fetchPuzzleSets();
             } else {
                 const error = await response.json();
+                console.error('❌ Server error:', error);
                 alert(`Error: ${error.message || 'Failed to save puzzle set'}`);
             }
         } catch (error) {
-            console.error('Error submitting puzzle set:', error);
-            alert('Error submitting puzzle set. Please try again.');
+            console.error('❌ Error submitting puzzle set:', error);
+            alert('Error submitting puzzle set: ' + error.message);
         }
     };
 
@@ -191,12 +232,32 @@ const ManagePuzzleSets = () => {
         if (window.confirm('Are you sure you want to delete this puzzle set?')) {
             try {
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                await fetch(`${API_URL}/puzzle-sets/${id}`, { method: 'DELETE' });
-                fetchPuzzleSets();
+                const response = await fetch(`${API_URL}/puzzle-sets/${id}`, { 
+                    method: 'DELETE',
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete puzzle set');
+                }
+                
+                const data = await response.json();
+                console.log('Delete response:', data);
+                
+                // Immediately update state to remove the deleted item
+                setPuzzleSets(prevSets => prevSets.filter(set => set._id !== id));
+                
+                // Also refetch to ensure sync with server
+                await fetchPuzzleSets();
+                
                 alert('Puzzle set deleted successfully!');
             } catch (error) {
                 console.error('Error deleting puzzle set:', error);
-                alert('Error deleting puzzle set');
+                alert('Error deleting puzzle set: ' + error.message);
+                // Refetch on error to ensure UI is in sync
+                await fetchPuzzleSets();
             }
         }
     };
@@ -219,7 +280,7 @@ const ManagePuzzleSets = () => {
                             type="text"
                             placeholder="Set Number (e.g., Set-1)"
                             value={formData.setNumber}
-                            onChange={e => setFormData({ ...formData, setNumber: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, setNumber: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                             required
                         />
@@ -227,7 +288,7 @@ const ManagePuzzleSets = () => {
                             type="text"
                             placeholder="Title (e.g., JEE Organic Chemistry)"
                             value={formData.title}
-                            onChange={e => setFormData({ ...formData, title: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                             required
                         />
@@ -236,7 +297,7 @@ const ManagePuzzleSets = () => {
                     <textarea
                         placeholder="Description"
                         value={formData.description}
-                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                        onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
                         className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full h-24"
                     />
 
@@ -245,7 +306,7 @@ const ManagePuzzleSets = () => {
                             type="text"
                             placeholder="Chapter (e.g., Organic Chemistry)"
                             value={formData.chapter}
-                            onChange={e => setFormData({ ...formData, chapter: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, chapter: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                             required
                         />
@@ -253,7 +314,7 @@ const ManagePuzzleSets = () => {
                             type="text"
                             placeholder="Topic (e.g., Reaction Mechanisms)"
                             value={formData.topic}
-                            onChange={e => setFormData({ ...formData, topic: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, topic: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                         />
                     </div>
@@ -261,7 +322,7 @@ const ManagePuzzleSets = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <select
                             value={formData.examType}
-                            onChange={e => setFormData({ ...formData, examType: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, examType: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                         >
                             <option value="All">All Exams</option>
@@ -272,7 +333,7 @@ const ManagePuzzleSets = () => {
 
                         <select
                             value={formData.difficulty}
-                            onChange={e => setFormData({ ...formData, difficulty: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, difficulty: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                         >
                             <option value="Easy">Easy</option>

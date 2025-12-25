@@ -11,6 +11,25 @@ const Puzzle = () => {
     const [showCrosswordModal, setShowCrosswordModal] = useState(false);
     const [selectedCrossword, setSelectedCrossword] = useState(null);
 
+    const handleDownloadPDF = (base64Data, filename) => {
+        try {
+            if (!base64Data) {
+                alert('PDF not available');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.href = base64Data;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error downloading PDF:', error);
+            alert('Error downloading PDF');
+        }
+    };
+
     // Fetch crosswords and puzzle sets
     useEffect(() => {
         fetchCrosswords();
@@ -236,17 +255,35 @@ const Puzzle = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {filteredPuzzleSets.map((puzzleSet) => (
+                            {filteredPuzzleSets.map((puzzleSet) => {
+                                console.log('Puzzle Set:', puzzleSet.title, 'Has thumbnail:', !!puzzleSet.thumbnailUrl);
+                                return (
                                 <div key={puzzleSet._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(251,146,60,0.3)] transition-all duration-300">
                                     {/* Circle Image */}
                                     <div className="flex justify-center mb-6">
-                                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-orange-400 shadow-lg">
-                                            {puzzleSet.thumbnailUrl ? (
-                                                <img
-                                                    src={puzzleSet.thumbnailUrl}
-                                                    alt={puzzleSet.title}
-                                                    className="w-full h-full object-cover"
-                                                />
+                                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-orange-400 shadow-lg bg-gray-800">
+                                            {puzzleSet.thumbnailUrl && puzzleSet.thumbnailUrl !== '' && puzzleSet.thumbnailUrl !== 'null' ? (
+                                                <>
+                                                    <img
+                                                        src={puzzleSet.thumbnailUrl}
+                                                        alt={puzzleSet.title || 'Puzzle'}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            console.error('Image load error for:', puzzleSet.title);
+                                                            e.target.style.display = 'none';
+                                                            if (e.target.nextElementSibling) {
+                                                                e.target.nextElementSibling.style.display = 'flex';
+                                                            }
+                                                        }}
+                                                        onLoad={() => console.log('Image loaded successfully for:', puzzleSet.title)}
+                                                    />
+                                                    <div 
+                                                        className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center"
+                                                        style={{ display: 'none' }}
+                                                    >
+                                                        <i className="fas fa-puzzle-piece text-white text-4xl"></i>
+                                                    </div>
+                                                </>
                                             ) : (
                                                 <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
                                                     <i className="fas fa-puzzle-piece text-white text-4xl"></i>
@@ -270,24 +307,22 @@ const Puzzle = () => {
                                     {/* Buttons Row */}
                                     <div className="grid grid-cols-2 gap-3 mb-4">
                                         {/* Set PDF Button */}
-                                        <a
-                                            href={puzzleSet.setPdfUrl}
-                                            download={`${puzzleSet.setNumber}.pdf`}
+                                        <button
+                                            onClick={() => handleDownloadPDF(puzzleSet.setPdfUrl, `${puzzleSet.setNumber}.pdf`)}
                                             className="py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg text-center font-bold hover:from-cyan-600 hover:to-blue-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
                                         >
                                             <i className="fas fa-download"></i>
                                             {puzzleSet.setNumber}
-                                        </a>
+                                        </button>
 
                                         {/* Answer PDF Button */}
-                                        <a
-                                            href={puzzleSet.answerPdfUrl}
-                                            download={`${puzzleSet.setNumber}-Answers.pdf`}
+                                        <button
+                                            onClick={() => handleDownloadPDF(puzzleSet.answerPdfUrl, `${puzzleSet.setNumber}-Answers.pdf`)}
                                             className="py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-center font-bold hover:from-green-600 hover:to-emerald-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
                                         >
                                             <i className="fas fa-check-circle"></i>
                                             Ans
-                                        </a>
+                                        </button>
                                     </div>
 
                                     {/* Tags */}
@@ -315,7 +350,7 @@ const Puzzle = () => {
                                         </span>
                                     </div>
                                 </div>
-                            ))}
+                            )})}
                         </div>
                     )}
                 </div>

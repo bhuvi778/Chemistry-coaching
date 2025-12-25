@@ -125,7 +125,7 @@ const ManageCrosswords = () => {
 
             try {
                 const base64 = await convertToBase64(file);
-                setFormData({ ...formData, thumbnailUrl: base64 });
+                setFormData(prevData => ({ ...prevData, thumbnailUrl: base64 }));
                 setThumbnailFileName(file.name);
             } catch (error) {
                 console.error('Error converting thumbnail:', error);
@@ -217,14 +217,14 @@ const ManageCrosswords = () => {
                         type="text"
                         placeholder="Title (e.g., JEE - Organic Chemistry Crossword)"
                         value={formData.title}
-                        onChange={e => setFormData({ ...formData, title: e.target.value })}
+                        onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
                         className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                         required
                     />
                     <textarea
                         placeholder="Description"
                         value={formData.description}
-                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                        onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
                         className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full h-24"
                         required
                     />
@@ -234,7 +234,7 @@ const ManageCrosswords = () => {
                             type="text"
                             placeholder="Chapter (e.g., Organic Chemistry)"
                             value={formData.chapter}
-                            onChange={e => setFormData({ ...formData, chapter: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, chapter: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                             required
                         />
@@ -242,7 +242,7 @@ const ManageCrosswords = () => {
                             type="text"
                             placeholder="Topic (Optional)"
                             value={formData.topic}
-                            onChange={e => setFormData({ ...formData, topic: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, topic: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                         />
                     </div>
@@ -256,7 +256,7 @@ const ManageCrosswords = () => {
                             type="url"
                             placeholder="https://crosswordlabs.com/embed/your-crossword-name-1234"
                             value={formData.crosswordUrl}
-                            onChange={e => setFormData({ ...formData, crosswordUrl: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, crosswordUrl: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                             required
                         />
@@ -269,7 +269,7 @@ const ManageCrosswords = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <select
                             value={formData.examType}
-                            onChange={e => setFormData({ ...formData, examType: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, examType: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                         >
                             <option value="All">All Exams</option>
@@ -280,7 +280,7 @@ const ManageCrosswords = () => {
 
                         <select
                             value={formData.difficulty}
-                            onChange={e => setFormData({ ...formData, difficulty: e.target.value })}
+                            onChange={e => setFormData(prev => ({ ...prev, difficulty: e.target.value }))}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                         >
                             <option value="Easy">Easy</option>

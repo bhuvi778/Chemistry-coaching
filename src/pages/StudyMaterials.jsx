@@ -194,16 +194,36 @@ const StudyMaterials = () => {
                       Size: {material.fileSize}
                     </p>
                   )}
-                  <a
-                    href={material.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download
+                  <button
+                    onClick={() => {
+                      if (material.fileUrl) {
+                        try {
+                          // Handle base64 data URLs
+                          const link = document.createElement('a');
+                          link.href = material.fileUrl;
+                          
+                          // Generate filename with proper extension
+                          const extension = material.fileType === 'PDF' ? 'pdf' : 
+                                          material.fileType === 'DOC' || material.fileType === 'DOCX' ? 'docx' :
+                                          material.fileType === 'PPT' || material.fileType === 'PPTX' ? 'pptx' :
+                                          material.fileType === 'ZIP' ? 'zip' : 'pdf';
+                          
+                          link.download = `${material.title.replace(/[^a-z0-9]/gi, '_')}.${extension}`;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        } catch (error) {
+                          console.error('Download error:', error);
+                          // Fallback: open in new tab
+                          window.open(material.fileUrl, '_blank');
+                        }
+                      }
+                    }}
                     className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:from-green-600 hover:to-blue-600 transition font-semibold"
                   >
                     <i className="fas fa-download"></i>
                     Download Free
-                  </a>
+                  </button>
                 </div>
               </div>
             ))}

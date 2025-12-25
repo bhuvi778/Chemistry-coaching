@@ -71,7 +71,7 @@ const AdminDashboard = () => {
               onClick={() => setActiveTab('puzzles')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'puzzles' ? 'bg-yellow-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
-              <i className="fas fa-puzzle-piece mr-2"></i> Manage Puzzles
+              <i className="fas fa-puzzle-piece mr-2"></i> Manage Search Word
             </button>
             <button
               onClick={() => setActiveTab('crosswords')}

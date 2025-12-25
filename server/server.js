@@ -798,7 +798,6 @@ app.post('/api/doubts/:id/reaction', async (req, res) => {
 app.get('/api/crosswords', cacheMiddleware('crosswords', 30 * 60 * 1000), async (req, res) => {
   try {
     const crosswords = await Crossword.find()
-      .select('title description chapter topic examType difficulty createdAt')
       .sort({ createdAt: -1 })
       .limit(100)
       .lean()
@@ -866,7 +865,7 @@ app.delete('/api/crosswords/:id', async (req, res) => {
 app.get('/api/puzzle-sets', cacheMiddleware('puzzle-sets', 30 * 60 * 1000), async (req, res) => {
   try {
     const puzzleSets = await PuzzleSet.find()
-      .select('setNumber title description chapter topic examType difficulty createdAt')
+      .select('setNumber title description chapter topic examType difficulty thumbnailUrl setPdfUrl answerPdfUrl createdAt')
       .sort({ setNumber: 1 })
       .limit(100)
       .lean()
@@ -879,14 +878,23 @@ app.get('/api/puzzle-sets', cacheMiddleware('puzzle-sets', 30 * 60 * 1000), asyn
 
 app.post('/api/puzzle-sets', async (req, res) => {
   try {
+    console.log('=== PUZZLE SET POST REQUEST ===');
+    console.log('Request body keys:', Object.keys(req.body));
+    console.log('Has thumbnailUrl:', !!req.body.thumbnailUrl);
+    console.log('thumbnailUrl length:', req.body.thumbnailUrl ? req.body.thumbnailUrl.length : 0);
+    console.log('thumbnailUrl preview:', req.body.thumbnailUrl ? req.body.thumbnailUrl.substring(0, 50) + '...' : 'EMPTY');
+    
     const puzzleSet = new PuzzleSet(req.body);
     await puzzleSet.save();
+    
+    console.log('Saved puzzle set with thumbnail:', !!puzzleSet.thumbnailUrl);
     
     // Clear cache so new puzzle shows immediately
     clearCache('puzzle-sets');
     
     res.json(puzzleSet);
   } catch (error) {
+    console.error('Error saving puzzle set:', error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -911,6 +919,7 @@ app.put('/api/puzzle-sets/:id', async (req, res) => {
 app.delete('/api/puzzle-sets/:id', async (req, res) => {
   try {
     await PuzzleSet.findByIdAndDelete(req.params.id);
+    clearCache('puzzle-sets');
     res.json({ message: 'Puzzle set deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });

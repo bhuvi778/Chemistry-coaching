@@ -231,17 +231,9 @@ const Lectures = () => {
                       {video.description}
                     </p>
 
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2 text-cyan-400 text-xs">
-                        <i className="fas fa-chalkboard-teacher"></i>
-                        <span>{video.instructor}</span>
-                      </div>
-                      {video.views && (
-                        <div className="text-gray-500 text-xs">
-                          <i className="fas fa-eye mr-1"></i>
-                          {video.views}
-                        </div>
-                      )}
+                    <div className="flex items-center gap-2 text-cyan-400 text-xs mb-4">
+                      <i className="fas fa-chalkboard-teacher"></i>
+                      <span>{video.instructor}</span>
                     </div>
 
                     {/* Watch Now Button */}

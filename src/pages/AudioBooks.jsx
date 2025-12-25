@@ -147,76 +147,93 @@ const AudioBooks = () => {
                   </button>
 
                   {/* Chapters List - Expandable */}
-                  {expandedBooks[book._id] && book.chapters && Array.isArray(book.chapters) && book.chapters.length > 0 && (
+                  {expandedBooks[book._id] && (
                     <div className="border-t border-gray-700 bg-gray-900/30 p-4">
-                      <div className="space-y-3">
-                        {book.chapters.map((chapter, chapterIndex) => {
-                          const chapterId = `${book._id}-${chapterIndex}`;
-                          return (
-                            <div key={chapterIndex} className="bg-gray-800/50 rounded-lg overflow-hidden">
-                              {/* Chapter Header - Clickable */}
-                              <button
-                                onClick={() => toggleChapter(chapterId)}
-                                className="w-full p-4 flex items-center justify-between hover:bg-gray-700/50 transition"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <i className={`fas fa-chevron-${expandedChapters[chapterId] ? 'down' : 'right'} text-cyan-400`}></i>
-                                  <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-xs font-bold mr-2">
-                                    Ch {chapterIndex + 1}
+                      {book.chapters && Array.isArray(book.chapters) && book.chapters.length > 0 ? (
+                        <div className="space-y-3">
+                          {book.chapters.map((chapter, chapterIndex) => {
+                            const chapterId = `${book._id}-${chapterIndex}`;
+                            return (
+                              <div key={chapterIndex} className="bg-gray-800/50 rounded-lg overflow-hidden">
+                                {/* Chapter Header - Clickable */}
+                                <button
+                                  onClick={() => toggleChapter(chapterId)}
+                                  className="w-full p-4 flex items-center justify-between hover:bg-gray-700/50 transition"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <i className={`fas fa-chevron-${expandedChapters[chapterId] ? 'down' : 'right'} text-cyan-400`}></i>
+                                    <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-xs font-bold mr-2">
+                                      Ch {chapterIndex + 1}
+                                    </span>
+                                    <span className="text-white font-semibold">{chapter.title}</span>
+                                  </div>
+                                  <span className="text-xs text-gray-400">
+                                    {chapter.topics?.length || 0} topics
                                   </span>
-                                  <span className="text-white font-semibold">{chapter.title}</span>
-                                </div>
-                                <span className="text-xs text-gray-400">
-                                  {chapter.topics?.length || 0} topics
-                                </span>
-                              </button>
+                                </button>
 
-                              {/* Topics List with Audio Players */}
-                              {expandedChapters[chapterId] && chapter.topics && Array.isArray(chapter.topics) && chapter.topics.length > 0 && (
-                                <div className="bg-gray-900/50 p-4 space-y-3">
-                                  {chapter.topics.map((topic, topicIndex) => (
-                                    <div key={topicIndex} className="bg-gray-800 rounded-lg p-4">
-                                      <div className="flex items-start gap-3 mb-3">
-                                        <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs font-bold mt-1">
-                                          {topicIndex + 1}
-                                        </span>
-                                        <i className="fas fa-headphones text-purple-400 mt-1"></i>
-                                        <div className="flex-1">
-                                          <h5 className="text-white font-semibold mb-1">{topic.title}</h5>
-                                          {topic.description && (
-                                            <p className="text-gray-400 text-sm mb-2">{topic.description}</p>
-                                          )}
-                                          {topic.duration && (
-                                            <span className="text-xs text-gray-500">
-                                              <i className="fas fa-clock mr-1"></i>
-                                              {topic.duration}
-                                            </span>
-                                          )}
-                                        </div>
+                                {/* Topics List with Audio Players */}
+                                {expandedChapters[chapterId] && (
+                                  <div className="bg-gray-900/50 p-4">
+                                    {chapter.topics && Array.isArray(chapter.topics) && chapter.topics.length > 0 ? (
+                                      <div className="space-y-3">
+                                        {chapter.topics.map((topic, topicIndex) => (
+                                          <div key={topicIndex} className="bg-gray-800 rounded-lg p-4">
+                                            <div className="flex items-start gap-3 mb-3">
+                                              <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs font-bold mt-1">
+                                                {topicIndex + 1}
+                                              </span>
+                                              <i className="fas fa-headphones text-purple-400 mt-1"></i>
+                                              <div className="flex-1">
+                                                <h5 className="text-white font-semibold mb-1">{topic.title}</h5>
+                                                {topic.description && (
+                                                  <p className="text-gray-400 text-sm mb-2">{topic.description}</p>
+                                                )}
+                                                {topic.duration && (
+                                                  <span className="text-xs text-gray-500">
+                                                    <i className="fas fa-clock mr-1"></i>
+                                                    {topic.duration}
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
+                                            {/* Audio Player */}
+                                            {topic.audioUrl && (
+                                              <audio
+                                                controls
+                                                controlsList="nodownload"
+                                                className="w-full mt-2"
+                                                style={{
+                                                  height: '40px',
+                                                  borderRadius: '8px'
+                                                }}
+                                              >
+                                                <source src={topic.audioUrl} type="audio/mpeg" />
+                                                Your browser does not support the audio element.
+                                              </audio>
+                                            )}
+                                          </div>
+                                        ))}
                                       </div>
-                                      {/* Audio Player */}
-                                      {topic.audioUrl && (
-                                        <audio
-                                          controls
-                                          controlsList="nodownload"
-                                          className="w-full mt-2"
-                                          style={{
-                                            height: '40px',
-                                            borderRadius: '8px'
-                                          }}
-                                        >
-                                          <source src={topic.audioUrl} type="audio/mpeg" />
-                                          Your browser does not support the audio element.
-                                        </audio>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
+                                    ) : (
+                                      <div className="text-center py-6 text-gray-400">
+                                        <i className="fas fa-music text-3xl mb-2 opacity-50"></i>
+                                        <p>No topics available in this chapter</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-gray-400">
+                          <i className="fas fa-book-open text-4xl mb-3 opacity-50"></i>
+                          <p className="text-lg">No chapters available yet</p>
+                          <p className="text-sm mt-1">Please add chapters with topics from the admin panel</p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
