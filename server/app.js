@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/database');
 const { cacheMiddleware, clearCache } = require('./middleware/cache');
 
@@ -62,6 +65,40 @@ app.use(cors({
 app.use(express.json({ limit: '200mb' }));
 app.use(express.urlencoded({ limit: '200mb', extended: true, parameterLimit: 100000 }));
 app.use(compression());
+
+// Configure Multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const cleanName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
+    cb(null, Date.now() + '-' + cleanName);
+  }
+});
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 500 * 1024 * 1024 }
+});
+
+// Serve uploaded files
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Upload Endpoint
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  console.log('📤 Upload request received');
+  if (!req.file) {
+    console.log('❌ No file in request');
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+  const fileUrl = `/api/uploads/${req.file.filename}`;
+  console.log('✅ File uploaded:', req.file.filename, 'Size:', (req.file.size / (1024*1024)).toFixed(2), 'MB');
+  res.json({ fileUrl: fileUrl });
+});
 
 // Connect to database
 connectDB();
