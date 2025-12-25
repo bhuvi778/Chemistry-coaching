@@ -19,6 +19,7 @@ const magazineSchema = new mongoose.Schema({
     unique: true,
     index: true
   },
+  fileSize: String,
   topics: [String],
   isActive: {
     type: Boolean,

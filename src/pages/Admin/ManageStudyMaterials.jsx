@@ -297,6 +297,13 @@ const ManageStudyMaterials = () => {
     }
 
     console.log('📝 Submitting study material:', formData);
+    
+    // Show loading state for large files
+    const isLargeFile = formData.fileSize && parseFloat(formData.fileSize) > 30;
+    if (isLargeFile) {
+      setUploadProgress('Saving large file... This may take a moment');
+      setIsUploading(true);
+    }
 
     try {
       if (isEditing) {
@@ -315,6 +322,9 @@ const ManageStudyMaterials = () => {
     } catch (error) {
       console.error('❌ Error submitting study material:', error);
       alert('Error submitting study material: ' + error.message);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress('');
     }
   };
 
@@ -405,14 +415,23 @@ const ManageStudyMaterials = () => {
           <div>
             <label className="block text-gray-400 mb-2 font-semibold">
               <i className="fas fa-image mr-2 text-blue-400"></i>
-              Thumbnail Image (Optional)
+              Thumbnail Image
+              <span className="ml-2 text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                Recommended
+              </span>
             </label>
+            <p className="text-xs text-gray-500 mb-3">
+              <i className="fas fa-info-circle mr-1"></i>
+              Upload a thumbnail image to display in the materials list. This helps students identify the material quickly.
+            </p>
             <div
               onDragOver={handleThumbnailDragOver}
               onDragLeave={handleThumbnailDragLeave}
               onDrop={handleThumbnailDrop}
               className={`border-2 border-dashed rounded-lg p-6 text-center transition-all ${isDraggingThumbnail
                 ? 'border-blue-400 bg-blue-500/10'
+                : formData.thumbnailUrl 
+                ? 'border-green-500 bg-green-500/10'
                 : 'border-gray-700 hover:border-blue-500'
                 }`}
             >
@@ -424,9 +443,9 @@ const ManageStudyMaterials = () => {
                 id="thumbnailInput"
               />
               <label htmlFor="thumbnailInput" className="cursor-pointer">
-                <i className="fas fa-image text-4xl text-blue-400 mb-3 block"></i>
+                <i className={`fas fa-image text-4xl ${formData.thumbnailUrl ? 'text-green-400' : 'text-blue-400'} mb-3 block`}></i>
                 <p className="text-white mb-2">
-                  {thumbnailFileName || 'Click to upload or drag and drop'}
+                  {thumbnailFileName || 'Click to upload or drag and drop thumbnail'}
                 </p>
                 <p className="text-gray-500 text-sm">
                   PNG, JPG, WEBP (Max 5MB)

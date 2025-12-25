@@ -217,7 +217,7 @@ const ManageDoubts = () => {
                             <label className="block text-white font-semibold mb-2">
                                 Your Answer
                             </label>
-                            <div className="bg-white rounded-lg">
+                            <div className="bg-white rounded-lg overflow-hidden">
                                 <ReactQuill
                                     theme="snow"
                                     value={answerText}
@@ -225,6 +225,7 @@ const ManageDoubts = () => {
                                     modules={quillModules}
                                     formats={quillFormats}
                                     placeholder="Type your answer here... Use the toolbar to format text, add lists, links, etc."
+                                    className="quill-editor-black-text"
                                     style={{ height: '300px', marginBottom: '50px' }}
                                 />
                             </div>

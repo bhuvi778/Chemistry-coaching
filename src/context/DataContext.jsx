@@ -365,11 +365,18 @@ export const DataProvider = ({ children }) => {
   // Study Materials CRUD
   const addStudyMaterial = async (material) => {
     try {
+      // Add timeout for large files
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+      
       const res = await fetch(`${API_URL}/study-materials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(material)
+        body: JSON.stringify(material),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       
       console.log('Upload response status:', res.status);
       const responseData = await res.json();
@@ -385,6 +392,10 @@ export const DataProvider = ({ children }) => {
       
       return responseData;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        console.error("Request timed out - file might be too large");
+        throw new Error("Upload timed out. Please try with a smaller file or check your connection.");
+      }
       console.error("Error adding study material:", error);
       throw error;
     }

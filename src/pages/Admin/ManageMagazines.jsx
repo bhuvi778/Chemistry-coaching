@@ -32,7 +32,8 @@ const ManageMagazines = () => {
     setCurrentMagazine(magazine);
     setFormData({
       ...magazine,
-      topics: magazine.topics ? magazine.topics.join(', ') : ''
+      topics: magazine.topics ? magazine.topics.join(', ') : '',
+      fileSize: magazine.fileSize || '' // Preserve file size if it exists
     });
     setPdfFileName(magazine.pdfUrl ? 'Current PDF file' : '');
     setCoverFileName(magazine.coverImageUrl ? 'Current cover image' : '');

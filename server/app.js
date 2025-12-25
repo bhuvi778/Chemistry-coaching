@@ -137,6 +137,98 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Send WhatsApp message using BotBiz template API
+app.post('/api/send-whatsapp', async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields',
+        details: 'Phone number is required'
+      });
+    }
+
+    console.log('=== BotBiz WhatsApp Template API ===');
+    console.log('Phone:', phone);
+
+    // BotBiz API Configuration
+    const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
+    const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || '884991348021443';
+    const TEMPLATE_ID = '286421';
+
+    console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
+    console.log('Phone Number ID:', PHONE_NUMBER_ID);
+    console.log('Template ID:', TEMPLATE_ID);
+
+    if (!PHONE_NUMBER_ID) {
+      console.error('⚠ PHONE_NUMBER_ID not configured');
+      return res.status(500).json({
+        success: false,
+        error: 'WhatsApp configuration incomplete',
+        details: 'PHONE_NUMBER_ID is required',
+        suggestion: 'Add BOTBIZ_PHONE_NUMBER_ID to environment variables'
+      });
+    }
+
+    const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
+    const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
+    const formData = new URLSearchParams();
+    formData.append('apiToken', BOTBIZ_API_KEY);
+    formData.append('phone_number', phone);
+    formData.append('phone_number_id', PHONE_NUMBER_ID);
+    formData.append('template_id', TEMPLATE_ID);
+
+    console.log('Sending request to BotBiz API...');
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString()
+    });
+
+    const responseText = await response.text();
+    console.log('=== BotBiz API Response ===');
+    console.log('Status:', response.status);
+    console.log('Response:', responseText);
+    console.log('========================');
+
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      console.error('Could not parse response as JSON');
+      responseData = { raw: responseText };
+    }
+
+    if (response.ok && (responseData.success || responseData.status === 'success')) {
+      return res.json({
+        success: true,
+        message: 'WhatsApp message sent successfully',
+        details: responseData
+      });
+    } else {
+      return res.status(response.status || 500).json({
+        success: false,
+        error: 'Failed to send WhatsApp message',
+        details: responseData.message || responseData.error || responseText,
+        fullResponse: responseData
+      });
+    }
+  } catch (error) {
+    console.error('Error sending WhatsApp:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error',
+      details: error.message
+    });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {

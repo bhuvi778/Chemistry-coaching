@@ -5,6 +5,11 @@ const CACHE_TTL = 60 * 60 * 1000; // 1 hour for public data
 // Cache middleware - DISABLED for videos to prevent caching issues
 const cacheMiddleware = (key, ttl = CACHE_TTL) => {
   return (req, res, next) => {
+    // CRITICAL FIX: Only cache GET requests, not POST/PUT/DELETE
+    if (req.method !== 'GET') {
+      return next();
+    }
+    
     // Skip caching for videos endpoint
     if (key === 'videos') {
       res.set('Cache-Control', 'no-cache, no-store, must-revalidate');

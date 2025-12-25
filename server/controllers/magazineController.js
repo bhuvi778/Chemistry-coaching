@@ -6,7 +6,6 @@ const setClearCacheFunction = (fn) => { clearCache = fn; };
 const getMagazines = async (req, res) => {
   try {
     const magazines = await Magazine.find()
-      .select('title description coverImage year month topics isActive')
       .sort({ year: -1, month: -1 })
       .lean()
       .exec();

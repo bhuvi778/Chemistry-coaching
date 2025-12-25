@@ -19,7 +19,7 @@ const doubtSchema = new mongoose.Schema({
     },
     studentPhone: {
         type: String,
-        required: true
+        required: false
     },
     status: {
         type: String,

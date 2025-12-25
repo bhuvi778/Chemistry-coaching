@@ -598,14 +598,36 @@ app.get('/api/study-materials/:id', cacheMiddleware('study-material'), async (re
 
 app.post('/api/study-materials', async (req, res) => {
   try {
+    console.log('[DEBUG] ========== NEW STUDY MATERIAL REQUEST ==========');
+    console.log('[DEBUG] Received request body:', JSON.stringify(req.body, null, 2));
+    console.log('[DEBUG] Mongoose connection state:', mongoose.connection.readyState);
+    console.log('[DEBUG] Connection states: 0=disconnected, 1=connected, 2=connecting, 3=disconnecting');
+    
     const material = new StudyMaterial(req.body);
-    await material.save();
+    console.log('[DEBUG] Material object created:', JSON.stringify(material.toObject(), null, 2));
+    
+    // Check validation
+    const validationError = material.validateSync();
+    console.log('[DEBUG] Validation errors:', validationError);
+    
+    console.log('[DEBUG] Attempting to save to database...');
+    const savedMaterial = await material.save();
+    console.log('[DEBUG] ✅ Save completed! Saved material ID:', savedMaterial._id);
+    console.log('[DEBUG] Saved material:', JSON.stringify(savedMaterial.toObject(), null, 2));
 
     // Clear cache so new material shows immediately
     clearCache('study-materials');
+    console.log('[DEBUG] Cache cleared');
 
-    res.json(material);
+    // Verify it was actually saved
+    const verifyCount = await StudyMaterial.countDocuments();
+    console.log('[DEBUG] Total materials in database after save:', verifyCount);
+
+    res.json(savedMaterial);
+    console.log('[DEBUG] ========== REQUEST COMPLETED ==========');
   } catch (error) {
+    console.error('[ERROR] Failed to save material:', error.message);
+    console.error('[ERROR] Error stack:', error.stack);
     res.status(500).json({ message: error.message });
   }
 });
@@ -1238,6 +1260,98 @@ app.post('/api/send-app-link', async (req, res) => {
   } catch (error) {
     console.error('Error sending app link:', error);
     res.status(500).json({ message: 'Failed to send app link. Please try again.' });
+  }
+});
+
+// Send WhatsApp message using BotBiz template API
+app.post('/api/send-whatsapp', async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields',
+        details: 'Phone number is required'
+      });
+    }
+
+    console.log('=== BotBiz WhatsApp Template API ===');
+    console.log('Phone:', phone);
+
+    // BotBiz API Configuration
+    const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
+    const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || '884991348021443';
+    const TEMPLATE_ID = '286421';
+
+    console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
+    console.log('Phone Number ID:', PHONE_NUMBER_ID);
+    console.log('Template ID:', TEMPLATE_ID);
+
+    if (!PHONE_NUMBER_ID) {
+      console.error('⚠ PHONE_NUMBER_ID not configured');
+      return res.status(500).json({
+        success: false,
+        error: 'WhatsApp configuration incomplete',
+        details: 'PHONE_NUMBER_ID is required',
+        suggestion: 'Add BOTBIZ_PHONE_NUMBER_ID to environment variables'
+      });
+    }
+
+    const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
+    const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
+    const formData = new URLSearchParams();
+    formData.append('apiToken', BOTBIZ_API_KEY);
+    formData.append('phone', phone);
+    formData.append('phoneNumberId', PHONE_NUMBER_ID);
+    formData.append('templateId', TEMPLATE_ID);
+
+    console.log('Sending request to BotBiz API...');
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString()
+    });
+
+    const responseText = await response.text();
+    console.log('=== BotBiz API Response ===');
+    console.log('Status:', response.status);
+    console.log('Response:', responseText);
+    console.log('========================');
+
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      console.error('Could not parse response as JSON');
+      responseData = { raw: responseText };
+    }
+
+    if (response.ok && (responseData.success || responseData.status === 'success')) {
+      return res.json({
+        success: true,
+        message: 'WhatsApp message sent successfully',
+        details: responseData
+      });
+    } else {
+      return res.status(response.status || 500).json({
+        success: false,
+        error: 'Failed to send WhatsApp message',
+        details: responseData.message || responseData.error || responseText,
+        fullResponse: responseData
+      });
+    }
+  } catch (error) {
+    console.error('Error sending WhatsApp:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error',
+      details: error.message
+    });
   }
 });
 

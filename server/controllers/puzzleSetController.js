@@ -6,7 +6,6 @@ const setClearCacheFunction = (fn) => { clearCache = fn; };
 const getPuzzleSets = async (req, res) => {
   try {
     const puzzleSets = await PuzzleSet.find()
-      .select('title description chapter category puzzles isActive')
       .sort({ createdAt: -1 })
       .lean()
       .exec();

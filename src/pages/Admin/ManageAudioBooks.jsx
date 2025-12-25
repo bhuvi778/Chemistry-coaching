@@ -48,15 +48,29 @@ const ManageAudioBooks = () => {
   const handleEdit = async (audioBook) => {
     setIsEditing(true);
     setCurrentAudioBook(audioBook);
-    setFormData(audioBook);
+    const safeAudioBook = {
+      ...audioBook,
+      chapters: Array.isArray(audioBook.chapters) ? audioBook.chapters.map(ch => ({
+        ...ch,
+        topics: Array.isArray(ch.topics) ? ch.topics : []
+      })) : []
+    };
+    setFormData(safeAudioBook);
     setThumbnailFileName(audioBook.thumbnailUrl ? 'Current thumbnail' : '');
 
     try {
       const res = await fetch(`/api/audiobooks/${audioBook._id}`);
       if (res.ok) {
         const fullData = await res.json();
-        setFormData(fullData);
-        setCurrentAudioBook(fullData);
+        const safeFullData = {
+          ...fullData,
+          chapters: Array.isArray(fullData.chapters) ? fullData.chapters.map(ch => ({
+            ...ch,
+            topics: Array.isArray(ch.topics) ? ch.topics : []
+          })) : []
+        };
+        setFormData(safeFullData);
+        setCurrentAudioBook(safeFullData);
       }
     } catch (error) {
       console.error('Error fetching full audiobook details:', error);
@@ -216,24 +230,26 @@ const ManageAudioBooks = () => {
   };
 
   const handleEditTopic = (index) => {
-    setCurrentTopic(currentChapter.topics[index]);
-    setEditingTopicIndex(index);
-    setAudioFileName('Current audio file');
+    if (Array.isArray(currentChapter.topics) && currentChapter.topics[index]) {
+      setCurrentTopic(currentChapter.topics[index]);
+      setEditingTopicIndex(index);
+      setAudioFileName('Current audio file');
+    }
   };
 
   const handleDeleteTopic = (index) => {
-    const updatedTopics = currentChapter.topics.filter((_, i) => i !== index);
+    const updatedTopics = Array.isArray(currentChapter.topics) ? currentChapter.topics.filter((_, i) => i !== index) : [];
     setCurrentChapter({ ...currentChapter, topics: updatedTopics });
   };
 
   // Chapter management functions
   const handleAddChapter = () => {
-    if (!currentChapter.title || currentChapter.topics.length === 0) {
+    if (!currentChapter.title || !Array.isArray(currentChapter.topics) || currentChapter.topics.length === 0) {
       alert('Please provide chapter title and at least one topic');
       return;
     }
 
-    const updatedChapters = [...formData.chapters];
+    const updatedChapters = Array.isArray(formData.chapters) ? [...formData.chapters] : [];
     if (editingChapterIndex !== null) {
       updatedChapters[editingChapterIndex] = { ...currentChapter };
       setEditingChapterIndex(null);
@@ -248,12 +264,19 @@ const ManageAudioBooks = () => {
   };
 
   const handleEditChapter = (index) => {
-    setCurrentChapter(formData.chapters[index]);
-    setEditingChapterIndex(index);
+    const chapter = formData.chapters && formData.chapters[index];
+    if (chapter) {
+      const safeChapter = {
+        ...chapter,
+        topics: Array.isArray(chapter.topics) ? chapter.topics : []
+      };
+      setCurrentChapter(safeChapter);
+      setEditingChapterIndex(index);
+    }
   };
 
   const handleDeleteChapter = (index) => {
-    const updatedChapters = formData.chapters.filter((_, i) => i !== index);
+    const updatedChapters = Array.isArray(formData.chapters) ? formData.chapters.filter((_, i) => i !== index) : [];
     setFormData({ ...formData, chapters: updatedChapters });
   };
 
@@ -267,7 +290,7 @@ const ManageAudioBooks = () => {
       return;
     }
 
-    if (formData.chapters.length === 0) {
+    if (!Array.isArray(formData.chapters) || formData.chapters.length === 0) {
       alert('Please add at least one chapter with topics');
       return;
     }

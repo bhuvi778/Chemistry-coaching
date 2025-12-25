@@ -99,13 +99,27 @@ const Magazines = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredMagazines.map((magazine) => (
               <div key={magazine._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(236,72,153,0.3)] transition-all duration-300">
-                {magazine.coverImageUrl && (
-                  <div className="w-full aspect-[0.707/1] bg-gray-900">
+                {magazine.coverImageUrl && magazine.coverImageUrl.trim() !== '' ? (
+                  <div className="w-full aspect-[0.707/1] bg-gray-900 relative">
                     <img
                       src={magazine.coverImageUrl}
                       alt={magazine.title}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      onError={(e) => {
+                        console.error('Image failed to load for:', magazine.title);
+                        e.target.style.display = 'none';
+                        const fallback = document.createElement('div');
+                        fallback.className = 'w-full h-full flex flex-col items-center justify-center text-center p-4 bg-gray-800';
+                        fallback.innerHTML = '<i class="fas fa-book-open text-6xl text-gray-600 mb-3"></i><p class="text-gray-500 text-sm">Cover image not available</p>';
+                        e.target.parentElement.appendChild(fallback);
+                      }}
                     />
+                  </div>
+                ) : (
+                  <div className="w-full aspect-[0.707/1] bg-gray-900 flex flex-col items-center justify-center">
+                    <i className="fas fa-book-open text-6xl text-gray-700 mb-3"></i>
+                    <p className="text-gray-600 text-sm">No cover image</p>
                   </div>
                 )}
                 <div className="p-6">
@@ -137,16 +151,27 @@ const Magazines = () => {
                     </div>
                   )}
 
-                  <a
-                    href={magazine.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download
+                  <button
+                    onClick={() => {
+                      // Handle both base64 and URL formats
+                      if (magazine.pdfUrl.startsWith('data:')) {
+                        // Base64 PDF - create a blob and download
+                        const link = document.createElement('a');
+                        link.href = magazine.pdfUrl;
+                        link.download = `${magazine.title.replace(/[^a-z0-9]/gi, '_')}_${magazine.month}_${magazine.year}.pdf`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      } else {
+                        // Regular URL - open in new tab
+                        window.open(magazine.pdfUrl, '_blank');
+                      }
+                    }}
                     className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg hover:from-pink-600 hover:to-orange-600 transition font-semibold"
                   >
                     <i className="fas fa-download"></i>
                     Download Magazine
-                  </a>
+                  </button>
                 </div>
               </div>
             ))}

@@ -6,7 +6,6 @@ const setClearCacheFunction = (fn) => { clearCache = fn; };
 const getCrosswords = async (req, res) => {
   try {
     const crosswords = await Crossword.find()
-      .select('title description chapter category difficulty grid isActive')
       .sort({ createdAt: -1 })
       .lean()
       .exec();

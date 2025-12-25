@@ -38,10 +38,7 @@ const Puzzle = () => {
 
     const fetchCrosswords = async () => {
         try {
-            // Normalize API URL - remove /api if it's already included
-            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
-            const response = await fetch(`${API_URL}/api/crosswords`);
+            const response = await fetch('/api/crosswords');
             const data = await response.json();
             // Ensure data is always an array
             setCrosswords(Array.isArray(data) ? data : []);
@@ -55,10 +52,7 @@ const Puzzle = () => {
 
     const fetchPuzzleSets = async () => {
         try {
-            // Normalize API URL - remove /api if it's already included
-            let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            API_URL = API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
-            const response = await fetch(`${API_URL}/api/puzzle-sets`);
+            const response = await fetch('/api/puzzle-sets');
             const data = await response.json();
             // Ensure data is always an array
             setPuzzleSets(Array.isArray(data) ? data : []);
@@ -74,6 +68,7 @@ const Puzzle = () => {
 
     // Filter crosswords
     const filteredCrosswords = safeCrosswords.filter(crossword => {
+        if (!crossword) return false;
         const examMatch = selectedExam === 'all' || crossword.examType === selectedExam;
         const chapterMatch = selectedChapter === 'all' || crossword.chapter === selectedChapter;
         return examMatch && chapterMatch;
@@ -81,13 +76,17 @@ const Puzzle = () => {
 
     // Filter puzzle sets
     const filteredPuzzleSets = safePuzzleSets.filter(puzzleSet => {
+        if (!puzzleSet) return false;
         const examMatch = selectedExam === 'all' || puzzleSet.examType === selectedExam;
         const chapterMatch = selectedChapter === 'all' || puzzleSet.chapter === selectedChapter;
         return examMatch && chapterMatch;
     });
 
     // Get unique chapters from both
-    const allChapters = [...new Set([...safeCrosswords.map(c => c.chapter), ...safePuzzleSets.map(p => p.chapter)])];
+    const allChapters = [...new Set([
+        ...safeCrosswords.filter(c => c && c.chapter).map(c => c.chapter), 
+        ...safePuzzleSets.filter(p => p && p.chapter).map(p => p.chapter)
+    ])];
     const chapters = ['all', ...allChapters];
 
     return (

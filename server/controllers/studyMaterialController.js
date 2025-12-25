@@ -1,4 +1,5 @@
 const StudyMaterial = require('../models/StudyMaterial');
+const mongoose = require('mongoose');
 
 let clearCache = () => { };
 const setClearCacheFunction = (fn) => { clearCache = fn; };
@@ -28,12 +29,37 @@ const getStudyMaterialById = async (req, res) => {
 
 const createStudyMaterial = async (req, res) => {
   try {
+    console.log('[Study Material] ========== NEW CREATE REQUEST ==========');
+    console.log('[Study Material] Full request body:', JSON.stringify(req.body, null, 2));
+    console.log('[Study Material] Mongoose connection state:', mongoose.connection.readyState);
+    
     const material = new StudyMaterial(req.body);
-    await material.save();
+    console.log('[Study Material] Material instance created');
+    
+    // Validate before saving
+    const validationError = material.validateSync();
+    if (validationError) {
+      console.error('[Study Material] Validation failed:', validationError);
+      return res.status(400).json({ message: 'Validation failed', error: validationError });
+    }
+    
+    console.log('[Study Material] Validation passed, attempting save...');
+    const savedMaterial = await material.save();
+    console.log('[Study Material] ✅ SAVE SUCCESSFUL! Material ID:', savedMaterial._id);
+    
+    // Verify it was actually saved
+    const verifyCount = await StudyMaterial.countDocuments();
+    console.log('[Study Material] Total materials in DB after save:', verifyCount);
+    
     clearCache('study-materials');
-    res.json(material);
+    console.log('[Study Material] Cache cleared');
+    
+    res.json(savedMaterial);
+    console.log('[Study Material] ========== REQUEST COMPLETED ==========');
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('[Study Material] ❌ ERROR:', error.message);
+    console.error('[Study Material] Error stack:', error.stack);
+    res.status(500).json({ message: error.message, error: error.toString() });
   }
 };
 
