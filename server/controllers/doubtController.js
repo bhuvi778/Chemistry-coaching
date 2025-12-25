@@ -1,4 +1,5 @@
 const Doubt = require('../models/Doubt');
+const Feedback = require('../models/Feedback');
 
 const getPublishedDoubts = async (req, res) => {
   try {
@@ -57,10 +58,24 @@ const deleteDoubt = async (req, res) => {
 
 const addReaction = async (req, res) => {
   try {
-    const { reactionType } = req.body;
+    const { reactionType, name, email, feedback } = req.body;
     const doubt = await Doubt.findById(req.params.id);
     if (!doubt) return res.status(404).json({ message: 'Doubt not found' });
     
+    // Handle feedback submission (like/dislike with user details)
+    if ((reactionType === 'like' || reactionType === 'dislike') && name) {
+      const feedbackEntry = new Feedback({
+        doubtId: req.params.id,
+        reactionType,
+        name,
+        email: email || '',
+        feedback: feedback || ''
+      });
+      await feedbackEntry.save();
+      return res.json({ message: 'Feedback submitted successfully', feedback: feedbackEntry });
+    }
+    
+    // Handle simple reactions (helpful/insightful/thanks)
     if (reactionType === 'helpful') doubt.reactions.helpful += 1;
     else if (reactionType === 'insightful') doubt.reactions.insightful += 1;
     else if (reactionType === 'thanks') doubt.reactions.thanks += 1;

@@ -2,7 +2,10 @@ const Feedback = require('../models/Feedback');
 
 const getFeedback = async (req, res) => {
   try {
-    const feedback = await Feedback.find().sort({ createdAt: -1 }).lean();
+    const feedback = await Feedback.find()
+      .populate('doubtId', 'question')
+      .sort({ submittedAt: -1 })
+      .lean();
     res.json(feedback);
   } catch (error) {
     res.status(500).json({ message: error.message });
