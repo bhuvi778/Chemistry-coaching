@@ -26,6 +26,26 @@ const ManageFeedback = () => {
         }
     };
 
+    const handleDeleteFeedback = async (id) => {
+        if (!confirm('Are you sure you want to delete this feedback?')) return;
+        
+        try {
+            const res = await fetch(`${API_URL}/feedback/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (res.ok) {
+                setFeedbackList(feedbackList.filter(item => item._id !== id));
+                alert('Feedback deleted successfully');
+            } else {
+                alert('Failed to delete feedback');
+            }
+        } catch (error) {
+            console.error('Error deleting feedback:', error);
+            alert('Failed to delete feedback');
+        }
+    };
+
     const safeFeedbackList = Array.isArray(feedbackList) ? feedbackList : [];
 
     const filteredFeedback = safeFeedbackList.filter(item => {
@@ -152,25 +172,34 @@ const ManageFeedback = () => {
                                     </div>
                                     <div>
                                         <h3 className="text-white font-bold">{item.name}</h3>
-                                        <p className="text-gray-400 text-sm">{item.email}</p>
+                                        <p className="text-gray-400 text-sm">{item.email || 'No email provided'}</p>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${item.reactionType === 'like'
-                                            ? 'bg-green-500/20 text-green-400'
-                                            : 'bg-red-500/20 text-red-400'
-                                        }`}>
-                                        {item.reactionType === 'like' ? 'Helpful' : 'Not Helpful'}
-                                    </span>
-                                    <p className="text-gray-500 text-xs mt-1">
-                                        {new Date(item.submittedAt).toLocaleDateString('en-US', {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </p>
+                                <div className="flex items-center gap-3">
+                                    <div className="text-right">
+                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${item.reactionType === 'like'
+                                                ? 'bg-green-500/20 text-green-400'
+                                                : 'bg-red-500/20 text-red-400'
+                                            }`}>
+                                            {item.reactionType === 'like' ? 'Helpful' : 'Not Helpful'}
+                                        </span>
+                                        <p className="text-gray-500 text-xs mt-1">
+                                            {new Date(item.submittedAt).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDeleteFeedback(item._id)}
+                                        className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition"
+                                        title="Delete feedback"
+                                    >
+                                        <i className="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
 
