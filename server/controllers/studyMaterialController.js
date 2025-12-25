@@ -1,12 +1,12 @@
 const StudyMaterial = require('../models/StudyMaterial');
 
-let clearCache = () => {};
+let clearCache = () => { };
 const setClearCacheFunction = (fn) => { clearCache = fn; };
 
 const getStudyMaterials = async (req, res) => {
   try {
     const materials = await StudyMaterial.find()
-      .select('title description category pdfData thumbnail isActive')
+      .select('title description category fileUrl fileType examType thumbnailUrl fileSize isActive createdAt')
       .sort({ createdAt: -1 })
       .lean()
       .exec();

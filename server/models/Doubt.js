@@ -44,8 +44,17 @@ const doubtSchema = new mongoose.Schema({
     dislikes: {
         type: Number,
         default: 0
-    }
-
+    },
+    feedbacks: [{
+        name: String,
+        email: String,
+        feedback: String,
+        reactionType: String,
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }]
 });
 
 module.exports = mongoose.model('Doubt', doubtSchema);

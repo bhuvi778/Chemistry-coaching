@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const compression = require('compression');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const Course = require('./models/Course');
 const Enquiry = require('./models/Enquiry');
 const Contact = require('./models/Contact');
@@ -93,12 +96,43 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Increase payload size limit for base64 images
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// Increase payload size limit for base64 images/audio
+app.use(express.json({ limit: '500mb' }));
+app.use(express.urlencoded({ limit: '500mb', extended: true, parameterLimit: 100000 }));
 
 // Enable GZIP compression
 app.use(compression());
+
+// Configure Multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const cleanName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
+    cb(null, Date.now() + '-' + cleanName);
+  }
+});
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 500 * 1024 * 1024 }
+});
+
+// Serve uploaded files
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Upload Endpoint
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+  const fileUrl = `/api/uploads/${req.file.filename}`;
+  res.json({ url: fileUrl });
+});
 
 // Connect to MongoDB - using local instance
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/test';
@@ -354,7 +388,7 @@ app.get('/api/audiobooks', cacheMiddleware('audiobooks', 30 * 60 * 1000), async 
     const skip = (page - 1) * limit;
 
     const audioBooks = await AudioBook.find({ isActive: true })
-      .select('title description author category createdAt chapters thumbnailUrl coverImage')
+      .select('title description author category createdAt chapters.title chapters.topics.title chapters.topics.description chapters.topics.duration thumbnailUrl coverImage')
       .limit(limit)
       .skip(skip)
       .lean()
@@ -392,7 +426,7 @@ app.get('/api/audiobooks/:id', cacheMiddleware('audiobook'), async (req, res) =>
 });
 
 // Helper function to wrap save operation with timeout
-const saveWithTimeout = (model, timeoutMs = 45000) => {
+const saveWithTimeout = (model, timeoutMs = 120000) => {
   return Promise.race([
     model.save(),
     new Promise((_, reject) =>
@@ -422,7 +456,7 @@ app.post('/api/audiobooks', async (req, res) => {
     console.log('Attempting to save with 45s timeout...');
 
     const saveStart = Date.now();
-    const savedAudioBook = await saveWithTimeout(audioBook, 45000);
+    const savedAudioBook = await saveWithTimeout(audioBook, 120000);
     console.log(`💾 Database save: ${Date.now() - saveStart}ms`);
 
     console.log('✅ Audiobook saved successfully:', savedAudioBook._id);
@@ -535,7 +569,7 @@ app.delete('/api/audiobooks/:id', async (req, res) => {
 app.get('/api/study-materials', cacheMiddleware('study-materials', 30 * 60 * 1000), async (req, res) => {
   try {
     const materials = await StudyMaterial.find({ isActive: true })
-      .select('title description category examType fileType fileSize createdAt')
+      .select('title description category examType fileType fileSize createdAt fileUrl thumbnailUrl')
       .sort({ createdAt: -1 })
       .limit(100)
       .lean()
@@ -802,9 +836,10 @@ app.delete('/api/doubts/:id', async (req, res) => {
 });
 
 // Doubt reaction endpoint (like/dislike)
+// Doubt reaction endpoint (like/dislike)
 app.post('/api/doubts/:id/reaction', async (req, res) => {
   try {
-    const { reactionType } = req.body;
+    const { reactionType, name, email, feedback } = req.body;
     const doubt = await Doubt.findById(req.params.id);
 
     if (!doubt) {
@@ -815,6 +850,17 @@ app.post('/api/doubts/:id/reaction', async (req, res) => {
       doubt.likes += 1;
     } else if (reactionType === 'dislike') {
       doubt.dislikes += 1;
+    }
+
+    // Save detailed feedback if provided
+    if (feedback || name) {
+      doubt.feedbacks.push({
+        name,
+        email,
+        feedback,
+        reactionType,
+        createdAt: new Date()
+      });
     }
 
     await doubt.save();

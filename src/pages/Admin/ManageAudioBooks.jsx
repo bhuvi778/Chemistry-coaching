@@ -45,11 +45,22 @@ const ManageAudioBooks = () => {
     }));
   };
 
-  const handleEdit = (audioBook) => {
+  const handleEdit = async (audioBook) => {
     setIsEditing(true);
     setCurrentAudioBook(audioBook);
     setFormData(audioBook);
     setThumbnailFileName(audioBook.thumbnailUrl ? 'Current thumbnail' : '');
+
+    try {
+      const res = await fetch(`/api/audiobooks/${audioBook._id}`);
+      if (res.ok) {
+        const fullData = await res.json();
+        setFormData(fullData);
+        setCurrentAudioBook(fullData);
+      }
+    } catch (error) {
+      console.error('Error fetching full audiobook details:', error);
+    }
   };
 
   const handleDelete = (id) => {
@@ -59,13 +70,27 @@ const ManageAudioBooks = () => {
   };
 
   // Convert file to base64
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
+  // Upload file to server
+  const uploadFile = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw error;
+    }
   };
 
   // Handle thumbnail upload
@@ -76,16 +101,13 @@ const ManageAudioBooks = () => {
         alert('Please upload a valid image file');
         return;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image file size should be less than 5MB');
-        return;
-      }
       try {
-        const base64 = await convertToBase64(file);
-        setFormData({ ...formData, thumbnailUrl: base64 });
+        setThumbnailFileName('Uploading...');
+        const url = await uploadFile(file);
+        setFormData({ ...formData, thumbnailUrl: url });
         setThumbnailFileName(file.name);
       } catch (error) {
-        console.error('Error converting thumbnail:', error);
+        setThumbnailFileName('Upload failed');
         alert('Error uploading thumbnail');
       }
     }
@@ -130,16 +152,13 @@ const ManageAudioBooks = () => {
         alert('Please upload a valid audio file (MP3, WAV, etc.)');
         return;
       }
-      if (file.size > 50 * 1024 * 1024) {
-        alert('Audio file size should be less than 50MB');
-        return;
-      }
       try {
-        const base64 = await convertToBase64(file);
-        setCurrentTopic({ ...currentTopic, audioUrl: base64 });
+        setAudioFileName('Uploading...');
+        const url = await uploadFile(file);
+        setCurrentTopic({ ...currentTopic, audioUrl: url });
         setAudioFileName(file.name);
       } catch (error) {
-        console.error('Error converting audio file:', error);
+        setAudioFileName('Upload failed');
         alert('Error uploading audio file');
       }
     }
@@ -240,6 +259,13 @@ const ManageAudioBooks = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check payload size
+    const payloadSize = JSON.stringify(formData).length;
+    if (payloadSize > 16000000) {
+      alert(`The audio book content is too large (${(payloadSize / (1024 * 1024)).toFixed(2)}MB) for a single entry. The database limit is 16MB. Please compress your audio/images or split the book into multiple parts.`);
+      return;
+    }
 
     if (formData.chapters.length === 0) {
       alert('Please add at least one chapter with topics');

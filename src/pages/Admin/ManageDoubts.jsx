@@ -312,6 +312,42 @@ const ManageDoubts = () => {
                                 </div>
                             )}
 
+                            {/* User Feedback Display */}
+                            {doubt.feedbacks && doubt.feedbacks.length > 0 && (
+                                <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4 mb-4">
+                                    <h4 className="text-sm font-bold text-gray-300 mb-3 flex items-center gap-2">
+                                        <i className="fas fa-comments text-cyan-500"></i>
+                                        User Feedback ({doubt.feedbacks.length})
+                                    </h4>
+                                    <div className="space-y-3 max-h-40 overflow-y-auto custom-scrollbar">
+                                        {doubt.feedbacks.map((fb, index) => (
+                                            <div key={index} className="text-sm border-b border-gray-700/50 pb-2 last:border-0 last:pb-0">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-semibold text-gray-400">{fb.name || 'Anonymous'}</span>
+                                                        <span className={`text-xs px-2 py-0.5 rounded-full ${fb.reactionType === 'like'
+                                                                ? 'bg-green-500/20 text-green-400'
+                                                                : 'bg-red-500/20 text-red-400'
+                                                            }`}>
+                                                            {fb.reactionType === 'like' ? 'Helpful' : 'Not Helpful'}
+                                                        </span>
+                                                    </div>
+                                                    <span className="text-xs text-gray-500">
+                                                        {new Date(fb.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                                {fb.feedback && (
+                                                    <p className="text-gray-300 italic">"{fb.feedback}"</p>
+                                                )}
+                                                {fb.email && (
+                                                    <p className="text-xs text-gray-500 mt-0.5">{fb.email}</p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Actions */}
                             <div className="flex gap-2 flex-wrap">
                                 <button
