@@ -1,12 +1,11 @@
 const AudioBook = require('../models/AudioBook');
 
-let clearCache = () => {};
+let clearCache = () => { };
 const setClearCacheFunction = (fn) => { clearCache = fn; };
 
 const getAudioBooks = async (req, res) => {
   try {
     const audioBooks = await AudioBook.find()
-      .select('title description coverImage chapters category isActive')
       .sort({ createdAt: -1 })
       .lean()
       .exec();
@@ -34,7 +33,7 @@ const createAudioBook = async (req, res) => {
     res.json(audioBook);
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'This audio file URL has already been added to the database',
         error: 'Duplicate audiobook'
       });

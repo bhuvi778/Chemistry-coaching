@@ -7,6 +7,7 @@ const Lectures = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedExam, setSelectedExam] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [downloadingId, setDownloadingId] = useState(null);
   const videosPerPage = 12; // 3 rows × 4 columns
 
   const categories = [
@@ -24,10 +25,10 @@ const Lectures = () => {
   }, [selectedCategory, selectedExam]);
 
   const safeVideos = Array.isArray(videos) ? videos : [];
-  
+
   // Filter videos: must have valid youtubeId AND be active
   const validVideos = safeVideos.filter(video => video?.youtubeId && video?.isActive !== false);
-  
+
   const filteredVideos = validVideos.filter(video => {
     const categoryMatch = selectedCategory === 'all' || video.category === selectedCategory;
     const examMatch = selectedExam === 'all' || video.examType === selectedExam;
@@ -248,31 +249,81 @@ const Lectures = () => {
                     </a>
 
                     {/* Class Notes Button */}
-                    {video.classNotes && video.classNotes.data && (
+                    {video.classNotes && (video.classNotes.filename || video.classNotes.data || Object.keys(video.classNotes).length > 0) ? (
                       <button
-                        onClick={() => {
+                        onClick={async () => {
+                          const notes = video.classNotes;
+                          let dataUrl = notes.data;
+
+                          if (!dataUrl) {
+                            try {
+                              setDownloadingId(video._id);
+                              // Fetch full video details to get the PDF data
+                              const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                              // Remove trailing slash if present
+                              const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+                              // Check if /api is already included to prevent duplication
+                              const apiUrl = cleanBaseUrl.endsWith('/api')
+                                ? `${cleanBaseUrl}/videos/${video._id}`
+                                : `${cleanBaseUrl}/api/videos/${video._id}`;
+
+                              const response = await fetch(apiUrl);
+                              const fullVideo = await response.json();
+
+                              if (fullVideo && fullVideo.classNotes && fullVideo.classNotes.data) {
+                                dataUrl = fullVideo.classNotes.data;
+                              } else {
+                                alert('Error: Note data not found');
+                                setDownloadingId(null);
+                                return;
+                              }
+                            } catch (err) {
+                              console.error('Error fetching notes:', err);
+                              alert('Failed to download notes');
+                              setDownloadingId(null);
+                              return;
+                            }
+                          }
+
                           // Create a download link for the PDF
-                          const linkSource = video.classNotes.data;
+                          const linkSource = dataUrl;
+
+                          if (!linkSource || !linkSource.startsWith('data:application/pdf')) {
+                            alert('Invalid PDF data received from server');
+                            setDownloadingId(null);
+                            return;
+                          }
+
                           const downloadLink = document.createElement('a');
                           downloadLink.href = linkSource;
-                          downloadLink.download = video.classNotes.filename || `${video.title}-notes.pdf`;
+                          downloadLink.download = notes.filename || `${video.title}-notes.pdf`;
+                          document.body.appendChild(downloadLink);
                           downloadLink.click();
+                          document.body.removeChild(downloadLink);
+                          setDownloadingId(null);
                         }}
+                        disabled={downloadingId === video._id}
                         className="block w-full text-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
                       >
-                        <i className="fas fa-file-pdf mr-2"></i>
-                        Download Class Notes
+                        {downloadingId === video._id ? (
+                          <>
+                            <i className="fas fa-spinner fa-spin mr-2"></i>
+                            Downloading...
+                          </>
+                        ) : (
+                          <>
+                            <i className="fas fa-file-pdf mr-2"></i>
+                            Download Class Notes
+                          </>
+                        )}
                       </button>
-                    )}
-
-                    {/* TEMPORARY: Test button - remove after testing */}
-                    {!video.classNotes && (
+                    ) : (
                       <button
                         disabled
-                        className="block w-full text-center bg-gray-600 text-gray-400 font-semibold py-2.5 px-4 rounded-lg mt-2 cursor-not-allowed opacity-50"
+                        className="block w-full text-center bg-gray-800 text-gray-500 font-semibold py-2.5 px-4 rounded-lg mt-2 cursor-not-allowed border border-gray-700"
                       >
                         <i className="fas fa-file-pdf mr-2"></i>
-                        No Class Notes Available
+                        No Notes Available
                       </button>
                     )}
                   </div>

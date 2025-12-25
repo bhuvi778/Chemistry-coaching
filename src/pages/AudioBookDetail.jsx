@@ -17,20 +17,74 @@ const AudioBookDetail = () => {
     const [duration, setDuration] = useState(0);
     const [expandedChapter, setExpandedChapter] = useState(null);
 
-    const audioBook = audioBooks.find(book => book._id === id);
+    const [fullAudioBook, setFullAudioBook] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (!audioBook) {
-            navigate('/audiobooks');
-        } else if (audioBook.chapters && audioBook.chapters.length > 0) {
-            // Auto-select first chapter and first topic
-            setSelectedChapter(audioBook.chapters[0]);
-            setExpandedChapter(0);
-            if (audioBook.chapters[0].topics && audioBook.chapters[0].topics.length > 0) {
-                setSelectedTopic(audioBook.chapters[0].topics[0]);
+        const fetchAudioBook = async () => {
+            setIsLoading(true);
+            try {
+                // Determine if we need to fetch
+                const contextBook = audioBooks.find(book => book._id === id);
+
+                // If we have the book in context AND it has chapters, use it
+                if (contextBook && contextBook.chapters && contextBook.chapters.length > 0) {
+                    setFullAudioBook(contextBook);
+                    setIsLoading(false);
+                    return;
+                }
+
+                // Otherwise, fetch from API
+                const url = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                // Handle potential double /api if VITE_API_URL has it
+                const cleanUrl = url.endsWith('/api') ? url : `${url}/api`;
+                // Further safety check if cleanUrl already ends in /api and we append /audiobooks... 
+                // actually simpler: ensure we don't duplicate logic.
+                // Let's use the same logic as we did for videos to be safe.
+
+                const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+                const apiUrl = cleanBaseUrl.endsWith('/api')
+                    ? `${cleanBaseUrl}/audiobooks/${id}`
+                    : `${cleanBaseUrl}/api/audiobooks/${id}`;
+
+                const res = await fetch(apiUrl);
+                if (res.ok) {
+                    const data = await res.json();
+                    setFullAudioBook(data);
+                } else {
+                    console.error("Failed to fetch audiobook details");
+                    // If fetch fails but we have context book (even without chapters), fallback to it? 
+                    // No, better to show nothing or error.
+                }
+            } catch (error) {
+                console.error("Error fetching audiobook:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchAudioBook();
+    }, [id, audioBooks]);
+
+    useEffect(() => {
+        if (!isLoading && !fullAudioBook) {
+            // Only redirect if we effectively failed to get any data
+            // navigate('/audiobooks'); // Optional: could redirect back
+        } else if (fullAudioBook && fullAudioBook.chapters && fullAudioBook.chapters.length > 0) {
+            // Auto-select first chapter and first topic if not already selected
+            if (!selectedChapter) {
+                setSelectedChapter(fullAudioBook.chapters[0]);
+                setExpandedChapter(0);
+                if (fullAudioBook.chapters[0].topics && fullAudioBook.chapters[0].topics.length > 0) {
+                    setSelectedTopic(fullAudioBook.chapters[0].topics[0]);
+                }
             }
         }
-    }, [audioBook, navigate]);
+    }, [fullAudioBook, isLoading, selectedChapter]);
+
+    // Use fullAudioBook for rendering
+    const audioBook = fullAudioBook;
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -142,12 +196,12 @@ const AudioBookDetail = () => {
                                             <button
                                                 onClick={() => toggleChapter(chapterIndex)}
                                                 className={`w-full text-left p-3 rounded-lg transition ${expandedChapter === chapterIndex
-                                                        ? isDark
-                                                            ? 'bg-purple-500/20 border border-purple-500'
-                                                            : 'bg-purple-50 border border-purple-300'
-                                                        : isDark
-                                                            ? 'bg-gray-800 hover:bg-gray-700'
-                                                            : 'bg-gray-100 hover:bg-gray-200'
+                                                    ? isDark
+                                                        ? 'bg-purple-500/20 border border-purple-500'
+                                                        : 'bg-purple-50 border border-purple-300'
+                                                    : isDark
+                                                        ? 'bg-gray-800 hover:bg-gray-700'
+                                                        : 'bg-gray-100 hover:bg-gray-200'
                                                     }`}
                                             >
                                                 <div className="flex items-center justify-between">
@@ -174,12 +228,12 @@ const AudioBookDetail = () => {
                                                             key={topic._id || topicIndex}
                                                             onClick={() => handleTopicSelect(chapter, topic)}
                                                             className={`w-full text-left p-2 rounded-lg transition text-sm ${selectedTopic?._id === topic._id
-                                                                    ? isDark
-                                                                        ? 'bg-cyan-500/20 border border-cyan-400 text-cyan-400'
-                                                                        : 'bg-cyan-50 border border-cyan-300 text-cyan-700'
-                                                                    : isDark
-                                                                        ? 'bg-gray-800/50 text-gray-300 hover:bg-gray-700'
-                                                                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                                                                ? isDark
+                                                                    ? 'bg-cyan-500/20 border border-cyan-400 text-cyan-400'
+                                                                    : 'bg-cyan-50 border border-cyan-300 text-cyan-700'
+                                                                : isDark
+                                                                    ? 'bg-gray-800/50 text-gray-300 hover:bg-gray-700'
+                                                                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                                                                 }`}
                                                         >
                                                             <div className="flex items-center gap-2">
@@ -285,8 +339,8 @@ const AudioBookDetail = () => {
                                     <button
                                         onClick={togglePlayPause}
                                         className={`w-16 h-16 rounded-full flex items-center justify-center transition ${isDark
-                                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
-                                                : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+                                            : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
                                             } text-white`}
                                     >
                                         <i className={`fas fa-${isPlaying ? 'pause' : 'play'} text-2xl ${!isPlaying ? 'ml-1' : ''}`}></i>

@@ -1,7 +1,7 @@
 const Video = require('../models/Video');
 
 // Clear cache helper (will be injected from server.js)
-let clearCache = () => {};
+let clearCache = () => { };
 
 const setClearCacheFunction = (fn) => {
   clearCache = fn;
@@ -14,11 +14,11 @@ const getVideos = async (req, res) => {
   try {
     // Check if admin wants all videos (including inactive)
     const showAll = req.query.all === 'true';
-    
+
     const filter = showAll ? {} : { isActive: true };
-    
+
     const videos = await Video.find(filter)
-      .select('title description category examType youtubeId instructor duration isActive createdAt views')
+      .select('title description category examType youtubeId instructor duration isActive createdAt views classNotes.filename classNotes.uploadedAt')
       .sort({ createdAt: -1 })
       .limit(100)
       .lean()
@@ -53,29 +53,29 @@ const createVideo = async (req, res) => {
     console.log('=== RECEIVED VIDEO POST REQUEST ===');
     console.log('Request body:', req.body);
     console.log('YouTube ID received:', req.body.youtubeId);
-    
+
     const video = new Video(req.body);
     await video.save();
-    
+
     console.log('Video saved successfully:', video._id);
     console.log('Saved YouTube ID:', video.youtubeId);
     console.log('===================================');
-    
+
     // Clear cache so new video shows immediately
     clearCache('videos');
-    
+
     res.json(video);
   } catch (error) {
     console.error('Error saving video:', error.message);
-    
+
     // Handle duplicate key error
     if (error.code === 11000) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'This YouTube video has already been added to the database',
         error: 'Duplicate video'
       });
     }
-    
+
     res.status(500).json({ message: error.message });
   }
 };
