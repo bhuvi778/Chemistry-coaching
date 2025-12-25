@@ -79,9 +79,9 @@ const ManageStudyMaterials = () => {
         return;
       }
 
-      // Check file size (limit to 50MB)
-      if (file.size > 50 * 1024 * 1024) {
-        alert('File size should be less than 50MB');
+      // Check file size (limit to 100MB)
+      if (file.size > 100 * 1024 * 1024) {
+        alert('File size should be less than 100MB');
         return;
       }
 

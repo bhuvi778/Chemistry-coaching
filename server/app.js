@@ -58,9 +58,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Middleware
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// Middleware - Increase payload size limit for large file uploads (base64 encoded files are ~33% larger)
+app.use(express.json({ limit: '200mb' }));
+app.use(express.urlencoded({ limit: '200mb', extended: true, parameterLimit: 100000 }));
 app.use(compression());
 
 // Connect to database
@@ -102,7 +102,7 @@ app.get('/api/health', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log('\n🚀 ==========================================');
   console.log(`✅ Server running on port ${PORT}`);
   console.log('📁 MVC Architecture Fully Implemented');
@@ -114,5 +114,10 @@ app.listen(PORT, () => {
   console.log('   - Config: database.js');
   console.log('==========================================\n');
 });
+
+// Increase timeout for large file uploads (5 minutes)
+server.timeout = 300000;
+server.keepAliveTimeout = 300000;
+server.headersTimeout = 300000;
 
 module.exports = app;
