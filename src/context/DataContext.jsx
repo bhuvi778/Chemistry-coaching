@@ -370,11 +370,23 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(material)
       });
-      const newMaterial = await res.json();
-      const updatedMaterials = [newMaterial, ...(Array.isArray(studyMaterials) ? studyMaterials : [])];
+      
+      console.log('Upload response status:', res.status);
+      const responseData = await res.json();
+      console.log('Response data:', responseData);
+      
+      if (!res.ok) {
+        throw new Error(responseData.message || 'Failed to add study material');
+      }
+      
+      const updatedMaterials = [responseData, ...(Array.isArray(studyMaterials) ? studyMaterials : [])];
+      console.log('Updated materials count:', updatedMaterials.length);
       setStudyMaterials(updatedMaterials);
+      
+      return responseData;
     } catch (error) {
       console.error("Error adding study material:", error);
+      throw error;
     }
   };
 

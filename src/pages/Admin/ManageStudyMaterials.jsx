@@ -4,6 +4,7 @@ import Pagination from '../../components/UI/Pagination';
 
 const ManageStudyMaterials = () => {
   const { studyMaterials, addStudyMaterial, updateStudyMaterial, deleteStudyMaterial } = useData();
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const [isEditing, setIsEditing] = useState(false);
   const [currentMaterial, setCurrentMaterial] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -12,6 +13,8 @@ const ManageStudyMaterials = () => {
   const [thumbnailFileName, setThumbnailFileName] = useState('');
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [isDraggingThumbnail, setIsDraggingThumbnail] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
 
   const initialFormState = {
     title: '',
@@ -79,14 +82,39 @@ const ManageStudyMaterials = () => {
         return;
       }
 
-      // Check file size (limit to 100MB)
-      if (file.size > 100 * 1024 * 1024) {
-        alert('File size should be less than 100MB');
+      // Check file size (limit to 500MB to match server)
+      if (file.size > 500 * 1024 * 1024) {
+        alert('File size should be less than 500MB');
         return;
       }
 
       try {
-        const base64 = await convertToBase64(file);
+        setIsUploading(true);
+        setUploadProgress('Uploading file... Please wait');
+        
+        console.log('📤 Uploading file:', file.name, 'Size:', (file.size / (1024*1024)).toFixed(2), 'MB');
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', file);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minute timeout
+        
+        const uploadRes = await fetch(`${API_URL}/upload`, {
+          method: 'POST',
+          body: uploadFormData,
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('📥 Upload response status:', uploadRes.status);
+        
+        if (!uploadRes.ok) {
+          const errorData = await uploadRes.json().catch(() => ({message: 'Upload failed'}));
+          throw new Error(errorData.message || 'File upload failed');
+        }
+        
+        const uploadData = await uploadRes.json();
+        console.log('✅ Upload successful, fileUrl:', uploadData.fileUrl);
         const fileSize = formatFileSize(file.size);
 
         // Detect file type
@@ -97,14 +125,22 @@ const ManageStudyMaterials = () => {
 
         setFormData({
           ...formData,
-          fileUrl: base64,
+          fileUrl: uploadData.fileUrl,
           fileSize: fileSize,
           fileType: fileType
         });
         setFileFileName(file.name);
+        setUploadProgress('Upload complete!');
+        setTimeout(() => setUploadProgress(''), 2000);
       } catch (error) {
-        console.error('Error converting file:', error);
-        alert('Error uploading file');
+        console.error('❌ Error uploading file:', error);
+        if (error.name === 'AbortError') {
+          alert('Upload timed out. The file might be too large or connection is slow.');
+        } else {
+          alert('Error uploading file: ' + error.message);
+        }
+      } finally {
+        setIsUploading(false);
       }
     }
   };
@@ -166,13 +202,37 @@ const ManageStudyMaterials = () => {
         return;
       }
 
-      if (file.size > 50 * 1024 * 1024) {
-        alert('File size should be less than 50MB');
+      if (file.size > 500 * 1024 * 1024) {
+        alert('File size should be less than 500MB');
         return;
       }
 
       try {
-        const base64 = await convertToBase64(file);
+        setIsUploading(true);
+        setUploadProgress('Uploading file... Please wait');
+        
+        // Upload file to server with timeout
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', file);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minute timeout
+        
+        const uploadRes = await fetch(`${API_URL}/upload`, {
+          method: 'POST',
+          body: uploadFormData,
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!uploadRes.ok) {
+          const errorData = await uploadRes.json().catch(() => ({message: 'Upload failed'}));
+          throw new Error(errorData.message || 'File upload failed');
+        }
+        
+        const uploadData = await uploadRes.json();
+        console.log('✅ Upload successful:', uploadData);
         const fileSize = formatFileSize(file.size);
 
         let fileType = 'PDF';
@@ -182,7 +242,7 @@ const ManageStudyMaterials = () => {
 
         setFormData({
           ...formData,
-          fileUrl: base64,
+          fileUrl: uploadData.fileUrl,
           fileSize: fileSize,
           fileType: fileType
         });
@@ -236,12 +296,15 @@ const ManageStudyMaterials = () => {
       return;
     }
 
+    console.log('📝 Submitting study material:', formData);
+
     try {
       if (isEditing) {
         await updateStudyMaterial(currentMaterial._id, formData);
         alert('Study material updated successfully!');
       } else {
-        await addStudyMaterial(formData);
+        const result = await addStudyMaterial(formData);
+        console.log('✅ Study material added:', result);
         alert('Study material added successfully!');
       }
       setIsEditing(false);
@@ -250,8 +313,8 @@ const ManageStudyMaterials = () => {
       setFileFileName('');
       setThumbnailFileName('');
     } catch (error) {
-      console.error('Error submitting study material:', error);
-      alert('Error submitting study material. Please try again.');
+      console.error('❌ Error submitting study material:', error);
+      alert('Error submitting study material: ' + error.message);
     }
   };
 
@@ -467,9 +530,23 @@ const ManageStudyMaterials = () => {
             </div>
           )}
 
+          {uploadProgress && (
+            <div className="mb-4 p-3 bg-blue-100 text-blue-700 rounded">
+              {uploadProgress}
+            </div>
+          )}
+
           <div className="flex gap-4">
-            <button type="submit" className="bg-green-500 text-white font-bold py-2 px-6 rounded hover:bg-green-400 transition">
-              {isEditing ? 'Update Material' : 'Add Material'}
+            <button 
+              type="submit" 
+              disabled={isUploading || !formData.fileUrl}
+              className={`font-bold py-2 px-6 rounded transition ${
+                isUploading || !formData.fileUrl 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-green-500 text-white hover:bg-green-400'
+              }`}
+            >
+              {isUploading ? 'Uploading...' : isEditing ? 'Update Material' : 'Add Material'}
             </button>
             {isEditing && (
               <button

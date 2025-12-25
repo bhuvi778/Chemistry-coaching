@@ -127,11 +127,14 @@ app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Upload Endpoint
 app.post('/api/upload', upload.single('file'), (req, res) => {
+  console.log('📤 Upload request received');
   if (!req.file) {
+    console.log('❌ No file in request');
     return res.status(400).json({ message: 'No file uploaded' });
   }
   const fileUrl = `/api/uploads/${req.file.filename}`;
-  res.json({ url: fileUrl });
+  console.log('✅ File uploaded:', req.file.filename, 'Size:', (req.file.size / (1024*1024)).toFixed(2), 'MB');
+  res.json({ fileUrl: fileUrl });
 });
 
 // Connect to MongoDB - using local instance
