@@ -472,13 +472,11 @@ export const DataProvider = ({ children }) => {
   };
 
   const login = (username, password) => {
-    if (username === 'admin' && password === 'admin123') {
-      setIsAdmin(true);
-      // Fetch enquiries and contacts immediately after login
-      fetchEnquiriesAndContacts();
-      return true;
-    }
-    return false;
+    // Since we already validated via API in AdminLogin, just set admin state
+    setIsAdmin(true);
+    // Fetch enquiries and contacts immediately after login
+    fetchEnquiriesAndContacts();
+    return true;
   };
 
   const fetchEnquiriesAndContacts = async () => {
