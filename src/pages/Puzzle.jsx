@@ -10,6 +10,8 @@ const Puzzle = () => {
     const [loading, setLoading] = useState(true);
     const [showCrosswordModal, setShowCrosswordModal] = useState(false);
     const [selectedCrossword, setSelectedCrossword] = useState(null);
+    const [showAnswerModal, setShowAnswerModal] = useState(false);
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
 
     const handleDownloadPDF = (base64Data, filename) => {
         try {
@@ -316,10 +318,17 @@ const Puzzle = () => {
 
                                         {/* Answer PDF Button */}
                                         <button
-                                            onClick={() => handleDownloadPDF(puzzleSet.answerPdfUrl, `${puzzleSet.setNumber}-Answers.pdf`)}
+                                            onClick={() => {
+                                                setSelectedAnswer({
+                                                    url: puzzleSet.answerPdfUrl,
+                                                    title: `${puzzleSet.title} - Answers`,
+                                                    filename: `${puzzleSet.setNumber}-Answers.pdf`
+                                                });
+                                                setShowAnswerModal(true);
+                                            }}
                                             className="py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-center font-bold hover:from-green-600 hover:to-emerald-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
                                         >
-                                            <i className="fas fa-check-circle"></i>
+                                            <i className="fas fa-eye"></i>
                                             Ans
                                         </button>
                                     </div>
@@ -456,6 +465,84 @@ const Puzzle = () => {
                                 onClick={() => {
                                     setShowCrosswordModal(false);
                                     setSelectedCrossword(null);
+                                }}
+                                className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition font-semibold"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Answer PDF Modal */}
+            {showAnswerModal && selectedAnswer && ReactDOM.createPortal(
+                <div
+                    className="fixed inset-0 bg-black/90 flex items-center justify-center z-[9999] p-4"
+                    style={{ top: 0, left: 0, right: 0, bottom: 0, position: 'fixed' }}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onKeyDown={(e) => {
+                        // Block PrintScreen, Ctrl+P, Ctrl+S, Ctrl+Shift+S
+                        if (e.key === 'PrintScreen' || 
+                            (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'P' || e.key === 'S'))) {
+                            e.preventDefault();
+                            alert('Screenshots and printing are disabled for answer sheets.');
+                        }
+                    }}
+                    tabIndex={0}
+                >
+                    <div className="relative w-full max-w-6xl bg-gray-900 rounded-xl overflow-hidden shadow-2xl max-h-[95vh] flex flex-col select-none"
+                        style={{ userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', msUserSelect: 'none' }}
+                    >
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-500 to-emerald-500">
+                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                <i className="fas fa-file-pdf"></i>
+                                {selectedAnswer.title}
+                            </h2>
+                            <button
+                                onClick={() => {
+                                    setShowAnswerModal(false);
+                                    setSelectedAnswer(null);
+                                }}
+                                className="text-white hover:bg-white/20 rounded-full p-2 transition"
+                                aria-label="Close"
+                            >
+                                <i className="fas fa-times text-2xl"></i>
+                            </button>
+                        </div>
+
+                        {/* PDF Viewer Container */}
+                        <div className="flex-1 bg-gray-800 p-4 overflow-auto relative select-none"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', msUserSelect: 'none' }}
+                        >
+                            {/* Watermark Overlay */}
+                            <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center opacity-10">
+                                <div className="text-white text-6xl font-bold transform -rotate-45">
+                                    VIEW ONLY
+                                </div>
+                            </div>
+                            <iframe
+                                src={selectedAnswer.url}
+                                className="w-full h-full min-h-[70vh] rounded-lg relative z-0"
+                                frameBorder="0"
+                                title={selectedAnswer.title}
+                                onContextMenu={(e) => e.preventDefault()}
+                            />
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-4 bg-gray-800 flex items-center justify-between flex-wrap gap-3">
+                            <p className="text-gray-400 text-sm">
+                                <i className="fas fa-lock mr-2"></i>
+                                View only - Screenshots and downloads are disabled.
+                            </p>
+                            <button
+                                onClick={() => {
+                                    setShowAnswerModal(false);
+                                    setSelectedAnswer(null);
                                 }}
                                 className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition font-semibold"
                             >
