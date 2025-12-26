@@ -731,9 +731,9 @@ const Puzzle = () => {
                                     </div>
                                 )
                             ) : (
-                                /* Desktop: Standard iframe */
+                                /* Desktop: Standard iframe with toolbar disabled */
                                 <iframe
-                                    src={selectedAnswer.url}
+                                    src={`${selectedAnswer.url}#toolbar=0&navpanes=0&scrollbar=1`}
                                     className="w-full h-full min-h-[70vh] rounded-lg relative z-0 bg-white"
                                     frameBorder="0"
                                     title={selectedAnswer.title}
