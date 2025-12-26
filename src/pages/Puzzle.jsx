@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Set worker to local file (hosted in public directory)
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 const Puzzle = () => {
     const [selectedExam, setSelectedExam] = useState('all');
@@ -12,6 +16,21 @@ const Puzzle = () => {
     const [selectedCrossword, setSelectedCrossword] = useState(null);
     const [showAnswerModal, setShowAnswerModal] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [showBlackScreen, setShowBlackScreen] = useState(false);
+    const [pdfPages, setPdfPages] = useState([]);
+    const [loadingPdf, setLoadingPdf] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const canvasContainerRef = useRef(null);
+
+    // Detect mobile device
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const handleDownloadPDF = (base64Data, filename) => {
         try {
@@ -32,11 +51,157 @@ const Puzzle = () => {
         }
     };
 
+    // Load and render PDF using PDF.js for mobile
+    const loadPdfForMobile = async (url) => {
+        if (!isMobile) return;
+        
+        setLoadingPdf(true);
+        setPdfPages([]);
+        
+        try {
+            // Fetch PDF as blob to avoid CORS issues
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const arrayBuffer = await blob.arrayBuffer();
+            
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const pages = [];
+            
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 1.5 });
+                
+                // Create canvas
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                // Render page
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+                
+                // Convert canvas to image
+                const imageData = canvas.toDataURL('image/png');
+                pages.push({ pageNum, imageData, width: viewport.width, height: viewport.height });
+            }
+            
+            setPdfPages(pages);
+        } catch (error) {
+            console.error('Error loading PDF:', error);
+            console.error('Error details:', error.message);
+            alert(`Failed to load PDF: ${error.message}`);
+        } finally {
+            setLoadingPdf(false);
+        }
+    };
+
+    // Load PDF when modal opens on mobile
+    useEffect(() => {
+        if (showAnswerModal && selectedAnswer && isMobile) {
+            loadPdfForMobile(selectedAnswer.url);
+        } else if (!showAnswerModal) {
+            setPdfPages([]);
+        }
+    }, [showAnswerModal, selectedAnswer, isMobile]);
+
     // Fetch crosswords and puzzle sets
     useEffect(() => {
         fetchCrosswords();
         fetchPuzzleSets();
     }, []);
+
+    // Screenshot protection - black screen on visibility change or blur
+    useEffect(() => {
+        if (!showAnswerModal) return;
+
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                setShowBlackScreen(true);
+            } else {
+                // Delay showing content again
+                setTimeout(() => setShowBlackScreen(false), 500);
+            }
+        };
+
+        const handleBlur = () => {
+            setShowBlackScreen(true);
+            setTimeout(() => setShowBlackScreen(false), 1500);
+        };
+
+        const handleFocus = () => {
+            // When window regains focus, briefly show black screen
+            setShowBlackScreen(true);
+            setTimeout(() => setShowBlackScreen(false), 800);
+        };
+
+        const handleKeyUp = (e) => {
+            // Detect PrintScreen or other screenshot keys
+            if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                setShowBlackScreen(true);
+                setTimeout(() => setShowBlackScreen(false), 1500);
+            }
+        };
+
+        const handleKeyDown = (e) => {
+            // Detect multiple key combinations for screenshots
+            // Cmd+Shift+3, Cmd+Shift+4 (Mac), Windows+Shift+S, etc.
+            if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                setShowBlackScreen(true);
+                setTimeout(() => setShowBlackScreen(false), 1500);
+                alert('Screenshots are not allowed for answer sheets.');
+            }
+        };
+
+        // Mobile screenshot detection - detect when app loses focus briefly
+        let touchStartTime = 0;
+        const handleTouchStart = () => {
+            touchStartTime = Date.now();
+        };
+
+        const handleTouchEnd = () => {
+            const touchDuration = Date.now() - touchStartTime;
+            // Very short touch could be volume+power button for screenshot
+            if (touchDuration < 100) {
+                setShowBlackScreen(true);
+                setTimeout(() => setShowBlackScreen(false), 1000);
+            }
+        };
+
+        // Pause/Resume events for mobile (triggered during screenshots)
+        const handlePause = () => {
+            setShowBlackScreen(true);
+        };
+
+        const handleResume = () => {
+            setTimeout(() => setShowBlackScreen(false), 800);
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('blur', handleBlur);
+        window.addEventListener('focus', handleFocus);
+        window.addEventListener('keyup', handleKeyUp);
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('touchstart', handleTouchStart);
+        window.addEventListener('touchend', handleTouchEnd);
+        document.addEventListener('pause', handlePause);
+        document.addEventListener('resume', handleResume);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('blur', handleBlur);
+            window.removeEventListener('focus', handleFocus);
+            window.removeEventListener('keyup', handleKeyUp);
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('touchstart', handleTouchStart);
+            window.removeEventListener('touchend', handleTouchEnd);
+            document.removeEventListener('pause', handlePause);
+            document.removeEventListener('resume', handleResume);
+        };
+    }, [showAnswerModal]);
 
     const fetchCrosswords = async () => {
         try {
@@ -517,20 +682,65 @@ const Puzzle = () => {
                         <div className="flex-1 bg-gray-800 p-4 overflow-auto relative select-none"
                             onContextMenu={(e) => e.preventDefault()}
                             style={{ userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', msUserSelect: 'none' }}
+                            ref={canvasContainerRef}
                         >
+                            {/* Black Screen Overlay for Screenshot Protection */}
+                            {showBlackScreen && (
+                                <div className="absolute inset-0 bg-black z-50 flex items-center justify-center">
+                                    <div className="text-white text-2xl font-bold">
+                                        <i className="fas fa-lock text-4xl mb-4 block"></i>
+                                        Protected Content
+                                    </div>
+                                </div>
+                            )}
+                            
                             {/* Watermark Overlay */}
                             <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center opacity-10">
                                 <div className="text-white text-6xl font-bold transform -rotate-45">
                                     VIEW ONLY
                                 </div>
                             </div>
-                            <iframe
-                                src={selectedAnswer.url}
-                                className="w-full h-full min-h-[70vh] rounded-lg relative z-0"
-                                frameBorder="0"
-                                title={selectedAnswer.title}
-                                onContextMenu={(e) => e.preventDefault()}
-                            />
+                            
+                            {/* Mobile: PDF.js Canvas Rendering */}
+                            {isMobile ? (
+                                loadingPdf ? (
+                                    <div className="flex items-center justify-center min-h-[70vh]">
+                                        <div className="text-center">
+                                            <i className="fas fa-spinner fa-spin text-4xl text-cyan-400 mb-4"></i>
+                                            <p className="text-white">Loading PDF...</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {pdfPages.map((page) => (
+                                            <img
+                                                key={page.pageNum}
+                                                src={page.imageData}
+                                                alt={`Page ${page.pageNum}`}
+                                                className="w-full rounded shadow-lg"
+                                                onContextMenu={(e) => e.preventDefault()}
+                                                style={{ userSelect: 'none', pointerEvents: 'none' }}
+                                            />
+                                        ))}
+                                        {pdfPages.length === 0 && !loadingPdf && (
+                                            <div className="text-center text-gray-400 py-10">
+                                                <i className="fas fa-file-pdf text-6xl mb-4"></i>
+                                                <p>Failed to load PDF</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )
+                            ) : (
+                                /* Desktop: Standard iframe */
+                                <iframe
+                                    src={selectedAnswer.url}
+                                    className="w-full h-full min-h-[70vh] rounded-lg relative z-0 bg-white"
+                                    frameBorder="0"
+                                    title={selectedAnswer.title}
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    style={{ border: 'none' }}
+                                />
+                            )}
                         </div>
 
                         {/* Modal Footer */}
