@@ -105,6 +105,7 @@ function AppContent() {
       <div className="pt-20 flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/about" element={<About />} />
           <Route path="/courses" element={<AllCourses />} />
           <Route path="/lectures" element={<Lectures />} />
