@@ -62,17 +62,29 @@ const addReaction = async (req, res) => {
     const doubt = await Doubt.findById(req.params.id);
     if (!doubt) return res.status(404).json({ message: 'Doubt not found' });
     
-    // Handle feedback submission (like/dislike with user details)
-    if ((reactionType === 'like' || reactionType === 'dislike') && name) {
-      const feedbackEntry = new Feedback({
-        doubtId: req.params.id,
-        reactionType,
-        name,
-        email: email || '',
-        feedback: feedback || ''
-      });
-      await feedbackEntry.save();
-      return res.json({ message: 'Feedback submitted successfully', feedback: feedbackEntry });
+    // Handle like/dislike with feedback
+    if (reactionType === 'like' || reactionType === 'dislike') {
+      // Increment like or dislike count
+      if (reactionType === 'like') {
+        doubt.likes = (doubt.likes || 0) + 1;
+      } else {
+        doubt.dislikes = (doubt.dislikes || 0) + 1;
+      }
+      
+      // Add feedback entry if name is provided
+      if (name) {
+        if (!doubt.feedbacks) doubt.feedbacks = [];
+        doubt.feedbacks.push({
+          name,
+          email: email || '',
+          feedback: feedback || '',
+          reactionType,
+          createdAt: new Date()
+        });
+      }
+      
+      await doubt.save();
+      return res.json({ message: 'Reaction submitted successfully', doubt });
     }
     
     // Handle simple reactions (helpful/insightful/thanks)

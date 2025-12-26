@@ -144,6 +144,8 @@ const Doubts = () => {
                 setFeedbackData({ name: '', email: '', feedback: '' });
                 setSelectedDoubt(null);
                 setReactionType(null);
+                // Refresh doubts to show updated counts and feedback
+                await fetchPublishedDoubts();
             }
         } catch (error) {
             console.error('Error submitting feedback:', error);
@@ -431,6 +433,48 @@ const Doubts = () => {
                                                     {doubt.dislikes > 0 && <span className="text-sm">({doubt.dislikes})</span>}
                                                 </button>
                                             </div>
+
+                                            {/* Feedback Comments */}
+                                            {doubt.feedbacks && doubt.feedbacks.length > 0 && (
+                                                <div className={`mt-4 pt-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                                                    <h4 className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-3 flex items-center gap-2`}>
+                                                        <i className="fas fa-comments"></i>
+                                                        Student Feedback ({doubt.feedbacks.length})
+                                                    </h4>
+                                                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                                                        {doubt.feedbacks.map((fb, idx) => (
+                                                            <div key={idx} className={`${isDark ? 'bg-gray-800/50' : 'bg-gray-50'} rounded-lg p-3`}>
+                                                                <div className="flex items-start gap-2 mb-2">
+                                                                    <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+                                                                        fb.reactionType === 'like' 
+                                                                            ? 'bg-green-500/20' 
+                                                                            : 'bg-red-500/20'
+                                                                    }`}>
+                                                                        <i className={`fas fa-thumbs-${fb.reactionType === 'like' ? 'up' : 'down'} text-xs ${
+                                                                            fb.reactionType === 'like'
+                                                                                ? 'text-green-400'
+                                                                                : 'text-red-400'
+                                                                        }`}></i>
+                                                                    </div>
+                                                                    <div className="flex-1">
+                                                                        <p className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                                            {fb.name}
+                                                                        </p>
+                                                                        <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                                                                            {new Date(fb.createdAt).toLocaleDateString()}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                {fb.feedback && (
+                                                                    <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'} ml-8`}>
+                                                                        {fb.feedback}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     ));
                                 })()}
