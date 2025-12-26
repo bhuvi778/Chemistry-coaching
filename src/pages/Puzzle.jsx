@@ -379,6 +379,15 @@ const Puzzle = () => {
                                             <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
                                                 {crossword.examType}
                                             </span>
+                                            {crossword.difficulty && (
+                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                                    crossword.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
+                                                    crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                    'bg-red-500/20 text-red-400'
+                                                }`}>
+                                                    {crossword.difficulty}
+                                                </span>
+                                            )}
                                         </div>
                                         <button
                                             onClick={() => {

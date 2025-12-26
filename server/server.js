@@ -394,7 +394,7 @@ app.get('/api/audiobooks', cacheMiddleware('audiobooks', 30 * 60 * 1000), async 
     const skip = (page - 1) * limit;
 
     const audioBooks = await AudioBook.find({ isActive: true })
-      .select('title description author category createdAt chapters.title chapters.topics.title chapters.topics.description chapters.topics.duration thumbnailUrl coverImage')
+      .select('title description author category createdAt chapters.title chapters.topics.title chapters.topics.description chapters.topics.duration chapters.topics.audioUrl thumbnailUrl coverImage')
       .limit(limit)
       .skip(skip)
       .lean()
@@ -665,7 +665,7 @@ app.delete('/api/study-materials/:id', async (req, res) => {
 app.get('/api/magazines', cacheMiddleware('magazines', 30 * 60 * 1000), async (req, res) => {
   try {
     const magazines = await Magazine.find({ isActive: true })
-      .select('title description month year category createdAt coverImageUrl pdfUrl topics')
+      .select('title description month year edition category createdAt coverImageUrl pdfUrl topics')
       .sort({ createdAt: -1 })
       .limit(50)
       .lean()
@@ -732,8 +732,33 @@ app.delete('/api/magazines/:id', async (req, res) => {
 // Feedback
 app.get('/api/feedback', async (req, res) => {
   try {
-    const feedback = await Feedback.find().sort({ createdAt: -1 }).lean();
-    res.json(feedback);
+    // Aggregate feedback from all doubts
+    const doubts = await Doubt.find({ 'feedbacks.0': { $exists: true } })
+      .select('question answer feedbacks')
+      .lean();
+    
+    // Flatten all feedbacks with doubt context
+    const allFeedback = [];
+    doubts.forEach(doubt => {
+      doubt.feedbacks.forEach(feedback => {
+        allFeedback.push({
+          _id: feedback._id,
+          name: feedback.name,
+          email: feedback.email,
+          feedback: feedback.feedback,
+          reactionType: feedback.reactionType,
+          createdAt: feedback.createdAt,
+          doubtId: doubt._id,
+          doubtQuestion: doubt.question,
+          doubtAnswer: doubt.answer
+        });
+      });
+    });
+    
+    // Sort by creation date (newest first)
+    allFeedback.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    res.json(allFeedback);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -751,8 +776,17 @@ app.post('/api/feedback', async (req, res) => {
 
 app.delete('/api/feedback/:id', async (req, res) => {
   try {
-    await Feedback.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Feedback deleted' });
+    // Find the doubt that contains this feedback and remove it
+    const result = await Doubt.updateOne(
+      { 'feedbacks._id': req.params.id },
+      { $pull: { feedbacks: { _id: req.params.id } } }
+    );
+    
+    if (result.modifiedCount > 0) {
+      res.json({ message: 'Feedback deleted' });
+    } else {
+      res.status(404).json({ message: 'Feedback not found' });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -822,11 +856,11 @@ app.post('/api/doubts', async (req, res) => {
     console.log('Received doubt data:', req.body);
 
     // Validate required fields
-    const { question, studentName, studentEmail, studentPhone } = req.body;
-    if (!question || !studentName || !studentEmail || !studentPhone) {
+    const { question, studentName, studentEmail } = req.body;
+    if (!question || !studentName || !studentEmail) {
       return res.status(400).json({
         message: 'Missing required fields',
-        required: ['question', 'studentName', 'studentEmail', 'studentPhone'],
+        required: ['question', 'studentName', 'studentEmail'],
         received: Object.keys(req.body)
       });
     }
