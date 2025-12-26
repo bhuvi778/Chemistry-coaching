@@ -45,7 +45,22 @@ const ManageAudioBooks = () => {
     }));
   };
 
+  // Convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleEdit = async (audioBook) => {
+    console.log('=== EDITING AUDIOBOOK ===');
+    console.log('Initial audiobook data:', audioBook);
+    console.log('Chapters count:', audioBook.chapters?.length);
+    console.log('Thumbnail URL:', audioBook.thumbnailUrl ? 'Present' : 'Missing');
+    
     setIsEditing(true);
     setCurrentAudioBook(audioBook);
     const safeAudioBook = {
@@ -58,10 +73,34 @@ const ManageAudioBooks = () => {
     setFormData(safeAudioBook);
     setThumbnailFileName(audioBook.thumbnailUrl ? 'Current thumbnail' : '');
 
+    // Reset current chapter and topic to avoid confusion
+    setCurrentChapter({ title: '', topics: [] });
+    setCurrentTopic({ title: '', description: '', duration: '', audioUrl: '' });
+    setEditingChapterIndex(null);
+    setEditingTopicIndex(null);
+    setAudioFileName('');
+
     try {
       const res = await fetch(`/api/audiobooks/${audioBook._id}`);
       if (res.ok) {
-        const fullData = await res.json();
+        let fullData = await res.json();
+        console.log('Full data from API:', fullData);
+        
+        // API returns array, get first element
+        if (Array.isArray(fullData)) {
+          console.log('API returned array, getting first element');
+          fullData = fullData[0];
+        }
+        
+        console.log('Processed full data:', fullData);
+        console.log('Chapters in full data:', fullData.chapters?.length);
+        console.log('Thumbnail URL:', fullData.thumbnailUrl);
+        
+        if (fullData.chapters && fullData.chapters[0]) {
+          console.log('First chapter structure:', fullData.chapters[0]);
+          console.log('First chapter topics:', fullData.chapters[0].topics);
+        }
+        
         const safeFullData = {
           ...fullData,
           chapters: Array.isArray(fullData.chapters) ? fullData.chapters.map(ch => ({
@@ -69,12 +108,18 @@ const ManageAudioBooks = () => {
             topics: Array.isArray(ch.topics) ? ch.topics : []
           })) : []
         };
+        console.log('Safe full data chapters:', safeFullData.chapters);
+        console.log('Safe full data thumbnail:', safeFullData.thumbnailUrl);
         setFormData(safeFullData);
         setCurrentAudioBook(safeFullData);
+        setThumbnailFileName(safeFullData.thumbnailUrl ? 'Current thumbnail' : '');
       }
     } catch (error) {
       console.error('Error fetching full audiobook details:', error);
     }
+
+    // Scroll to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = (id) => {
@@ -86,21 +131,30 @@ const ManageAudioBooks = () => {
   // Convert file to base64
   // Upload file to server
   const uploadFile = async (file) => {
+    console.log('uploadFile called with:', file.name, file.size, 'bytes');
     const formData = new FormData();
     formData.append('file', file);
 
     try {
+      console.log('Sending file to /api/upload...');
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData
       });
 
+      console.log('Upload response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Upload failed');
+        const errorText = await response.text();
+        console.error('Upload failed:', errorText);
+        throw new Error('Upload failed: ' + errorText);
       }
 
       const data = await response.json();
-      return data.url;
+      console.log('Upload response data:', data);
+      const url = data.url || data.fileUrl;
+      console.log('Upload successful, URL:', url);
+      return url;
     } catch (error) {
       console.error('Error uploading file:', error);
       throw error;
@@ -161,19 +215,33 @@ const ManageAudioBooks = () => {
   // Handle audio file upload for topics
   const handleAudioFileChange = async (e) => {
     const file = e.target.files[0];
+    console.log('Audio file selected:', file?.name);
     if (file) {
       if (!file.type.startsWith('audio/')) {
         alert('Please upload a valid audio file (MP3, WAV, etc.)');
         return;
       }
+      if (file.size > 50 * 1024 * 1024) {
+        alert('Audio file size should be less than 50MB');
+        return;
+      }
       try {
         setAudioFileName('Uploading...');
+        console.log('Starting audio upload...');
         const url = await uploadFile(file);
-        setCurrentTopic({ ...currentTopic, audioUrl: url });
+        console.log('Audio uploaded successfully, URL:', url);
+        console.log('Setting currentTopic audioUrl to:', url);
+        setCurrentTopic(prev => {
+          const updated = { ...prev, audioUrl: url };
+          console.log('Updated currentTopic:', updated);
+          return updated;
+        });
         setAudioFileName(file.name);
+        console.log('Audio file upload complete');
       } catch (error) {
+        console.error('Error uploading audio file:', error);
         setAudioFileName('Upload failed');
-        alert('Error uploading audio file');
+        alert('Error uploading audio file: ' + error.message);
       }
     }
   };
@@ -197,11 +265,13 @@ const ManageAudioBooks = () => {
         return;
       }
       try {
-        const base64 = await convertToBase64(file);
-        setCurrentTopic({ ...currentTopic, audioUrl: base64 });
+        setAudioFileName('Uploading...');
+        const url = await uploadFile(file);
+        setCurrentTopic({ ...currentTopic, audioUrl: url });
         setAudioFileName(file.name);
       } catch (error) {
-        console.error('Error converting audio file:', error);
+        console.error('Error uploading audio file:', error);
+        setAudioFileName('Upload failed');
         alert('Error uploading audio file');
       }
     } else {
@@ -211,12 +281,24 @@ const ManageAudioBooks = () => {
 
   // Topic management functions
   const handleAddTopic = () => {
-    if (!currentTopic.title || !currentTopic.audioUrl) {
-      alert('Please provide topic title and audio file');
+    console.log('Adding topic:', currentTopic);
+    console.log('Title:', currentTopic.title);
+    console.log('Audio URL:', currentTopic.audioUrl ? 'Present' : 'Missing');
+    console.log('Current chapter:', currentChapter);
+    console.log('Current topics in chapter:', currentChapter.topics);
+    
+    if (!currentTopic.title || !currentTopic.title.trim()) {
+      alert('Please provide topic title');
       return;
     }
 
-    const updatedTopics = [...currentChapter.topics];
+    if (!currentTopic.audioUrl || !currentTopic.audioUrl.trim()) {
+      alert('Please provide audio file');
+      return;
+    }
+
+    // Deep copy existing topics
+    const updatedTopics = Array.isArray(currentChapter.topics) ? currentChapter.topics.map(t => ({ ...t })) : [];
     if (editingTopicIndex !== null) {
       updatedTopics[editingTopicIndex] = { ...currentTopic };
       setEditingTopicIndex(null);
@@ -224,22 +306,37 @@ const ManageAudioBooks = () => {
       updatedTopics.push({ ...currentTopic });
     }
 
-    setCurrentChapter({ ...currentChapter, topics: updatedTopics });
+    console.log('Updated topics array:', updatedTopics);
+    const updatedChapter = { ...currentChapter, topics: updatedTopics };
+    console.log('Updated chapter:', updatedChapter);
+    
+    // Use functional update to ensure latest state
+    setCurrentChapter(prev => {
+      console.log('Previous chapter state:', prev);
+      return updatedChapter;
+    });
+    
     setCurrentTopic({ title: '', description: '', duration: '', audioUrl: '' });
     setAudioFileName('');
   };
 
   const handleEditTopic = (index) => {
+    console.log('Editing topic at index:', index);
+    console.log('Current chapter topics:', currentChapter.topics);
     if (Array.isArray(currentChapter.topics) && currentChapter.topics[index]) {
-      setCurrentTopic(currentChapter.topics[index]);
+      const topicToEdit = currentChapter.topics[index];
+      console.log('Topic to edit:', topicToEdit);
+      setCurrentTopic({ ...topicToEdit });
       setEditingTopicIndex(index);
-      setAudioFileName('Current audio file');
+      setAudioFileName(topicToEdit.audioUrl ? 'Current audio file' : '');
     }
   };
 
   const handleDeleteTopic = (index) => {
-    const updatedTopics = Array.isArray(currentChapter.topics) ? currentChapter.topics.filter((_, i) => i !== index) : [];
-    setCurrentChapter({ ...currentChapter, topics: updatedTopics });
+    setCurrentChapter(prev => {
+      const updatedTopics = Array.isArray(prev.topics) ? prev.topics.filter((_, i) => i !== index) : [];
+      return { ...prev, topics: updatedTopics };
+    });
   };
 
   // Chapter management functions
@@ -264,14 +361,39 @@ const ManageAudioBooks = () => {
   };
 
   const handleEditChapter = (index) => {
+    console.log('=== EDITING CHAPTER ===');
+    console.log('Index:', index);
+    console.log('FormData chapters:', formData.chapters);
+    console.log('Total chapters:', formData.chapters?.length);
+    
     const chapter = formData.chapters && formData.chapters[index];
+    console.log('Chapter at index', index, ':', chapter);
+    console.log('Chapter title:', chapter?.title);
+    console.log('Chapter topics:', chapter?.topics);
+    console.log('Topics count:', chapter?.topics?.length);
+    
     if (chapter) {
+      // Deep copy to avoid reference issues
       const safeChapter = {
-        ...chapter,
-        topics: Array.isArray(chapter.topics) ? chapter.topics : []
+        title: chapter.title || '',
+        topics: Array.isArray(chapter.topics) ? chapter.topics.map(topic => ({ ...topic })) : []
       };
+      console.log('Safe chapter created:', safeChapter);
+      console.log('Safe chapter title:', safeChapter.title);
+      console.log('Safe chapter topics:', safeChapter.topics);
+      console.log('Number of topics:', safeChapter.topics.length);
+      
       setCurrentChapter(safeChapter);
+      console.log('Current chapter state updated');
       setEditingChapterIndex(index);
+      
+      // Reset topic form when editing chapter
+      setCurrentTopic({ title: '', description: '', duration: '', audioUrl: '' });
+      setEditingTopicIndex(null);
+      setAudioFileName('');
+      
+      // Scroll to chapter form
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -448,10 +570,20 @@ const ManageAudioBooks = () => {
 
             {/* Current Chapter Form */}
             <div className="bg-gray-800/50 p-4 rounded-lg space-y-4">
-              <h4 className="text-md font-semibold text-white flex items-center gap-2">
-                <i className="fas fa-bookmark"></i>
-                {editingChapterIndex !== null ? 'Edit Chapter' : 'Add New Chapter'}
-              </h4>
+              <div className="flex items-start justify-between gap-4 mb-2">
+                <h4 className="text-md font-semibold text-white flex items-center gap-2">
+                  <i className="fas fa-bookmark"></i>
+                  {editingChapterIndex !== null ? 'Edit Chapter' : 'Add New Chapter'}
+                </h4>
+                {editingChapterIndex !== null && (
+                  <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg px-3 py-1.5">
+                    <p className="text-blue-300 text-xs flex items-center gap-2">
+                      <i className="fas fa-info-circle"></i>
+                      <span>Add new topics below, then click "Update Chapter" to save</span>
+                    </p>
+                  </div>
+                )}
+              </div>
 
               <input
                 type="text"

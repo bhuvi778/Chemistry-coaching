@@ -6,7 +6,6 @@ const setClearCacheFunction = (fn) => { clearCache = fn; };
 const getCourses = async (req, res) => {
   try {
     const courses = await Course.find()
-      .select('title description category price duration features isActive')
       .sort({ createdAt: -1 })
       .lean()
       .exec();

@@ -42,14 +42,54 @@ const CourseCard = ({ course }) => {
         </div>
 
         <h3 className="text-2xl font-bold mb-1 text-white">{course.title}</h3>
-        <p className={`${textColor} font-bold text-sm mb-4`}>{course.subtitle}</p>
-        <p className="text-gray-400 mb-6 text-sm flex-grow">{course.desc}</p>
+        
+        {/* Subtitle */}
+        {course.subtitle && (
+          <p className={`${textColor} font-bold text-sm mb-3`}>{course.subtitle}</p>
+        )}
 
-        <ul className="text-sm text-gray-400 mb-6 space-y-2">
-          {course.features.map((f, idx) => (
-            <li key={idx}><i className="fas fa-check text-green-500 mr-2"></i> {f}</li>
-          ))}
-        </ul>
+        {/* Description */}
+        {(course.desc || course.description) && (
+          <p className="text-gray-400 mb-4 text-sm flex-grow line-clamp-3">
+            {course.desc || course.description}
+          </p>
+        )}
+
+        {/* Course Details - Duration, Schedule, Price */}
+        <div className="mb-4 space-y-2">
+          {course.duration && (
+            <div className="flex items-center text-sm text-gray-300">
+              <i className="fas fa-clock text-cyan-400 mr-2 w-4"></i>
+              <span className="font-semibold mr-1">Duration:</span>
+              <span>{course.duration}</span>
+            </div>
+          )}
+          
+          {course.schedule && (
+            <div className="flex items-center text-sm text-gray-300">
+              <i className="fas fa-calendar-alt text-purple-400 mr-2 w-4"></i>
+              <span className="font-semibold mr-1">Schedule:</span>
+              <span>{course.schedule}</span>
+            </div>
+          )}
+          
+          {course.price && (
+            <div className="flex items-center text-sm">
+              <i className="fas fa-tag text-green-400 mr-2 w-4"></i>
+              <span className="font-semibold text-gray-300 mr-1">Price:</span>
+              <span className="text-green-400 font-bold">{course.price}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Features */}
+        {course.features && course.features.length > 0 && (
+          <ul className="text-sm text-gray-400 mb-6 space-y-2">
+            {course.features.map((f, idx) => (
+              <li key={idx}><i className="fas fa-check text-green-500 mr-2"></i> {f}</li>
+            ))}
+          </ul>
+        )}
 
         <div className="mt-auto flex gap-3">
           <button
