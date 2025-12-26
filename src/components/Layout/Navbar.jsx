@@ -17,7 +17,16 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="glass-panel fixed w-full z-50 top-0 border-b border-gray-800">
+    <>
+      {/* 3D Coming Soon Banner */}
+      <div className="fixed w-full z-[60] top-0 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white py-2 px-4 text-center animate-pulse">
+        <p className="text-sm md:text-base font-bold flex items-center justify-center gap-2">
+          <i className="fas fa-cube"></i>
+          <span>🚀 Coming Soon: 3D Interactive Chemistry Models & Logos!</span>
+          <i className="fas fa-cube"></i>
+        </p>
+      </div>
+      <nav className="glass-panel fixed w-full z-50 top-10 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center cursor-pointer">
@@ -339,6 +348,7 @@ const Navbar = () => {
         </div>
       )}
     </nav>
+    </>
   );
 };
 

@@ -198,7 +198,7 @@ const ManageWebinarCards = () => {
                                         <img
                                             src={formData.image}
                                             alt="Preview"
-                                            className="w-full h-48 object-cover rounded-lg border border-gray-700"
+                                            className="w-full h-48 object-contain bg-gray-900 rounded-lg border border-gray-700"
                                         />
                                         <button
                                             type="button"
@@ -358,7 +358,9 @@ const ManageWebinarCards = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cards.map((card) => (
                     <div key={card._id} className="glass-panel rounded-xl overflow-hidden">
-                        <img src={card.image} alt={card.title} className="w-full h-48 object-cover" />
+                        <div className="w-full h-48 bg-gray-900 flex items-center justify-center">
+                            <img src={card.image} alt={card.title} className="max-w-full max-h-full object-contain" />
+                        </div>
                         <div className="p-4">
                             <h3 className="text-white font-bold text-lg mb-1">{card.title}</h3>
                             {card.subtitle && (

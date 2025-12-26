@@ -92,11 +92,11 @@ const BookMeeting = () => {
                                             <div key={card._id} className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-lg overflow-hidden hover:shadow-xl transition-shadow`}>
                                                 <div className="flex flex-col sm:flex-row">
                                                     {/* Card Image */}
-                                                    <div className="sm:w-1/3 h-48 sm:h-auto">
+                                                    <div className="sm:w-1/3 h-48 sm:h-auto bg-gray-900/50 flex items-center justify-center">
                                                         <img
                                                             src={card.image}
                                                             alt={card.title}
-                                                            className="w-full h-full object-cover"
+                                                            className="w-full h-full object-contain"
                                                         />
                                                     </div>
 
