@@ -54,15 +54,31 @@ const ManageCrosswords = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this crossword?')) {
             try {
+                console.log('Deleting crossword with ID:', id);
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                await fetch(`${API_URL}/crosswords/${id}`, {
+                const url = `${API_URL}/crosswords/${id}`;
+                console.log('Delete URL:', url);
+                
+                const response = await fetch(url, {
                     method: 'DELETE'
                 });
-                fetchCrosswords();
+                
+                console.log('Delete response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Delete failed:', errorText);
+                    throw new Error(`Delete failed: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Delete result:', result);
+                
+                await fetchCrosswords();
                 alert('Crossword deleted successfully!');
             } catch (error) {
                 console.error('Error deleting crossword:', error);
-                alert('Error deleting crossword');
+                alert('Error deleting crossword: ' + error.message);
             }
         }
     };

@@ -61,7 +61,7 @@ const JoinCommunity = () => {
 
                         {/* CTA Button */}
                         <a
-                            href="https://ace2examz-1003.freshlearn.com/member/#/login"
+                            href="https://whatsapp.com/channel/0029Vb79CnNJJhzVMjDHFv0U"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg rounded-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all duration-300 transform hover:scale-105"
