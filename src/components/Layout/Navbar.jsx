@@ -22,7 +22,7 @@ const Navbar = () => {
       <div className="fixed w-full z-[60] top-0 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white py-2 px-4 text-center animate-pulse">
         <p className="text-sm md:text-base font-bold flex items-center justify-center gap-2">
           <i className="fas fa-cube"></i>
-          <span>🚀 Coming Soon: 3D Interactive Chemistry Models & Logos!</span>
+          <span>🚀 Coming Soon: 3D Interactive Chemistry Models!</span>
           <i className="fas fa-cube"></i>
         </p>
       </div>
