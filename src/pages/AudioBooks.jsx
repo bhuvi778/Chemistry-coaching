@@ -198,19 +198,33 @@ const AudioBooks = () => {
                                               </div>
                                             </div>
                                             {/* Audio Player */}
-                                            {topic.audioUrl && (
-                                              <audio
-                                                controls
-                                                controlsList="nodownload"
-                                                className="w-full mt-2"
-                                                style={{
-                                                  height: '40px',
-                                                  borderRadius: '8px'
-                                                }}
-                                              >
-                                                <source src={topic.audioUrl} type="audio/mpeg" />
-                                                Your browser does not support the audio element.
-                                              </audio>
+                                            {topic.audioUrl ? (
+                                              <div className="bg-gray-700/50 rounded-lg p-3 mt-3">
+                                                <audio
+                                                  controls
+                                                  controlsList="nodownload"
+                                                  className="w-full"
+                                                  style={{
+                                                    height: '45px',
+                                                    borderRadius: '8px',
+                                                    filter: 'invert(0.9) hue-rotate(180deg)',
+                                                    background: 'transparent'
+                                                  }}
+                                                  preload="metadata"
+                                                >
+                                                  <source src={topic.audioUrl} type="audio/mpeg" />
+                                                  <source src={topic.audioUrl} type="audio/mp4" />
+                                                  <source src={topic.audioUrl} type="audio/wav" />
+                                                  Your browser does not support the audio element.
+                                                </audio>
+                                              </div>
+                                            ) : (
+                                              <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3 mt-3">
+                                                <p className="text-yellow-400 text-sm text-center">
+                                                  <i className="fas fa-exclamation-triangle mr-2"></i>
+                                                  Audio file not available
+                                                </p>
+                                              </div>
                                             )}
                                           </div>
                                         ))}
