@@ -289,6 +289,23 @@ const ManageDoubts = () => {
                                                 Published
                                             </span>
                                         )}
+                                        {/* Like/Dislike Stats */}
+                                        {(doubt.likes > 0 || doubt.dislikes > 0) && (
+                                            <div className="flex items-center gap-2 ml-2">
+                                                {doubt.likes > 0 && (
+                                                    <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">
+                                                        <i className="fas fa-thumbs-up mr-1"></i>
+                                                        {doubt.likes}
+                                                    </span>
+                                                )}
+                                                {doubt.dislikes > 0 && (
+                                                    <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400">
+                                                        <i className="fas fa-thumbs-down mr-1"></i>
+                                                        {doubt.dislikes}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                     <h3 className="text-white font-bold text-lg mb-2">
                                         {doubt.question}
