@@ -204,13 +204,13 @@ const ManageFeedback = () => {
                             </div>
 
                             {/* Related Doubt */}
-                            {item.doubtId && (
+                            {item.question && (
                                 <div className="bg-gray-800/50 rounded-lg p-4 mb-3">
                                     <p className="text-gray-400 text-xs mb-2">
                                         <i className="fas fa-question-circle mr-1"></i>
                                         Related Question:
                                     </p>
-                                    <p className="text-white font-medium">{item.doubtId.question}</p>
+                                    <p className="text-white font-medium">{item.question}</p>
                                 </div>
                             )}
 
