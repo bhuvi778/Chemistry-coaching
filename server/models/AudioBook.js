@@ -9,7 +9,7 @@ const topicSchema = new mongoose.Schema({
   duration: String,
   audioUrl: {
     type: String,
-    required: true
+    required: false  // Made optional to allow audiobooks without audio files
   }
 });
 
