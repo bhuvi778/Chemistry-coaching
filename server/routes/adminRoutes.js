@@ -1,7 +1,49 @@
 const express = require('express');
 const router = express.Router();
-const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
+
+const ADMIN_FILE = path.join(__dirname, '../data/admin.json');
+
+// Helper function to read admin data
+const readAdminData = () => {
+    try {
+        if (!fs.existsSync(ADMIN_FILE)) {
+            // Create default admin if file doesn't exist
+            const defaultAdmin = {
+                username: 'admin',
+                password: bcrypt.hashSync('admin123', 10)
+            };
+            const dir = path.dirname(ADMIN_FILE);
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+            }
+            fs.writeFileSync(ADMIN_FILE, JSON.stringify(defaultAdmin, null, 2));
+            return defaultAdmin;
+        }
+        const data = fs.readFileSync(ADMIN_FILE, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading admin data:', error);
+        return null;
+    }
+};
+
+// Helper function to write admin data
+const writeAdminData = (data) => {
+    try {
+        const dir = path.dirname(ADMIN_FILE);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(ADMIN_FILE, JSON.stringify(data, null, 2));
+        return true;
+    } catch (error) {
+        console.error('Error writing admin data:', error);
+        return false;
+    }
+};
 
 // Login
 router.post('/login', async (req, res) => {
@@ -15,10 +57,10 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Find admin by username
-        const admin = await Admin.findOne({ username });
+        // Read admin from file
+        const admin = readAdminData();
         
-        if (!admin) {
+        if (!admin || admin.username !== username) {
             return res.status(401).json({ 
                 success: false, 
                 message: 'Invalid credentials' 
@@ -26,7 +68,7 @@ router.post('/login', async (req, res) => {
         }
 
         // Compare password
-        const isMatch = await admin.comparePassword(password);
+        const isMatch = await bcrypt.compare(password, admin.password);
         
         if (!isMatch) {
             return res.status(401).json({ 
@@ -39,7 +81,6 @@ router.post('/login', async (req, res) => {
             success: true, 
             message: 'Login successful',
             admin: {
-                id: admin._id,
                 username: admin.username
             }
         });
@@ -136,10 +177,10 @@ router.put('/update-credentials', async (req, res) => {
             });
         }
 
-        // Find admin
-        const admin = await Admin.findOne({ username: currentUsername });
+        // Read admin from file
+        const admin = readAdminData();
         
-        if (!admin) {
+        if (!admin || admin.username !== currentUsername) {
             return res.status(404).json({ 
                 success: false, 
                 message: 'Admin not found' 
@@ -147,7 +188,7 @@ router.put('/update-credentials', async (req, res) => {
         }
 
         // Verify current password
-        const isMatch = await admin.comparePassword(currentPassword);
+        const isMatch = await bcrypt.compare(currentPassword, admin.password);
         
         if (!isMatch) {
             return res.status(401).json({ 
@@ -156,31 +197,30 @@ router.put('/update-credentials', async (req, res) => {
             });
         }
 
-        // Check if new username already exists (if changing username)
-        if (newUsername && newUsername !== currentUsername) {
-            const existingAdmin = await Admin.findOne({ username: newUsername });
-            if (existingAdmin) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: 'Username already exists' 
-                });
-            }
+        // Update username if provided
+        if (newUsername) {
             admin.username = newUsername;
         }
 
         // Update password if provided
         if (newPassword) {
-            admin.password = newPassword;
+            admin.password = await bcrypt.hash(newPassword, 10);
         }
 
-        admin.updatedAt = Date.now();
-        await admin.save();
+        // Save to file
+        const saved = writeAdminData(admin);
+        
+        if (!saved) {
+            return res.status(500).json({ 
+                success: false, 
+                message: 'Failed to save credentials' 
+            });
+        }
 
         res.json({ 
             success: true, 
             message: 'Credentials updated successfully',
             admin: {
-                id: admin._id,
                 username: admin.username
             }
         });
@@ -190,39 +230,6 @@ router.put('/update-credentials', async (req, res) => {
         res.status(500).json({ 
             success: false, 
             message: 'Server error while updating credentials' 
-        });
-    }
-});
-
-// Initialize default admin (run once)
-router.post('/initialize', async (req, res) => {
-    try {
-        const adminCount = await Admin.countDocuments();
-        
-        if (adminCount > 0) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Admin already exists' 
-            });
-        }
-
-        const defaultAdmin = new Admin({
-            username: 'admin',
-            password: 'admin123'
-        });
-
-        await defaultAdmin.save();
-
-        res.json({ 
-            success: true, 
-            message: 'Default admin created successfully' 
-        });
-
-    } catch (error) {
-        console.error('Initialize admin error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Server error while initializing admin' 
         });
     }
 });
