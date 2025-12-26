@@ -747,7 +747,7 @@ const Puzzle = () => {
                         <div className="p-4 bg-gray-800 flex items-center justify-between flex-wrap gap-3">
                             <p className="text-gray-400 text-sm">
                                 <i className="fas fa-lock mr-2"></i>
-                                View only - Screenshots and downloads are disabled.
+                               
                             </p>
                             <button
                                 onClick={() => {
