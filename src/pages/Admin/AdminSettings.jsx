@@ -38,39 +38,59 @@ const AdminSettings = () => {
         setIsSubmitting(true);
 
         try {
-            // In a real app, this would call a backend API
-            // For now, we'll update localStorage
-            const storedUsername = localStorage.getItem('admin_username') || 'admin';
-            const storedPassword = localStorage.getItem('admin_password') || 'admin123';
+            // Get current username from localStorage
+            const currentUsername = localStorage.getItem('admin_username') || 'admin';
 
-            // Verify current password
-            if (currentPassword !== storedPassword) {
-                setMessage({ type: 'error', text: 'Current password is incorrect' });
-                setIsSubmitting(false);
-                return;
-            }
-
-            // Update credentials
-            if (newUsername) {
-                localStorage.setItem('admin_username', newUsername);
-            }
-            if (newPassword) {
-                localStorage.setItem('admin_password', newPassword);
-            }
-
-            setMessage({
-                type: 'success',
-                text: `Credentials updated successfully! ${newUsername ? 'Username: ' + newUsername : ''} ${newPassword ? '(Password changed)' : ''}`
+            // Call backend API to update credentials
+            const response = await fetch('/api/admin/update-credentials', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    currentUsername,
+                    currentPassword,
+                    newUsername: newUsername || undefined,
+                    newPassword: newPassword || undefined
+                }),
             });
 
-            // Clear form
-            setCurrentPassword('');
-            setNewUsername('');
-            setNewPassword('');
-            setConfirmPassword('');
+            const data = await response.json();
+
+            if (data.success) {
+                // Update localStorage with new credentials
+                if (newUsername) {
+                    localStorage.setItem('admin_username', newUsername);
+                }
+                // Note: We don't store password in localStorage anymore
+
+                setMessage({
+                    type: 'success',
+                    text: `Credentials updated successfully! ${newUsername ? 'New username: ' + newUsername : ''} ${newPassword ? '(Password changed)' : ''}`
+                });
+
+                // Clear form
+                setCurrentPassword('');
+                setNewUsername('');
+                setNewPassword('');
+                setConfirmPassword('');
+
+                // If username was changed, show additional message
+                if (newUsername) {
+                    setTimeout(() => {
+                        setMessage({
+                            type: 'success',
+                            text: `Please remember your new username: ${newUsername}`
+                        });
+                    }, 2000);
+                }
+            } else {
+                setMessage({ type: 'error', text: data.message || 'Failed to update credentials' });
+            }
 
         } catch (error) {
-            setMessage({ type: 'error', text: 'Error updating credentials. Please try again.' });
+            console.error('Error updating credentials:', error);
+            setMessage({ type: 'error', text: 'Server error. Please try again.' });
         } finally {
             setIsSubmitting(false);
         }

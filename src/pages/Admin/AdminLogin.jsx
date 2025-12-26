@@ -6,15 +6,44 @@ const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useData();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (login(username, password)) {
-      navigate('/admin/dashboard');
-    } else {
-      setError('Invalid credentials');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      // Call backend API for login
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Store username in localStorage for the session
+        localStorage.setItem('admin_username', username);
+        localStorage.setItem('admin_logged_in', 'true');
+        
+        // Update context
+        login(username, password);
+        
+        navigate('/admin/dashboard');
+      } else {
+        setError(data.message || 'Invalid credentials');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Server error. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -42,8 +71,23 @@ const AdminLogin = () => {
               className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none"
             />
           </div>
-          <button type="submit" className="w-full bg-cyan-500 text-black font-bold py-3 rounded hover:bg-cyan-400 transition">
-            Login
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            className={`w-full font-bold py-3 rounded transition ${
+              isLoading 
+                ? 'bg-gray-500 cursor-not-allowed' 
+                : 'bg-cyan-500 hover:bg-cyan-400'
+            } text-black`}
+          >
+            {isLoading ? (
+              <>
+                <i className="fas fa-spinner fa-spin mr-2"></i>
+                Logging in...
+              </>
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
       </div>

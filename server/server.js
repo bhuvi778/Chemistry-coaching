@@ -17,6 +17,7 @@ const WebinarCard = require('./models/WebinarCard');
 const Doubt = require('./models/Doubt');
 const Crossword = require('./models/Crossword');
 const PuzzleSet = require('./models/PuzzleSet');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -176,6 +177,8 @@ mongoose.connection.on('disconnected', () => {
 });
 
 // Routes
+// Admin routes
+app.use('/api/admin', adminRoutes);
 
 // Courses
 app.get('/api/courses', cacheMiddleware('courses', 30 * 60 * 1000), async (req, res) => {
