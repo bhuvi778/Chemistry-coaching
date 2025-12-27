@@ -129,6 +129,8 @@ function AppContent() {
               </ProtectedRoute>
             } 
           />
+          {/* Catch all undefined routes and redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
 
