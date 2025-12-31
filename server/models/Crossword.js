@@ -43,6 +43,10 @@ const crosswordSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    answerPdfUrl: {
+        type: String,
+        default: ''
+    },
     createdAt: {
         type: Date,
         default: Date.now

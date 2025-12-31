@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
-  title: { 
-    type: String, 
-    required: true 
+  title: {
+    type: String,
+    required: true
   },
   subtitle: String, // Added to match frontend form
   grade: String, // Old field - kept for backward compatibility
-  category: { 
-    type: String, 
-    enum: ['JEE', 'NEET', 'IAT', 'NEST', 'CSIR NET', 'GATE', 'IIT JAM', 'TIFR', 'jee', 'neet', 'iat', 'nest', 'csir-net', 'gate', 'iit-jam', 'tifr'], 
-    default: 'JEE' 
+  category: {
+    type: String,
+    enum: ['JEE', 'NEET', 'IAT', 'NEST', 'CSIR NET', 'GATE', 'IIT JAM', 'TIFR', 'jee', 'neet', 'iat', 'nest', 'csir-net', 'gate', 'iit-jam', 'tifr'],
+    default: 'JEE'
   }, // Exam category (old categories)
   desc: String, // Frontend uses this field
   description: String, // Backend compatibility field
@@ -29,7 +29,8 @@ const courseSchema = new mongoose.Schema({
       '1-1-tutoring',
       'mentorship',
       'doubt-solver',
-      'test-series'
+      'test-series',
+      'focus-test-series'
     ],
     default: []
   }, // Program type categories (new categories)
@@ -44,7 +45,7 @@ const courseSchema = new mongoose.Schema({
 });
 
 // Pre-save hook to sync desc and description fields
-courseSchema.pre('save', function(next) {
+courseSchema.pre('save', function (next) {
   // If desc is provided but description is not, copy desc to description
   if (this.desc && !this.description) {
     this.description = this.desc;

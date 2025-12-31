@@ -6,6 +6,7 @@ const Lectures = () => {
   const { videos } = useData();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedExam, setSelectedExam] = useState('all');
+  const [selectedPlaylist, setSelectedPlaylist] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [downloadingId, setDownloadingId] = useState(null);
   const videosPerPage = 12; // 3 rows × 4 columns
@@ -22,17 +23,29 @@ const Lectures = () => {
   // Reset to page 1 when category or exam changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, selectedExam]);
+  }, [selectedCategory, selectedExam, selectedPlaylist]);
 
   const safeVideos = Array.isArray(videos) ? videos : [];
 
   // Filter videos: must have valid youtubeId AND be active
   const validVideos = safeVideos.filter(video => video?.youtubeId && video?.isActive !== false);
 
+  // Extract unique playlists/chapters from videos
+  const uniquePlaylists = ['all', ...new Set(
+    validVideos
+      .map(video => video.chapterName)
+      .filter(name => name && name.trim() !== '')
+  )].sort((a, b) => {
+    if (a === 'all') return -1;
+    if (b === 'all') return 1;
+    return a.localeCompare(b);
+  });
+
   const filteredVideos = validVideos.filter(video => {
     const categoryMatch = selectedCategory === 'all' || video.category === selectedCategory;
     const examMatch = selectedExam === 'all' || video.examType === selectedExam;
-    return categoryMatch && examMatch;
+    const playlistMatch = selectedPlaylist === 'all' || video.chapterName === selectedPlaylist;
+    return categoryMatch && examMatch && playlistMatch;
   });
 
   // Pagination calculations
@@ -77,7 +90,7 @@ const Lectures = () => {
             Filter Video Lectures
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Exam Type Dropdown */}
             <div>
               <label className="block text-sm font-semibold text-gray-400 mb-3">
@@ -132,6 +145,25 @@ const Lectures = () => {
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Playlist/Chapter Dropdown */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-3">
+                <i className="fas fa-list mr-2 text-purple-400"></i>
+                Filter by Playlist
+              </label>
+              <select
+                value={selectedPlaylist}
+                onChange={(e) => setSelectedPlaylist(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-purple-400 transition"
+              >
+                {uniquePlaylists.map((playlist) => (
+                  <option key={playlist} value={playlist}>
+                    {playlist === 'all' ? 'All Playlists' : playlist}
                   </option>
                 ))}
               </select>
@@ -326,6 +358,19 @@ const Lectures = () => {
                         No Notes Available
                       </button>
                     )}
+
+                    {/* Take Quiz Button */}
+                    {video.quizLink ? (
+                      <a
+                        href={video.quizLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
+                      >
+                        <i className="fas fa-question-circle mr-2"></i>
+                        Take Quiz
+                      </a>
+                    ) : null}
                   </div>
                 </div>
               ))}

@@ -29,6 +29,10 @@ const videoSchema = new mongoose.Schema({
     enum: ['JEE', 'NEET', 'GATE', 'AIIMS', 'IAT', 'NEST', 'KVPY', 'TIFR', 'CSIR NET', 'IIT JAM', 'OLYMPIAD', 'CUET', 'BOARDS', 'all'],
     default: 'all'
   },
+  chapterName: {
+    type: String,
+    default: ''
+  },
   duration: String,
   views: {
     type: Number,
@@ -38,6 +42,10 @@ const videoSchema = new mongoose.Schema({
     data: String,  // Base64 encoded PDF
     filename: String,
     uploadedAt: Date
+  },
+  quizLink: {
+    type: String,
+    default: ''
   },
   isActive: {
     type: Boolean,

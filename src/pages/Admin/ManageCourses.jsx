@@ -8,7 +8,7 @@ const ManageCourses = () => {
   const [currentCourse, setCurrentCourse] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
-  
+
   const initialFormState = {
     title: '',
     subtitle: '',
@@ -96,7 +96,7 @@ const ManageCourses = () => {
               type="text"
               placeholder="Course Title"
               value={formData.title}
-              onChange={e => setFormData({...formData, title: e.target.value})}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
               required
             />
@@ -104,7 +104,7 @@ const ManageCourses = () => {
               type="text"
               placeholder="Subtitle"
               value={formData.subtitle}
-              onChange={e => setFormData({...formData, subtitle: e.target.value})}
+              onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
               required
             />
@@ -112,7 +112,7 @@ const ManageCourses = () => {
           <textarea
             placeholder="Description"
             value={formData.desc}
-            onChange={e => setFormData({...formData, desc: e.target.value})}
+            onChange={e => setFormData({ ...formData, desc: e.target.value })}
             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full h-24"
             required
           />
@@ -121,7 +121,7 @@ const ManageCourses = () => {
               type="text"
               placeholder="Price (e.g., ₹45,000)"
               value={formData.price}
-              onChange={e => setFormData({...formData, price: e.target.value})}
+              onChange={e => setFormData({ ...formData, price: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
               required
             />
@@ -129,14 +129,14 @@ const ManageCourses = () => {
               type="text"
               placeholder="Duration (e.g., 1 Year)"
               value={formData.duration}
-              onChange={e => setFormData({...formData, duration: e.target.value})}
+              onChange={e => setFormData({ ...formData, duration: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             />
             <input
               type="text"
               placeholder="Schedule (e.g., Mon-Fri)"
               value={formData.schedule}
-              onChange={e => setFormData({...formData, schedule: e.target.value})}
+              onChange={e => setFormData({ ...formData, schedule: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             />
           </div>
@@ -144,14 +144,14 @@ const ManageCourses = () => {
             type="text"
             placeholder="Features (comma separated)"
             value={formData.features}
-            onChange={e => setFormData({...formData, features: e.target.value})}
+            onChange={e => setFormData({ ...formData, features: e.target.value })}
             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             required
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <select
               value={formData.category}
-              onChange={e => setFormData({...formData, category: e.target.value})}
+              onChange={e => setFormData({ ...formData, category: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             >
               <option value="">Select Exam Category</option>
@@ -166,7 +166,7 @@ const ManageCourses = () => {
             </select>
             <select
               value={formData.color}
-              onChange={e => setFormData({...formData, color: e.target.value})}
+              onChange={e => setFormData({ ...formData, color: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             >
               <option value="cyan">Cyan</option>
@@ -182,7 +182,7 @@ const ManageCourses = () => {
               type="text"
               placeholder="Icon Class (e.g., fa-flask)"
               value={formData.icon}
-              onChange={e => setFormData({...formData, icon: e.target.value})}
+              onChange={e => setFormData({ ...formData, icon: e.target.value })}
               className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
             />
           </div>
@@ -190,10 +190,10 @@ const ManageCourses = () => {
             type="text"
             placeholder="Badge Text (Optional)"
             value={formData.badge}
-            onChange={e => setFormData({...formData, badge: e.target.value})}
+            onChange={e => setFormData({ ...formData, badge: e.target.value })}
             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
           />
-          
+
           <div>
             <label className="block text-gray-400 mb-2 font-semibold">
               <i className="fas fa-graduation-cap mr-2 text-cyan-400"></i>
@@ -212,7 +212,7 @@ const ManageCourses = () => {
               Program Type Categories (Select all that apply):
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {['live-batch', 'recorded', '1-1-tutoring', 'mentorship', 'doubt-solver', 'test-series'].map(cat => (
+              {['live-batch', 'recorded', '1-1-tutoring', 'mentorship', 'doubt-solver', 'test-series', 'focus-test-series'].map(cat => (
                 <label key={cat} className="flex items-center gap-2 text-white cursor-pointer hover:text-cyan-400 transition">
                   <input
                     type="checkbox"
@@ -227,6 +227,7 @@ const ManageCourses = () => {
                     {cat === 'mentorship' && 'Mentorship'}
                     {cat === 'doubt-solver' && 'Doubt Solver'}
                     {cat === 'test-series' && 'Test Series'}
+                    {cat === 'focus-test-series' && 'Focus Test Series'}
                   </span>
                 </label>
               ))}

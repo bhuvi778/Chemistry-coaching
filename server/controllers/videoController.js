@@ -18,7 +18,7 @@ const getVideos = async (req, res) => {
     const filter = showAll ? {} : { isActive: true };
 
     const videos = await Video.find(filter)
-      .select('title description category examType youtubeId instructor duration isActive createdAt views classNotes.filename classNotes.uploadedAt')
+      .select('title description category examType chapterName youtubeId instructor duration isActive createdAt views classNotes.filename classNotes.uploadedAt quizLink')
       .sort({ createdAt: -1 })
       .limit(100)
       .lean()

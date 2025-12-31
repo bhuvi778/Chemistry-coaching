@@ -178,8 +178,8 @@ const Doubts = () => {
                     {/* Header */}
                     <div className="text-center mb-8">
                         <h1 className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>
-                            <i className="fas fa-question-circle text-cyan-500 mr-3"></i>
-                            Doubts & Questions
+                            <i className="fas fa-users text-cyan-500 mr-3"></i>
+                            Community
                         </h1>
                         <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                             Search for answers or ask your question
@@ -455,22 +455,20 @@ const Doubts = () => {
                                                         </span>
                                                         <i className={`fas fa-chevron-${expandedFeedback[doubt._id] ? 'up' : 'down'} text-xs`}></i>
                                                     </button>
-                                                    
+
                                                     {expandedFeedback[doubt._id] && (
                                                         <div className="space-y-3 max-h-60 overflow-y-auto">
                                                             {doubt.feedbacks.map((fb, idx) => (
                                                                 <div key={idx} className={`${isDark ? 'bg-gray-800/50' : 'bg-gray-50'} rounded-lg p-3`}>
                                                                     <div className="flex items-start gap-2 mb-2">
-                                                                        <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-                                                                            fb.reactionType === 'like' 
-                                                                                ? 'bg-green-500/20' 
+                                                                        <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${fb.reactionType === 'like'
+                                                                                ? 'bg-green-500/20'
                                                                                 : 'bg-red-500/20'
-                                                                        }`}>
-                                                                            <i className={`fas fa-thumbs-${fb.reactionType === 'like' ? 'up' : 'down'} text-xs ${
-                                                                                fb.reactionType === 'like'
+                                                                            }`}>
+                                                                            <i className={`fas fa-thumbs-${fb.reactionType === 'like' ? 'up' : 'down'} text-xs ${fb.reactionType === 'like'
                                                                                     ? 'text-green-400'
                                                                                     : 'text-red-400'
-                                                                            }`}></i>
+                                                                                }`}></i>
                                                                         </div>
                                                                         <div className="flex-1">
                                                                             <p className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>

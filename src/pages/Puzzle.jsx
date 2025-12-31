@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
+import Pagination from '../components/UI/Pagination';
 
 // Set worker to local file (hosted in public directory)
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
@@ -20,6 +21,8 @@ const Puzzle = () => {
     const [pdfPages, setPdfPages] = useState([]);
     const [loadingPdf, setLoadingPdf] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [currentCrosswordPage, setCurrentCrosswordPage] = useState(1);
+    const crosswordsPerPage = 6; // 2 rows × 3 columns
     const canvasContainerRef = useRef(null);
 
     // Detect mobile device
@@ -54,40 +57,40 @@ const Puzzle = () => {
     // Load and render PDF using PDF.js for mobile
     const loadPdfForMobile = async (url) => {
         if (!isMobile) return;
-        
+
         setLoadingPdf(true);
         setPdfPages([]);
-        
+
         try {
             // Fetch PDF as blob to avoid CORS issues
             const response = await fetch(url);
             const blob = await response.blob();
             const arrayBuffer = await blob.arrayBuffer();
-            
+
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             const pages = [];
-            
+
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
                 const viewport = page.getViewport({ scale: 1.5 });
-                
+
                 // Create canvas
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
-                
+
                 // Render page
                 await page.render({
                     canvasContext: context,
                     viewport: viewport
                 }).promise;
-                
+
                 // Convert canvas to image
                 const imageData = canvas.toDataURL('image/png');
                 pages.push({ pageNum, imageData, width: viewport.width, height: viewport.height });
             }
-            
+
             setPdfPages(pages);
         } catch (error) {
             console.error('Error loading PDF:', error);
@@ -249,9 +252,20 @@ const Puzzle = () => {
         return examMatch && chapterMatch;
     });
 
+    // Reset crossword pagination when filters change
+    useEffect(() => {
+        setCurrentCrosswordPage(1);
+    }, [selectedExam, selectedChapter]);
+
+    // Pagination calculations for crosswords
+    const totalCrosswordPages = Math.ceil(filteredCrosswords.length / crosswordsPerPage);
+    const indexOfLastCrossword = currentCrosswordPage * crosswordsPerPage;
+    const indexOfFirstCrossword = indexOfLastCrossword - crosswordsPerPage;
+    const currentCrosswords = filteredCrosswords.slice(indexOfFirstCrossword, indexOfLastCrossword);
+
     // Get unique chapters from both
     const allChapters = [...new Set([
-        ...safeCrosswords.filter(c => c && c.chapter).map(c => c.chapter), 
+        ...safeCrosswords.filter(c => c && c.chapter).map(c => c.chapter),
         ...safePuzzleSets.filter(p => p && p.chapter).map(p => p.chapter)
     ])];
     const chapters = ['all', ...allChapters];
@@ -350,59 +364,93 @@ const Puzzle = () => {
                             </p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredCrosswords.map((crossword) => (
-                                <div key={crossword._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300 group">
-                                    {crossword.thumbnailUrl && (
-                                        <div className="w-full aspect-[16/9] overflow-hidden relative">
-                                            <img
-                                                src={crossword.thumbnailUrl}
-                                                alt={crossword.title}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                            />
-                                        </div>
-                                    )}
-                                    <div className="p-6">
-                                        <h3 className="text-xl font-bold text-white mb-2">{crossword.title}</h3>
-                                        {crossword.description && (
-                                            <p className="text-gray-400 text-sm mb-4">{crossword.description}</p>
-                                        )}
-                                        <div className="flex gap-2 mb-4 flex-wrap">
-                                            <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
-                                                {crossword.chapter}
-                                            </span>
-                                            {crossword.topic && (
-                                                <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
-                                                    {crossword.topic}
-                                                </span>
-                                            )}
-                                            <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
-                                                {crossword.examType}
-                                            </span>
-                                            {crossword.difficulty && (
-                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                                    crossword.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
-                                                    crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                    'bg-red-500/20 text-red-400'
-                                                }`}>
-                                                    {crossword.difficulty}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedCrossword(crossword);
-                                                setShowCrosswordModal(true);
-                                            }}
-                                            className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold"
-                                        >
-                                            <i className="fas fa-play"></i>
-                                            Play Crossword
-                                        </button>
-                                    </div>
+                        <>
+                            {/* Pagination Info */}
+                            <div className="mb-6 flex justify-between items-center">
+                                <div className="text-gray-400">
+                                    <i className="fas fa-th mr-2"></i>
+                                    Showing {indexOfFirstCrossword + 1}-{Math.min(indexOfLastCrossword, filteredCrosswords.length)} of {filteredCrosswords.length} {filteredCrosswords.length === 1 ? 'crossword' : 'crosswords'}
                                 </div>
-                            ))}
-                        </div>
+                                {totalCrosswordPages > 1 && (
+                                    <div className="text-gray-400 text-sm">
+                                        Page {currentCrosswordPage} of {totalCrosswordPages}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {currentCrosswords.map((crossword) => (
+                                    <div key={crossword._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300 group">
+                                        {crossword.thumbnailUrl && (
+                                            <div className="w-full aspect-[16/9] overflow-hidden relative">
+                                                <img
+                                                    src={crossword.thumbnailUrl}
+                                                    alt={crossword.title}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="p-6">
+                                            <h3 className="text-xl font-bold text-white mb-2">{crossword.title}</h3>
+                                            {crossword.description && (
+                                                <p className="text-gray-400 text-sm mb-4">{crossword.description}</p>
+                                            )}
+                                            <div className="flex gap-2 mb-4 flex-wrap">
+                                                <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
+                                                    {crossword.chapter}
+                                                </span>
+                                                {crossword.topic && (
+                                                    <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
+                                                        {crossword.topic}
+                                                    </span>
+                                                )}
+                                                <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
+                                                    {crossword.examType}
+                                                </span>
+                                                {crossword.difficulty && (
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${crossword.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
+                                                            crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                                'bg-red-500/20 text-red-400'
+                                                        }`}>
+                                                        {crossword.difficulty}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedCrossword(crossword);
+                                                    setShowCrosswordModal(true);
+                                                }}
+                                                className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold"
+                                            >
+                                                <i className="fas fa-play"></i>
+                                                Play Crossword
+                                            </button>
+
+                                            {/* View Answer Button */}
+                                            {crossword.answerPdfUrl && (
+                                                <a
+                                                    href={crossword.answerPdfUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition font-semibold mt-2"
+                                                >
+                                                    <i className="fas fa-file-pdf"></i>
+                                                    View Answer
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Pagination */}
+                            <Pagination
+                                currentPage={currentCrosswordPage}
+                                totalPages={totalCrosswordPages}
+                                onPageChange={setCurrentCrosswordPage}
+                            />
+                        </>
                     )}
                 </div>
 
@@ -433,106 +481,107 @@ const Puzzle = () => {
                             {filteredPuzzleSets.map((puzzleSet) => {
                                 console.log('Puzzle Set:', puzzleSet.title, 'Has thumbnail:', !!puzzleSet.thumbnailUrl);
                                 return (
-                                <div key={puzzleSet._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(251,146,60,0.3)] transition-all duration-300">
-                                    {/* Circle Image */}
-                                    <div className="flex justify-center mb-6">
-                                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-orange-400 shadow-lg bg-gray-800">
-                                            {puzzleSet.thumbnailUrl && puzzleSet.thumbnailUrl !== '' && puzzleSet.thumbnailUrl !== 'null' ? (
-                                                <>
-                                                    <img
-                                                        src={puzzleSet.thumbnailUrl}
-                                                        alt={puzzleSet.title || 'Puzzle'}
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            console.error('Image load error for:', puzzleSet.title);
-                                                            e.target.style.display = 'none';
-                                                            if (e.target.nextElementSibling) {
-                                                                e.target.nextElementSibling.style.display = 'flex';
-                                                            }
-                                                        }}
-                                                        onLoad={() => console.log('Image loaded successfully for:', puzzleSet.title)}
-                                                    />
-                                                    <div 
-                                                        className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center"
-                                                        style={{ display: 'none' }}
-                                                    >
+                                    <div key={puzzleSet._id} className="glass-panel rounded-xl p-6 hover:shadow-[0_0_30px_rgba(251,146,60,0.3)] transition-all duration-300">
+                                        {/* Circle Image */}
+                                        <div className="flex justify-center mb-6">
+                                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-orange-400 shadow-lg bg-gray-800">
+                                                {puzzleSet.thumbnailUrl && puzzleSet.thumbnailUrl !== '' && puzzleSet.thumbnailUrl !== 'null' ? (
+                                                    <>
+                                                        <img
+                                                            src={puzzleSet.thumbnailUrl}
+                                                            alt={puzzleSet.title || 'Puzzle'}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                console.error('Image load error for:', puzzleSet.title);
+                                                                e.target.style.display = 'none';
+                                                                if (e.target.nextElementSibling) {
+                                                                    e.target.nextElementSibling.style.display = 'flex';
+                                                                }
+                                                            }}
+                                                            onLoad={() => console.log('Image loaded successfully for:', puzzleSet.title)}
+                                                        />
+                                                        <div
+                                                            className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center"
+                                                            style={{ display: 'none' }}
+                                                        >
+                                                            <i className="fas fa-puzzle-piece text-white text-4xl"></i>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
                                                         <i className="fas fa-puzzle-piece text-white text-4xl"></i>
                                                     </div>
-                                                </>
-                                            ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-                                                    <i className="fas fa-puzzle-piece text-white text-4xl"></i>
-                                                </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Title */}
+                                        <h3 className="text-white font-bold text-center mb-2 text-lg">
+                                            {puzzleSet.title}
+                                        </h3>
+
+                                        {/* Description */}
+                                        {puzzleSet.description && (
+                                            <p className="text-gray-400 text-sm text-center mb-4 line-clamp-2">
+                                                {puzzleSet.description}
+                                            </p>
+                                        )}
+
+                                        {/* Buttons Row */}
+                                        <div className="grid grid-cols-2 gap-3 mb-4">
+                                            {/* Set PDF Button */}
+                                            <button
+                                                onClick={() => handleDownloadPDF(puzzleSet.setPdfUrl, `${puzzleSet.setNumber}.pdf`)}
+                                                className="py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg text-center font-bold hover:from-cyan-600 hover:to-blue-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
+                                            >
+                                                <i className="fas fa-download"></i>
+                                                {puzzleSet.setNumber}
+                                            </button>
+
+                                            {/* Answer PDF Button */}
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedAnswer({
+                                                        url: puzzleSet.answerPdfUrl,
+                                                        title: `${puzzleSet.title} - Answers`,
+                                                        filename: `${puzzleSet.setNumber}-Answers.pdf`
+                                                    });
+                                                    setShowAnswerModal(true);
+                                                }}
+                                                className="py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-center font-bold hover:from-green-600 hover:to-emerald-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
+                                            >
+                                                <i className="fas fa-eye"></i>
+                                                Ans
+                                            </button>
+                                        </div>
+
+                                        {/* Tags */}
+                                        <div className="flex gap-2 justify-center flex-wrap">
+                                            <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
+                                                {puzzleSet.chapter}
+                                            </span>
+                                            {puzzleSet.topic && (
+                                                <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
+                                                    {puzzleSet.topic}
+                                                </span>
                                             )}
+                                            <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
+                                                {puzzleSet.examType}
+                                            </span>
+                                        </div>
+
+                                        {/* Difficulty Badge */}
+                                        <div className="mt-3 text-center">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${puzzleSet.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
+                                                puzzleSet.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                    'bg-red-500/20 text-red-400'
+                                                }`}>
+                                                {puzzleSet.difficulty}
+                                            </span>
                                         </div>
                                     </div>
-
-                                    {/* Title */}
-                                    <h3 className="text-white font-bold text-center mb-2 text-lg">
-                                        {puzzleSet.title}
-                                    </h3>
-
-                                    {/* Description */}
-                                    {puzzleSet.description && (
-                                        <p className="text-gray-400 text-sm text-center mb-4 line-clamp-2">
-                                            {puzzleSet.description}
-                                        </p>
-                                    )}
-
-                                    {/* Buttons Row */}
-                                    <div className="grid grid-cols-2 gap-3 mb-4">
-                                        {/* Set PDF Button */}
-                                        <button
-                                            onClick={() => handleDownloadPDF(puzzleSet.setPdfUrl, `${puzzleSet.setNumber}.pdf`)}
-                                            className="py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg text-center font-bold hover:from-cyan-600 hover:to-blue-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
-                                        >
-                                            <i className="fas fa-download"></i>
-                                            {puzzleSet.setNumber}
-                                        </button>
-
-                                        {/* Answer PDF Button */}
-                                        <button
-                                            onClick={() => {
-                                                setSelectedAnswer({
-                                                    url: puzzleSet.answerPdfUrl,
-                                                    title: `${puzzleSet.title} - Answers`,
-                                                    filename: `${puzzleSet.setNumber}-Answers.pdf`
-                                                });
-                                                setShowAnswerModal(true);
-                                            }}
-                                            className="py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-center font-bold hover:from-green-600 hover:to-emerald-600 transition transform hover:scale-105 flex items-center justify-center gap-2"
-                                        >
-                                            <i className="fas fa-eye"></i>
-                                            Ans
-                                        </button>
-                                    </div>
-
-                                    {/* Tags */}
-                                    <div className="flex gap-2 justify-center flex-wrap">
-                                        <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
-                                            {puzzleSet.chapter}
-                                        </span>
-                                        {puzzleSet.topic && (
-                                            <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs">
-                                                {puzzleSet.topic}
-                                            </span>
-                                        )}
-                                        <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
-                                            {puzzleSet.examType}
-                                        </span>
-                                    </div>
-
-                                    {/* Difficulty Badge */}
-                                    <div className="mt-3 text-center">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${puzzleSet.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
-                                            puzzleSet.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                'bg-red-500/20 text-red-400'
-                                            }`}>
-                                            {puzzleSet.difficulty}
-                                        </span>
-                                    </div>
-                                </div>
-                            )})}
+                                )
+                            })}
                         </div>
                     )}
                 </div>
@@ -658,7 +707,7 @@ const Puzzle = () => {
                     onContextMenu={(e) => e.preventDefault()}
                     onKeyDown={(e) => {
                         // Block PrintScreen, Ctrl+P, Ctrl+S, Ctrl+Shift+S
-                        if (e.key === 'PrintScreen' || 
+                        if (e.key === 'PrintScreen' ||
                             (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'P' || e.key === 'S'))) {
                             e.preventDefault();
                             alert('Screenshots and printing are disabled for answer sheets.');
@@ -702,14 +751,14 @@ const Puzzle = () => {
                                     </div>
                                 </div>
                             )}
-                            
+
                             {/* Watermark Overlay */}
                             <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center opacity-10">
                                 <div className="text-white text-6xl font-bold transform -rotate-45">
                                     VIEW ONLY
                                 </div>
                             </div>
-                            
+
                             {/* Mobile: PDF.js Canvas Rendering */}
                             {isMobile ? (
                                 loadingPdf ? (

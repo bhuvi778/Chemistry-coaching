@@ -18,6 +18,7 @@ const ManageCrosswords = () => {
         topic: '',
         examType: 'All',
         crosswordUrl: '',
+        answerPdfUrl: '',
         difficulty: 'Medium',
         thumbnailUrl: ''
     };
@@ -58,22 +59,22 @@ const ManageCrosswords = () => {
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
                 const url = `${API_URL}/crosswords/${id}`;
                 console.log('Delete URL:', url);
-                
+
                 const response = await fetch(url, {
                     method: 'DELETE'
                 });
-                
+
                 console.log('Delete response status:', response.status);
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('Delete failed:', errorText);
                     throw new Error(`Delete failed: ${response.status}`);
                 }
-                
+
                 const result = await response.json();
                 console.log('Delete result:', result);
-                
+
                 await fetchCrosswords();
                 alert('Crossword deleted successfully!');
             } catch (error) {
@@ -282,6 +283,24 @@ const ManageCrosswords = () => {
                         </p>
                     </div>
 
+                    <div>
+                        <label className="block text-gray-400 mb-2 font-semibold">
+                            <i className="fas fa-file-pdf mr-2 text-green-400"></i>
+                            Answer PDF URL (Optional)
+                        </label>
+                        <input
+                            type="url"
+                            placeholder="https://example.com/answer.pdf or base64 data URL"
+                            value={formData.answerPdfUrl}
+                            onChange={e => setFormData(prev => ({ ...prev, answerPdfUrl: e.target.value }))}
+                            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+                        />
+                        <p className="text-gray-500 text-sm mt-2">
+                            <i className="fas fa-info-circle mr-1"></i>
+                            Add a link to the answer PDF or upload it as base64 data URL
+                        </p>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <select
                             value={formData.examType}
@@ -378,7 +397,7 @@ const ManageCrosswords = () => {
 
             <div className="grid grid-cols-1 gap-4">
                 <h3 className="text-xl font-bold text-white">All Interactive Crosswords ({crosswords.length})</h3>
-                
+
                 {crosswords.length > 0 && (
                     <div className="mb-4 text-gray-400">
                         Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, crosswords.length)} of {crosswords.length} crosswords
