@@ -1,3 +1,19 @@
+# Enable Rewrite Engine for React Router
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Don't rewrite files or directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Don't rewrite API calls
+    RewriteCond %{REQUEST_URI} !^/api/
+    
+    # Rewrite everything else to index.html
+    RewriteRule ^ index.html [L]
+</IfModule>
+
 # Force browser to reload ALL files including HTML
 <FilesMatch "\.(html|css|js)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
