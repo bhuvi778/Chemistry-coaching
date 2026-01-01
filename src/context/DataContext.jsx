@@ -26,6 +26,9 @@ export const DataProvider = ({ children }) => {
   // Magazines State
   const [magazines, setMagazines] = useState([]);
 
+  // Score Match Batches State
+  const [scoreMatchBatches, setScoreMatchBatches] = useState([]);
+
   // Auth State
   const [isAdmin, setIsAdmin] = useState(() => {
     return localStorage.getItem('reaction_isAdmin') === 'true';
@@ -36,7 +39,7 @@ export const DataProvider = ({ children }) => {
   // Clear all cache on mount
   useEffect(() => {
     const clearAllCache = () => {
-      const cacheKeys = ['cache_version', 'cache_courses', 'cache_videos', 'cache_audiobooks', 'cache_study-materials', 'cache_magazines'];
+      const cacheKeys = ['cache_version', 'cache_courses', 'cache_videos', 'cache_audiobooks', 'cache_study-materials', 'cache_magazines', 'cache_scoreMatchBatches'];
       cacheKeys.forEach(key => localStorage.removeItem(key));
       console.log('✅ All cache cleared - fetching fresh data from API');
     };
@@ -47,7 +50,7 @@ export const DataProvider = ({ children }) => {
   const fetchWithTimeout = (url, timeout = 10000) => {
     return Promise.race([
       fetch(url),
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), timeout)
       )
     ]);
@@ -59,9 +62,9 @@ export const DataProvider = ({ children }) => {
       try {
         // Add cache-busting timestamp to force fresh data
         const cacheBuster = `?_t=${Date.now()}`;
-        
+
         // Fetch all data in parallel with timeout
-        const [coursesData, videosData, audioBooksResponse, studyMaterialsData, magazinesData, enquiriesData, contactsData] = await Promise.all([
+        const [coursesData, videosData, audioBooksResponse, studyMaterialsData, magazinesData, scoreMatchBatchesData, enquiriesData, contactsData] = await Promise.all([
           fetchWithTimeout(`${API_URL}/courses${cacheBuster}`).then(r => r.json()).catch(err => {
             console.error('❌ Courses fetch error:', err);
             return [];
@@ -76,6 +79,7 @@ export const DataProvider = ({ children }) => {
           }),
           fetchWithTimeout(`${API_URL}/study-materials${cacheBuster}`).then(r => r.json()).catch(() => []),
           fetchWithTimeout(`${API_URL}/magazines${cacheBuster}`).then(r => r.json()).catch(() => []),
+          fetchWithTimeout(`${API_URL}/score-match-batches${cacheBuster}`).then(r => r.json()).catch(() => []),
           isAdmin ? fetchWithTimeout(`${API_URL}/enquiries${cacheBuster}`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
           isAdmin ? fetchWithTimeout(`${API_URL}/contacts${cacheBuster}`).then(r => r.json()).catch(() => []) : Promise.resolve([])
         ]);
@@ -92,6 +96,7 @@ export const DataProvider = ({ children }) => {
         setAudioBooks(ensureArray(audioBooksData));
         setStudyMaterials(ensureArray(studyMaterialsData));
         setMagazines(ensureArray(magazinesData));
+        setScoreMatchBatches(ensureArray(scoreMatchBatchesData));
 
         if (isAdmin) {
           setEnquiries(ensureArray(enquiriesData));
@@ -116,11 +121,11 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      
+
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      
+
       const newEnquiry = await res.json();
       setEnquiries([newEnquiry, ...enquiries]);
       console.log('Enquiry saved successfully:', newEnquiry);
@@ -136,11 +141,11 @@ export const DataProvider = ({ children }) => {
       const res = await fetch(`${API_URL}/enquiries/${id}`, {
         method: 'DELETE'
       });
-      
+
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      
+
       setEnquiries((Array.isArray(enquiries) ? enquiries : []).filter(enq => enq._id !== id));
       console.log('Enquiry deleted successfully');
     } catch (error) {
@@ -168,11 +173,11 @@ export const DataProvider = ({ children }) => {
       const res = await fetch(`${API_URL}/contacts/${id}`, {
         method: 'DELETE'
       });
-      
+
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      
+
       setContacts((Array.isArray(contacts) ? contacts : []).filter(contact => contact._id !== id));
       console.log('Contact deleted successfully');
     } catch (error) {
@@ -189,12 +194,12 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(course)
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
       }
-      
+
       const newCourse = await res.json();
       console.log('Course added successfully:', newCourse);
       setCourses([...(Array.isArray(courses) ? courses : []), newCourse]);
@@ -238,20 +243,20 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(video)
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
-        
+
         // Handle duplicate video error
         if (res.status === 400 && errorData.error === 'Duplicate video') {
           throw new Error('⚠️ This YouTube video has already been added to the database!');
         }
-        
+
         throw new Error(errorData.message || `Server error: ${res.status}`);
       }
-      
+
       const newVideo = await res.json();
-      
+
       const updatedVideos = [newVideo, ...(Array.isArray(videos) ? videos : [])];
       setVideos(updatedVideos);
     } catch (error) {
@@ -296,20 +301,20 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(audioBook)
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
       }
-      
+
       const response = await res.json();
-      
+
       // Handle response - remove success/message fields if present
       const { success, message, ...newAudioBook } = response;
-      
+
       // Immediately update state with new audiobook
       setAudioBooks(prev => [newAudioBook, ...(Array.isArray(prev) ? prev : [])]);
-      
+
       return newAudioBook;
     } catch (error) {
       console.error("Error adding audio book:", error);
@@ -324,18 +329,18 @@ export const DataProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedAudioBook)
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
       }
-      
+
       const response = await res.json();
       const { success, message, ...data } = response;
-      
+
       // Immediately update state
       setAudioBooks(prev => (Array.isArray(prev) ? prev : []).map(a => a._id === id ? data : a));
-      
+
       return data;
     } catch (error) {
       console.error("Error updating audio book:", error);
@@ -348,12 +353,12 @@ export const DataProvider = ({ children }) => {
       const res = await fetch(`${API_URL}/audiobooks/${id}`, {
         method: 'DELETE'
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
       }
-      
+
       // Immediately update state by removing the deleted item
       setAudioBooks(prev => (Array.isArray(prev) ? prev : []).filter(a => a._id !== id));
     } catch (error) {
@@ -368,28 +373,28 @@ export const DataProvider = ({ children }) => {
       // Add timeout for large files
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
-      
+
       const res = await fetch(`${API_URL}/study-materials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(material),
         signal: controller.signal
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       console.log('Upload response status:', res.status);
       const responseData = await res.json();
       console.log('Response data:', responseData);
-      
+
       if (!res.ok) {
         throw new Error(responseData.message || 'Failed to add study material');
       }
-      
+
       const updatedMaterials = [responseData, ...(Array.isArray(studyMaterials) ? studyMaterials : [])];
       console.log('Updated materials count:', updatedMaterials.length);
       setStudyMaterials(updatedMaterials);
-      
+
       return responseData;
     } catch (error) {
       if (error.name === 'AbortError') {
@@ -471,6 +476,54 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // Score Match Batches CRUD
+  const addScoreMatchBatch = async (batch) => {
+    try {
+      const res = await fetch(`${API_URL}/score-match-batches`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(batch)
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+
+      const newBatch = await res.json();
+      setScoreMatchBatches([...(Array.isArray(scoreMatchBatches) ? scoreMatchBatches : []), newBatch]);
+      return newBatch;
+    } catch (error) {
+      console.error("Error adding score match batch:", error);
+      throw error;
+    }
+  };
+
+  const updateScoreMatchBatch = async (id, updatedBatch) => {
+    try {
+      const res = await fetch(`${API_URL}/score-match-batches/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedBatch)
+      });
+      const data = await res.json();
+      setScoreMatchBatches((Array.isArray(scoreMatchBatches) ? scoreMatchBatches : []).map(b => b._id === id ? data : b));
+    } catch (error) {
+      console.error("Error updating score match batch:", error);
+    }
+  };
+
+  const deleteScoreMatchBatch = async (id) => {
+    try {
+      await fetch(`${API_URL}/score-match-batches/${id}`, {
+        method: 'DELETE'
+      });
+      setScoreMatchBatches((Array.isArray(scoreMatchBatches) ? scoreMatchBatches : []).filter(b => b._id !== id));
+    } catch (error) {
+      console.error("Error deleting score match batch:", error);
+    }
+  };
+
   const login = (username, password) => {
     // Since we already validated via API in AdminLogin, just set admin state
     setIsAdmin(true);
@@ -506,6 +559,7 @@ export const DataProvider = ({ children }) => {
       audioBooks,
       studyMaterials,
       magazines,
+      scoreMatchBatches,
       isAdmin,
       addEnquiry,
       deleteEnquiry,
@@ -526,6 +580,9 @@ export const DataProvider = ({ children }) => {
       addMagazine,
       updateMagazine,
       deleteMagazine,
+      addScoreMatchBatch,
+      updateScoreMatchBatch,
+      deleteScoreMatchBatch,
       login,
       logout
     }}>

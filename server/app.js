@@ -17,6 +17,7 @@ const studyMaterialController = require('./controllers/studyMaterialController')
 const magazineController = require('./controllers/magazineController');
 const crosswordController = require('./controllers/crosswordController');
 const puzzleSetController = require('./controllers/puzzleSetController');
+const scoreMatchBatchController = require('./controllers/scoreMatchBatchController');
 
 // Import routes
 const videoRoutes = require('./routes/videoRoutes');
@@ -31,6 +32,7 @@ const webinarRoutes = require('./routes/webinarRoutes');
 const communityRoutes = require('./routes/communityRoutes');
 const crosswordRoutes = require('./routes/crosswordRoutes');
 const puzzleSetRoutes = require('./routes/puzzleSetRoutes');
+const scoreMatchBatchRoutes = require('./routes/scoreMatchBatchRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
@@ -114,6 +116,7 @@ studyMaterialController.setClearCacheFunction(clearCache);
 magazineController.setClearCacheFunction(clearCache);
 crosswordController.setClearCacheFunction(clearCache);
 puzzleSetController.setClearCacheFunction(clearCache);
+scoreMatchBatchController.setClearCacheFunction(clearCache);
 
 // API Routes with caching
 app.use('/api/admin', adminRoutes);
@@ -129,6 +132,7 @@ app.use('/api/webinar-cards', webinarRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/crosswords', cacheMiddleware('crosswords', 30 * 60 * 1000), crosswordRoutes);
 app.use('/api/puzzle-sets', cacheMiddleware('puzzle-sets', 30 * 60 * 1000), puzzleSetRoutes);
+app.use('/api/score-match-batches', cacheMiddleware('scoreMatchBatches', 30 * 60 * 1000), scoreMatchBatchRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
