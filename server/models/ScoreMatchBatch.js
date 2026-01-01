@@ -17,7 +17,7 @@ const scoreMatchBatchSchema = new mongoose.Schema({
     },
     batchType: {
         type: String,
-        enum: ['Regular', 'Crash Course', 'Weekend', 'Fast Track', 'Intensive'],
+        enum: ['Crash Course', 'Revision Batch', 'Practice Batch', 'One Shot Course', 'Fast Track Batch'],
         required: true
     },
     price: String,

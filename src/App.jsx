@@ -17,6 +17,8 @@ import StudyMaterials from './pages/StudyMaterials';
 import Magazines from './pages/Magazines';
 import Puzzle from './pages/Puzzle';
 import Community from './pages/Community';
+import ScoreMatchBatches from './pages/ScoreMatchBatches';
+import FreeQuiz from './pages/FreeQuiz';
 import BookMeeting from './pages/BookMeeting';
 import AIAssistantPage from './pages/AIAssistantPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -114,6 +116,8 @@ function AppContent() {
           <Route path="/magazines" element={<Magazines />} />
           <Route path="/puzzles" element={<Puzzle />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/score-max-batches" element={<ScoreMatchBatches />} />
+          <Route path="/free-quiz" element={<FreeQuiz />} />
           <Route path="/book-meeting" element={<BookMeeting />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />

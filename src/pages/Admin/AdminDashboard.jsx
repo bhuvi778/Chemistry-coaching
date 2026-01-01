@@ -12,6 +12,7 @@ import ManageCommunity from './ManageCommunity';
 import ManageWebinarCards from './ManageWebinarCards';
 import ManageFeedback from './ManageFeedback';
 import ManageScoreMatchBatches from './ManageScoreMatchBatches';
+import ManageFreeQuizzes from './ManageFreeQuizzes';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -102,7 +103,13 @@ const AdminDashboard = () => {
               onClick={() => setActiveTab('scorematch')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'scorematch' ? 'bg-amber-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
-              <i className="fas fa-trophy mr-2"></i> Score Match Batches
+              <i className="fas fa-trophy mr-2"></i> Score Max Batches
+            </button>
+            <button
+              onClick={() => setActiveTab('freequizzes')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'freequizzes' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-clipboard-list mr-2"></i> Manage Free Quizzes
             </button>
             <button
               onClick={() => setActiveTab('enquiries')}
@@ -133,6 +140,7 @@ const AdminDashboard = () => {
           {activeTab === 'webinars' && <ManageWebinarCards />}
           {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'scorematch' && <ManageScoreMatchBatches />}
+          {activeTab === 'freequizzes' && <ManageFreeQuizzes />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>

@@ -1,8 +1,8 @@
-# Score Match Batch - Data Verification & Testing Guide
+# Score Max Batch - Data Verification & Testing Guide
 
 ## ✅ Issue Resolved
 
-The issue was that the Score Match Batches collection was empty. I've successfully:
+The issue was that the Score Max Batches collection was empty. I've successfully:
 1. ✅ Added 6 sample batches to the database
 2. ✅ Verified API endpoints are working correctly
 3. ✅ Cleared cache and restarted server
@@ -13,12 +13,12 @@ The issue was that the Score Match Batches collection was empty. I've successful
 ```
 Courses:              1 item
 Videos:               1 item
-Score Match Batches:  6 items ✨ NEW
+Score Max Batches:  6 items ✨ NEW
 ```
 
 ## 🎯 Sample Batches Added
 
-### 1. JEE Advanced Score Match Batch
+### 1. JEE Advanced Score Max Batch
 - **Exam**: JEE
 - **Type**: Intensive
 - **Price**: ₹45,000
@@ -64,7 +64,7 @@ Score Match Batches:  6 items ✨ NEW
 ### 1. View on Website
 1. Navigate to: `https://ace2examz.com/courses`
 2. Scroll down past the Focus Test Series section
-3. You should see the **Score Match Batch** section with 6 batches
+3. You should see the **Score Max Batch** section with 6 batches
 
 ### 2. Test Filters
 
@@ -92,7 +92,7 @@ Score Match Batches:  6 items ✨ NEW
 
 ### 3. Admin Panel Testing
 1. Login to admin dashboard
-2. Click "Score Match Batches" in sidebar
+2. Click "Score Max Batches" in sidebar
 3. You should see all 6 batches listed
 4. Try editing a batch
 5. Try adding a new batch
@@ -116,7 +116,7 @@ curl -s http://localhost:5000/api/score-match-batches | jq '.[0]'
 
 ### Via Admin Panel (Recommended)
 1. Login to admin dashboard
-2. Navigate to "Score Match Batches"
+2. Navigate to "Score Max Batches"
 3. Fill in the form with:
    - Title
    - Subtitle (optional)
@@ -189,7 +189,7 @@ node server/scripts/addSampleScoreMatchBatches.js
 
 ## 📱 Responsive Design
 
-The Score Match Batch section is fully responsive:
+The Score Max Batch section is fully responsive:
 - **Mobile**: 1 column layout
 - **Tablet**: 2 column layout
 - **Desktop**: 3 column layout

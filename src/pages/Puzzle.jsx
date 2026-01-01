@@ -435,15 +435,20 @@ const Puzzle = () => {
 
                                             {/* View Answer Button */}
                                             {crossword.answerPdfUrl && crossword.answerPdfUrl.trim() !== '' && (
-                                                <a
-                                                    href={crossword.answerPdfUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedAnswer({
+                                                            url: crossword.answerPdfUrl,
+                                                            title: `${crossword.title} - Answer`,
+                                                            filename: `${crossword.title}-Answer.pdf`
+                                                        });
+                                                        setShowAnswerModal(true);
+                                                    }}
                                                     className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition font-semibold mt-2"
                                                 >
                                                     <i className="fas fa-file-pdf"></i>
                                                     View Answer
-                                                </a>
+                                                </button>
                                             )}
                                         </div>
                                     </div>

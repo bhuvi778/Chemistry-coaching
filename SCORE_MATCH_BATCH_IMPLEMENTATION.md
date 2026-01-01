@@ -1,7 +1,7 @@
-# Score Match Batch Feature Implementation
+# Score Max Batch Feature Implementation
 
 ## Overview
-Successfully implemented a comprehensive "Score Match Batch" section on the courses page, positioned below the Focus Test Series section. This feature includes full admin panel management and dual filtering capabilities (By Exam and By Batch Type).
+Successfully implemented a comprehensive "Score Max Batch" section on the courses page, positioned below the Focus Test Series section. This feature includes full admin panel management and dual filtering capabilities (By Exam and By Batch Type).
 
 ## Backend Implementation
 
@@ -66,7 +66,7 @@ Successfully implemented a comprehensive "Score Match Batch" section on the cour
   - Visual badges showing exam, batch type, and price
 
 **File**: `/src/pages/Admin/AdminDashboard.jsx`
-- Added "Score Match Batches" tab to admin sidebar
+- Added "Score Max Batches" tab to admin sidebar
 - Integrated ManageScoreMatchBatches component
 - Styled with amber/orange gradient theme
 
@@ -98,7 +98,7 @@ Successfully implemented a comprehensive "Score Match Batch" section on the cour
 ## Features
 
 ### Admin Features
-✅ Add new Score Match Batches with all details
+✅ Add new Score Max Batches with all details
 ✅ Edit existing batches
 ✅ Delete batches with confirmation
 ✅ Pagination for batch list
@@ -136,7 +136,7 @@ Successfully implemented a comprehensive "Score Match Batch" section on the cour
 
 ## API Endpoints
 
-### Score Match Batches
+### Score Max Batches
 ```
 GET    /api/score-match-batches      - Get all batches
 POST   /api/score-match-batches      - Create new batch
@@ -170,7 +170,7 @@ DELETE /api/score-match-batches/:id  - Delete batch
 ## Testing Checklist
 
 ### Admin Panel
-- [ ] Navigate to Admin Dashboard → Score Match Batches
+- [ ] Navigate to Admin Dashboard → Score Max Batches
 - [ ] Add a new batch with all fields
 - [ ] Verify batch appears in list
 - [ ] Edit an existing batch
@@ -179,7 +179,7 @@ DELETE /api/score-match-batches/:id  - Delete batch
 
 ### Public Display
 - [ ] Navigate to /courses page
-- [ ] Scroll to Score Match Batch section (below Focus Test Series)
+- [ ] Scroll to Score Max Batch section (below Focus Test Series)
 - [ ] Test "Filter by Exam" - select different exams
 - [ ] Test "Filter by Batch Type" - select different types
 - [ ] Test combined filters (exam + batch type)
@@ -209,7 +209,7 @@ DELETE /api/score-match-batches/:id  - Delete batch
 
 ## Next Steps
 
-1. **Add Sample Data**: Use the admin panel to add some sample Score Match Batches
+1. **Add Sample Data**: Use the admin panel to add some sample Score Max Batches
 2. **Test Filters**: Verify both exam and batch type filters work correctly
 3. **Customize**: Adjust colors, icons, and styling as needed
 4. **Enrollment Links**: Add enrollment links to enable the "Enroll Now" button

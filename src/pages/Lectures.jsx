@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useData } from '../context/DataContext';
 import Pagination from '../components/UI/Pagination';
 
@@ -9,6 +10,9 @@ const Lectures = () => {
   const [selectedPlaylist, setSelectedPlaylist] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [downloadingId, setDownloadingId] = useState(null);
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [quizUrl, setQuizUrl] = useState('');
+  const [quizTitle, setQuizTitle] = useState('');
   const videosPerPage = 12; // 3 rows × 4 columns
 
   const categories = [
@@ -60,6 +64,57 @@ const Lectures = () => {
       });
     }
   }, [filteredVideos]);
+
+  const handleOpenQuiz = async (video) => {
+    // Identify if PDF or Link
+    const isPdf = video.quizPdf && (video.quizPdf.filename || video.quizPdf.data);
+    const isLink = video.quizLink && video.quizLink.trim() !== '';
+
+    if (!isPdf && !isLink) return;
+
+    if (isPdf) {
+      // PDF Logic
+      setDownloadingId(video._id + '_quiz'); // Show loading on button
+      let dataUrl = video.quizPdf.data;
+
+      if (!dataUrl) {
+        try {
+          const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+          const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+          const apiUrl = cleanBaseUrl.endsWith('/api')
+            ? `${cleanBaseUrl}/videos/${video._id}`
+            : `${cleanBaseUrl}/api/videos/${video._id}`;
+
+          const response = await fetch(apiUrl);
+          const fullVideo = await response.json();
+
+          if (fullVideo && fullVideo.quizPdf && fullVideo.quizPdf.data) {
+            dataUrl = fullVideo.quizPdf.data;
+          } else {
+            alert('Error: Quiz PDF data not found');
+            setDownloadingId(null);
+            return;
+          }
+        } catch (err) {
+          console.error('Error fetching quiz PDF:', err);
+          alert('Failed to load quiz PDF');
+          setDownloadingId(null);
+          return;
+        }
+      }
+
+      setQuizUrl(dataUrl);
+      setQuizTitle(video.title + ' - Quiz');
+      setShowQuizModal(true);
+      setDownloadingId(null);
+
+    } else {
+      // Link Logic
+      setQuizUrl(video.quizLink);
+      setQuizTitle(video.title + ' - Quiz');
+      setShowQuizModal(true);
+    }
+  };
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
@@ -374,85 +429,26 @@ const Lectures = () => {
 
                     {/* Take Quiz Button - supports both PDF and Link */}
                     {(video.quizPdf && (video.quizPdf.filename || video.quizPdf.data)) || (video.quizLink && video.quizLink.trim() !== '') ? (
-                      video.quizPdf && (video.quizPdf.filename || video.quizPdf.data) ? (
-                        // Quiz PDF Download Button
-                        <button
-                          onClick={async () => {
-                            const quiz = video.quizPdf;
-                            let dataUrl = quiz.data;
-
-                            if (!dataUrl) {
-                              try {
-                                setDownloadingId(video._id + '_quiz');
-                                // Fetch full video details to get the PDF data
-                                const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                                const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-                                const apiUrl = cleanBaseUrl.endsWith('/api')
-                                  ? `${cleanBaseUrl}/videos/${video._id}`
-                                  : `${cleanBaseUrl}/api/videos/${video._id}`;
-
-                                const response = await fetch(apiUrl);
-                                const fullVideo = await response.json();
-
-                                if (fullVideo && fullVideo.quizPdf && fullVideo.quizPdf.data) {
-                                  dataUrl = fullVideo.quizPdf.data;
-                                } else {
-                                  alert('Error: Quiz PDF data not found');
-                                  setDownloadingId(null);
-                                  return;
-                                }
-                              } catch (err) {
-                                console.error('Error fetching quiz PDF:', err);
-                                alert('Failed to download quiz PDF');
-                                setDownloadingId(null);
-                                return;
-                              }
-                            }
-
-                            // Create a download link for the PDF
-                            const linkSource = dataUrl;
-
-                            if (!linkSource || !linkSource.startsWith('data:application/pdf')) {
-                              alert('Invalid PDF data received from server');
-                              setDownloadingId(null);
-                              return;
-                            }
-
-                            const downloadLink = document.createElement('a');
-                            downloadLink.href = linkSource;
-                            downloadLink.download = quiz.filename || `${video.title}-quiz.pdf`;
-                            document.body.appendChild(downloadLink);
-                            downloadLink.click();
-                            document.body.removeChild(downloadLink);
-                            setDownloadingId(null);
-                          }}
-                          disabled={downloadingId === video._id + '_quiz'}
-                          className="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
-                        >
-                          {downloadingId === video._id + '_quiz' ? (
-                            <>
-                              <i className="fas fa-spinner fa-spin mr-2"></i>
-                              Downloading...
-                            </>
-                          ) : (
-                            <>
-                              <i className="fas fa-file-pdf mr-2"></i>
-                              Take Quiz
-                            </>
-                          )}
-                        </button>
-                      ) : (
-                        // Quiz Link Button
-                        <a
-                          href={video.quizLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
-                        >
-                          <i className="fas fa-external-link-alt mr-2"></i>
-                          Take Quiz
-                        </a>
-                      )
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleOpenQuiz(video);
+                        }}
+                        disabled={downloadingId === video._id + '_quiz'}
+                        className="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
+                      >
+                        {downloadingId === video._id + '_quiz' ? (
+                          <>
+                            <i className="fas fa-spinner fa-spin mr-2"></i>
+                            Loading Quiz...
+                          </>
+                        ) : (
+                          <>
+                            <i className="fas fa-clipboard-check mr-2"></i>
+                            Take Quiz
+                          </>
+                        )}
+                      </button>
                     ) : null}
                   </div>
                 </div>
@@ -490,6 +486,39 @@ const Lectures = () => {
           </a>
         </div>
       </section>
+
+      {/* Quiz Modal */}
+      {showQuizModal && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn">
+          <div className="bg-gray-900 rounded-2xl w-full max-w-6xl h-[90vh] flex flex-col border border-gray-700 shadow-2xl relative">
+            {/* Header */}
+            <div className="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800/50 rounded-t-2xl">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <i className="fas fa-clipboard-check text-yellow-400"></i>
+                {quizTitle}
+              </h3>
+              <button
+                onClick={() => setShowQuizModal(false)}
+                className="w-8 h-8 rounded-full bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white flex items-center justify-center transition"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+
+            {/* Content (Iframe) */}
+            <div className="flex-1 bg-white relative">
+              <iframe
+                src={quizUrl}
+                title="Quiz Content"
+                className="w-full h-full border-none"
+                allow="autoplay; encrypted-media"
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

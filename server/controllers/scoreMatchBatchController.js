@@ -29,7 +29,7 @@ const createScoreMatchBatch = async (req, res) => {
 const updateScoreMatchBatch = async (req, res) => {
     try {
         const batch = await ScoreMatchBatch.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!batch) return res.status(404).json({ message: 'Score Match Batch not found' });
+        if (!batch) return res.status(404).json({ message: 'Score Max Batch not found' });
         clearCache('scoreMatchBatches');
         res.json(batch);
     } catch (error) {
@@ -40,9 +40,9 @@ const updateScoreMatchBatch = async (req, res) => {
 const deleteScoreMatchBatch = async (req, res) => {
     try {
         const batch = await ScoreMatchBatch.findByIdAndDelete(req.params.id);
-        if (!batch) return res.status(404).json({ message: 'Score Match Batch not found' });
+        if (!batch) return res.status(404).json({ message: 'Score Max Batch not found' });
         clearCache('scoreMatchBatches');
-        res.json({ message: 'Score Match Batch deleted' });
+        res.json({ message: 'Score Max Batch deleted' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

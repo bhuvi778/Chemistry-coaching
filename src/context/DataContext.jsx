@@ -26,8 +26,11 @@ export const DataProvider = ({ children }) => {
   // Magazines State
   const [magazines, setMagazines] = useState([]);
 
-  // Score Match Batches State
+  // Score Max Batches State
   const [scoreMatchBatches, setScoreMatchBatches] = useState([]);
+
+  // Free Quizzes State
+  const [freeQuizzes, setFreeQuizzes] = useState([]);
 
   // Auth State
   const [isAdmin, setIsAdmin] = useState(() => {
@@ -39,7 +42,7 @@ export const DataProvider = ({ children }) => {
   // Clear all cache on mount
   useEffect(() => {
     const clearAllCache = () => {
-      const cacheKeys = ['cache_version', 'cache_courses', 'cache_videos', 'cache_audiobooks', 'cache_study-materials', 'cache_magazines', 'cache_scoreMatchBatches'];
+      const cacheKeys = ['cache_version', 'cache_courses', 'cache_videos', 'cache_audiobooks', 'cache_study-materials', 'cache_magazines', 'cache_scoreMatchBatches', 'cache_freeQuizzes'];
       cacheKeys.forEach(key => localStorage.removeItem(key));
       console.log('✅ All cache cleared - fetching fresh data from API');
     };
@@ -64,7 +67,7 @@ export const DataProvider = ({ children }) => {
         const cacheBuster = `?_t=${Date.now()}`;
 
         // Fetch all data in parallel with timeout
-        const [coursesData, videosData, audioBooksResponse, studyMaterialsData, magazinesData, scoreMatchBatchesData, enquiriesData, contactsData] = await Promise.all([
+        const [coursesData, videosData, audioBooksResponse, studyMaterialsData, magazinesData, scoreMatchBatchesData, freeQuizzesData, enquiriesData, contactsData] = await Promise.all([
           fetchWithTimeout(`${API_URL}/courses${cacheBuster}`).then(r => r.json()).catch(err => {
             console.error('❌ Courses fetch error:', err);
             return [];
@@ -80,6 +83,7 @@ export const DataProvider = ({ children }) => {
           fetchWithTimeout(`${API_URL}/study-materials${cacheBuster}`).then(r => r.json()).catch(() => []),
           fetchWithTimeout(`${API_URL}/magazines${cacheBuster}`).then(r => r.json()).catch(() => []),
           fetchWithTimeout(`${API_URL}/score-match-batches${cacheBuster}`).then(r => r.json()).catch(() => []),
+          fetchWithTimeout(`${API_URL}/free-quizzes${cacheBuster}`).then(r => r.json()).catch(() => []),
           isAdmin ? fetchWithTimeout(`${API_URL}/enquiries${cacheBuster}`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
           isAdmin ? fetchWithTimeout(`${API_URL}/contacts${cacheBuster}`).then(r => r.json()).catch(() => []) : Promise.resolve([])
         ]);
@@ -97,6 +101,7 @@ export const DataProvider = ({ children }) => {
         setStudyMaterials(ensureArray(studyMaterialsData));
         setMagazines(ensureArray(magazinesData));
         setScoreMatchBatches(ensureArray(scoreMatchBatchesData));
+        setFreeQuizzes(ensureArray(freeQuizzesData));
 
         if (isAdmin) {
           setEnquiries(ensureArray(enquiriesData));
@@ -476,7 +481,7 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // Score Match Batches CRUD
+  // Score Max Batches CRUD
   const addScoreMatchBatch = async (batch) => {
     try {
       const res = await fetch(`${API_URL}/score-match-batches`, {
@@ -494,7 +499,7 @@ export const DataProvider = ({ children }) => {
       setScoreMatchBatches([...(Array.isArray(scoreMatchBatches) ? scoreMatchBatches : []), newBatch]);
       return newBatch;
     } catch (error) {
-      console.error("Error adding score match batch:", error);
+      console.error("Error adding Score Max Batch:", error);
       throw error;
     }
   };
@@ -509,7 +514,7 @@ export const DataProvider = ({ children }) => {
       const data = await res.json();
       setScoreMatchBatches((Array.isArray(scoreMatchBatches) ? scoreMatchBatches : []).map(b => b._id === id ? data : b));
     } catch (error) {
-      console.error("Error updating score match batch:", error);
+      console.error("Error updating Score Max Batch:", error);
     }
   };
 
@@ -520,7 +525,53 @@ export const DataProvider = ({ children }) => {
       });
       setScoreMatchBatches((Array.isArray(scoreMatchBatches) ? scoreMatchBatches : []).filter(b => b._id !== id));
     } catch (error) {
-      console.error("Error deleting score match batch:", error);
+      console.error("Error deleting Score Max Batch:", error);
+    }
+  };
+
+  // Free Quizzes CRUD
+  const addFreeQuiz = async (quiz) => {
+    try {
+      const res = await fetch(`${API_URL}/free-quizzes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(quiz)
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+      const newQuiz = await res.json();
+      setFreeQuizzes([...(Array.isArray(freeQuizzes) ? freeQuizzes : []), newQuiz]);
+      return newQuiz;
+    } catch (error) {
+      console.error("Error adding Free Quiz:", error);
+      throw error;
+    }
+  };
+
+  const updateFreeQuiz = async (id, updatedQuiz) => {
+    try {
+      const res = await fetch(`${API_URL}/free-quizzes/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedQuiz)
+      });
+      const data = await res.json();
+      setFreeQuizzes((Array.isArray(freeQuizzes) ? freeQuizzes : []).map(q => q._id === id ? data : q));
+    } catch (error) {
+      console.error("Error updating Free Quiz:", error);
+    }
+  };
+
+  const deleteFreeQuiz = async (id) => {
+    try {
+      await fetch(`${API_URL}/free-quizzes/${id}`, {
+        method: 'DELETE'
+      });
+      setFreeQuizzes((Array.isArray(freeQuizzes) ? freeQuizzes : []).filter(q => q._id !== id));
+    } catch (error) {
+      console.error("Error deleting Free Quiz:", error);
     }
   };
 
@@ -583,6 +634,10 @@ export const DataProvider = ({ children }) => {
       addScoreMatchBatch,
       updateScoreMatchBatch,
       deleteScoreMatchBatch,
+      freeQuizzes,
+      addFreeQuiz,
+      updateFreeQuiz,
+      deleteFreeQuiz,
       login,
       logout
     }}>

@@ -5,6 +5,8 @@ import { useTheme } from '../../context/ThemeContext';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isStudyMaterialOpen, setIsStudyMaterialOpen] = useState(false);
+  const [isCoursesOpen, setIsCoursesOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
@@ -39,8 +41,41 @@ const Navbar = () => {
             <div className="hidden md:flex items-center gap-6">
               <div className="flex items-baseline space-x-6 text-lg">
                 <Link to="/" className={getNavLinkClass('/')}>Home</Link>
-                <Link to="/about" className={getNavLinkClass('/about')}>About Us</Link>
-                <Link to="/courses" className={getNavLinkClass('/courses')}>Courses</Link>
+                {/* Courses Dropdown */}
+                <div
+                  className="relative group"
+                  onMouseEnter={() => setIsCoursesOpen(true)}
+                  onMouseLeave={() => setIsCoursesOpen(false)}
+                >
+                  <button className={`px-3 py-2 transition relative ${location.pathname.includes('/courses') || location.pathname.includes('/score-max-batches')
+                    ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+                    }`}>
+                    <span className="flex items-center gap-2">
+                      Courses
+                      <i className={`fas fa-chevron-down text-xs transition-transform ${isCoursesOpen ? 'rotate-180' : ''}`}></i>
+                    </span>
+                  </button>
+
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isCoursesOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                    }`}>
+                    <Link
+                      to="/courses"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsCoursesOpen(false)}
+                    >
+                      <i className="fas fa-th-large text-cyan-400"></i>
+                      <span>All Courses</span>
+                    </Link>
+                    <Link
+                      to="/score-max-batches"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsCoursesOpen(false)}
+                    >
+                      <i className="fas fa-trophy text-amber-500"></i>
+                      <span>Score Max Batches</span>
+                    </Link>
+                  </div>
+                </div>
 
                 {/* Study Material Dropdown */}
                 <div
@@ -88,6 +123,14 @@ const Navbar = () => {
                       <span>Free Study Materials</span>
                     </Link>
                     <Link
+                      to="/free-quiz"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsStudyMaterialOpen(false)}
+                    >
+                      <i className="fas fa-clipboard-list text-cyan-400"></i>
+                      <span>Free Quiz</span>
+                    </Link>
+                    <Link
                       to="/magazines"
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                       onClick={() => setIsStudyMaterialOpen(false)}
@@ -111,26 +154,6 @@ const Navbar = () => {
                       <i className="fas fa-users text-orange-500"></i>
                       <span>Community</span>
                     </Link>
-                    <a
-                      href="https://www.ace2examz.in/blog"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
-                      onClick={() => setIsStudyMaterialOpen(false)}
-                    >
-                      <i className="fas fa-blog text-blue-500"></i>
-                      <span>Blog</span>
-                    </a>
-                    <a
-                      href="https://stories.ace2examz.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
-                      onClick={() => setIsStudyMaterialOpen(false)}
-                    >
-                      <i className="fas fa-book-reader text-purple-500"></i>
-                      <span>Web Stories</span>
-                    </a>
                   </div>
                 </div>
 
@@ -146,6 +169,63 @@ const Navbar = () => {
                     Ask AI
                   </span>
                 </Link>
+
+                {/* More Dropdown */}
+                <div
+                  className="relative group"
+                  onMouseEnter={() => setIsMoreOpen(true)}
+                  onMouseLeave={() => setIsMoreOpen(false)}
+                >
+                  <button className={`px-3 py-2 transition relative ${location.pathname.includes('/about') || location.pathname.includes('/contact')
+                    ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+                    }`}>
+                    <span className="flex items-center gap-2">
+                      <i className="fas fa-ellipsis-h"></i>
+                      More
+                      <i className={`fas fa-chevron-down text-xs transition-transform ${isMoreOpen ? 'rotate-180' : ''}`}></i>
+                    </span>
+                  </button>
+
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isMoreOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                    }`}>
+                    <Link
+                      to="/about"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsMoreOpen(false)}
+                    >
+                      <i className="fas fa-info-circle text-blue-400"></i>
+                      <span>About Us</span>
+                    </Link>
+                    <a
+                      href="https://www.ace2examz.in/blog"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsMoreOpen(false)}
+                    >
+                      <i className="fas fa-blog text-blue-500"></i>
+                      <span>Blog</span>
+                    </a>
+                    <a
+                      href="https://stories.ace2examz.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsMoreOpen(false)}
+                    >
+                      <i className="fas fa-book-reader text-purple-500"></i>
+                      <span>Web Stories</span>
+                    </a>
+                    <Link
+                      to="/contact"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsMoreOpen(false)}
+                    >
+                      <i className="fas fa-envelope text-green-500"></i>
+                      <span>Contact Us</span>
+                    </Link>
+                  </div>
+                </div>
               </div>
 
               {/* Notification Bell Icon */}
@@ -260,8 +340,10 @@ const Navbar = () => {
           <div className="md:hidden glass-panel border-t border-gray-700">
             <div className="px-2 pt-2 pb-3 space-y-1 text-center">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Home</Link>
-              <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">About Us</Link>
               <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Courses</Link>
+              <Link to="/score-max-batches" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-trophy text-amber-500 mr-2"></i>Score Max Batches
+              </Link>
               <Link to="/lectures" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fab fa-youtube text-red-500 mr-2"></i>Video Lectures
               </Link>
@@ -270,6 +352,9 @@ const Navbar = () => {
               </Link>
               <Link to="/study-materials" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fas fa-file-pdf text-green-500 mr-2"></i>Free Study Materials
+              </Link>
+              <Link to="/free-quiz" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                <i className="fas fa-clipboard-list text-cyan-400 mr-2"></i>Free Quiz
               </Link>
               <Link to="/magazines" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fas fa-book-open text-pink-500 mr-2"></i>Chemistry Magazine
@@ -280,18 +365,32 @@ const Navbar = () => {
               <Link to="/community" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fas fa-users text-orange-500 mr-2"></i>Community
               </Link>
-              <a href="https://www.ace2examz.in/blog" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-blog text-blue-500 mr-2"></i>Blog
-              </a>
-              <a href="https://stories.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-book-reader text-purple-500 mr-2"></i>Web Stories
-              </a>
               <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book your meet
               </Link>
               <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
               </Link>
+
+              {/* Divider */}
+              <div className="border-t border-gray-700 my-2"></div>
+
+              {/* More Section */}
+              <div className="pt-2">
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">More</p>
+                <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                  <i className="fas fa-info-circle text-blue-400 mr-2"></i>About Us
+                </Link>
+                <a href="https://www.ace2examz.in/blog" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                  <i className="fas fa-blog text-blue-500 mr-2"></i>Blog
+                </a>
+                <a href="https://stories.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                  <i className="fas fa-book-reader text-purple-500 mr-2"></i>Web Stories
+                </a>
+                <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+                  <i className="fas fa-envelope text-green-500 mr-2"></i>Contact Us
+                </Link>
+              </div>
             </div>
           </div>
         )}
@@ -344,7 +443,7 @@ const Navbar = () => {
             </div>
           </div>
         )}
-      </nav>
+      </nav >
     </>
   );
 };

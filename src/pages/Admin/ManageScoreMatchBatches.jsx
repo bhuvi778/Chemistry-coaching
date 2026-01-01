@@ -14,7 +14,7 @@ const ManageScoreMatchBatches = () => {
         subtitle: '',
         desc: '',
         exam: 'JEE',
-        batchType: 'Regular',
+        batchType: 'Crash Course',
         price: '',
         duration: '',
         schedule: '',
@@ -43,7 +43,7 @@ const ManageScoreMatchBatches = () => {
     };
 
     const handleDelete = (id) => {
-        if (window.confirm('Are you sure you want to delete this Score Match Batch?')) {
+        if (window.confirm('Are you sure you want to delete this Score Max Batch?')) {
             deleteScoreMatchBatch(id);
         }
     };
@@ -58,18 +58,18 @@ const ManageScoreMatchBatches = () => {
         try {
             if (isEditing) {
                 await updateScoreMatchBatch(currentBatch._id, batchData);
-                alert('Score Match Batch updated successfully!');
+                alert('Score Max Batch updated successfully!');
             } else {
                 await addScoreMatchBatch(batchData);
-                alert('Score Match Batch added successfully!');
+                alert('Score Max Batch added successfully!');
             }
 
             setIsEditing(false);
             setCurrentBatch(null);
             setFormData(initialFormState);
         } catch (error) {
-            console.error('Error submitting score match batch:', error);
-            alert('Failed to save Score Match Batch. Please try again.');
+            console.error('Error submitting Score Max Batch:', error);
+            alert('Failed to save Score Max Batch. Please try again.');
         }
     };
 
@@ -83,7 +83,7 @@ const ManageScoreMatchBatches = () => {
         <div className="space-y-8">
             <div className="glass-panel p-6 rounded-xl">
                 <h2 className="text-xl font-bold text-white mb-4">
-                    {isEditing ? 'Edit Score Match Batch' : 'Add New Score Match Batch'}
+                    {isEditing ? 'Edit Score Max Batch' : 'Add New Score Max Batch'}
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -134,11 +134,11 @@ const ManageScoreMatchBatches = () => {
                             required
                         >
                             <option value="">Select Batch Type</option>
-                            <option value="Regular">Regular</option>
                             <option value="Crash Course">Crash Course</option>
-                            <option value="Weekend">Weekend</option>
-                            <option value="Fast Track">Fast Track</option>
-                            <option value="Intensive">Intensive</option>
+                            <option value="Revision Batch">Revision Batch</option>
+                            <option value="Practice Batch">Practice Batch</option>
+                            <option value="One Shot Course">One Shot Course</option>
+                            <option value="Fast Track Batch">Fast Track Batch</option>
                         </select>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

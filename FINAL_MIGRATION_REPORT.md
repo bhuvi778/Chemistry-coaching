@@ -12,7 +12,7 @@ All your data has been consolidated into your requested database: `chemistry_coa
 The application is now serving data ONLY from `chemistry_coaching`.
 
 - **Courses**: 13 items
-- **Score Match Batches**: 6 items
+- **Score Max Batches**: 6 items
 - **Videos**: 2 items
 - **Study Materials**: 18 items
 - **Crosswords**: 15 items
