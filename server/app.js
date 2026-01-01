@@ -31,6 +31,7 @@ const webinarRoutes = require('./routes/webinarRoutes');
 const communityRoutes = require('./routes/communityRoutes');
 const crosswordRoutes = require('./routes/crosswordRoutes');
 const puzzleSetRoutes = require('./routes/puzzleSetRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -115,6 +116,7 @@ crosswordController.setClearCacheFunction(clearCache);
 puzzleSetController.setClearCacheFunction(clearCache);
 
 // API Routes with caching
+app.use('/api/admin', adminRoutes);
 app.use('/api/videos', cacheMiddleware('videos', 30 * 60 * 1000), videoRoutes);
 app.use('/api/courses', cacheMiddleware('courses', 30 * 60 * 1000), courseRoutes);
 app.use('/api/enquiries', cacheMiddleware('enquiries', 5 * 60 * 1000), enquiryRoutes);
