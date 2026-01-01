@@ -1,31 +1,35 @@
+const Community = require('../models/Community');
 const Feedback = require('../models/Feedback');
-const Doubt = require('../models/Doubt');
 
-const getFeedback = async (req, res) => {
+const getAllFeedback = async (req, res) => {
   try {
-    // Get all doubts with feedbacks
-    const doubts = await Doubt.find({ 'feedbacks.0': { $exists: true } })
-      .select('question feedbacks')
-      .sort({ createdAt: -1 })
+    // Get all community posts with feedbacks
+    const posts = await Community.find({ 'feedbacks.0': { $exists: true } })
+      .select('question answer feedbacks')
       .lean();
-    
-    // Flatten feedbacks from all doubts
+
+    // Flatten feedbacks from all posts
     const allFeedback = [];
-    doubts.forEach(doubt => {
-      if (doubt.feedbacks && doubt.feedbacks.length > 0) {
-        doubt.feedbacks.forEach(fb => {
-          allFeedback.push({
-            ...fb,
-            doubtId: doubt._id,
-            question: doubt.question
-          });
+
+    posts.forEach(post => {
+      post.feedbacks.forEach(feedback => {
+        allFeedback.push({
+          _id: feedback._id,
+          name: feedback.name,
+          email: feedback.email,
+          feedback: feedback.feedback,
+          reactionType: feedback.reactionType,
+          createdAt: feedback.createdAt,
+          postId: post._id,
+          postQuestion: post.question,
+          postAnswer: post.answer
         });
-      }
+      });
     });
-    
+
     // Sort by date
     allFeedback.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
+
     res.json(allFeedback);
   } catch (error) {
     console.error('Error fetching feedback:', error);

@@ -14,7 +14,7 @@ const StudyMaterial = require('./models/StudyMaterial');
 const Magazine = require('./models/Magazine');
 const Feedback = require('./models/Feedback');
 const WebinarCard = require('./models/WebinarCard');
-const Doubt = require('./models/Doubt');
+const Community = require('./models/Community');
 const Crossword = require('./models/Crossword');
 const PuzzleSet = require('./models/PuzzleSet');
 const adminRoutes = require('./routes/adminRoutes');
@@ -732,15 +732,15 @@ app.delete('/api/magazines/:id', async (req, res) => {
 // Feedback
 app.get('/api/feedback', async (req, res) => {
   try {
-    // Aggregate feedback from all doubts
-    const doubts = await Doubt.find({ 'feedbacks.0': { $exists: true } })
+    // Aggregate feedback from all community posts
+    const posts = await Community.find({ 'feedbacks.0': { $exists: true } })
       .select('question answer feedbacks')
       .lean();
 
-    // Flatten all feedbacks with doubt context
+    // Flatten all feedbacks with post context
     const allFeedback = [];
-    doubts.forEach(doubt => {
-      doubt.feedbacks.forEach(feedback => {
+    posts.forEach(post => {
+      post.feedbacks.forEach(feedback => {
         allFeedback.push({
           _id: feedback._id,
           name: feedback.name,
@@ -748,9 +748,9 @@ app.get('/api/feedback', async (req, res) => {
           feedback: feedback.feedback,
           reactionType: feedback.reactionType,
           createdAt: feedback.createdAt,
-          doubtId: doubt._id,
-          doubtQuestion: doubt.question,
-          doubtAnswer: doubt.answer
+          postId: post._id,
+          postQuestion: post.question,
+          postAnswer: post.answer
         });
       });
     });
@@ -776,8 +776,8 @@ app.post('/api/feedback', async (req, res) => {
 
 app.delete('/api/feedback/:id', async (req, res) => {
   try {
-    // Find the doubt that contains this feedback and remove it
-    const result = await Doubt.updateOne(
+    // Find the community post that contains this feedback and remove it
+    const result = await Community.updateOne(
       { 'feedbacks._id': req.params.id },
       { $pull: { feedbacks: { _id: req.params.id } } }
     );
