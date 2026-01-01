@@ -134,7 +134,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     return res.status(400).json({ message: 'No file uploaded' });
   }
   const fileUrl = `/api/uploads/${req.file.filename}`;
-  console.log('✅ File uploaded:', req.file.filename, 'Size:', (req.file.size / (1024*1024)).toFixed(2), 'MB');
+  console.log('✅ File uploaded:', req.file.filename, 'Size:', (req.file.size / (1024 * 1024)).toFixed(2), 'MB');
   res.json({ fileUrl: fileUrl });
 });
 
@@ -310,7 +310,7 @@ app.get('/api/videos', cacheMiddleware('videos', 30 * 60 * 1000), async (req, re
     const skip = (page - 1) * limit;
 
     const videos = await Video.find({ isActive: true })
-      .select('title description category examType youtubeId instructor duration isActive createdAt views classNotes.filename classNotes.uploadedAt')
+      .select('title description category examType youtubeId instructor duration isActive createdAt views classNotes.filename classNotes.uploadedAt quizPdf quizLink chapterName')
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(skip)
@@ -605,14 +605,14 @@ app.post('/api/study-materials', async (req, res) => {
     console.log('[DEBUG] Received request body:', JSON.stringify(req.body, null, 2));
     console.log('[DEBUG] Mongoose connection state:', mongoose.connection.readyState);
     console.log('[DEBUG] Connection states: 0=disconnected, 1=connected, 2=connecting, 3=disconnecting');
-    
+
     const material = new StudyMaterial(req.body);
     console.log('[DEBUG] Material object created:', JSON.stringify(material.toObject(), null, 2));
-    
+
     // Check validation
     const validationError = material.validateSync();
     console.log('[DEBUG] Validation errors:', validationError);
-    
+
     console.log('[DEBUG] Attempting to save to database...');
     const savedMaterial = await material.save();
     console.log('[DEBUG] ✅ Save completed! Saved material ID:', savedMaterial._id);
@@ -736,7 +736,7 @@ app.get('/api/feedback', async (req, res) => {
     const doubts = await Doubt.find({ 'feedbacks.0': { $exists: true } })
       .select('question answer feedbacks')
       .lean();
-    
+
     // Flatten all feedbacks with doubt context
     const allFeedback = [];
     doubts.forEach(doubt => {
@@ -754,10 +754,10 @@ app.get('/api/feedback', async (req, res) => {
         });
       });
     });
-    
+
     // Sort by creation date (newest first)
     allFeedback.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
+
     res.json(allFeedback);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -781,7 +781,7 @@ app.delete('/api/feedback/:id', async (req, res) => {
       { 'feedbacks._id': req.params.id },
       { $pull: { feedbacks: { _id: req.params.id } } }
     );
-    
+
     if (result.modifiedCount > 0) {
       res.json({ message: 'Feedback deleted' });
     } else {

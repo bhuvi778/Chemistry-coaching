@@ -28,7 +28,7 @@ const studyMaterialRoutes = require('./routes/studyMaterialRoutes');
 const magazineRoutes = require('./routes/magazineRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 const webinarRoutes = require('./routes/webinarRoutes');
-const doubtRoutes = require('./routes/doubtRoutes');
+const communityRoutes = require('./routes/communityRoutes');
 const crosswordRoutes = require('./routes/crosswordRoutes');
 const puzzleSetRoutes = require('./routes/puzzleSetRoutes');
 
@@ -36,7 +36,7 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:5173',
@@ -48,7 +48,7 @@ app.use(cors({
       'https://ace2examz.vercel.app',
       'https://www.ace2examz.vercel.app',
     ];
-    
+
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -96,7 +96,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     return res.status(400).json({ message: 'No file uploaded' });
   }
   const fileUrl = `/api/uploads/${req.file.filename}`;
-  console.log('✅ File uploaded:', req.file.filename, 'Size:', (req.file.size / (1024*1024)).toFixed(2), 'MB');
+  console.log('✅ File uploaded:', req.file.filename, 'Size:', (req.file.size / (1024 * 1024)).toFixed(2), 'MB');
   res.json({ fileUrl: fileUrl });
 });
 
@@ -124,14 +124,14 @@ app.use('/api/study-materials', cacheMiddleware('study-materials', 30 * 60 * 100
 app.use('/api/magazines', cacheMiddleware('magazines', 30 * 60 * 1000), magazineRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/webinar-cards', webinarRoutes);
-app.use('/api/doubts', doubtRoutes);
+app.use('/api/community', communityRoutes);
 app.use('/api/crosswords', cacheMiddleware('crosswords', 30 * 60 * 1000), crosswordRoutes);
 app.use('/api/puzzle-sets', cacheMiddleware('puzzle-sets', 30 * 60 * 1000), puzzleSetRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'Server is running with MVC architecture',
     timestamp: new Date().toISOString()
   });

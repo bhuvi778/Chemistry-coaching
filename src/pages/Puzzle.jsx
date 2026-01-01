@@ -210,6 +210,8 @@ const Puzzle = () => {
         try {
             const response = await fetch('/api/crosswords');
             const data = await response.json();
+            console.log('Fetched crosswords:', data);
+            console.log('First crossword:', data[0]);
             // Ensure data is always an array
             setCrosswords(Array.isArray(data) ? data : []);
             setLoading(false);
@@ -381,12 +383,16 @@ const Puzzle = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {currentCrosswords.map((crossword) => (
                                     <div key={crossword._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300 group">
-                                        {crossword.thumbnailUrl && (
+                                        {crossword.thumbnailUrl && crossword.thumbnailUrl.trim() !== '' && (
                                             <div className="w-full aspect-[16/9] overflow-hidden relative">
                                                 <img
                                                     src={crossword.thumbnailUrl}
                                                     alt={crossword.title}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        console.error('Failed to load thumbnail:', crossword.thumbnailUrl);
+                                                        e.target.style.display = 'none';
+                                                    }}
                                                 />
                                             </div>
                                         )}
@@ -409,8 +415,8 @@ const Puzzle = () => {
                                                 </span>
                                                 {crossword.difficulty && (
                                                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${crossword.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
-                                                            crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                                'bg-red-500/20 text-red-400'
+                                                        crossword.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                            'bg-red-500/20 text-red-400'
                                                         }`}>
                                                         {crossword.difficulty}
                                                     </span>
@@ -428,7 +434,7 @@ const Puzzle = () => {
                                             </button>
 
                                             {/* View Answer Button */}
-                                            {crossword.answerPdfUrl && (
+                                            {crossword.answerPdfUrl && crossword.answerPdfUrl.trim() !== '' && (
                                                 <a
                                                     href={crossword.answerPdfUrl}
                                                     target="_blank"

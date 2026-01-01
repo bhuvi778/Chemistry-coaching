@@ -8,7 +8,7 @@ import ManageStudyMaterials from './ManageStudyMaterials';
 import ManageMagazines from './ManageMagazines';
 import ManagePuzzleSets from './ManagePuzzleSets';
 import ManageCrosswords from './ManageCrosswords';
-import ManageDoubts from './ManageDoubts';
+import ManageCommunity from './ManageCommunity';
 import ManageWebinarCards from './ManageWebinarCards';
 import ManageFeedback from './ManageFeedback';
 import Enquiries from './Enquiries';
@@ -80,10 +80,10 @@ const AdminDashboard = () => {
               <i className="fas fa-th mr-2"></i> Manage Crosswords
             </button>
             <button
-              onClick={() => setActiveTab('doubts')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'doubts' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+              onClick={() => setActiveTab('community')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'community' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
-              <i className="fas fa-question-circle mr-2"></i> Manage Doubts
+              <i className="fas fa-users mr-2"></i> Manage Community
             </button>
             <button
               onClick={() => setActiveTab('webinars')}
@@ -122,7 +122,7 @@ const AdminDashboard = () => {
           {activeTab === 'magazines' && <ManageMagazines />}
           {activeTab === 'puzzles' && <ManagePuzzleSets />}
           {activeTab === 'crosswords' && <ManageCrosswords />}
-          {activeTab === 'doubts' && <ManageDoubts />}
+          {activeTab === 'community' && <ManageCommunity />}
           {activeTab === 'webinars' && <ManageWebinarCards />}
           {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'enquiries' && <Enquiries />}

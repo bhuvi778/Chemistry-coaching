@@ -43,6 +43,11 @@ const videoSchema = new mongoose.Schema({
     filename: String,
     uploadedAt: Date
   },
+  quizPdf: {
+    data: String,  // Base64 encoded PDF
+    filename: String,
+    uploadedAt: Date
+  },
   quizLink: {
     type: String,
     default: ''

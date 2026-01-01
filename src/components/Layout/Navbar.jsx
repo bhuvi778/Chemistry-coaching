@@ -49,9 +49,9 @@ const Navbar = () => {
                   onMouseLeave={() => setIsStudyMaterialOpen(false)}
                 >
                   <button className={`px-3 py-2 transition relative ${location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') ||
-                      location.pathname.includes('/study-materials') || location.pathname.includes('/magazines') ||
-                      location.pathname.includes('/puzzles') || location.pathname.includes('/doubts')
-                      ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+                    location.pathname.includes('/study-materials') || location.pathname.includes('/magazines') ||
+                    location.pathname.includes('/puzzles') || location.pathname.includes('/community')
+                    ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
                     <span className="flex items-center gap-2">
                       <i className="fas fa-book"></i>
@@ -104,7 +104,7 @@ const Navbar = () => {
                       <span>Chemistry Puzzles</span>
                     </Link>
                     <Link
-                      to="/doubts"
+                      to="/community"
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                       onClick={() => setIsStudyMaterialOpen(false)}
                     >
@@ -277,7 +277,7 @@ const Navbar = () => {
               <Link to="/puzzles" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fas fa-puzzle-piece text-yellow-500 mr-2"></i>Chemistry Puzzles
               </Link>
-              <Link to="/doubts" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+              <Link to="/community" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fas fa-users text-orange-500 mr-2"></i>Community
               </Link>
               <a href="https://www.ace2examz.in/blog" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">

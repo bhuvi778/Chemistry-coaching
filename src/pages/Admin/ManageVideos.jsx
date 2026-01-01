@@ -30,6 +30,7 @@ const ManageVideos = () => {
     duration: '',
     isActive: true,
     classNotes: null,  // Will store {data: base64, filename: string}
+    quizPdf: null,  // Will store {data: base64, filename: string}
     quizLink: ''
   });
 
@@ -81,6 +82,7 @@ const ManageVideos = () => {
         duration: '',
         isActive: true,
         classNotes: null,
+        quizPdf: null,
         quizLink: ''
       });
       setIsAdding(false);
@@ -106,6 +108,7 @@ const ManageVideos = () => {
       duration: video.duration || '',
       isActive: video.isActive !== false,
       classNotes: video.classNotes || null,
+      quizPdf: video.quizPdf || null,
       quizLink: video.quizLink || ''
     });
     setIsAdding(true);
@@ -132,6 +135,7 @@ const ManageVideos = () => {
       duration: '',
       isActive: true,
       classNotes: null,
+      quizPdf: null,
       quizLink: ''
     });
   };
@@ -385,7 +389,7 @@ const ManageVideos = () => {
             {/* Quiz Link */}
             <div>
               <label className="block text-gray-400 mb-2">
-                <i className="fas fa-question-circle mr-2 text-yellow-400"></i>
+                <i className="fas fa-link mr-2 text-yellow-400"></i>
                 Quiz Link (optional)
               </label>
               <input
@@ -397,6 +401,59 @@ const ManageVideos = () => {
               />
               <p className="text-xs text-gray-500 mt-1">
                 Add a link to an external quiz or Google Form for this video
+              </p>
+            </div>
+
+            {/* Quiz PDF Upload */}
+            <div>
+              <label className="block text-gray-400 mb-2">
+                <i className="fas fa-file-pdf mr-2 text-yellow-400"></i>
+                Quiz PDF (optional)
+              </label>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    if (file.size > 50 * 1024 * 1024) {  // 50MB limit
+                      alert('File size must be less than 50MB');
+                      e.target.value = '';
+                      return;
+                    }
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setFormData({
+                        ...formData,
+                        quizPdf: {
+                          data: reader.result,
+                          filename: file.name,
+                          uploadedAt: new Date()
+                        }
+                      });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-yellow-600 file:text-white hover:file:bg-yellow-700"
+              />
+              {formData.quizPdf && (
+                <div className="mt-2 flex items-center justify-between bg-gray-900 border border-gray-700 rounded p-3">
+                  <div className="flex items-center gap-2 text-green-400">
+                    <i className="fas fa-check-circle"></i>
+                    <span className="text-sm">{formData.quizPdf.filename}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, quizPdf: null })}
+                    className="text-red-400 hover:text-red-300 text-sm"
+                  >
+                    <i className="fas fa-times"></i> Remove
+                  </button>
+                </div>
+              )}
+              <p className="text-xs text-gray-500 mt-1">
+                Upload a PDF quiz file (Max 50MB). You can provide either a link OR upload a PDF.
               </p>
             </div>
 

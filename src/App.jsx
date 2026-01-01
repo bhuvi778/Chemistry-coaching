@@ -16,7 +16,7 @@ import AudioBooks from './pages/AudioBooks';
 import StudyMaterials from './pages/StudyMaterials';
 import Magazines from './pages/Magazines';
 import Puzzle from './pages/Puzzle';
-import Doubts from './pages/Doubts';
+import Community from './pages/Community';
 import BookMeeting from './pages/BookMeeting';
 import AIAssistantPage from './pages/AIAssistantPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -101,7 +101,7 @@ function AppContent() {
       <ScrollToTop />
       <ParticleCanvas />
       <Navbar />
-      
+
       <div className="pt-20 flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -113,21 +113,21 @@ function AppContent() {
           <Route path="/study-materials" element={<StudyMaterials />} />
           <Route path="/magazines" element={<Magazines />} />
           <Route path="/puzzles" element={<Puzzle />} />
-          <Route path="/doubts" element={<Doubts />} />
+          <Route path="/community" element={<Community />} />
           <Route path="/book-meeting" element={<BookMeeting />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-            <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/admin" element={<AdminLogin />} />
-          <Route 
-            path="/admin/dashboard" 
+          <Route
+            path="/admin/dashboard"
             element={
               <ProtectedRoute>
                 <AdminDashboard />
               </ProtectedRoute>
-            } 
+            }
           />
           {/* Catch all undefined routes and redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />

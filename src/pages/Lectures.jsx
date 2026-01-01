@@ -48,6 +48,19 @@ const Lectures = () => {
     return categoryMatch && examMatch && playlistMatch;
   });
 
+  // Debug: Log first video to check quizLink and quizPdf
+  useEffect(() => {
+    if (filteredVideos.length > 0) {
+      console.log('Sample video data:', {
+        title: filteredVideos[0].title,
+        quizLink: filteredVideos[0].quizLink,
+        hasQuizLink: !!filteredVideos[0].quizLink && filteredVideos[0].quizLink.trim() !== '',
+        quizPdf: filteredVideos[0].quizPdf,
+        hasQuizPdf: !!filteredVideos[0].quizPdf && (filteredVideos[0].quizPdf.filename || filteredVideos[0].quizPdf.data)
+      });
+    }
+  }, [filteredVideos]);
+
   // Pagination calculations
   const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
   const indexOfLastVideo = currentPage * videosPerPage;
@@ -281,7 +294,7 @@ const Lectures = () => {
                     </a>
 
                     {/* Class Notes Button */}
-                    {video.classNotes && (video.classNotes.filename || video.classNotes.data || Object.keys(video.classNotes).length > 0) ? (
+                    {video.classNotes && (video.classNotes.filename || video.classNotes.data) ? (
                       <button
                         onClick={async () => {
                           const notes = video.classNotes;
@@ -359,17 +372,87 @@ const Lectures = () => {
                       </button>
                     )}
 
-                    {/* Take Quiz Button */}
-                    {video.quizLink ? (
-                      <a
-                        href={video.quizLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
-                      >
-                        <i className="fas fa-question-circle mr-2"></i>
-                        Take Quiz
-                      </a>
+                    {/* Take Quiz Button - supports both PDF and Link */}
+                    {(video.quizPdf && (video.quizPdf.filename || video.quizPdf.data)) || (video.quizLink && video.quizLink.trim() !== '') ? (
+                      video.quizPdf && (video.quizPdf.filename || video.quizPdf.data) ? (
+                        // Quiz PDF Download Button
+                        <button
+                          onClick={async () => {
+                            const quiz = video.quizPdf;
+                            let dataUrl = quiz.data;
+
+                            if (!dataUrl) {
+                              try {
+                                setDownloadingId(video._id + '_quiz');
+                                // Fetch full video details to get the PDF data
+                                const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                                const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+                                const apiUrl = cleanBaseUrl.endsWith('/api')
+                                  ? `${cleanBaseUrl}/videos/${video._id}`
+                                  : `${cleanBaseUrl}/api/videos/${video._id}`;
+
+                                const response = await fetch(apiUrl);
+                                const fullVideo = await response.json();
+
+                                if (fullVideo && fullVideo.quizPdf && fullVideo.quizPdf.data) {
+                                  dataUrl = fullVideo.quizPdf.data;
+                                } else {
+                                  alert('Error: Quiz PDF data not found');
+                                  setDownloadingId(null);
+                                  return;
+                                }
+                              } catch (err) {
+                                console.error('Error fetching quiz PDF:', err);
+                                alert('Failed to download quiz PDF');
+                                setDownloadingId(null);
+                                return;
+                              }
+                            }
+
+                            // Create a download link for the PDF
+                            const linkSource = dataUrl;
+
+                            if (!linkSource || !linkSource.startsWith('data:application/pdf')) {
+                              alert('Invalid PDF data received from server');
+                              setDownloadingId(null);
+                              return;
+                            }
+
+                            const downloadLink = document.createElement('a');
+                            downloadLink.href = linkSource;
+                            downloadLink.download = quiz.filename || `${video.title}-quiz.pdf`;
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                            document.body.removeChild(downloadLink);
+                            setDownloadingId(null);
+                          }}
+                          disabled={downloadingId === video._id + '_quiz'}
+                          className="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
+                        >
+                          {downloadingId === video._id + '_quiz' ? (
+                            <>
+                              <i className="fas fa-spinner fa-spin mr-2"></i>
+                              Downloading...
+                            </>
+                          ) : (
+                            <>
+                              <i className="fas fa-file-pdf mr-2"></i>
+                              Take Quiz
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        // Quiz Link Button
+                        <a
+                          href={video.quizLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-2"
+                        >
+                          <i className="fas fa-external-link-alt mr-2"></i>
+                          Take Quiz
+                        </a>
+                      )
                     ) : null}
                   </div>
                 </div>

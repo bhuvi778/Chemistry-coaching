@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import ParticleCanvas from '../components/UI/ParticleCanvas';
 
-const Doubts = () => {
+const Community = () => {
     const { isDark } = useTheme();
     const [searchQuery, setSearchQuery] = useState('');
-    const [publishedDoubts, setPublishedDoubts] = useState([]);
-    const [filteredDoubts, setFilteredDoubts] = useState([]);
+    const [publishedPosts, setPublishedPosts] = useState([]);
+    const [filteredPosts, setFilteredPosts] = useState([]);
     const [showAskForm, setShowAskForm] = useState(false);
     const [showAll, setShowAll] = useState(false);
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -37,36 +37,36 @@ const Doubts = () => {
     };
 
     useEffect(() => {
-        fetchPublishedDoubts();
+        fetchPublishedPosts();
     }, []);
 
     useEffect(() => {
-        // Filter doubts based on search query
-        // Ensure publishedDoubts is an array
-        const safeDoubts = Array.isArray(publishedDoubts) ? publishedDoubts : [];
+        // Filter posts based on search query
+        // Ensure publishedPosts is an array
+        const safePosts = Array.isArray(publishedPosts) ? publishedPosts : [];
         if (searchQuery.trim()) {
-            const filtered = safeDoubts.filter(doubt =>
-                doubt.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                doubt.answer.toLowerCase().includes(searchQuery.toLowerCase())
+            const filtered = safePosts.filter(post =>
+                post.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                post.answer.toLowerCase().includes(searchQuery.toLowerCase())
             );
-            setFilteredDoubts(filtered);
+            setFilteredPosts(filtered);
         } else {
-            setFilteredDoubts(safeDoubts);
+            setFilteredPosts(safePosts);
         }
-    }, [searchQuery, publishedDoubts]);
+    }, [searchQuery, publishedPosts]);
 
-    const fetchPublishedDoubts = async () => {
+    const fetchPublishedPosts = async () => {
         try {
-            const res = await fetch(`${API_URL}/doubts/published`);
+            const res = await fetch(`${API_URL}/community/published`);
             const data = await res.json();
             // Ensure data is always an array
-            const doubtsArray = Array.isArray(data) ? data : [];
-            setPublishedDoubts(doubtsArray);
-            setFilteredDoubts(doubtsArray);
+            const postsArray = Array.isArray(data) ? data : [];
+            setPublishedPosts(postsArray);
+            setFilteredPosts(postsArray);
         } catch (error) {
-            console.error('Error fetching doubts:', error);
-            setPublishedDoubts([]);
-            setFilteredDoubts([]);
+            console.error('Error fetching community posts:', error);
+            setPublishedPosts([]);
+            setFilteredPosts([]);
         }
     };
 
@@ -76,8 +76,8 @@ const Doubts = () => {
 
     const handleAskClick = () => {
         // Check if question already exists
-        const questionExists = publishedDoubts.some(doubt =>
-            doubt.question.toLowerCase().includes(searchQuery.toLowerCase().trim())
+        const questionExists = publishedPosts.some(post =>
+            post.question.toLowerCase().includes(searchQuery.toLowerCase().trim())
         );
 
         if (questionExists && searchQuery.trim()) {
@@ -102,7 +102,7 @@ const Doubts = () => {
         setIsSubmitting(true);
 
         try {
-            const res = await fetch(`${API_URL}/doubts`, {
+            const res = await fetch(`${API_URL}/community`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -137,7 +137,7 @@ const Doubts = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch(`${API_URL}/doubts/${selectedDoubt._id}/reaction`, {
+            const response = await fetch(`${API_URL}/community/${selectedDoubt._id}/reaction`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -152,8 +152,8 @@ const Doubts = () => {
                 setFeedbackData({ name: '', email: '', feedback: '' });
                 setSelectedDoubt(null);
                 setReactionType(null);
-                // Refresh doubts to show updated counts and feedback
-                await fetchPublishedDoubts();
+                // Refresh posts to show updated counts and feedback
+                await fetchPublishedPosts();
             }
         } catch (error) {
             console.error('Error submitting feedback:', error);
@@ -198,7 +198,7 @@ const Doubts = () => {
                                         Total Questions
                                     </p>
                                     <p className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                        {publishedDoubts.length}
+                                        {publishedPosts.length}
                                     </p>
                                 </div>
                             </div>
@@ -214,7 +214,7 @@ const Doubts = () => {
                                         Answered Questions
                                     </p>
                                     <p className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                        {publishedDoubts.length}
+                                        {publishedPosts.length}
                                     </p>
                                 </div>
                             </div>
@@ -372,18 +372,18 @@ const Doubts = () => {
 
                     {/* Q&A List */}
                     <div className="space-y-4">
-                        {filteredDoubts.length > 0 ? (
+                        {filteredPosts.length > 0 ? (
                             <>
                                 {/* Determine how many to show */}
                                 {(() => {
                                     // If searching, show all matching results
                                     // If not searching, show 5 or all based on showAll state
-                                    const doubtsToShow = searchQuery.trim()
-                                        ? filteredDoubts
-                                        : (showAll ? filteredDoubts : filteredDoubts.slice(0, 5));
+                                    const postsToShow = searchQuery.trim()
+                                        ? filteredPosts
+                                        : (showAll ? filteredPosts : filteredPosts.slice(0, 5));
 
-                                    return doubtsToShow.map((doubt) => (
-                                        <div key={doubt._id} className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-xl p-6 hover:shadow-xl transition-shadow`}>
+                                    return postsToShow.map((post) => (
+                                        <div key={post._id} className={`${isDark ? 'glass-panel' : 'bg-white shadow-md border border-gray-200'} rounded-xl p-6 hover:shadow-xl transition-shadow`}>
                                             {/* Question */}
                                             <div className="mb-4">
                                                 <div className="flex items-start gap-3">
@@ -392,10 +392,10 @@ const Doubts = () => {
                                                     </div>
                                                     <div className="flex-1">
                                                         <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
-                                                            {doubt.question}
+                                                            {post.question}
                                                         </h3>
                                                         <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                                                            Asked by {doubt.studentName}
+                                                            Asked by {post.studentName}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -410,7 +410,7 @@ const Doubts = () => {
                                                     <div className="flex-1">
                                                         <div
                                                             className={`${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed prose ${isDark ? 'prose-invert' : ''} max-w-none`}
-                                                            dangerouslySetInnerHTML={{ __html: doubt.answer }}
+                                                            dangerouslySetInnerHTML={{ __html: post.answer }}
                                                         />
                                                     </div>
                                                 </div>
@@ -419,7 +419,7 @@ const Doubts = () => {
                                             {/* Like/Dislike Buttons */}
                                             <div className="mt-4 flex items-center gap-4 pt-4 border-t border-gray-700/30">
                                                 <button
-                                                    onClick={() => handleReaction(doubt, 'like')}
+                                                    onClick={() => handleReaction(post, 'like')}
                                                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${isDark
                                                         ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20'
                                                         : 'bg-green-50 text-green-600 hover:bg-green-100'
@@ -427,10 +427,10 @@ const Doubts = () => {
                                                 >
                                                     <i className="fas fa-thumbs-up"></i>
                                                     <span className="font-semibold">Helpful</span>
-                                                    {doubt.likes > 0 && <span className="text-sm">({doubt.likes})</span>}
+                                                    {post.likes > 0 && <span className="text-sm">({post.likes})</span>}
                                                 </button>
                                                 <button
-                                                    onClick={() => handleReaction(doubt, 'dislike')}
+                                                    onClick={() => handleReaction(post, 'dislike')}
                                                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${isDark
                                                         ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
                                                         : 'bg-red-50 text-red-600 hover:bg-red-100'
@@ -438,36 +438,36 @@ const Doubts = () => {
                                                 >
                                                     <i className="fas fa-thumbs-down"></i>
                                                     <span className="font-semibold">Not Helpful</span>
-                                                    {doubt.dislikes > 0 && <span className="text-sm">({doubt.dislikes})</span>}
+                                                    {post.dislikes > 0 && <span className="text-sm">({post.dislikes})</span>}
                                                 </button>
                                             </div>
 
                                             {/* Feedback Comments */}
-                                            {doubt.feedbacks && doubt.feedbacks.length > 0 && (
+                                            {post.feedbacks && post.feedbacks.length > 0 && (
                                                 <div className={`mt-4 pt-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
                                                     <button
-                                                        onClick={() => toggleFeedback(doubt._id)}
+                                                        onClick={() => toggleFeedback(post._id)}
                                                         className={`w-full text-left text-sm font-semibold ${isDark ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'} mb-3 flex items-center justify-between gap-2 transition`}
                                                     >
                                                         <span className="flex items-center gap-2">
                                                             <i className="fas fa-comments"></i>
-                                                            Student Feedback ({doubt.feedbacks.length})
+                                                            Student Feedback ({post.feedbacks.length})
                                                         </span>
-                                                        <i className={`fas fa-chevron-${expandedFeedback[doubt._id] ? 'up' : 'down'} text-xs`}></i>
+                                                        <i className={`fas fa-chevron-${expandedFeedback[post._id] ? 'up' : 'down'} text-xs`}></i>
                                                     </button>
 
-                                                    {expandedFeedback[doubt._id] && (
+                                                    {expandedFeedback[post._id] && (
                                                         <div className="space-y-3 max-h-60 overflow-y-auto">
-                                                            {doubt.feedbacks.map((fb, idx) => (
+                                                            {post.feedbacks.map((fb, idx) => (
                                                                 <div key={idx} className={`${isDark ? 'bg-gray-800/50' : 'bg-gray-50'} rounded-lg p-3`}>
                                                                     <div className="flex items-start gap-2 mb-2">
                                                                         <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${fb.reactionType === 'like'
-                                                                                ? 'bg-green-500/20'
-                                                                                : 'bg-red-500/20'
+                                                                            ? 'bg-green-500/20'
+                                                                            : 'bg-red-500/20'
                                                                             }`}>
                                                                             <i className={`fas fa-thumbs-${fb.reactionType === 'like' ? 'up' : 'down'} text-xs ${fb.reactionType === 'like'
-                                                                                    ? 'text-green-400'
-                                                                                    : 'text-red-400'
+                                                                                ? 'text-green-400'
+                                                                                : 'text-red-400'
                                                                                 }`}></i>
                                                                         </div>
                                                                         <div className="flex-1">
@@ -494,21 +494,21 @@ const Doubts = () => {
                                     ));
                                 })()}
 
-                                {/* View More Button - Only show when not searching and there are more than 5 doubts */}
-                                {!searchQuery.trim() && filteredDoubts.length > 5 && !showAll && (
+                                {/* View More Button - Only show when not searching and there are more than 5 posts */}
+                                {!searchQuery.trim() && filteredPosts.length > 5 && !showAll && (
                                     <div className="text-center mt-8">
                                         <button
                                             onClick={() => setShowAll(true)}
                                             className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition transform hover:scale-105"
                                         >
                                             <i className="fas fa-chevron-down mr-2"></i>
-                                            View More ({filteredDoubts.length - 5} more questions)
+                                            View More ({filteredPosts.length - 5} more questions)
                                         </button>
                                     </div>
                                 )}
 
                                 {/* Show Less Button - Only show when showing all and not searching */}
-                                {!searchQuery.trim() && showAll && filteredDoubts.length > 5 && (
+                                {!searchQuery.trim() && showAll && filteredPosts.length > 5 && (
                                     <div className="text-center mt-8">
                                         <button
                                             onClick={() => {
@@ -642,4 +642,4 @@ const Doubts = () => {
     );
 };
 
-export default Doubts;
+export default Community;

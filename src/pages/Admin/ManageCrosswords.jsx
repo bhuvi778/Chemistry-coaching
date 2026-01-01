@@ -109,12 +109,27 @@ const ManageCrosswords = () => {
             }
 
             try {
-                const base64 = await convertToBase64(file);
-                setFormData({ ...formData, thumbnailUrl: base64 });
-                setThumbnailFileName(file.name);
+                // Upload to server instead of base64
+                const uploadFormData = new FormData();
+                uploadFormData.append('file', file);
+
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: uploadFormData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Store relative URL
+                    setFormData({ ...formData, thumbnailUrl: data.fileUrl });
+                    setThumbnailFileName(file.name);
+                } else {
+                    throw new Error('Upload failed');
+                }
             } catch (error) {
-                console.error('Error converting thumbnail:', error);
-                alert('Error uploading thumbnail');
+                console.error('Error uploading thumbnail:', error);
+                alert('Error uploading thumbnail. Please try again.');
             }
         }
     };
@@ -141,12 +156,27 @@ const ManageCrosswords = () => {
             }
 
             try {
-                const base64 = await convertToBase64(file);
-                setFormData(prevData => ({ ...prevData, thumbnailUrl: base64 }));
-                setThumbnailFileName(file.name);
+                // Upload to server instead of base64
+                const uploadFormData = new FormData();
+                uploadFormData.append('file', file);
+
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: uploadFormData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Store relative URL
+                    setFormData(prevData => ({ ...prevData, thumbnailUrl: data.fileUrl }));
+                    setThumbnailFileName(file.name);
+                } else {
+                    throw new Error('Upload failed');
+                }
             } catch (error) {
-                console.error('Error converting thumbnail:', error);
-                alert('Error uploading thumbnail');
+                console.error('Error uploading thumbnail:', error);
+                alert('Error uploading thumbnail. Please try again.');
             }
         } else {
             alert('Please drop a valid image file');
@@ -286,18 +316,95 @@ const ManageCrosswords = () => {
                     <div>
                         <label className="block text-gray-400 mb-2 font-semibold">
                             <i className="fas fa-file-pdf mr-2 text-green-400"></i>
-                            Answer PDF URL (Optional)
+                            Answer PDF (Optional)
                         </label>
+
+                        {/* URL Input */}
                         <input
                             type="url"
-                            placeholder="https://example.com/answer.pdf or base64 data URL"
-                            value={formData.answerPdfUrl}
+                            placeholder="https://example.com/answer.pdf"
+                            value={formData.answerPdfUrl && !formData.answerPdfUrl.includes('/api/uploads/') ? formData.answerPdfUrl : ''}
                             onChange={e => setFormData(prev => ({ ...prev, answerPdfUrl: e.target.value }))}
-                            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+                            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full mb-3"
                         />
+
+                        {/* PDF Upload */}
+                        <div className="border-2 border-dashed border-gray-700 rounded-lg p-4 hover:border-green-500 transition-all">
+                            <input
+                                type="file"
+                                accept=".pdf"
+                                onChange={async (e) => {
+                                    const file = e.target.files[0];
+                                    if (file) {
+                                        if (file.size > 50 * 1024 * 1024) {
+                                            alert('PDF file size should be less than 50MB');
+                                            e.target.value = '';
+                                            return;
+                                        }
+
+                                        try {
+                                            // Upload to server instead of base64
+                                            const formData = new FormData();
+                                            formData.append('file', file);
+
+                                            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                                            const response = await fetch(`${API_URL}/upload`, {
+                                                method: 'POST',
+                                                body: formData
+                                            });
+
+                                            if (response.ok) {
+                                                const data = await response.json();
+                                                // Store relative URL (not absolute) so it works on any domain
+                                                setFormData(prev => ({ ...prev, answerPdfUrl: data.fileUrl }));
+                                            } else {
+                                                throw new Error('Upload failed');
+                                            }
+                                        } catch (error) {
+                                            console.error('Error uploading PDF:', error);
+                                            alert('Error uploading PDF. Please try again.');
+                                        }
+                                    }
+                                }}
+                                className="hidden"
+                                id="answerPdfInput"
+                            />
+                            <label htmlFor="answerPdfInput" className="cursor-pointer block text-center">
+                                <i className="fas fa-file-pdf text-4xl text-green-400 mb-2 block"></i>
+                                <p className="text-white mb-1">
+                                    {formData.answerPdfUrl && formData.answerPdfUrl.includes('/api/uploads/')
+                                        ? 'PDF Uploaded ✓'
+                                        : 'Click to upload PDF'}
+                                </p>
+                                <p className="text-gray-500 text-sm">
+                                    Or paste URL above (Max 50MB)
+                                </p>
+                            </label>
+                        </div>
+
+                        {formData.answerPdfUrl && (
+                            <div className="mt-2 flex items-center justify-between bg-green-900/30 border border-green-500/50 rounded p-2">
+                                <div className="flex items-center gap-2 text-green-400 text-sm">
+                                    <i className="fas fa-check-circle"></i>
+                                    <span>
+                                        {formData.answerPdfUrl.includes('/api/uploads/')
+                                            ? 'PDF uploaded to server'
+                                            : 'External URL provided'}
+                                    </span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, answerPdfUrl: '' }))}
+                                    className="text-red-400 hover:text-red-300 text-sm"
+                                >
+                                    <i className="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                        )}
+
                         <p className="text-gray-500 text-sm mt-2">
                             <i className="fas fa-info-circle mr-1"></i>
-                            Add a link to the answer PDF or upload it as base64 data URL
+                            Provide either a URL or upload a PDF file for the answer sheet
                         </p>
                     </div>
 

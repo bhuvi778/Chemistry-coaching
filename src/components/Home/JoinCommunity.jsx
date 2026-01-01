@@ -15,47 +15,47 @@ const JoinCommunity = () => {
                         <div className="inline-block px-4 py-2 mb-4 bg-cyan-500/20 border border-cyan-400/50 rounded-full">
                             <span className="text-cyan-400 font-semibold text-sm flex items-center gap-2">
                                 <i className="fas fa-users"></i>
-                                Join 5,000+ Students
+                                Join Our Chemistry Community
                             </span>
                         </div>
 
                         <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                            Join Our Learning
+                            Connect, Learn & Excel
                             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-                                Community
+                                Together
                             </span>
                         </h2>
 
                         <p className="text-gray-300 text-lg mb-8 max-w-xl">
-                            Connect with fellow chemistry enthusiasts, access exclusive study materials,
-                            participate in live sessions, and get personalized guidance from expert mentors.
+                            Join our vibrant community of chemistry students preparing for JEE, NEET, and other competitive exams.
+                            Get instant doubt clearing, exclusive study materials, and guidance from experienced mentors.
                         </p>
 
                         {/* Benefits Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                             <div className="flex items-center gap-3 text-gray-300">
                                 <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                                    <i className="fas fa-video text-cyan-400"></i>
+                                    <i className="fas fa-question-circle text-cyan-400"></i>
                                 </div>
-                                <span className="text-sm">Live Interactive Sessions</span>
+                                <span className="text-sm">24/7 Doubt Clearing</span>
                             </div>
                             <div className="flex items-center gap-3 text-gray-300">
                                 <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                                    <i className="fas fa-book-open text-purple-400"></i>
+                                    <i className="fas fa-file-pdf text-purple-400"></i>
                                 </div>
-                                <span className="text-sm">Exclusive Study Materials</span>
+                                <span className="text-sm">Free Study Materials</span>
                             </div>
                             <div className="flex items-center gap-3 text-gray-300">
                                 <div className="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center flex-shrink-0">
-                                    <i className="fas fa-comments text-pink-400"></i>
+                                    <i className="fas fa-clipboard-check text-pink-400"></i>
                                 </div>
-                                <span className="text-sm">Doubt Clearing Forums</span>
+                                <span className="text-sm">Weekly Practice Tests</span>
                             </div>
                             <div className="flex items-center gap-3 text-gray-300">
                                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                                    <i className="fas fa-trophy text-blue-400"></i>
+                                    <i className="fas fa-chalkboard-teacher text-blue-400"></i>
                                 </div>
-                                <span className="text-sm">Weekly Competitions</span>
+                                <span className="text-sm">Expert Mentor Guidance</span>
                             </div>
                         </div>
 
@@ -64,16 +64,16 @@ const JoinCommunity = () => {
                             href="https://whatsapp.com/channel/0029Vb79CnNJJhzVMjDHFv0U"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg rounded-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all duration-300 transform hover:scale-105"
+                            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold text-lg rounded-lg hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-all duration-300 transform hover:scale-105"
                         >
-                            <i className="fas fa-sign-in-alt"></i>
-                            Join Community Now
+                            <i className="fab fa-whatsapp text-2xl"></i>
+                            Join WhatsApp Community
                             <i className="fas fa-arrow-right"></i>
                         </a>
 
                         <p className="text-gray-500 text-sm mt-4">
-                            <i className="fas fa-lock mr-1"></i>
-                            Free to join • No credit card required
+                            <i className="fas fa-check-circle mr-1 text-green-400"></i>
+                            Free to join • Instant access • 1000+ active members
                         </p>
                     </div>
 
@@ -85,9 +85,9 @@ const JoinCommunity = () => {
                                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-500/30 to-purple-500/30 animate-spin-slow"></div>
                                 <div className="absolute inset-4 rounded-full bg-gray-900/80 backdrop-blur-xl flex items-center justify-center border border-cyan-400/30">
                                     <div className="text-center">
-                                        <i className="fas fa-users text-6xl text-cyan-400 mb-2"></i>
-                                        <p className="text-white font-bold text-2xl">5,000+</p>
-                                        <p className="text-gray-400 text-sm">Active Alumni</p>
+                                        <i className="fas fa-flask text-6xl text-cyan-400 mb-2"></i>
+                                        <p className="text-white font-bold text-2xl">1000+</p>
+                                        <p className="text-gray-400 text-sm">Active Students</p>
                                     </div>
                                 </div>
                             </div>
@@ -96,21 +96,21 @@ const JoinCommunity = () => {
                             <div className="absolute -top-4 -right-4 glass-panel p-4 rounded-xl border border-cyan-400/30 animate-float">
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                                    <span className="text-white font-semibold text-sm">500+ Online</span>
+                                    <span className="text-white font-semibold text-sm">200+ Online</span>
                                 </div>
                             </div>
 
                             <div className="absolute -bottom-4 -left-4 glass-panel p-4 rounded-xl border border-purple-400/30 animate-float" style={{ animationDelay: '1s' }}>
                                 <div className="text-center">
-                                    <p className="text-purple-400 font-bold text-xl">95%</p>
-                                    <p className="text-gray-400 text-xs">Success Rate</p>
+                                    <p className="text-purple-400 font-bold text-xl">500+</p>
+                                    <p className="text-gray-400 text-xs">Doubts Solved</p>
                                 </div>
                             </div>
 
                             <div className="absolute top-1/2 -right-8 glass-panel p-3 rounded-lg border border-pink-400/30 animate-float" style={{ animationDelay: '0.5s' }}>
                                 <div className="flex items-center gap-2">
                                     <i className="fas fa-star text-yellow-400"></i>
-                                    <span className="text-white font-semibold text-sm">4.8/5</span>
+                                    <span className="text-white font-semibold text-sm">4.9/5</span>
                                 </div>
                             </div>
                         </div>
