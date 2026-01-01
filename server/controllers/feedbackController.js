@@ -56,4 +56,4 @@ const deleteFeedback = async (req, res) => {
   }
 };
 
-module.exports = { getFeedback, createFeedback, deleteFeedback };
+module.exports = { getAllFeedback, createFeedback, deleteFeedback };
