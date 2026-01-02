@@ -13,6 +13,9 @@ const Lectures = () => {
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [quizUrl, setQuizUrl] = useState('');
   const [quizTitle, setQuizTitle] = useState('');
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [videoUrl, setVideoUrl] = useState('');
+  const [videoTitle, setVideoTitle] = useState('');
   const videosPerPage = 12; // 3 rows × 4 columns
 
   const categories = [
@@ -114,6 +117,15 @@ const Lectures = () => {
       setQuizTitle(video.title + ' - Quiz');
       setShowQuizModal(true);
     }
+  };
+
+  const handleWatchVideo = (video) => {
+    if (!video.youtubeId) return;
+
+    // Set video URL for iframe (embed format)
+    setVideoUrl(`https://www.youtube.com/embed/${video.youtubeId}`);
+    setVideoTitle(video.title);
+    setShowVideoModal(true);
   };
 
   // Pagination calculations
@@ -287,16 +299,17 @@ const Lectures = () => {
                           }}
                         />
                         {/* Play Button Overlay */}
-                        <a
-                          href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all"
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleWatchVideo(video);
+                          }}
+                          className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all cursor-pointer"
                         >
                           <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
                             <i className="fas fa-play text-white text-xl ml-1"></i>
                           </div>
-                        </a>
+                        </button>
                       </>
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
@@ -338,15 +351,16 @@ const Lectures = () => {
                     </div>
 
                     {/* Watch Now Button */}
-                    <a
-                      href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleWatchVideo(video);
+                      }}
                       className="block w-full text-center bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                     >
                       <i className="fab fa-youtube mr-2"></i>
                       Watch Now
-                    </a>
+                    </button>
 
                     {/* Class Notes Button */}
                     {video.classNotes && (video.classNotes.filename || video.classNotes.data) ? (
@@ -512,6 +526,40 @@ const Lectures = () => {
                 title="Quiz Content"
                 className="w-full h-full border-none"
                 allow="autoplay; encrypted-media"
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Video Modal */}
+      {showVideoModal && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn">
+          <div className="bg-gray-900 rounded-2xl w-full max-w-6xl h-[90vh] flex flex-col border border-gray-700 shadow-2xl relative">
+            {/* Header */}
+            <div className="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800/50 rounded-t-2xl">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <i className="fab fa-youtube text-red-500"></i>
+                {videoTitle}
+              </h3>
+              <button
+                onClick={() => setShowVideoModal(false)}
+                className="w-8 h-8 rounded-full bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white flex items-center justify-center transition"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+
+            {/* Content (Iframe) */}
+            <div className="flex-1 bg-black relative">
+              <iframe
+                src={videoUrl}
+                title="Video Player"
+                className="w-full h-full border-none"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
                 loading="lazy"
               ></iframe>
             </div>

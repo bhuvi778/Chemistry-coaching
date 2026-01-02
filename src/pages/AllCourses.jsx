@@ -186,49 +186,49 @@ const AllCourses = () => {
                                     onClick={() => setActiveCategory('live-batch')}
                                     className={getCategoryClass('live-batch')}
                                 >
-                                    <i className="fas fa-video text-xl w-6"></i>
+                                    <i className="fas fa-broadcast-tower text-xl w-6"></i>
                                     <span className="font-semibold">Live Batch</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('recorded')}
                                     className={getCategoryClass('recorded')}
                                 >
-                                    <i className="fas fa-play-circle text-xl w-6"></i>
+                                    <i className="fas fa-film text-xl w-6"></i>
                                     <span className="font-semibold">Recorded Courses</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('1-1-tutoring')}
                                     className={getCategoryClass('1-1-tutoring')}
                                 >
-                                    <i className="fas fa-user-friends text-xl w-6"></i>
+                                    <i className="fas fa-user-graduate text-xl w-6"></i>
                                     <span className="font-semibold">1-1 Tutoring</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('mentorship')}
                                     className={getCategoryClass('mentorship')}
                                 >
-                                    <i className="fas fa-chalkboard-teacher text-xl w-6"></i>
+                                    <i className="fas fa-user-tie text-xl w-6"></i>
                                     <span className="font-semibold">Mentorship</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('doubt-solver')}
                                     className={getCategoryClass('doubt-solver')}
                                 >
-                                    <i className="fas fa-question-circle text-xl w-6"></i>
+                                    <i className="fas fa-hands-helping text-xl w-6"></i>
                                     <span className="font-semibold">Doubt Solver</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('test-series')}
                                     className={getCategoryClass('test-series')}
                                 >
-                                    <i className="fas fa-clipboard-check text-xl w-6"></i>
+                                    <i className="fas fa-tasks text-xl w-6"></i>
                                     <span className="font-semibold">Test Series</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('focus-test-series')}
                                     className={getCategoryClass('focus-test-series')}
                                 >
-                                    <i className="fas fa-bullseye text-xl w-6"></i>
+                                    <i className="fas fa-crosshairs text-xl w-6"></i>
                                     <span className="font-semibold">Focus Test Series</span>
                                 </button>
                             </div>

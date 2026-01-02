@@ -34,12 +34,12 @@ const Navbar = () => {
               <img
                 src={isDark ? "/logo-light.png" : "/logo-dark.png"}
                 alt="Ace2Examz - Your Path To Success"
-                className="h-12 md:h-16 w-auto object-contain transition-opacity duration-300"
+                className="h-10 md:h-12 w-auto object-contain transition-opacity duration-300"
               />
             </Link>
 
-            <div className="hidden md:flex items-center gap-6">
-              <div className="flex items-baseline space-x-6 text-lg">
+            <div className="hidden md:flex items-center gap-3">
+              <div className="flex items-baseline space-x-3 text-lg">
                 <Link to="/" className={getNavLinkClass('/')}>Home</Link>
                 {/* Courses Dropdown */}
                 <div
@@ -47,11 +47,12 @@ const Navbar = () => {
                   onMouseEnter={() => setIsCoursesOpen(true)}
                   onMouseLeave={() => setIsCoursesOpen(false)}
                 >
-                  <button className={`px-3 py-2 transition relative ${location.pathname.includes('/courses') || location.pathname.includes('/score-max-batches')
+                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/courses') || location.pathname.includes('/score-max-batches')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
-                    <span className="flex items-center gap-2">
-                      Courses
+                    <span className="flex items-center gap-1.5">
+                      <i className="fas fa-graduation-cap"></i>
+                      Ace Program
                       <i className={`fas fa-chevron-down text-xs transition-transform ${isCoursesOpen ? 'rotate-180' : ''}`}></i>
                     </span>
                   </button>
@@ -63,8 +64,8 @@ const Navbar = () => {
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                       onClick={() => setIsCoursesOpen(false)}
                     >
-                      <i className="fas fa-th-large text-cyan-400"></i>
-                      <span>All Courses</span>
+                      <i className="fas fa-graduation-cap text-cyan-400"></i>
+                      <span>Courses</span>
                     </Link>
                     <Link
                       to="/score-max-batches"
@@ -83,12 +84,12 @@ const Navbar = () => {
                   onMouseEnter={() => setIsStudyMaterialOpen(true)}
                   onMouseLeave={() => setIsStudyMaterialOpen(false)}
                 >
-                  <button className={`px-3 py-2 transition relative ${location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') ||
+                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') ||
                     location.pathname.includes('/study-materials') || location.pathname.includes('/magazines') ||
                     location.pathname.includes('/puzzles') || location.pathname.includes('/community')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-1.5">
                       <i className="fas fa-book"></i>
                       Study Material
                       <i className={`fas fa-chevron-down text-xs transition-transform ${isStudyMaterialOpen ? 'rotate-180' : ''}`}></i>
@@ -158,13 +159,13 @@ const Navbar = () => {
                 </div>
 
                 <Link to="/book-meeting" className={getNavLinkClass('/book-meeting')}>
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-1.5">
                     <i className="fas fa-calendar-alt text-green-500"></i>
-                    Book your meet
+                    Book Your Meet
                   </span>
                 </Link>
                 <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-1.5">
                     <i className="fas fa-robot text-cyan-400"></i>
                     Ask AI
                   </span>
@@ -176,10 +177,10 @@ const Navbar = () => {
                   onMouseEnter={() => setIsMoreOpen(true)}
                   onMouseLeave={() => setIsMoreOpen(false)}
                 >
-                  <button className={`px-3 py-2 transition relative ${location.pathname.includes('/about') || location.pathname.includes('/contact')
+                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/about') || location.pathname.includes('/contact')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-1.5">
                       <i className="fas fa-ellipsis-h"></i>
                       More
                       <i className={`fas fa-chevron-down text-xs transition-transform ${isMoreOpen ? 'rotate-180' : ''}`}></i>
@@ -340,7 +341,7 @@ const Navbar = () => {
           <div className="md:hidden glass-panel border-t border-gray-700">
             <div className="px-2 pt-2 pb-3 space-y-1 text-center">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Home</Link>
-              <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Courses</Link>
+              <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Ace Program</Link>
               <Link to="/score-max-batches" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
                 <i className="fas fa-trophy text-amber-500 mr-2"></i>Score Max Batches
               </Link>

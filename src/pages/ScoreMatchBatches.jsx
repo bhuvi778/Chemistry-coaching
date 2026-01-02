@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import Pagination from '../components/UI/Pagination';
 
 const ScoreMatchBatches = () => {
     const { scoreMatchBatches } = useData();
     const [selectedExam, setSelectedExam] = useState('all');
     const [selectedBatchType, setSelectedBatchType] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const batchesPerPage = 9; // 3 rows × 3 columns
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedExam, selectedBatchType]);
 
     // Filter batches
     const filteredBatches = (Array.isArray(scoreMatchBatches) ? scoreMatchBatches : []).filter(batch => {
@@ -13,6 +21,12 @@ const ScoreMatchBatches = () => {
         const batchTypeMatch = selectedBatchType === 'all' || batch.batchType === selectedBatchType;
         return examMatch && batchTypeMatch;
     });
+
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredBatches.length / batchesPerPage);
+    const indexOfLastBatch = currentPage * batchesPerPage;
+    const indexOfFirstBatch = indexOfLastBatch - batchesPerPage;
+    const currentBatches = filteredBatches.slice(indexOfFirstBatch, indexOfLastBatch);
 
     const getFilterClass = (isActive) => {
         return `px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 cursor-pointer ${isActive
@@ -117,12 +131,19 @@ const ScoreMatchBatches = () => {
                         </div>
                     ) : (
                         <>
-                            <div className="mb-4 text-gray-400 text-center">
-                                <i className="fas fa-trophy mr-2"></i>
-                                Showing {filteredBatches.length} {filteredBatches.length === 1 ? 'batch' : 'batches'}
+                            <div className="mb-4 flex justify-between items-center">
+                                <div className="text-gray-400">
+                                    <i className="fas fa-trophy mr-2"></i>
+                                    Showing {indexOfFirstBatch + 1}-{Math.min(indexOfLastBatch, filteredBatches.length)} of {filteredBatches.length} {filteredBatches.length === 1 ? 'batch' : 'batches'}
+                                </div>
+                                {totalPages > 1 && (
+                                    <div className="text-gray-400 text-sm">
+                                        Page {currentPage} of {totalPages}
+                                    </div>
+                                )}
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredBatches.map(batch => (
+                                {currentBatches.map(batch => (
                                     <div key={batch._id} className="glass-panel rounded-xl p-6 border border-gray-700/50 hover:border-amber-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(251,146,60,0.3)] group">
                                         {batch.badge && (
                                             <div className="inline-block px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full mb-3">
@@ -195,6 +216,13 @@ const ScoreMatchBatches = () => {
                                     </div>
                                 ))}
                             </div>
+
+                            {/* Pagination */}
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setCurrentPage}
+                            />
                         </>
                     )}
                 </div>

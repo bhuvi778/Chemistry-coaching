@@ -4,27 +4,27 @@ const Testimonials = () => {
   const testimonials = [
     {
       id: 1,
-      name: "Aarav Sharma",
-      role: "JEE Aspirant",
-      exam: "Class 12, Delhi",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
-      quote: "The WhatsApp community is amazing! Seniors and peers help clear doubts instantly. It feels like studying with 1000+ friends."
+      name: "Vishavjeet Singh",
+      role: "MBBS",
+      exam: "NEET Qualified, 2024",
+      image: "/1st.jpeg",
+      quote: "The structured approach and personalized guidance helped me achieve my dream of becoming a doctor. The faculty's dedication is unmatched."
     },
     {
       id: 2,
-      name: "Priya Verma",
-      role: "NEET Student",
-      exam: "Class 11, Mumbai",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-      quote: "Weekly study groups and practice tests in the community keep me motivated. The peer support is incredible!"
+      name: "Yashna",
+      role: "MBBS",
+      exam: "NEET Qualified, 2024",
+      image: "/2nd.jpeg",
+      quote: "Ace2examz's comprehensive study material and regular tests kept me on track. The support system here is incredible."
     },
     {
       id: 3,
-      name: "Rohan Patel",
-      role: "Chemistry Enthusiast",
-      exam: "Dropper, Pune",
-      image: "https://randomuser.me/api/portraits/men/22.jpg",
-      quote: "I love the daily chemistry facts and tricks shared in the community. Learning becomes fun when you're not alone!"
+      name: "Jaisika Kalra",
+      role: "JEE Qualified",
+      exam: "JEE Main 2024",
+      image: "/3rd.jpeg",
+      quote: "The conceptual clarity I gained here was the key to my success. Every topic was explained with real-world applications."
     }
   ];
 
@@ -78,6 +78,7 @@ const Testimonials = () => {
           </button>
         </Link>
       </div>
+
     </section>
   );
 };

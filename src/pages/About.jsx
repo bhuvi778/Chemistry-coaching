@@ -38,83 +38,83 @@ const About = () => {
   const successStories = [
     {
       id: 1,
-      name: "Aarav Patel",
-      rank: "AIR 45",
-      exam: "JEE Advanced 2023",
-      college: "IIT Bombay - Computer Science",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
-      quote: "The visualization techniques changed how I saw Organic Chemistry. It wasn't just memorizing reactions anymore.",
-      year: "2023"
+      name: "Vishavjeet Singh",
+      rank: "MBBS",
+      exam: "NEET Qualified",
+      college: "MBBS - Medical College",
+      image: "/1st.jpeg",
+      quote: "The structured approach and personalized guidance helped me achieve my dream of becoming a doctor. The faculty's dedication is unmatched.",
+      year: "2024"
     },
     {
       id: 2,
-      name: "Sneha Gupta",
-      rank: "AIR 12",
-      exam: "NEET UG 2023",
-      college: "AIIMS Delhi",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-      quote: "Ace2examz's test series is the closest thing to the actual exam. The analysis helped me improve my speed.",
-      year: "2023"
+      name: "Yashna",
+      rank: "MBBS",
+      exam: "NEET Qualified",
+      college: "MBBS - Medical College",
+      image: "/2nd.jpeg",
+      quote: "Ace2examz's comprehensive study material and regular tests kept me on track. The support system here is incredible.",
+      year: "2024"
     },
     {
       id: 3,
-      name: "Rohan Kumar",
-      rank: "AIR 108",
-      exam: "JEE Main 2023",
-      college: "IIT Delhi - Mechanical",
-      image: "https://randomuser.me/api/portraits/men/22.jpg",
-      quote: "Personal mentorship from HODs helped me overcome my weak topics in Physical Chemistry.",
-      year: "2023"
+      name: "Jaisika Kalra",
+      rank: "JEE Qualified",
+      exam: "JEE Main 2024",
+      college: "Engineering College",
+      image: "/3rd.jpeg",
+      quote: "The conceptual clarity I gained here was the key to my success. Every topic was explained with real-world applications.",
+      year: "2024"
     },
     {
       id: 4,
-      name: "Priya Sharma",
-      rank: "AIR 234",
-      exam: "NEET UG 2023",
-      college: "JIPMER Puducherry",
-      image: "https://randomuser.me/api/portraits/women/68.jpg",
+      name: "Bhoomika",
+      rank: "MBBS",
+      exam: "NEET Qualified",
+      college: "MBBS - Medical College",
+      image: "/4th.jpeg",
       quote: "The daily practice papers kept me consistent. I never missed a single DPP and it paid off!",
-      year: "2023"
+      year: "2024"
     },
     {
       id: 5,
-      name: "Arjun Mehta",
-      rank: "AIR 567",
-      exam: "JEE Advanced 2022",
-      college: "IIT Kharagpur - Chemical",
-      image: "https://randomuser.me/api/portraits/men/45.jpg",
-      quote: "Coming from a small town, I thought cracking IIT was impossible. Ace2examz proved me wrong.",
-      year: "2022"
+      name: "Akshita",
+      rank: "MBBS",
+      exam: "NEET Qualified",
+      college: "MBBS - Medical College",
+      image: "/5th.jpeg",
+      quote: "Coming from a small town, I thought cracking NEET was impossible. Ace2examz proved me wrong.",
+      year: "2024"
     },
     {
       id: 6,
-      name: "Ananya Singh",
-      rank: "AIR 89",
-      exam: "NEET UG 2022",
-      college: "AIIMS Jodhpur",
-      image: "https://randomuser.me/api/portraits/women/32.jpg",
+      name: "Pranav Pruthi",
+      rank: "JEE Qualified",
+      exam: "JEE Main 2024",
+      college: "Engineering College",
+      image: "/6th.jpeg",
       quote: "The faculty's dedication is unmatched. They stayed back after classes to clear my doubts every single day.",
-      year: "2022"
+      year: "2024"
     },
     {
       id: 7,
-      name: "Karthik Reddy",
-      rank: "AIR 1234",
-      exam: "JEE Main 2022",
-      college: "NIT Trichy - Electronics",
-      image: "https://randomuser.me/api/portraits/men/67.jpg",
-      quote: "The hybrid model was perfect for me. I could balance my board prep and JEE simultaneously.",
-      year: "2022"
+      name: "Diksha Grover",
+      rank: "MBBS",
+      exam: "NEET Qualified",
+      college: "MBBS - Medical College",
+      image: "/7th.jpeg",
+      quote: "The hybrid model was perfect for me. I could balance my board prep and NEET simultaneously.",
+      year: "2024"
     },
     {
       id: 8,
-      name: "Divya Iyer",
-      rank: "AIR 456",
-      exam: "NEET UG 2021",
-      college: "CMC Vellore",
-      image: "https://randomuser.me/api/portraits/women/55.jpg",
+      name: "Ginnu",
+      rank: "MBBS",
+      exam: "NEET Qualified",
+      college: "MBBS - Medical College",
+      image: "/8th.jpeg",
       quote: "Ace2examz's NCERT mastery sessions are gold. Every single line from NCERT was covered in detail.",
-      year: "2021"
+      year: "2024"
     },
     {
       id: 9,
@@ -263,7 +263,7 @@ const About = () => {
             {/* Background Decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/5 rounded-full blur-3xl"></div>
-            
+
             <div className="relative flex flex-col lg:flex-row items-center gap-12">
               {/* Left Content Side */}
               <div className="lg:w-1/2 space-y-8">
@@ -291,16 +291,16 @@ const About = () => {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-wrap gap-4">
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold rounded-xl transition transform hover:scale-105 shadow-lg inline-flex items-center"
                     title="Contact us on WhatsApp"
                   >
                     <i className="fab fa-whatsapp mr-2"></i>
                     Ask a Chemistry Expert
                   </a>
-                  <a 
-                    href="https://www.instagram.com/ace2examz/" 
+                  <a
+                    href="https://www.instagram.com/ace2examz/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-6 py-3 bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 font-bold rounded-xl border border-pink-500/30 transition inline-flex items-center"
@@ -341,16 +341,16 @@ const About = () => {
                 <div className="relative group">
                   {/* Border Frame */}
                   <div className="absolute -inset-4 bg-gradient-to-br from-cyan-400 via-blue-500 to-pink-500 rounded-3xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                  
+
                   {/* Image Container */}
                   <div className="relative rounded-3xl overflow-hidden border-4 border-cyan-500/30 shadow-2xl">
-                    <img 
-                      src="/navein-kumar-educator.png" 
-                      alt="Navein Kumar - Chemistry Educator" 
+                    <img
+                      src="/navein-kumar-educator.png"
+                      alt="Navein Kumar - Chemistry Educator"
                       className="w-full h-[500px] object-cover object-center"
                       onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&h=500&fit=crop'; }}
                     />
-                    
+
                     {/* Top Badge */}
                     <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg">
                       <div className="flex items-center gap-2">
@@ -401,7 +401,7 @@ const About = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {successStories.slice(0, 6).map((story) => (
+              {successStories.slice(0, 8).map((story) => (
                 <div key={story.id} className="glass-panel rounded-2xl border border-cyan-500/20 p-6 hover:border-cyan-500/50 transition-all duration-300 group">
                   <div className="flex items-start gap-4 mb-4">
                     <img src={story.image} alt={story.name} className="w-16 h-16 rounded-full object-cover border-2 border-cyan-500/50" />
@@ -411,7 +411,7 @@ const About = () => {
                       <p className="text-gray-400 text-xs">{story.exam}</p>
                     </div>
                   </div>
-                  
+
                   <div className="mb-4">
                     <p className="text-gray-300 text-sm italic">"{story.quote}"</p>
                   </div>

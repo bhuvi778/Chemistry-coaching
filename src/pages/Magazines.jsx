@@ -96,11 +96,11 @@ const Magazines = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {filteredMagazines.map((magazine) => (
               <div key={magazine._id} className="glass-panel rounded-xl overflow-hidden hover:shadow-[0_0_30px_rgba(236,72,153,0.3)] transition-all duration-300">
                 {magazine.coverImageUrl && magazine.coverImageUrl.trim() !== '' ? (
-                  <div className="w-full aspect-[0.707/1] bg-gray-900 relative">
+                  <div className="w-full aspect-[1/1.414] overflow-hidden bg-gray-900 relative">
                     <img
                       src={magazine.coverImageUrl}
                       alt={magazine.title}
@@ -117,7 +117,7 @@ const Magazines = () => {
                     />
                   </div>
                 ) : (
-                  <div className="w-full aspect-[0.707/1] bg-gray-900 flex flex-col items-center justify-center">
+                  <div className="w-full aspect-[1/1.414] bg-gray-900 flex flex-col items-center justify-center">
                     <i className="fas fa-book-open text-6xl text-gray-700 mb-3"></i>
                     <p className="text-gray-600 text-sm">No cover image</p>
                   </div>
