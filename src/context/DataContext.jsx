@@ -23,6 +23,9 @@ export const DataProvider = ({ children }) => {
   // Study Materials State
   const [studyMaterials, setStudyMaterials] = useState([]);
 
+  // ChemSnaps State
+  const [chemSnaps, setChemSnaps] = useState([]);
+
   // Magazines State
   const [magazines, setMagazines] = useState([]);
 
@@ -67,7 +70,7 @@ export const DataProvider = ({ children }) => {
         const cacheBuster = `?_t=${Date.now()}`;
 
         // Fetch all data in parallel with timeout
-        const [coursesData, videosData, audioBooksResponse, studyMaterialsData, magazinesData, scoreMatchBatchesData, freeQuizzesData, enquiriesData, contactsData] = await Promise.all([
+        const [coursesData, videosData, audioBooksResponse, studyMaterialsData, chemSnapsData, magazinesData, scoreMatchBatchesData, freeQuizzesData, enquiriesData, contactsData] = await Promise.all([
           fetchWithTimeout(`${API_URL}/courses${cacheBuster}`).then(r => r.json()).catch(err => {
             console.error('❌ Courses fetch error:', err);
             return [];
@@ -81,6 +84,7 @@ export const DataProvider = ({ children }) => {
             return { audioBooks: [] };
           }),
           fetchWithTimeout(`${API_URL}/study-materials${cacheBuster}`).then(r => r.json()).catch(() => []),
+          fetchWithTimeout(`${API_URL}/chemsnaps${cacheBuster}`).then(r => r.json()).catch(() => []),
           fetchWithTimeout(`${API_URL}/magazines${cacheBuster}`).then(r => r.json()).catch(() => []),
           fetchWithTimeout(`${API_URL}/score-match-batches${cacheBuster}`).then(r => r.json()).catch(() => []),
           fetchWithTimeout(`${API_URL}/free-quizzes${cacheBuster}`).then(r => r.json()).catch(() => []),
@@ -99,6 +103,7 @@ export const DataProvider = ({ children }) => {
         setVideos(ensureArray(videosData));
         setAudioBooks(ensureArray(audioBooksData));
         setStudyMaterials(ensureArray(studyMaterialsData));
+        setChemSnaps(ensureArray(chemSnapsData));
         setMagazines(ensureArray(magazinesData));
         setScoreMatchBatches(ensureArray(scoreMatchBatchesData));
         setFreeQuizzes(ensureArray(freeQuizzesData));
@@ -438,6 +443,54 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // ChemSnaps CRUD
+  const addChemSnap = async (chemSnap) => {
+    try {
+      const res = await fetch(`${API_URL}/chemsnaps`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(chemSnap)
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      }
+      const newChemSnap = await res.json();
+      setChemSnaps([newChemSnap, ...(Array.isArray(chemSnaps) ? chemSnaps : [])]);
+      return newChemSnap;
+    } catch (error) {
+      console.error("Error adding ChemSnap:", error);
+      throw error;
+    }
+  };
+
+  const updateChemSnap = async (id, updatedChemSnap) => {
+    try {
+      const res = await fetch(`${API_URL}/chemsnaps/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedChemSnap)
+      });
+      const data = await res.json();
+      setChemSnaps((Array.isArray(chemSnaps) ? chemSnaps : []).map(c => c._id === id ? data : c));
+    } catch (error) {
+      console.error("Error updating ChemSnap:", error);
+      throw error;
+    }
+  };
+
+  const deleteChemSnap = async (id) => {
+    try {
+      await fetch(`${API_URL}/chemsnaps/${id}`, {
+        method: 'DELETE'
+      });
+      setChemSnaps((Array.isArray(chemSnaps) ? chemSnaps : []).filter(c => c._id !== id));
+    } catch (error) {
+      console.error("Error deleting ChemSnap:", error);
+      throw error;
+    }
+  };
+
   // Magazines CRUD
   const addMagazine = async (magazine) => {
     try {
@@ -609,6 +662,7 @@ export const DataProvider = ({ children }) => {
       videos,
       audioBooks,
       studyMaterials,
+      chemSnaps,
       magazines,
       scoreMatchBatches,
       isAdmin,
@@ -628,6 +682,9 @@ export const DataProvider = ({ children }) => {
       addStudyMaterial,
       updateStudyMaterial,
       deleteStudyMaterial,
+      addChemSnap,
+      updateChemSnap,
+      deleteChemSnap,
       addMagazine,
       updateMagazine,
       deleteMagazine,

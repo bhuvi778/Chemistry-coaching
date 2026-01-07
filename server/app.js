@@ -19,6 +19,9 @@ const crosswordController = require('./controllers/crosswordController');
 const puzzleSetController = require('./controllers/puzzleSetController');
 const scoreMatchBatchController = require('./controllers/scoreMatchBatchController');
 const freeQuizController = require('./controllers/freeQuizController');
+const chemSnapController = require('./controllers/chemSnapController');
+const examCountdownController = require('./controllers/examCountdownController');
+const conceptNoteController = require('./controllers/conceptNoteController');
 
 // Import routes
 const videoRoutes = require('./routes/videoRoutes');
@@ -35,6 +38,9 @@ const crosswordRoutes = require('./routes/crosswordRoutes');
 const puzzleSetRoutes = require('./routes/puzzleSetRoutes');
 const scoreMatchBatchRoutes = require('./routes/scoreMatchBatchRoutes');
 const freeQuizRoutes = require('./routes/freeQuizRoutes');
+const chemSnapRoutes = require('./routes/chemSnapRoutes');
+const examCountdownRoutes = require('./routes/examCountdownRoutes');
+const conceptNoteRoutes = require('./routes/conceptNoteRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
@@ -120,6 +126,9 @@ crosswordController.setClearCacheFunction(clearCache);
 puzzleSetController.setClearCacheFunction(clearCache);
 scoreMatchBatchController.setClearCacheFunction(clearCache);
 freeQuizController.setClearCacheFunction(clearCache);
+chemSnapController.setClearCacheFunction(clearCache);
+examCountdownController.setClearCacheFunction(clearCache);
+conceptNoteController.setClearCacheFunction(clearCache);
 
 // API Routes with caching
 app.use('/api/admin', adminRoutes);
@@ -137,6 +146,9 @@ app.use('/api/crosswords', cacheMiddleware('crosswords', 30 * 60 * 1000), crossw
 app.use('/api/puzzle-sets', cacheMiddleware('puzzle-sets', 30 * 60 * 1000), puzzleSetRoutes);
 app.use('/api/score-match-batches', cacheMiddleware('scoreMatchBatches', 30 * 60 * 1000), scoreMatchBatchRoutes);
 app.use('/api/free-quizzes', cacheMiddleware('freeQuizzes', 30 * 60 * 1000), freeQuizRoutes);
+app.use('/api/chemsnaps', cacheMiddleware('chemsnaps', 30 * 60 * 1000), chemSnapRoutes);
+app.use('/api/exam-countdown', cacheMiddleware('exam-countdown', 10 * 60 * 1000), examCountdownRoutes);
+app.use('/api/concept-notes', cacheMiddleware('concept-notes', 30 * 60 * 1000), conceptNoteRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

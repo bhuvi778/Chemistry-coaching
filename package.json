@@ -11,6 +11,7 @@
     "watch": "chokidar 'src/**/*' -c 'npm run build && cp -r dist/* . && echo \"✅ Auto-deployed at $(date +%H:%M:%S)\"'"
   },
   "dependencies": {
+    "mammoth": "^1.11.0",
     "pdfjs-dist": "^5.4.449",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

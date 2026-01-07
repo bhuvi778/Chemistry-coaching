@@ -8,6 +8,10 @@ const Navbar = () => {
   const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  // Mobile dropdown states
+  const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
+  const [isMobileStudyMaterialOpen, setIsMobileStudyMaterialOpen] = useState(false);
+  const [isMobileMoreOpen, setIsMobileMoreOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
 
@@ -86,7 +90,8 @@ const Navbar = () => {
                 >
                   <button className={`px-2 py-2 transition relative ${location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') ||
                     location.pathname.includes('/study-materials') || location.pathname.includes('/magazines') ||
-                    location.pathname.includes('/puzzles') || location.pathname.includes('/community')
+                    location.pathname.includes('/puzzles') || location.pathname.includes('/community') ||
+                    location.pathname.includes('/chemsnaps') || location.pathname.includes('/concept-wise-notes')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
                     <span className="flex items-center gap-1.5">
@@ -146,6 +151,22 @@ const Navbar = () => {
                     >
                       <i className="fas fa-puzzle-piece text-yellow-500"></i>
                       <span>Chemistry Puzzles</span>
+                    </Link>
+                    <Link
+                      to="/chemsnaps"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsStudyMaterialOpen(false)}
+                    >
+                      <i className="fas fa-bolt text-cyan-500"></i>
+                      <span>ChemSnaps</span>
+                    </Link>
+                    <Link
+                      to="/concept-wise-notes"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsStudyMaterialOpen(false)}
+                    >
+                      <i className="fas fa-book-open text-teal-500"></i>
+                      <span>Concept Wise Notes</span>
                     </Link>
                     <Link
                       to="/community"
@@ -339,58 +360,113 @@ const Navbar = () => {
 
         {isMenuOpen && (
           <div className="md:hidden glass-panel border-t border-gray-700">
-            <div className="px-2 pt-2 pb-3 space-y-1 text-center">
-              <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Home</Link>
-              <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">Ace Program</Link>
-              <Link to="/score-max-batches" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-trophy text-amber-500 mr-2"></i>Score Max Batches
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700 rounded-md transition">
+                <i className="fas fa-home mr-2"></i>Home
               </Link>
-              <Link to="/lectures" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fab fa-youtube text-red-500 mr-2"></i>Video Lectures
+
+              {/* Ace Program Dropdown */}
+              <div className="border-b border-gray-700 pb-2">
+                <button
+                  onClick={() => setIsMobileCoursesOpen(!isMobileCoursesOpen)}
+                  className="w-full flex items-center justify-between px-3 py-2 text-white hover:bg-gray-700 rounded-md transition"
+                >
+                  <span>
+                    <i className="fas fa-graduation-cap mr-2"></i>Ace Program
+                  </span>
+                  <i className={`fas fa-chevron-down text-xs transition-transform ${isMobileCoursesOpen ? 'rotate-180' : ''}`}></i>
+                </button>
+                {isMobileCoursesOpen && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-graduation-cap text-cyan-400 mr-2"></i>Courses
+                    </Link>
+                    <Link to="/score-max-batches" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-trophy text-amber-500 mr-2"></i>Score Max Batches
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Study Material Dropdown */}
+              <div className="border-b border-gray-700 pb-2">
+                <button
+                  onClick={() => setIsMobileStudyMaterialOpen(!isMobileStudyMaterialOpen)}
+                  className="w-full flex items-center justify-between px-3 py-2 text-white hover:bg-gray-700 rounded-md transition"
+                >
+                  <span>
+                    <i className="fas fa-book mr-2"></i>Study Material
+                  </span>
+                  <i className={`fas fa-chevron-down text-xs transition-transform ${isMobileStudyMaterialOpen ? 'rotate-180' : ''}`}></i>
+                </button>
+                {isMobileStudyMaterialOpen && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    <Link to="/lectures" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fab fa-youtube text-red-500 mr-2"></i>Video Lectures
+                    </Link>
+                    <Link to="/audiobooks" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-headphones text-purple-500 mr-2"></i>Audio Books
+                    </Link>
+                    <Link to="/study-materials" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-file-pdf text-green-500 mr-2"></i>Free Study Materials
+                    </Link>
+                    <Link to="/free-quiz" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-clipboard-list text-cyan-400 mr-2"></i>Free Quiz
+                    </Link>
+                    <Link to="/magazines" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-book-open text-pink-500 mr-2"></i>Chemistry Magazine
+                    </Link>
+                    <Link to="/puzzles" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-puzzle-piece text-yellow-500 mr-2"></i>Chemistry Puzzles
+                    </Link>
+                    <Link to="/chemsnaps" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-bolt text-cyan-500 mr-2"></i>ChemSnaps
+                    </Link>
+                    <Link to="/concept-wise-notes" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-book-open text-teal-500 mr-2"></i>Concept Wise Notes
+                    </Link>
+                    <Link to="/community" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-users text-orange-500 mr-2"></i>Community
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Standalone Links */}
+              <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700 rounded-md transition">
+                <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book Your Meet
               </Link>
-              <Link to="/audiobooks" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-headphones text-purple-500 mr-2"></i>Audio Books
-              </Link>
-              <Link to="/study-materials" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-file-pdf text-green-500 mr-2"></i>Free Study Materials
-              </Link>
-              <Link to="/free-quiz" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-clipboard-list text-cyan-400 mr-2"></i>Free Quiz
-              </Link>
-              <Link to="/magazines" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-book-open text-pink-500 mr-2"></i>Chemistry Magazine
-              </Link>
-              <Link to="/puzzles" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-puzzle-piece text-yellow-500 mr-2"></i>Chemistry Puzzles
-              </Link>
-              <Link to="/community" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-users text-orange-500 mr-2"></i>Community
-              </Link>
-              <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book your meet
-              </Link>
-              <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
+              <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700 rounded-md transition">
                 <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
               </Link>
 
-              {/* Divider */}
-              <div className="border-t border-gray-700 my-2"></div>
-
-              {/* More Section */}
-              <div className="pt-2">
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">More</p>
-                <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                  <i className="fas fa-info-circle text-blue-400 mr-2"></i>About Us
-                </Link>
-                <a href="https://www.ace2examz.in/blog" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                  <i className="fas fa-blog text-blue-500 mr-2"></i>Blog
-                </a>
-                <a href="https://stories.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                  <i className="fas fa-book-reader text-purple-500 mr-2"></i>Web Stories
-                </a>
-                <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700">
-                  <i className="fas fa-envelope text-green-500 mr-2"></i>Contact Us
-                </Link>
+              {/* More Dropdown */}
+              <div className="border-t border-gray-700 pt-2">
+                <button
+                  onClick={() => setIsMobileMoreOpen(!isMobileMoreOpen)}
+                  className="w-full flex items-center justify-between px-3 py-2 text-white hover:bg-gray-700 rounded-md transition"
+                >
+                  <span>
+                    <i className="fas fa-ellipsis-h mr-2"></i>More
+                  </span>
+                  <i className={`fas fa-chevron-down text-xs transition-transform ${isMobileMoreOpen ? 'rotate-180' : ''}`}></i>
+                </button>
+                {isMobileMoreOpen && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-info-circle text-blue-400 mr-2"></i>About Us
+                    </Link>
+                    <a href="https://www.ace2examz.in/blog" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-blog text-blue-500 mr-2"></i>Blog
+                    </a>
+                    <a href="https://stories.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-book-reader text-purple-500 mr-2"></i>Web Stories
+                    </a>
+                    <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-envelope text-green-500 mr-2"></i>Contact Us
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>

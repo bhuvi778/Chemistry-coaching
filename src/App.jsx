@@ -17,6 +17,8 @@ import StudyMaterials from './pages/StudyMaterials';
 import Magazines from './pages/Magazines';
 import Puzzle from './pages/Puzzle';
 import Community from './pages/Community';
+import ChemSnaps from './pages/ChemSnaps';
+import ConceptWiseNotes from './pages/ConceptWiseNotes';
 import ScoreMatchBatches from './pages/ScoreMatchBatches';
 import FreeQuiz from './pages/FreeQuiz';
 import BookMeeting from './pages/BookMeeting';
@@ -26,6 +28,7 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import RefundPolicy from './pages/RefundPolicy';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import ExamCountdown from './components/ExamCountdown';
 
 const ProtectedRoute = ({ children }) => {
   const { isAdmin } = useData();
@@ -103,6 +106,7 @@ function AppContent() {
       <ScrollToTop />
       <ParticleCanvas />
       <Navbar />
+      {!isAdminRoute && <ExamCountdown />}
 
       <div className="pt-20 flex-grow">
         <Routes>
@@ -115,6 +119,8 @@ function AppContent() {
           <Route path="/study-materials" element={<StudyMaterials />} />
           <Route path="/magazines" element={<Magazines />} />
           <Route path="/puzzles" element={<Puzzle />} />
+          <Route path="/chemsnaps" element={<ChemSnaps />} />
+          <Route path="/concept-wise-notes" element={<ConceptWiseNotes />} />
           <Route path="/community" element={<Community />} />
           <Route path="/score-max-batches" element={<ScoreMatchBatches />} />
           <Route path="/free-quiz" element={<FreeQuiz />} />

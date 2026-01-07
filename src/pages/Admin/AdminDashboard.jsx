@@ -5,6 +5,7 @@ import ManageCourses from './ManageCourses';
 import ManageVideos from './ManageVideos';
 import ManageAudioBooks from './ManageAudioBooks';
 import ManageStudyMaterials from './ManageStudyMaterials';
+import ManageChemSnaps from './ManageChemSnaps';
 import ManageMagazines from './ManageMagazines';
 import ManagePuzzleSets from './ManagePuzzleSets';
 import ManageCrosswords from './ManageCrosswords';
@@ -13,6 +14,8 @@ import ManageWebinarCards from './ManageWebinarCards';
 import ManageFeedback from './ManageFeedback';
 import ManageScoreMatchBatches from './ManageScoreMatchBatches';
 import ManageFreeQuizzes from './ManageFreeQuizzes';
+import ManageExamCountdown from './ManageExamCountdown';
+import ManageConceptNotes from './ManageConceptNotes';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -64,6 +67,12 @@ const AdminDashboard = () => {
               <i className="fas fa-file-pdf mr-2"></i> Manage Study Materials
             </button>
             <button
+              onClick={() => setActiveTab('chemsnaps')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'chemsnaps' ? 'bg-cyan-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-bolt mr-2"></i> Manage ChemSnaps
+            </button>
+            <button
               onClick={() => setActiveTab('magazines')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'magazines' ? 'bg-pink-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -112,6 +121,18 @@ const AdminDashboard = () => {
               <i className="fas fa-clipboard-list mr-2"></i> Manage Free Quizzes
             </button>
             <button
+              onClick={() => setActiveTab('examcountdown')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'examcountdown' ? 'bg-orange-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-clock mr-2"></i> Exam Countdown
+            </button>
+            <button
+              onClick={() => setActiveTab('conceptnotes')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'conceptnotes' ? 'bg-purple-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-book mr-2"></i> Concept Wise Notes
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -133,6 +154,7 @@ const AdminDashboard = () => {
           {activeTab === 'videos' && <ManageVideos />}
           {activeTab === 'audiobooks' && <ManageAudioBooks />}
           {activeTab === 'materials' && <ManageStudyMaterials />}
+          {activeTab === 'chemsnaps' && <ManageChemSnaps />}
           {activeTab === 'magazines' && <ManageMagazines />}
           {activeTab === 'puzzles' && <ManagePuzzleSets />}
           {activeTab === 'crosswords' && <ManageCrosswords />}
@@ -141,6 +163,8 @@ const AdminDashboard = () => {
           {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'scorematch' && <ManageScoreMatchBatches />}
           {activeTab === 'freequizzes' && <ManageFreeQuizzes />}
+          {activeTab === 'examcountdown' && <ManageExamCountdown />}
+          {activeTab === 'conceptnotes' && <ManageConceptNotes />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>

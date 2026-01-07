@@ -9,7 +9,7 @@ const cacheMiddleware = (key, ttl = CACHE_TTL) => {
     if (req.method !== 'GET') {
       return next();
     }
-    
+
     // Skip caching for videos endpoint
     if (key === 'videos') {
       res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -17,8 +17,11 @@ const cacheMiddleware = (key, ttl = CACHE_TTL) => {
       res.set('Expires', '0');
       return next();
     }
-    
-    const cached = cache.get(key);
+
+    // Use full URL path as cache key to prevent different endpoints from sharing cache
+    const cacheKey = `${key}:${req.originalUrl || req.url}`;
+
+    const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < ttl) {
       res.set('Cache-Control', 'public, max-age=3600');
       res.set('ETag', `"${cached.timestamp}"`);
@@ -26,7 +29,7 @@ const cacheMiddleware = (key, ttl = CACHE_TTL) => {
     }
     res.sendResponse = res.json;
     res.json = (data) => {
-      cache.set(key, { data, timestamp: Date.now() });
+      cache.set(cacheKey, { data, timestamp: Date.now() });
       res.set('Cache-Control', 'public, max-age=3600');
       res.set('ETag', `"${Date.now()}"`);
       res.sendResponse(data);
