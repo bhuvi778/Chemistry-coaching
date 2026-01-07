@@ -240,11 +240,12 @@ const ConceptWiseNotes = () => {
                                         className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-blue-400 transition"
                                     >
                                         <option value="all">All Subjects</option>
-                                        {allChapters.map(group => (
-                                            <option key={group.subject} value={group.subject}>
-                                                {group.subject}
-                                            </option>
-                                        ))}
+                                        <option value="Physical Chemistry">Physical Chemistry</option>
+                                        <option value="Organic Chemistry">Organic Chemistry</option>
+                                        <option value="Inorganic Chemistry">Inorganic Chemistry</option>
+                                        <option value="General Chemistry">General Chemistry</option>
+                                        <option value="Analytical Chemistry">Analytical Chemistry</option>
+                                        <option value="Biochemistry">Biochemistry</option>
                                     </select>
                                 </div>
                             )}
