@@ -46,6 +46,9 @@ const ManageConceptNotes = () => {
     // For expandable chapters in list view
     const [expandedChapters, setExpandedChapters] = useState({});
 
+    // Track editor focus state for expansion
+    const [isEditorFocused, setIsEditorFocused] = useState(false);
+
     // Quill modules
     const modules = {
         toolbar: [
@@ -62,6 +65,30 @@ const ManageConceptNotes = () => {
     useEffect(() => {
         fetchChapters();
     }, []);
+
+    // Handle clicking outside editor to collapse it
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (isEditorFocused) {
+                const editorContainer = document.querySelector('.ql-container');
+                const toolbar = document.querySelector('.ql-toolbar');
+                const editorWrapper = editorContainer?.parentElement;
+
+                if (editorWrapper && !editorWrapper.contains(event.target) &&
+                    toolbar && !toolbar.contains(event.target)) {
+                    setIsEditorFocused(false);
+                }
+            }
+        };
+
+        if (isEditorFocused) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isEditorFocused]);
 
     const fetchChapters = async () => {
         try {
@@ -586,6 +613,11 @@ const ManageConceptNotes = () => {
                                 <label className="text-white font-semibold flex items-center gap-2">
                                     <i className="fas fa-paragraph text-cyan-400"></i>
                                     Topic Content
+                                    {isEditorFocused && (
+                                        <span className="text-xs text-cyan-400 animate-pulse ml-2">
+                                            (Expanded Mode - Click outside to minimize)
+                                        </span>
+                                    )}
                                 </label>
                                 <div className="relative">
                                     <input
@@ -605,22 +637,58 @@ const ManageConceptNotes = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-lg text-black">
+                            <div
+                                className={`bg-white rounded-lg text-black relative transition-all duration-300 ${isEditorFocused ? 'shadow-2xl ring-2 ring-cyan-400' : ''
+                                    }`}
+                                onClick={() => setIsEditorFocused(true)}
+                            >
                                 <ReactQuill
                                     theme="snow"
                                     value={currentTopic.content}
                                     onChange={(content) => setCurrentTopic({ ...currentTopic, content })}
                                     modules={modules}
-                                    className="h-64 mb-12"
+                                    style={{
+                                        height: isEditorFocused ? '800px' : '300px',
+                                        marginBottom: '42px',
+                                        transition: 'height 0.3s ease'
+                                    }}
                                     placeholder="Write your detailed notes here..."
+                                    onFocus={() => setIsEditorFocused(true)}
+                                    onBlur={() => {
+                                        // Delay to allow clicking toolbar buttons
+                                        setTimeout(() => {
+                                            const activeElement = document.activeElement;
+                                            const isQuillElement = activeElement?.closest('.ql-toolbar') ||
+                                                activeElement?.closest('.ql-editor');
+                                            if (!isQuillElement) {
+                                                setIsEditorFocused(false);
+                                            }
+                                        }, 200);
+                                    }}
                                 />
+                                {isEditorFocused && (
+                                    <div
+                                        className="absolute -bottom-8 left-0 right-0 text-center"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsEditorFocused(false);
+                                        }}
+                                    >
+                                        <button
+                                            type="button"
+                                            className="text-xs text-cyan-400 hover:text-cyan-300 underline"
+                                        >
+                                            Click here or outside to minimize editor
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Topic Images */}
                             <div className="border-t border-gray-700 pt-4 mt-8">
                                 <label className="text-sm text-gray-400 block mb-2 font-semibold">
                                     <i className="fas fa-images mr-2 text-purple-400"></i>
-                                    Add Images / Diagrams to Topic
+                                    Add Images / Diagrams to Topic (Optional)
                                 </label>
                                 <div className="flex gap-2 mb-2">
                                     <div className="flex-1 flex gap-2">

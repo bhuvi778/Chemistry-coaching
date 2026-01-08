@@ -16,7 +16,15 @@ const ExamCountdown = () => {
     useEffect(() => {
         const fetchCountdown = async () => {
             try {
-                const response = await fetch(`${API_URL}/exam-countdown/active`);
+                // Add cache-busting timestamp to ensure fresh data
+                const timestamp = new Date().getTime();
+                const response = await fetch(`${API_URL}/exam-countdown/active?t=${timestamp}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
                 const data = await response.json();
 
                 if (data && data.examDate) {
@@ -28,8 +36,8 @@ const ExamCountdown = () => {
         };
 
         fetchCountdown();
-        // Refresh every 5 minutes
-        const interval = setInterval(fetchCountdown, 5 * 60 * 1000);
+        // Refresh every 1 minute for more responsive updates
+        const interval = setInterval(fetchCountdown, 60 * 1000);
         return () => clearInterval(interval);
     }, []);
 

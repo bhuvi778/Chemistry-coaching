@@ -18,15 +18,25 @@ const cacheMiddleware = (key, ttl = CACHE_TTL) => {
       return next();
     }
 
-    // Use full URL path as cache key to prevent different endpoints from sharing cache
-    const cacheKey = `${key}:${req.originalUrl || req.url}`;
+    // Check if client requested no-cache
+    const cacheControl = req.headers['cache-control'] || '';
+    const pragma = req.headers['pragma'] || '';
+    const bypassCache = cacheControl.includes('no-cache') || pragma.includes('no-cache');
 
-    const cached = cache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < ttl) {
-      res.set('Cache-Control', 'public, max-age=3600');
-      res.set('ETag', `"${cached.timestamp}"`);
-      return res.json(cached.data);
+    // Strip cache-busting query parameter from URL for cache key
+    const urlWithoutCacheBuster = (req.originalUrl || req.url).split('?t=')[0];
+    const cacheKey = `${key}:${urlWithoutCacheBuster}`;
+
+    // If client requests no-cache, skip cache lookup
+    if (!bypassCache) {
+      const cached = cache.get(cacheKey);
+      if (cached && Date.now() - cached.timestamp < ttl) {
+        res.set('Cache-Control', 'public, max-age=3600');
+        res.set('ETag', `"${cached.timestamp}"`);
+        return res.json(cached.data);
+      }
     }
+
     res.sendResponse = res.json;
     res.json = (data) => {
       cache.set(cacheKey, { data, timestamp: Date.now() });

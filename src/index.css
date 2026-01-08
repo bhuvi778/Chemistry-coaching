@@ -348,6 +348,7 @@ canvas[class*="pointer-events-none"] {
   z-index: 0 !important;
   pointer-events: none !important;
 }
+
 /* ReactQuill Editor Styles - Black Text for Admin */
 .quill-editor-black-text .ql-editor {
   color: #000000 !important;
@@ -388,4 +389,20 @@ canvas[class*="pointer-events-none"] {
 .quill-editor-black-text .ql-container.ql-snow {
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
+}
+
+/* Dynamic ReactQuill editor height in admin panel */
+.ql-container {
+  overflow-y: auto;
+  transition: height 0.3s ease;
+}
+
+.ql-editor {
+  overflow-y: auto;
+  transition: min-height 0.3s ease, max-height 0.3s ease;
+}
+
+/* Smooth transitions for editor expansion */
+.quill {
+  transition: all 0.3s ease;
 }

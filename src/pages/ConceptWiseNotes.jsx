@@ -55,6 +55,28 @@ const ConceptWiseNotes = () => {
 
             const chaptersData = await Promise.all(chaptersPromises);
             setAllChapters(chaptersData);
+
+            // Debug: Log badge information with more details
+            console.log('🔍 ===== BADGE DEBUG START =====');
+            console.log('Total subject groups:', chaptersData.length);
+            chaptersData.forEach(group => {
+                console.log(`\n📚 Subject: ${group.subject}`);
+                console.log(`   Chapters in this subject: ${group.chapters.length}`);
+                group.chapters.forEach((ch, idx) => {
+                    console.log(`\n   Chapter ${idx + 1}: "${ch.chapterName}"`);
+                    console.log(`   - _id: ${ch._id}`);
+                    console.log(`   - badges field exists: ${ch.hasOwnProperty('badges')}`);
+                    console.log(`   - badges value: "${ch.badges}"`);
+                    console.log(`   - badges type: ${typeof ch.badges}`);
+                    console.log(`   - badges is truthy: ${!!ch.badges}`);
+                    console.log(`   - badges.trim() !== '': ${ch.badges && ch.badges.trim() !== ''}`);
+                    console.log(`   - WILL DISPLAY: ${ch.badges && ch.badges.trim() !== '' ? 'YES ✅' : 'NO ❌'}`);
+
+                    // Log the entire chapter object for inspection
+                    console.log(`   - Full chapter object:`, ch);
+                });
+            });
+            console.log('\n🔍 ===== BADGE DEBUG END =====\n');
         } catch (error) {
             console.error('Error fetching chapters:', error);
         } finally {
@@ -331,7 +353,7 @@ const ConceptWiseNotes = () => {
                                                                     {chapter.examType}
                                                                 </span>
                                                             )}
-                                                            {chapter.badges && (
+                                                            {chapter.badges && chapter.badges.trim() !== '' && (
                                                                 <span className="px-2 py-1 bg-pink-500/20 text-pink-400 text-xs rounded-full border border-pink-500/30 font-bold animate-pulse">
                                                                     {chapter.badges}
                                                                 </span>

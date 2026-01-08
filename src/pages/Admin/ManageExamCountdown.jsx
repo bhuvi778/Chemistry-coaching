@@ -41,7 +41,15 @@ const ManageExamCountdown = () => {
     // Fetch countdowns
     const fetchCountdowns = async () => {
         try {
-            const response = await fetch(`${API_URL}/exam-countdown`);
+            // Add cache-busting timestamp to ensure fresh data
+            const timestamp = new Date().getTime();
+            const response = await fetch(`${API_URL}/exam-countdown?t=${timestamp}`, {
+                cache: 'no-cache',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
             const data = await response.json();
             setCountdowns(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -170,8 +178,8 @@ const ManageExamCountdown = () => {
                                         type="button"
                                         onClick={() => setFormData({ ...formData, color: color.value })}
                                         className={`${color.class} h-10 rounded ${formData.color === color.value
-                                                ? 'ring-4 ring-white'
-                                                : 'opacity-50 hover:opacity-100'
+                                            ? 'ring-4 ring-white'
+                                            : 'opacity-50 hover:opacity-100'
                                             } transition`}
                                         title={color.label}
                                     />
