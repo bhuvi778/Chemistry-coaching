@@ -4,6 +4,7 @@ const chemSnapController = require('../controllers/chemSnapController');
 
 // Public routes
 router.get('/', chemSnapController.getAllChemSnaps);
+router.get('/chapters/list', chemSnapController.getChemSnapChapters);
 router.get('/:id', chemSnapController.getChemSnapById);
 
 // Admin routes

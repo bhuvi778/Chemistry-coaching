@@ -23,6 +23,7 @@ const ManageChemSnaps = () => {
         fileType: 'PDF',
         category: 'General',
         examType: 'All',
+        chapter: '',
         thumbnailUrl: '',
         fileSize: ''
     };
@@ -353,6 +354,27 @@ const ManageChemSnaps = () => {
                         required
                     />
 
+                    {/* Chapter Input */}
+                    <div>
+                        <label className="block text-gray-400 mb-2 font-semibold">
+                            <i className="fas fa-book mr-2 text-purple-400"></i>
+                            Chapter Name
+                            <span className="ml-2 text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
+                                Optional
+                            </span>
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="e.g., Atomic Structure, Chemical Bonding, Thermodynamics"
+                            value={formData.chapter}
+                            onChange={e => setFormData({ ...formData, chapter: e.target.value })}
+                            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full focus:outline-none focus:border-purple-400 transition"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                            Enter the chapter name to enable filtering by chapter on the ChemSnaps page
+                        </p>
+                    </div>
+
                     {/* File Upload */}
                     <div>
                         <label className="block text-gray-400 mb-2 font-semibold">
@@ -566,6 +588,12 @@ const ManageChemSnaps = () => {
                                 <span className="px-3 py-1 bg-purple-900/50 border border-purple-500 text-purple-400 rounded-full text-xs">
                                     {chemSnap.examType}
                                 </span>
+                                {chemSnap.chapter && (
+                                    <span className="px-3 py-1 bg-pink-900/50 border border-pink-500 text-pink-400 rounded-full text-xs">
+                                        <i className="fas fa-book mr-1"></i>
+                                        {chemSnap.chapter}
+                                    </span>
+                                )}
                             </div>
                         </div>
                         <div className="flex gap-2">

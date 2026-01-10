@@ -17,8 +17,7 @@ const ChemSnaps = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [viewingFile, setViewingFile] = useState(null);
 
-    // Mobile PDF states
-    const [isMobile, setIsMobile] = useState(false);
+    // PDF rendering states
     const [loadingPdf, setLoadingPdf] = useState(false);
     const [pdfPages, setPdfPages] = useState([]);
 
@@ -28,20 +27,8 @@ const ChemSnaps = () => {
 
     const materialsPerPage = 10; // 2 rows × 5 columns
 
-    // Detect mobile device
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
-        };
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
-    // Load and render PDF using PDF.js for mobile
-    const loadPdfForMobile = async (url) => {
-        if (!isMobile) return;
-
+    // Load and render PDF using PDF.js (works for all devices)
+    const loadPdfPages = async (url) => {
         setLoadingPdf(true);
         setPdfPages([]);
 
@@ -54,9 +41,12 @@ const ChemSnaps = () => {
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             const pages = [];
 
+            // Use higher scale for better quality on desktop
+            const scale = window.innerWidth > 768 ? 2.0 : 1.5;
+
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
-                const viewport = page.getViewport({ scale: 1.5 });
+                const viewport = page.getViewport({ scale });
 
                 // Create canvas
                 const canvas = document.createElement('canvas');
@@ -86,37 +76,29 @@ const ChemSnaps = () => {
 
     // Trigger PDF load when viewing file changes
     useEffect(() => {
-        if (viewingFile && viewingFile.fileType !== 'IMAGE' && isMobile) {
-            loadPdfForMobile(viewingFile.fileUrl);
+        if (viewingFile && viewingFile.fileType !== 'IMAGE') {
+            loadPdfPages(viewingFile.fileUrl);
         } else if (!viewingFile) {
             setPdfPages([]);
         }
-    }, [viewingFile, isMobile]);
+    }, [viewingFile]);
 
-    // Fetch chapters from Admin Panel (Concept Notes)
+    // Fetch chapters from ChemSnaps API
     useEffect(() => {
-        const fetchAdminChapters = async () => {
+        const fetchChemSnapChapters = async () => {
             try {
-                const subRes = await fetch(`${API_URL}/concept-notes/subjects?t=${Date.now()}`);
-                if (!subRes.ok) return;
-                const subjects = await subRes.json();
-
-                const allChaps = [];
-                // Parallel fetch for speed
-                await Promise.all(subjects.map(async (sub) => {
-                    const res = await fetch(`${API_URL}/concept-notes/subjects/${encodeURIComponent(sub)}/chapters?t=${Date.now()}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        allChaps.push(...data.map(d => d.chapterName));
-                    }
-                }));
-
-                setAdminChapters([...new Set(allChaps)].sort());
+                const res = await fetch(`${API_URL}/chemsnaps/chapters/list?t=${Date.now()}`);
+                if (res.ok) {
+                    const chapters = await res.json();
+                    setAdminChapters(chapters);
+                } else {
+                    console.error('Failed to fetch ChemSnap chapters');
+                }
             } catch (err) {
-                console.error("Error fetching admin chapters:", err);
+                console.error("Error fetching ChemSnap chapters:", err);
             }
         };
-        fetchAdminChapters();
+        fetchChemSnapChapters();
     }, []);
 
     useEffect(() => {
@@ -125,8 +107,7 @@ const ChemSnaps = () => {
 
     const safeChemSnaps = Array.isArray(chemSnaps) ? chemSnaps : [];
 
-    // Get unique chapters for filter dropdown
-    // Get unique chapters for filter dropdown (Use Admin Chapters instead of derived)
+    // Get unique chapters for filter dropdown from ChemSnaps API
     const uniqueChapters = adminChapters;
 
     const filteredChemSnaps = safeChemSnaps.filter(snap => {
@@ -367,12 +348,7 @@ const ChemSnaps = () => {
                                         </div>
                                     )}
                                     <div className="p-6">
-                                        <div className="flex items-start justify-between mb-3">
-                                            <h3 className="text-xl font-bold text-white flex-1">{chemSnap.title}</h3>
-                                            <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs">
-                                                {chemSnap.fileType}
-                                            </span>
-                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-3">{chemSnap.title}</h3>
                                         <p className="text-gray-400 text-sm mb-4">{chemSnap.description}</p>
                                         <div className="flex flex-wrap gap-2 mb-4">
                                             <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">
@@ -387,12 +363,6 @@ const ChemSnaps = () => {
                                                 </span>
                                             )}
                                         </div>
-                                        {chemSnap.fileSize && (
-                                            <p className="text-gray-500 text-sm mb-4">
-                                                <i className="fas fa-file mr-2"></i>
-                                                Size: {chemSnap.fileSize}
-                                            </p>
-                                        )}
                                         <button
                                             onClick={() => handleView(chemSnap)}
                                             className="flex items-center justify-center gap-2 w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold"
@@ -447,47 +417,35 @@ const ChemSnaps = () => {
                                     />
                                 </div>
                             ) : (
-                                <>
-                                    {isMobile ? (
-                                        <div className="w-full h-full bg-gray-800 p-4 overflow-y-auto">
-                                            {loadingPdf ? (
-                                                <div className="flex items-center justify-center h-full">
-                                                    <div className="text-center">
-                                                        <i className="fas fa-spinner fa-spin text-4xl text-cyan-400 mb-4"></i>
-                                                        <p className="text-white">Loading PDF...</p>
-                                                    </div>
-                                                </div>
+                                <div className="w-full h-full bg-gray-800 p-4 overflow-y-auto">
+                                    {loadingPdf ? (
+                                        <div className="flex items-center justify-center h-full">
+                                            <div className="text-center">
+                                                <i className="fas fa-spinner fa-spin text-4xl text-cyan-400 mb-4"></i>
+                                                <p className="text-white">Loading PDF...</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {pdfPages.length > 0 ? (
+                                                pdfPages.map((page) => (
+                                                    <img
+                                                        key={page.pageNum}
+                                                        src={page.imageData}
+                                                        alt={`Page ${page.pageNum}`}
+                                                        className="w-full rounded shadow-lg"
+                                                        onContextMenu={(e) => e.preventDefault()}
+                                                    />
+                                                ))
                                             ) : (
-                                                <div className="space-y-4">
-                                                    {pdfPages.length > 0 ? (
-                                                        pdfPages.map((page) => (
-                                                            <img
-                                                                key={page.pageNum}
-                                                                src={page.imageData}
-                                                                alt={`Page ${page.pageNum}`}
-                                                                className="w-full rounded shadow-lg"
-                                                                onContextMenu={(e) => e.preventDefault()}
-                                                            />
-                                                        ))
-                                                    ) : (
-                                                        <div className="text-center text-gray-400 py-10">
-                                                            <i className="fas fa-file-pdf text-6xl mb-4"></i>
-                                                            <p>Failed to load PDF</p>
-                                                        </div>
-                                                    )}
+                                                <div className="text-center text-gray-400 py-10">
+                                                    <i className="fas fa-file-pdf text-6xl mb-4"></i>
+                                                    <p>Failed to load PDF</p>
                                                 </div>
                                             )}
                                         </div>
-                                    ) : (
-                                        <iframe
-                                            src={`${viewingFile.fileUrl}#view=FitH&toolbar=0&navpanes=0&scrollbar=1`}
-                                            title={viewingFile.title}
-                                            className="w-full h-full border-none"
-                                            loading="lazy"
-                                            allow="fullscreen"
-                                        ></iframe>
                                     )}
-                                </>
+                                </div>
                             )}
                         </div>
                     </div>

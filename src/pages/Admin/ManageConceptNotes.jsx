@@ -1,7 +1,24 @@
 import { useState, useEffect } from 'react';
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import mammoth from 'mammoth';
+
+// Register custom fonts for Quill
+const Font = Quill.import('formats/font');
+Font.whitelist = [
+    'sans-serif',
+    'serif',
+    'monospace',
+    'arial',
+    'times-new-roman',
+    'georgia',
+    'courier',
+    'verdana',
+    'comic-sans',
+    'impact'
+];
+Quill.register(Font, true);
+
 
 const ManageConceptNotes = () => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -49,14 +66,18 @@ const ManageConceptNotes = () => {
     // Track editor focus state for expansion
     const [isEditorFocused, setIsEditorFocused] = useState(false);
 
-    // Quill modules
+    // Quill modules with font family and size
     const modules = {
         toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            [{ 'font': ['sans-serif', 'serif', 'monospace', 'arial', 'times-new-roman', 'georgia', 'courier', 'verdana', 'comic-sans', 'impact'] }], // Font family dropdown with all custom fonts
+            [{ 'size': ['small', false, 'large', 'huge'] }], // Font size dropdown
             ['bold', 'italic', 'underline', 'strike'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'script': 'sub' }, { 'script': 'super' }],
             [{ 'color': [] }, { 'background': [] }],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'indent': '-1' }, { 'indent': '+1' }],
+            [{ 'align': [] }],
             ['link', 'formula'],
             ['clean']
         ],
@@ -1022,5 +1043,77 @@ const ManageConceptNotes = () => {
         </div>
     );
 };
+
+// Add custom font styles
+const style = document.createElement('style');
+style.innerHTML = `
+    /* Quill Font Families */
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="sans-serif"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="sans-serif"]::before {
+        content: 'Sans Serif';
+        font-family: 'Arial', sans-serif;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="serif"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before {
+        content: 'Serif';
+        font-family: 'Georgia', serif;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="monospace"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before {
+        content: 'Monospace';
+        font-family: 'Courier New', monospace;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="arial"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before {
+        content: 'Arial';
+        font-family: Arial, sans-serif;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="times-new-roman"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times-new-roman"]::before {
+        content: 'Times New Roman';
+        font-family: 'Times New Roman', serif;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="georgia"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before {
+        content: 'Georgia';
+        font-family: Georgia, serif;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="courier"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier"]::before {
+        content: 'Courier';
+        font-family: 'Courier New', monospace;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="verdana"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before {
+        content: 'Verdana';
+        font-family: Verdana, sans-serif;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="comic-sans"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="comic-sans"]::before {
+        content: 'Comic Sans';
+        font-family: 'Comic Sans MS', cursive;
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="impact"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="impact"]::before {
+        content: 'Impact';
+        font-family: Impact, sans-serif;
+    }
+
+    /* Apply fonts to editor content */
+    .ql-font-sans-serif { font-family: Arial, sans-serif; }
+    .ql-font-serif { font-family: Georgia, serif; }
+    .ql-font-monospace { font-family: 'Courier New', monospace; }
+    .ql-font-arial { font-family: Arial, sans-serif; }
+    .ql-font-times-new-roman { font-family: 'Times New Roman', serif; }
+    .ql-font-georgia { font-family: Georgia, serif; }
+    .ql-font-courier { font-family: 'Courier New', monospace; }
+    .ql-font-verdana { font-family: Verdana, sans-serif; }
+    .ql-font-comic-sans { font-family: 'Comic Sans MS', cursive; }
+    .ql-font-impact { font-family: Impact, sans-serif; }
+`;
+if (!document.head.querySelector('#quill-custom-fonts')) {
+    style.id = 'quill-custom-fonts';
+    document.head.appendChild(style);
+}
 
 export default ManageConceptNotes;

@@ -92,11 +92,30 @@ const deleteChemSnap = async (req, res) => {
     }
 };
 
+// Get unique chapters from ChemSnaps
+const getChemSnapChapters = async (req, res) => {
+    try {
+        const chapters = await ChemSnap.distinct('chapter', {
+            isActive: true,
+            chapter: { $exists: true, $ne: '' }
+        });
+
+        // Sort alphabetically
+        const sortedChapters = chapters.sort((a, b) => a.localeCompare(b));
+
+        res.json(sortedChapters);
+    } catch (error) {
+        console.error('Error fetching ChemSnap chapters:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 module.exports = {
     setClearCacheFunction,
     getAllChemSnaps,
     getChemSnapById,
     createChemSnap,
     updateChemSnap,
-    deleteChemSnap
+    deleteChemSnap,
+    getChemSnapChapters
 };
