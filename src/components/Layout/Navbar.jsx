@@ -79,6 +79,14 @@ const Navbar = () => {
                       <i className="fas fa-trophy text-amber-500"></i>
                       <span>Score Max Batches</span>
                     </Link>
+                    <Link
+                      to="/my-daily-target"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsCoursesOpen(false)}
+                    >
+                      <i className="fas fa-bullseye text-green-500"></i>
+                      <span>My Daily Target</span>
+                    </Link>
                   </div>
                 </div>
 
@@ -90,7 +98,7 @@ const Navbar = () => {
                 >
                   <button className={`px-2 py-2 transition relative ${location.pathname.includes('/lectures') || location.pathname.includes('/audiobooks') ||
                     location.pathname.includes('/study-materials') || location.pathname.includes('/magazines') ||
-                    location.pathname.includes('/puzzles') || location.pathname.includes('/community') ||
+                    location.pathname.includes('/puzzles') || location.pathname.includes('/flash-cards') ||
                     location.pathname.includes('/chemsnaps') || location.pathname.includes('/concept-wise-notes')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
@@ -169,13 +177,22 @@ const Navbar = () => {
                       <span>Concept Wise Notes</span>
                     </Link>
                     <Link
-                      to="/community"
+                      to="/flash-cards"
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                       onClick={() => setIsStudyMaterialOpen(false)}
                     >
-                      <i className="fas fa-users text-orange-500"></i>
-                      <span>Community</span>
+                      <i className="fas fa-layer-group text-indigo-500"></i>
+                      <span>Flash Card</span>
                     </Link>
+                    <Link
+                      to="/assertion-reason"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsStudyMaterialOpen(false)}
+                    >
+                      <i className="fas fa-question-circle text-orange-500"></i>
+                      <span>Assertion & Reason</span>
+                    </Link>
+
                   </div>
                 </div>
 
@@ -198,7 +215,7 @@ const Navbar = () => {
                   onMouseEnter={() => setIsMoreOpen(true)}
                   onMouseLeave={() => setIsMoreOpen(false)}
                 >
-                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/about') || location.pathname.includes('/contact')
+                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/about') || location.pathname.includes('/contact') || location.pathname.includes('/community')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
                     <span className="flex items-center gap-1.5">
@@ -238,6 +255,14 @@ const Navbar = () => {
                       <i className="fas fa-book-reader text-purple-500"></i>
                       <span>Web Stories</span>
                     </a>
+                    <Link
+                      to="/community"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsMoreOpen(false)}
+                    >
+                      <i className="fas fa-users text-orange-500"></i>
+                      <span>Community</span>
+                    </Link>
                     <Link
                       to="/contact"
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
@@ -384,6 +409,9 @@ const Navbar = () => {
                     <Link to="/score-max-batches" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-trophy text-amber-500 mr-2"></i>Score Max Batches
                     </Link>
+                    <Link to="/my-daily-target" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-bullseye text-green-500 mr-2"></i>My Daily Target
+                    </Link>
                   </div>
                 )}
               </div>
@@ -425,9 +453,13 @@ const Navbar = () => {
                     <Link to="/concept-wise-notes" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-book-open text-teal-500 mr-2"></i>Concept Wise Notes
                     </Link>
-                    <Link to="/community" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
-                      <i className="fas fa-users text-orange-500 mr-2"></i>Community
+                    <Link to="/flash-cards" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-layer-group text-indigo-500 mr-2"></i>Flash Card
                     </Link>
+                    <Link to="/assertion-reason" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-question-circle text-orange-500 mr-2"></i>Assertion & Reason
+                    </Link>
+
                   </div>
                 )}
               </div>
@@ -462,6 +494,9 @@ const Navbar = () => {
                     <a href="https://stories.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-book-reader text-purple-500 mr-2"></i>Web Stories
                     </a>
+                    <Link to="/community" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-users text-orange-500 mr-2"></i>Community
+                    </Link>
                     <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-envelope text-green-500 mr-2"></i>Contact Us
                     </Link>

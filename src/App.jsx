@@ -28,6 +28,12 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import RefundPolicy from './pages/RefundPolicy';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import FlashCards from './pages/FlashCards';
+import FlashCardTopics from './pages/FlashCardTopics';
+import FlashCardPractice from './pages/FlashCardPractice';
+import AssertionReason from './pages/AssertionReason';
+import AssertionReasonChapter from './pages/AssertionReasonChapter';
+import AssertionReasonPractice from './pages/AssertionReasonPractice';
 import ExamCountdown from './components/ExamCountdown';
 
 const ProtectedRoute = ({ children }) => {
@@ -43,6 +49,13 @@ function AppContent() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   useEffect(() => {
+    // Initialize userId for flashcard progress tracking
+    if (!localStorage.getItem('userId')) {
+      // Generate a unique ID for this browser/user
+      const userId = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now();
+      localStorage.setItem('userId', userId);
+    }
+
     // Disable right-click, copy, cut, paste for non-admin pages
     const handleContextMenu = (e) => {
       if (!isAdminRoute) {
@@ -121,6 +134,12 @@ function AppContent() {
           <Route path="/puzzles" element={<Puzzle />} />
           <Route path="/chemsnaps" element={<ChemSnaps />} />
           <Route path="/concept-wise-notes" element={<ConceptWiseNotes />} />
+          <Route path="/flash-cards" element={<FlashCards />} />
+          <Route path="/flash-cards/:chapterId" element={<FlashCardTopics />} />
+          <Route path="/flash-cards/:chapterId/practice" element={<FlashCardPractice />} />
+          <Route path="/assertion-reason" element={<AssertionReason />} />
+          <Route path="/assertion-reason/:chapterId" element={<AssertionReasonChapter />} />
+          <Route path="/assertion-reason/:chapterId/practice" element={<AssertionReasonPractice />} />
           <Route path="/community" element={<Community />} />
           <Route path="/score-max-batches" element={<ScoreMatchBatches />} />
           <Route path="/free-quiz" element={<FreeQuiz />} />

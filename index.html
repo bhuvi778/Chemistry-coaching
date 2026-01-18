@@ -26,13 +26,18 @@
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function (OneSignal) {
-      await OneSignal.init({
-        appId: "f19678f2-4968-4172-b5a8-7854008c21b0",
-        notifyButton: {
-          enable: true,
-          position: 'bottom-left',
-        },
-      });
+      try {
+        await OneSignal.init({
+          appId: "f19678f2-4968-4172-b5a8-7854008c21b0",
+          notifyButton: {
+            enable: true,
+            position: 'bottom-left',
+          },
+        });
+      } catch (error) {
+        // Silently handle OneSignal initialization errors
+        console.log('Push notifications not available');
+      }
     });
   </script>
 

@@ -18,6 +18,7 @@ const Community = require('./models/Community');
 const Crossword = require('./models/Crossword');
 const PuzzleSet = require('./models/PuzzleSet');
 const adminRoutes = require('./routes/adminRoutes');
+const flashCardRoutes = require('./routes/flashCardRoutes');
 
 const app = express();
 
@@ -179,6 +180,8 @@ mongoose.connection.on('disconnected', () => {
 // Routes
 // Admin routes
 app.use('/api/admin', adminRoutes);
+// Flash Card routes
+app.use('/api/flashcards', flashCardRoutes);
 
 // Courses
 app.get('/api/courses', cacheMiddleware('courses', 30 * 60 * 1000), async (req, res) => {

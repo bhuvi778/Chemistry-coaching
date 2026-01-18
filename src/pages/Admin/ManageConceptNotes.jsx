@@ -262,6 +262,7 @@ const ManageConceptNotes = () => {
             const newImages = [];
             for (const file of files) {
                 const url = await uploadFile(file);
+                // Add images with empty captions - users will add captions individually
                 if (url) newImages.push({ url, caption: '' });
             }
 
@@ -285,16 +286,24 @@ const ManageConceptNotes = () => {
         }
         setCurrentTopic({
             ...currentTopic,
-            images: [...currentTopic.images, { url: imageUrl, caption: imageCaption }]
+            images: [...currentTopic.images, { url: imageUrl, caption: '' }]
         });
         setImageUrl('');
-        setImageCaption('');
     };
 
     const removeImageFromTopic = (idx) => {
         setCurrentTopic({
             ...currentTopic,
             images: currentTopic.images.filter((_, i) => i !== idx)
+        });
+    };
+
+    const updateImageCaption = (idx, newCaption) => {
+        const updatedImages = [...currentTopic.images];
+        updatedImages[idx] = { ...updatedImages[idx], caption: newCaption };
+        setCurrentTopic({
+            ...currentTopic,
+            images: updatedImages
         });
     };
 
@@ -712,60 +721,77 @@ const ManageConceptNotes = () => {
                                     Add Images / Diagrams to Topic (Optional)
                                 </label>
                                 <div className="flex gap-2 mb-2">
-                                    <div className="flex-1 flex gap-2">
-                                        <input
-                                            type="text"
-                                            placeholder="Image URL (or upload)"
-                                            value={imageUrl}
-                                            onChange={(e) => setImageUrl(e.target.value)}
-                                            className="bg-gray-800 border border-gray-600 rounded p-2 text-white flex-1 text-sm"
-                                        />
-                                        <div className="relative">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                multiple
-                                                onChange={handleImageUpload}
-                                                className="hidden"
-                                                id="topic-image-upload"
-                                            />
-                                            <label
-                                                htmlFor="topic-image-upload"
-                                                className={`cursor-pointer bg-gray-700 hover:bg-gray-600 text-white px-3 rounded flex items-center justify-center h-full border border-gray-600 ${uploadingImage ? 'opacity-50' : ''}`}
-                                                title="Upload Multiple Images"
-                                            >
-                                                <i className={`fas ${uploadingImage ? 'fa-spinner fa-spin' : 'fa-images'}`}></i>
-                                            </label>
-                                        </div>
-                                    </div>
                                     <input
                                         type="text"
-                                        placeholder="Caption"
-                                        value={imageCaption}
-                                        onChange={(e) => setImageCaption(e.target.value)}
+                                        placeholder="Image URL"
+                                        value={imageUrl}
+                                        onChange={(e) => setImageUrl(e.target.value)}
+                                        onKeyPress={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                addImageToTopic();
+                                            }
+                                        }}
                                         className="bg-gray-800 border border-gray-600 rounded p-2 text-white flex-1 text-sm"
                                     />
                                     <button
                                         type="button"
                                         onClick={addImageToTopic}
-                                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500 text-sm"
+                                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 text-sm"
+                                        title="Add image from URL"
                                     >
-                                        Add
+                                        <i className="fas fa-plus"></i>
                                     </button>
+                                    <div className="relative">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            onChange={handleImageUpload}
+                                            className="hidden"
+                                            id="topic-image-upload"
+                                        />
+                                        <label
+                                            htmlFor="topic-image-upload"
+                                            className={`cursor-pointer bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded flex items-center gap-2 border border-gray-600 ${uploadingImage ? 'opacity-50' : ''}`}
+                                            title="Upload Multiple Images"
+                                        >
+                                            <i className={`fas ${uploadingImage ? 'fa-spinner fa-spin' : 'fa-upload'}`}></i>
+                                            Upload
+                                        </label>
+                                    </div>
                                 </div>
+                                <p className="text-xs text-gray-500 mb-2">
+                                    Add captions to each image after upload using the caption field below each image
+                                </p>
+
 
                                 {currentTopic.images.length > 0 && (
-                                    <div className="flex flex-wrap gap-2 mt-2">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                                         {currentTopic.images.map((img, idx) => (
-                                            <div key={idx} className="relative group">
-                                                <img src={img.url} alt="mini" className="w-16 h-16 object-cover rounded border border-gray-600" />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeImageFromTopic(idx)}
-                                                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
-                                                >
-                                                    &times;
-                                                </button>
+                                            <div key={idx} className="relative bg-gray-900 rounded-lg p-2 border border-gray-700">
+                                                <div className="relative group">
+                                                    <img
+                                                        src={img.url}
+                                                        alt={img.caption || 'Topic image'}
+                                                        className="w-full h-32 object-cover rounded border border-gray-600"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeImageFromTopic(idx)}
+                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-lg"
+                                                        title="Remove image"
+                                                    >
+                                                        <i className="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Add caption..."
+                                                    value={img.caption || ''}
+                                                    onChange={(e) => updateImageCaption(idx, e.target.value)}
+                                                    className="w-full mt-2 bg-gray-800 border border-gray-600 rounded p-1.5 text-white text-xs"
+                                                />
                                             </div>
                                         ))}
                                     </div>

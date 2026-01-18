@@ -16,6 +16,8 @@ import ManageScoreMatchBatches from './ManageScoreMatchBatches';
 import ManageFreeQuizzes from './ManageFreeQuizzes';
 import ManageExamCountdown from './ManageExamCountdown';
 import ManageConceptNotes from './ManageConceptNotes';
+import ManageFlashCards from './ManageFlashCards';
+import ManageAssertionReason from './ManageAssertionReason';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -133,6 +135,18 @@ const AdminDashboard = () => {
               <i className="fas fa-book mr-2"></i> Concept Wise Notes
             </button>
             <button
+              onClick={() => setActiveTab('flashcards')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'flashcards' ? 'bg-indigo-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-layer-group mr-2"></i> Flash Cards
+            </button>
+            <button
+              onClick={() => setActiveTab('assertionreason')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'assertionreason' ? 'bg-orange-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-question-circle mr-2"></i> Assertion & Reason
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -165,6 +179,8 @@ const AdminDashboard = () => {
           {activeTab === 'freequizzes' && <ManageFreeQuizzes />}
           {activeTab === 'examcountdown' && <ManageExamCountdown />}
           {activeTab === 'conceptnotes' && <ManageConceptNotes />}
+          {activeTab === 'flashcards' && <ManageFlashCards />}
+          {activeTab === 'assertionreason' && <ManageAssertionReason />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>
