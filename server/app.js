@@ -23,6 +23,7 @@ const chemSnapController = require('./controllers/chemSnapController');
 const examCountdownController = require('./controllers/examCountdownController');
 const conceptNoteController = require('./controllers/conceptNoteController');
 const flashCardController = require('./controllers/flashCardController');
+const practiceTestController = require('./controllers/practiceTestController');
 
 // Import routes
 const videoRoutes = require('./routes/videoRoutes');
@@ -44,6 +45,7 @@ const examCountdownRoutes = require('./routes/examCountdownRoutes');
 const conceptNoteRoutes = require('./routes/conceptNoteRoutes');
 const flashCardRoutes = require('./routes/flashCardRoutes');
 const assertionReasonRoutes = require('./routes/assertionReason');
+const practiceTestRoutes = require('./routes/practiceTest');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
@@ -133,6 +135,7 @@ chemSnapController.setClearCacheFunction(clearCache);
 examCountdownController.setClearCacheFunction(clearCache);
 conceptNoteController.setClearCacheFunction(clearCache);
 flashCardController.setClearCacheFunction(clearCache);
+practiceTestController.setClearCacheFunction(clearCache);
 
 // API Routes with caching
 app.use('/api/admin', adminRoutes);
@@ -155,6 +158,7 @@ app.use('/api/exam-countdown', cacheMiddleware('exam-countdown', 10 * 60 * 1000)
 app.use('/api/concept-notes', cacheMiddleware('concept-notes', 30 * 60 * 1000), conceptNoteRoutes);
 app.use('/api/flashcards', cacheMiddleware('flashcards', 30 * 60 * 1000), flashCardRoutes);
 app.use('/api/assertion-reason', assertionReasonRoutes);
+app.use('/api/practice-tests', cacheMiddleware('practice-tests', 30 * 60 * 1000), practiceTestRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

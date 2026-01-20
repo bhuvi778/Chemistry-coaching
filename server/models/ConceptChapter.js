@@ -16,7 +16,19 @@ const conceptChapterSchema = new mongoose.Schema({
     examType: {
         type: String,
         default: 'All',
-        enum: ['All', 'JEE', 'NEET', 'BOARDS', 'OLYMPIAD', 'GATE', 'CSIR NET', 'IIT JAM', 'IAT', 'NEST', 'KVPY', 'TIFR', 'AIIMS', 'CUET']
+        enum: [
+            'All',
+            // UG Entrance Exams
+            'NEET', 'JEE', 'IAT', 'NEST', 'CUET UG', 'BITSAT',
+            // PG Entrance Exams
+            'IIT JAM', 'CUET PG',
+            // Research Level Exams
+            'CSIR NET', 'GATE', 'TIFR',
+            // Competitive Exams (Govt. Job)
+            'PSTET', 'Master Cadre', 'UPSC - Mains (Chemistry)',
+            // Legacy/Other
+            'BOARDS', 'OLYMPIAD', 'KVPY', 'AIIMS', 'CUET', 'Foundation'
+        ]
     },
     badges: {
         type: String,

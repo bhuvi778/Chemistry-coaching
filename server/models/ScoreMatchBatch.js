@@ -12,7 +12,16 @@ const scoreMatchBatchSchema = new mongoose.Schema({
     },
     exam: {
         type: String,
-        enum: ['JEE', 'NEET', 'IAT', 'NEST', 'CSIR NET', 'GATE', 'IIT JAM', 'TIFR'],
+        enum: [
+            // UG Entrance Exams
+            'NEET', 'JEE', 'IAT', 'NEST', 'CUET UG', 'BITSAT',
+            // PG Entrance Exams
+            'IIT JAM', 'CUET PG',
+            // Research Level Exams
+            'CSIR NET', 'GATE', 'TIFR',
+            // Competitive Exams (Govt. Job)
+            'PSTET', 'Master Cadre', 'UPSC - Mains (Chemistry)'
+        ],
         required: true
     },
     batchType: {

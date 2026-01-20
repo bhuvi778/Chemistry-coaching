@@ -8,6 +8,7 @@ const FreeQuiz = () => {
     const [selectedExam, setSelectedExam] = useState('all');
     const [selectedSubject, setSelectedSubject] = useState('all');
     const [selectedChapter, setSelectedChapter] = useState('all');
+    const [selectedQuizType, setSelectedQuizType] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
 
     // Modal State
@@ -27,7 +28,8 @@ const FreeQuiz = () => {
         const examMatch = selectedExam === 'all' || quiz.examType === selectedExam;
         const subjectMatch = selectedSubject === 'all' || quiz.subject === selectedSubject;
         const chapterMatch = selectedChapter === 'all' || quiz.chapter === selectedChapter;
-        return examMatch && subjectMatch && chapterMatch;
+        const quizTypeMatch = selectedQuizType === 'all' || quiz.quizCategory === selectedQuizType;
+        return examMatch && subjectMatch && chapterMatch && quizTypeMatch;
     });
 
     // Pagination Logic - 6 items per page (2 rows × 3 columns)
@@ -40,7 +42,7 @@ const FreeQuiz = () => {
     // Reset to page 1 when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedExam, selectedSubject, selectedChapter]);
+    }, [selectedExam, selectedSubject, selectedChapter, selectedQuizType]);
 
     // Handle Quiz Opening
     const handleOpenQuiz = async (quiz) => {
@@ -103,7 +105,7 @@ const FreeQuiz = () => {
                         <i className="fas fa-filter text-cyan-400"></i>
                         Filter Quizzes
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {/* Exam Filter */}
                         <div>
                             <label className="block text-sm font-semibold text-gray-400 mb-2">Filter by Exam</label>
@@ -113,13 +115,28 @@ const FreeQuiz = () => {
                                 className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
                             >
                                 <option value="all">All Exams</option>
-                                <option value="JEE">JEE (Main & Advanced)</option>
-                                <option value="NEET">NEET</option>
-                                <option value="BOARDS">Boards</option>
-                                <option value="KVPY">KVPY</option>
-                                <option value="OLYMPIAD">Olympiad</option>
-                                <option value="FOUNDATION">Foundation</option>
-                                <option value="OTHER">Other</option>
+                                <optgroup label="UG Entrance Exams">
+                                    <option value="NEET">NEET</option>
+                                    <option value="JEE">JEE (Main & Advanced)</option>
+                                    <option value="IAT">IAT</option>
+                                    <option value="NEST">NEST</option>
+                                    <option value="CUET UG">CUET UG</option>
+                                    <option value="BITSAT">BITSAT</option>
+                                </optgroup>
+                                <optgroup label="PG Entrance Exams">
+                                    <option value="IIT JAM">IIT JAM</option>
+                                    <option value="CUET PG">CUET PG</option>
+                                </optgroup>
+                                <optgroup label="Research Level Exams">
+                                    <option value="CSIR NET">CSIR NET</option>
+                                    <option value="GATE">GATE</option>
+                                    <option value="TIFR">TIFR</option>
+                                </optgroup>
+                                <optgroup label="Competitive Exams (Govt. Job)">
+                                    <option value="PSTET">PSTET</option>
+                                    <option value="Master Cadre">Master Cadre</option>
+                                    <option value="UPSC - Mains (Chemistry)">UPSC - Mains (Chemistry)</option>
+                                </optgroup>
                             </select>
                         </div>
 
@@ -144,6 +161,21 @@ const FreeQuiz = () => {
                                 className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
                             >
                                 {chapters.map(c => <option key={c} value={c}>{c === 'all' ? 'All Chapters' : c}</option>)}
+                            </select>
+                        </div>
+
+                        {/* Quiz Type Filter */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-400 mb-2">Filter by Quiz Type</label>
+                            <select
+                                value={selectedQuizType}
+                                onChange={(e) => setSelectedQuizType(e.target.value)}
+                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
+                            >
+                                <option value="all">All Types</option>
+                                <option value="Quiz">Quiz</option>
+                                <option value="Mock Test">Mock Test</option>
+                                <option value="PYPs">PYPs (Previous Year Papers)</option>
                             </select>
                         </div>
                     </div>

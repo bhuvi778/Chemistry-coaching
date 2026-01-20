@@ -188,30 +188,27 @@ const ChemSnaps = () => {
                                 className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
                             >
                                 <option value="all">All Exams</option>
-                                <optgroup label="Engineering Entrance">
-                                    <option value="JEE">JEE (Main & Advanced)</option>
-                                    <option value="GATE">GATE</option>
-                                </optgroup>
-                                <optgroup label="Medical Entrance">
+                                <optgroup label="UG Entrance Exams">
                                     <option value="NEET">NEET</option>
-                                    <option value="AIIMS">AIIMS</option>
-                                </optgroup>
-                                <optgroup label="Science Entrance">
+                                    <option value="JEE">JEE (Main & Advanced)</option>
                                     <option value="IAT">IAT (IISER Aptitude Test)</option>
                                     <option value="NEST">NEST (National Entrance Screening Test)</option>
-                                    <option value="KVPY">KVPY (Kishore Vaigyanik Protsahan Yojana)</option>
+                                    <option value="CUET UG">CUET UG</option>
+                                    <option value="BITSAT">BITSAT</option>
+                                </optgroup>
+                                <optgroup label="PG Entrance Exams">
+                                    <option value="IIT JAM">IIT JAM</option>
+                                    <option value="CUET PG">CUET PG</option>
+                                </optgroup>
+                                <optgroup label="Research Level Exams">
+                                    <option value="CSIR NET">CSIR NET</option>
+                                    <option value="GATE">GATE</option>
                                     <option value="TIFR">TIFR (Tata Institute)</option>
                                 </optgroup>
-                                <optgroup label="Post Graduate">
-                                    <option value="CSIR NET">CSIR NET</option>
-                                    <option value="IIT JAM">IIT JAM</option>
-                                </optgroup>
-                                <optgroup label="Other Competitive">
-                                    <option value="OLYMPIAD">Olympiad (Chemistry/Physics/Math)</option>
-                                    <option value="CUET">CUET (Common University Entrance Test)</option>
-                                </optgroup>
-                                <optgroup label="School Level">
-                                    <option value="BOARDS">Board Exams (CBSE/State - 11th/12th)</option>
+                                <optgroup label="Competitive Exams (Govt. Job)">
+                                    <option value="PSTET">PSTET</option>
+                                    <option value="Master Cadre">Master Cadre</option>
+                                    <option value="UPSC - Mains (Chemistry)">UPSC - Mains (Chemistry)</option>
                                 </optgroup>
                             </select>
                         </div>

@@ -36,6 +36,11 @@ const assertionReasonQuestionSchema = new mongoose.Schema({
         enum: ['Easy', 'Medium', 'Hard'],
         default: 'Medium'
     },
+    explanation: {
+        type: String,
+        trim: true,
+        default: ''
+    },
     tags: [{
         type: String,
         trim: true

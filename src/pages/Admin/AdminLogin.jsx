@@ -5,6 +5,7 @@ import { useData } from '../../context/DataContext';
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useData();
@@ -31,10 +32,10 @@ const AdminLogin = () => {
         // Store username in localStorage for the session
         localStorage.setItem('admin_username', username);
         localStorage.setItem('admin_logged_in', 'true');
-        
+
         // Update context
         login(username, password);
-        
+
         navigate('/admin/dashboard');
       } else {
         setError(data.message || 'Invalid credentials');
@@ -64,21 +65,29 @@ const AdminLogin = () => {
           </div>
           <div>
             <label className="block text-gray-400 mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-cyan-400 focus:outline-none pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white focus:outline-none"
+              >
+                <i className={`fas fa-${showPassword ? 'eye-slash' : 'eye'}`}></i>
+              </button>
+            </div>
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isLoading}
-            className={`w-full font-bold py-3 rounded transition ${
-              isLoading 
-                ? 'bg-gray-500 cursor-not-allowed' 
+            className={`w-full font-bold py-3 rounded transition ${isLoading
+                ? 'bg-gray-500 cursor-not-allowed'
                 : 'bg-cyan-500 hover:bg-cyan-400'
-            } text-black`}
+              } text-black`}
           >
             {isLoading ? (
               <>

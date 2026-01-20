@@ -27,6 +27,7 @@ const ManageAssertionReason = () => {
         reasonTrue: true,
         reasonExplainsAssertion: true,
         difficulty: 'Medium',
+        explanation: '',
         tags: '',
         order: 0
     });
@@ -148,6 +149,7 @@ const ManageAssertionReason = () => {
                 reasonTrue: question.reasonTrue,
                 reasonExplainsAssertion: question.reasonExplainsAssertion,
                 difficulty: question.difficulty || 'Medium',
+                explanation: question.explanation || '',
                 tags: question.tags ? question.tags.join(', ') : '',
                 order: question.order || 0
             });
@@ -162,6 +164,7 @@ const ManageAssertionReason = () => {
                 reasonTrue: true,
                 reasonExplainsAssertion: true,
                 difficulty: 'Medium',
+                explanation: '',
                 tags: '',
                 order: 0
             });
@@ -224,6 +227,7 @@ const ManageAssertionReason = () => {
             reasonTrue: true,
             reasonExplainsAssertion: true,
             difficulty: 'Medium',
+            explanation: '',
             tags: '',
             order: 0
         });
@@ -337,8 +341,8 @@ const ManageAssertionReason = () => {
                                                                 <div className="flex items-center gap-2 mb-2">
                                                                     <span className="text-cyan-400 font-semibold">Q{index + 1}</span>
                                                                     <span className={`px-2 py-0.5 rounded text-xs ${question.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
-                                                                            question.difficulty === 'Hard' ? 'bg-red-500/20 text-red-400' :
-                                                                                'bg-amber-500/20 text-amber-400'
+                                                                        question.difficulty === 'Hard' ? 'bg-red-500/20 text-red-400' :
+                                                                            'bg-amber-500/20 text-amber-400'
                                                                         }`}>
                                                                         {question.difficulty}
                                                                     </span>
@@ -367,6 +371,17 @@ const ManageAssertionReason = () => {
                                                                             {question.reasonExplainsAssertion ? 'R explains A' : 'R is just a fact'}
                                                                         </span>
                                                                     </div>
+                                                                    {question.explanation && (
+                                                                        <div className="mt-2 p-3 rounded bg-yellow-500/10 border border-yellow-500/30">
+                                                                            <div className="flex items-start gap-2">
+                                                                                <i className="fas fa-lightbulb text-yellow-400 text-sm mt-0.5"></i>
+                                                                                <div className="flex-1">
+                                                                                    <p className="text-yellow-400 text-xs font-semibold mb-1">Explanation:</p>
+                                                                                    <p className="text-gray-300 text-xs leading-relaxed">{question.explanation}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                             <div className="flex gap-2">
@@ -398,8 +413,8 @@ const ManageAssertionReason = () => {
 
             {/* Chapter Modal */}
             {showChapterModal && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-                    <div className="bg-gray-800 rounded-xl p-6 max-w-2xl w-full">
+                <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
+                    <div className="bg-gray-800 rounded-xl p-6 max-w-2xl w-full my-8">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-bold text-white">
                                 {editingId && editingType === 'chapter' ? 'Edit Chapter' : 'New Chapter'}
@@ -506,8 +521,8 @@ const ManageAssertionReason = () => {
 
             {/* Question Modal */}
             {showQuestionModal && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-                    <div className="bg-gray-800 rounded-xl p-6 max-w-4xl w-full my-8">
+                <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
+                    <div className="bg-gray-800 rounded-xl p-6 max-w-4xl w-full my-8 min-h-min">
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <h2 className="text-2xl font-bold text-white">
@@ -609,6 +624,18 @@ const ManageAssertionReason = () => {
                                         className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
                                     />
                                 </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-gray-300 mb-2 font-semibold">Explanation / Concept Card Content</label>
+                                <textarea
+                                    value={questionForm.explanation}
+                                    onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
+                                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
+                                    rows="4"
+                                    placeholder="Detailed explanation shown when user answers incorrectly. Explain why the correct answer is what it is..."
+                                />
+                                <p className="text-xs text-gray-500 mt-1">This will be displayed in the concept card when users get the answer wrong</p>
                             </div>
 
                             <div>

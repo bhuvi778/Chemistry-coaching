@@ -18,6 +18,8 @@ import ManageExamCountdown from './ManageExamCountdown';
 import ManageConceptNotes from './ManageConceptNotes';
 import ManageFlashCards from './ManageFlashCards';
 import ManageAssertionReason from './ManageAssertionReason';
+import ManagePracticeTests from './ManagePracticeTests';
+import ManageTestRegistrations from './ManageTestRegistrations';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -147,6 +149,18 @@ const AdminDashboard = () => {
               <i className="fas fa-question-circle mr-2"></i> Assertion & Reason
             </button>
             <button
+              onClick={() => setActiveTab('practicetests')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'practicetests' ? 'bg-green-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-bullseye mr-2"></i> Practice Tests
+            </button>
+            <button
+              onClick={() => setActiveTab('registrations')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'registrations' ? 'bg-blue-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-user-check mr-2"></i> Test Registrations
+            </button>
+            <button
               onClick={() => setActiveTab('enquiries')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'enquiries' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -181,6 +195,8 @@ const AdminDashboard = () => {
           {activeTab === 'conceptnotes' && <ManageConceptNotes />}
           {activeTab === 'flashcards' && <ManageFlashCards />}
           {activeTab === 'assertionreason' && <ManageAssertionReason />}
+          {activeTab === 'practicetests' && <ManagePracticeTests />}
+          {activeTab === 'registrations' && <ManageTestRegistrations />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>

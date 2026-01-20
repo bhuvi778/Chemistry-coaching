@@ -509,10 +509,28 @@ const ManageConceptNotes = () => {
                                     className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                                 >
                                     <option value="All">All Exams</option>
-                                    <option value="JEE">JEE</option>
-                                    <option value="NEET">NEET</option>
-                                    <option value="BOARDS">Boards</option>
-                                    <option value="OLYMPIAD">Olympiad</option>
+                                    <optgroup label="UG Entrance Exams">
+                                        <option value="NEET">NEET</option>
+                                        <option value="JEE">JEE</option>
+                                        <option value="IAT">IAT</option>
+                                        <option value="NEST">NEST</option>
+                                        <option value="CUET UG">CUET UG</option>
+                                        <option value="BITSAT">BITSAT</option>
+                                    </optgroup>
+                                    <optgroup label="PG Entrance Exams">
+                                        <option value="IIT JAM">IIT JAM</option>
+                                        <option value="CUET PG">CUET PG</option>
+                                    </optgroup>
+                                    <optgroup label="Research Level Exams">
+                                        <option value="CSIR NET">CSIR NET</option>
+                                        <option value="GATE">GATE</option>
+                                        <option value="TIFR">TIFR</option>
+                                    </optgroup>
+                                    <optgroup label="Competitive Exams (Govt. Job)">
+                                        <option value="PSTET">PSTET</option>
+                                        <option value="Master Cadre">Master Cadre</option>
+                                        <option value="UPSC - Mains (Chemistry)">UPSC - Mains (Chemistry)</option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div>

@@ -23,12 +23,16 @@ const cacheMiddleware = (key, ttl = CACHE_TTL) => {
     const pragma = req.headers['pragma'] || '';
     const bypassCache = cacheControl.includes('no-cache') || pragma.includes('no-cache');
 
-    // Strip cache-busting query parameter from URL for cache key
-    const urlWithoutCacheBuster = (req.originalUrl || req.url).split('?t=')[0];
+    // Strip cache-busting query parameters from URL for cache key
+    const url = req.originalUrl || req.url;
+    const urlWithoutCacheBuster = url.split('?')[0]; // Remove all query params for cache key
     const cacheKey = `${key}:${urlWithoutCacheBuster}`;
 
-    // If client requests no-cache, skip cache lookup
-    if (!bypassCache) {
+    // Check if URL has cache-busting parameter (_t or t)
+    const hasCacheBuster = url.includes('?_t=') || url.includes('&_t=') || url.includes('?t=') || url.includes('&t=');
+
+    // If client requests no-cache or has cache-busting parameter, skip cache lookup
+    if (!bypassCache && !hasCacheBuster) {
       const cached = cache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < ttl) {
         res.set('Cache-Control', 'public, max-age=3600');

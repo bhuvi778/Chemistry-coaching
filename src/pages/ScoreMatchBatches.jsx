@@ -67,11 +67,12 @@ const ScoreMatchBatches = () => {
                             <button onClick={() => setSelectedExam('all')} className={getFilterClass(selectedExam === 'all')}>
                                 <i className="fas fa-th-large mr-2"></i>All Exams
                             </button>
-                            <button onClick={() => setSelectedExam('JEE')} className={getFilterClass(selectedExam === 'JEE')}>
-                                <i className="fas fa-atom mr-2"></i>JEE
-                            </button>
+                            {/* UG Entrance Exams */}
                             <button onClick={() => setSelectedExam('NEET')} className={getFilterClass(selectedExam === 'NEET')}>
                                 <i className="fas fa-heartbeat mr-2"></i>NEET
+                            </button>
+                            <button onClick={() => setSelectedExam('JEE')} className={getFilterClass(selectedExam === 'JEE')}>
+                                <i className="fas fa-atom mr-2"></i>JEE
                             </button>
                             <button onClick={() => setSelectedExam('IAT')} className={getFilterClass(selectedExam === 'IAT')}>
                                 <i className="fas fa-flask mr-2"></i>IAT
@@ -79,17 +80,38 @@ const ScoreMatchBatches = () => {
                             <button onClick={() => setSelectedExam('NEST')} className={getFilterClass(selectedExam === 'NEST')}>
                                 <i className="fas fa-microscope mr-2"></i>NEST
                             </button>
+                            <button onClick={() => setSelectedExam('CUET UG')} className={getFilterClass(selectedExam === 'CUET UG')}>
+                                <i className="fas fa-graduation-cap mr-2"></i>CUET UG
+                            </button>
+                            <button onClick={() => setSelectedExam('BITSAT')} className={getFilterClass(selectedExam === 'BITSAT')}>
+                                <i className="fas fa-laptop-code mr-2"></i>BITSAT
+                            </button>
+                            {/* PG Entrance Exams */}
+                            <button onClick={() => setSelectedExam('IIT JAM')} className={getFilterClass(selectedExam === 'IIT JAM')}>
+                                <i className="fas fa-university mr-2"></i>IIT JAM
+                            </button>
+                            <button onClick={() => setSelectedExam('CUET PG')} className={getFilterClass(selectedExam === 'CUET PG')}>
+                                <i className="fas fa-user-graduate mr-2"></i>CUET PG
+                            </button>
+                            {/* Research Level Exams */}
                             <button onClick={() => setSelectedExam('CSIR NET')} className={getFilterClass(selectedExam === 'CSIR NET')}>
-                                <i className="fas fa-graduation-cap mr-2"></i>CSIR NET
+                                <i className="fas fa-flask mr-2"></i>CSIR NET
                             </button>
                             <button onClick={() => setSelectedExam('GATE')} className={getFilterClass(selectedExam === 'GATE')}>
                                 <i className="fas fa-door-open mr-2"></i>GATE
                             </button>
-                            <button onClick={() => setSelectedExam('IIT JAM')} className={getFilterClass(selectedExam === 'IIT JAM')}>
-                                <i className="fas fa-university mr-2"></i>IIT JAM
-                            </button>
                             <button onClick={() => setSelectedExam('TIFR')} className={getFilterClass(selectedExam === 'TIFR')}>
                                 <i className="fas fa-atom mr-2"></i>TIFR
+                            </button>
+                            {/* Competitive Exams (Govt. Job) */}
+                            <button onClick={() => setSelectedExam('PSTET')} className={getFilterClass(selectedExam === 'PSTET')}>
+                                <i className="fas fa-chalkboard-teacher mr-2"></i>PSTET
+                            </button>
+                            <button onClick={() => setSelectedExam('Master Cadre')} className={getFilterClass(selectedExam === 'Master Cadre')}>
+                                <i className="fas fa-user-tie mr-2"></i>Master Cadre
+                            </button>
+                            <button onClick={() => setSelectedExam('UPSC - Mains (Chemistry)')} className={getFilterClass(selectedExam === 'UPSC - Mains (Chemistry)')}>
+                                <i className="fas fa-landmark mr-2"></i>UPSC Mains
                             </button>
                         </div>
                     </div>

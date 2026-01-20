@@ -167,9 +167,11 @@ const AssertionReason = () => {
                                         >
                                             <i className={chapter.icon || 'fas fa-bolt'}></i>
                                         </div>
-                                        {chapter.dueCount > 0 && (
-                                            <div className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30">
-                                                <span className="text-amber-400 font-bold text-sm">{chapter.dueCount} due</span>
+                                        {(chapter.dueCount || 0) > 0 && (
+                                            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30">
+                                                <span className="text-amber-400 font-bold text-sm">{chapter.dueCount}</span>
+                                                <span className="text-amber-400 text-xs">due</span>
+                                                <i className="fas fa-chevron-right text-amber-400 text-xs"></i>
                                             </div>
                                         )}
                                     </div>
@@ -192,16 +194,20 @@ const AssertionReason = () => {
                                         {chapter.name}
                                     </h3>
 
-                                    {/* Stats */}
-                                    <div className="flex items-center gap-4 text-sm text-gray-400">
+                                    {/* Stats - Show completed/total */}
+                                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
                                         <span>
                                             <i className="fas fa-question-circle mr-1"></i>
                                             {chapter.questionCount} questions
                                         </span>
+                                        <span>•</span>
+                                        <span className="text-cyan-400">
+                                            {chapter.questionCount - (chapter.dueCount || 0)} completed
+                                        </span>
                                     </div>
 
-                                    {/* Progress Bar */}
-                                    {chapter.progress > 0 && (
+                                    {/* Progress Bar - Only show if progress > 0 */}
+                                    {(chapter.progress || 0) > 0 && (
                                         <div className="mt-3">
                                             <div className="flex items-center justify-between mb-1">
                                                 <span className="text-xs text-gray-400">Progress</span>

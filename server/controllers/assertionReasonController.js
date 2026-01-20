@@ -204,6 +204,7 @@ exports.getQuestionsForPractice = async (req, res) => {
             assertionTrue: q.assertionTrue,
             reasonTrue: q.reasonTrue,
             correctAnswer: q.reasonExplainsAssertion ? 'yes' : 'no',
+            explanation: q.explanation || '',
             difficulty: q.difficulty
         }));
 
