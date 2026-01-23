@@ -20,6 +20,7 @@ import ManageFlashCards from './ManageFlashCards';
 import ManageAssertionReason from './ManageAssertionReason';
 import ManagePracticeTests from './ManagePracticeTests';
 import ManageTestRegistrations from './ManageTestRegistrations';
+import ManageBlogs from './ManageBlogs';
 import Enquiries from './Enquiries';
 import AdminSettings from './AdminSettings';
 
@@ -166,6 +167,12 @@ const AdminDashboard = () => {
             >
               <i className="fas fa-envelope mr-2"></i> Enquiries & Contacts
             </button>
+            <button
+              onClick={() => setActiveTab('blogs')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'blogs' ? 'bg-blue-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-blog mr-2"></i> Manage Blogs
+            </button>
             <div className="border-t border-gray-700 my-2"></div>
             <button
               onClick={() => setActiveTab('settings')}
@@ -198,6 +205,7 @@ const AdminDashboard = () => {
           {activeTab === 'practicetests' && <ManagePracticeTests />}
           {activeTab === 'registrations' && <ManageTestRegistrations />}
           {activeTab === 'enquiries' && <Enquiries />}
+          {activeTab === 'blogs' && <ManageBlogs />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>
       </div>

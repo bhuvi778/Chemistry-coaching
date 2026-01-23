@@ -41,6 +41,14 @@ const assertionReasonQuestionSchema = new mongoose.Schema({
         trim: true,
         default: ''
     },
+    videoUrls: [{
+        type: String,
+        trim: true
+    }],
+    additionalImages: [{
+        type: String,
+        trim: true
+    }],
     tags: [{
         type: String,
         trim: true

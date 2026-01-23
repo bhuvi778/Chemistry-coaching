@@ -75,7 +75,7 @@ const Footer = () => {
                             <li><Link to="/about" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> About Us</Link></li>
                             <li><Link to="/courses" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> All Courses</Link></li>
                             <li><Link to="/lectures" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fab fa-youtube text-xs text-red-500"></i> Video Lectures</Link></li>
-                            <li><Link to="/ai-assistant" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-robot text-xs text-cyan-400"></i> Ask AI Assistant</Link></li>
+                            <li><Link to="/ai-assistant" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-robot text-xs text-cyan-400"></i> Ask Prepiify</Link></li>
                             <li><Link to="/contact" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> Contact Us</Link></li>
                             <li><a href="https://www.ace2examz.in/careers" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-users text-xs text-green-500"></i> Join Us</a></li>
                         </ul>

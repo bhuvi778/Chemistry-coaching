@@ -205,7 +205,7 @@ const Navbar = () => {
                 <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
                   <span className="flex items-center gap-1.5">
                     <i className="fas fa-robot text-cyan-400"></i>
-                    Ask AI
+                    Ask Prepiify
                   </span>
                 </Link>
 
@@ -235,16 +235,14 @@ const Navbar = () => {
                       <i className="fas fa-info-circle text-blue-400"></i>
                       <span>About Us</span>
                     </Link>
-                    <a
-                      href="https://www.ace2examz.in/blog"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to="/blogs"
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                       onClick={() => setIsMoreOpen(false)}
                     >
                       <i className="fas fa-blog text-blue-500"></i>
                       <span>Blog</span>
-                    </a>
+                    </Link>
                     <a
                       href="https://stories.ace2examz.com"
                       target="_blank"
@@ -469,7 +467,7 @@ const Navbar = () => {
                 <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book Your Meet
               </Link>
               <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700 rounded-md transition">
-                <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask AI
+                <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask Prepiify
               </Link>
 
               {/* More Dropdown */}
@@ -488,9 +486,9 @@ const Navbar = () => {
                     <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-info-circle text-blue-400 mr-2"></i>About Us
                     </Link>
-                    <a href="https://www.ace2examz.in/blog" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                    <Link to="/blogs" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-blog text-blue-500 mr-2"></i>Blog
-                    </a>
+                    </Link>
                     <a href="https://stories.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-book-reader text-purple-500 mr-2"></i>Web Stories
                     </a>

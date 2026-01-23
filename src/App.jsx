@@ -37,6 +37,9 @@ import AssertionReasonPractice from './pages/AssertionReasonPractice';
 import MyDailyTarget from './pages/MyDailyTarget';
 import PracticeTest from './pages/PracticeTest';
 import PracticeTestResults from './pages/PracticeTestResults';
+import Blogs from './pages/Blogs';
+import BlogDetail from './pages/BlogDetail';
+import FAQ from './pages/FAQ';
 import ExamCountdown from './components/ExamCountdown';
 
 const ProtectedRoute = ({ children }) => {
@@ -146,6 +149,9 @@ function AppContent() {
           <Route path="/my-daily-target" element={<MyDailyTarget />} />
           <Route path="/practice-test/:testId" element={<PracticeTest />} />
           <Route path="/practice-test/:testId/results" element={<PracticeTestResults />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blog/:slug" element={<BlogDetail />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/community" element={<Community />} />
           <Route path="/score-max-batches" element={<ScoreMatchBatches />} />
           <Route path="/free-quiz" element={<FreeQuiz />} />

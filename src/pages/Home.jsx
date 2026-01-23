@@ -50,7 +50,7 @@ const Home = () => {
             </Link>
             <Link to="/ai-assistant" className="px-8 py-4 rounded border-2 border-cyan-400 text-cyan-400 font-bold text-lg hover:bg-cyan-400 hover:text-black transition text-center">
               <i className="fas fa-robot mr-2"></i>
-              Try AI Assistant
+              Try Prepiify
             </Link>
           </div>
         </div>

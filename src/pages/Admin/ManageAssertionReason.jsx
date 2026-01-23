@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const ManageAssertionReason = () => {
     const [chapters, setChapters] = useState([]);
@@ -28,6 +30,8 @@ const ManageAssertionReason = () => {
         reasonExplainsAssertion: true,
         difficulty: 'Medium',
         explanation: '',
+        videoUrls: [],
+        additionalImages: [],
         tags: '',
         order: 0
     });
@@ -150,6 +154,8 @@ const ManageAssertionReason = () => {
                 reasonExplainsAssertion: question.reasonExplainsAssertion,
                 difficulty: question.difficulty || 'Medium',
                 explanation: question.explanation || '',
+                videoUrls: question.videoUrls || [],
+                additionalImages: question.additionalImages || [],
                 tags: question.tags ? question.tags.join(', ') : '',
                 order: question.order || 0
             });
@@ -165,6 +171,8 @@ const ManageAssertionReason = () => {
                 reasonExplainsAssertion: true,
                 difficulty: 'Medium',
                 explanation: '',
+                videoUrls: [],
+                additionalImages: [],
                 tags: '',
                 order: 0
             });
@@ -228,11 +236,94 @@ const ManageAssertionReason = () => {
             reasonExplainsAssertion: true,
             difficulty: 'Medium',
             explanation: '',
+            videoUrls: [],
+            additionalImages: [],
             tags: '',
             order: 0
         });
         setEditingId(null);
         setEditingType(null);
+    };
+
+    // ============ MEDIA UPLOAD HANDLERS ============
+
+    const handleVideoUrlInput = (e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+            e.preventDefault();
+            const newUrl = e.target.value.trim();
+            if (!questionForm.videoUrls.includes(newUrl)) {
+                setQuestionForm(prev => ({ ...prev, videoUrls: [...prev.videoUrls, newUrl] }));
+            }
+            e.target.value = '';
+        }
+    };
+
+    const handleVideoFileUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        try {
+            const uploadPromises = files.map(async (file) => {
+                const uploadFormData = new FormData();
+                uploadFormData.append('file', file);
+                const response = await axios.post(`${API_URL}/upload`, uploadFormData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                return response.data.fileUrl;
+            });
+
+            const uploadedUrls = await Promise.all(uploadPromises);
+            setQuestionForm(prev => ({
+                ...prev,
+                videoUrls: [...prev.videoUrls, ...uploadedUrls]
+            }));
+            alert(`${uploadedUrls.length} video(s) uploaded successfully!`);
+            e.target.value = ''; // Reset file input
+        } catch (error) {
+            console.error('Error uploading videos:', error);
+            alert('Error uploading videos');
+        }
+    };
+
+    const removeVideoUrl = (urlToRemove) => {
+        setQuestionForm(prev => ({
+            ...prev,
+            videoUrls: prev.videoUrls.filter(url => url !== urlToRemove)
+        }));
+    };
+
+    const handleAdditionalImageUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        try {
+            const uploadPromises = files.map(async (file) => {
+                const uploadFormData = new FormData();
+                uploadFormData.append('file', file);
+                const response = await axios.post(`${API_URL}/upload`, uploadFormData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                return response.data.fileUrl;
+            });
+
+            const uploadedUrls = await Promise.all(uploadPromises);
+            setQuestionForm(prev => ({
+                ...prev,
+                additionalImages: [...prev.additionalImages, ...uploadedUrls]
+            }));
+            alert(`${uploadedUrls.length} image(s) uploaded successfully!`);
+            e.target.value = ''; // Reset file input
+        } catch (error) {
+            console.error('Error uploading images:', error);
+            alert('Error uploading images');
+        }
+    };
+
+    const removeAdditionalImage = (imageToRemove) => {
+        setQuestionForm(prev => ({
+            ...prev,
+            additionalImages: prev.additionalImages.filter(img => img !== imageToRemove)
+        }));
     };
 
     return (
@@ -544,26 +635,46 @@ const ManageAssertionReason = () => {
                         <form onSubmit={handleQuestionSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-gray-300 mb-2 font-semibold">Assertion (Statement A) *</label>
-                                <textarea
-                                    value={questionForm.assertion}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, assertion: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
-                                    rows="3"
-                                    placeholder="Enter the assertion statement..."
-                                    required
-                                />
+                                <div className="quill-editor-wrapper quill-editor-black-text">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={questionForm.assertion}
+                                        onChange={(content) => setQuestionForm({ ...questionForm, assertion: content })}
+                                        className="bg-white rounded-lg"
+                                        style={{ minHeight: '150px' }}
+                                        modules={{
+                                            toolbar: [
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'script': 'sub' }, { 'script': 'super' }],
+                                                ['link', 'image'],
+                                                ['clean']
+                                            ]
+                                        }}
+                                        placeholder="Enter the assertion statement..."
+                                    />
+                                </div>
                             </div>
 
                             <div>
                                 <label className="block text-gray-300 mb-2 font-semibold">Reason (Statement R) *</label>
-                                <textarea
-                                    value={questionForm.reason}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, reason: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
-                                    rows="3"
-                                    placeholder="Enter the reason statement..."
-                                    required
-                                />
+                                <div className="quill-editor-wrapper quill-editor-black-text">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={questionForm.reason}
+                                        onChange={(content) => setQuestionForm({ ...questionForm, reason: content })}
+                                        className="bg-white rounded-lg"
+                                        style={{ minHeight: '150px' }}
+                                        modules={{
+                                            toolbar: [
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'script': 'sub' }, { 'script': 'super' }],
+                                                ['link', 'image'],
+                                                ['clean']
+                                            ]
+                                        }}
+                                        placeholder="Enter the reason statement..."
+                                    />
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-3 gap-4">
@@ -628,14 +739,121 @@ const ManageAssertionReason = () => {
 
                             <div>
                                 <label className="block text-gray-300 mb-2 font-semibold">Explanation / Concept Card Content</label>
-                                <textarea
-                                    value={questionForm.explanation}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
-                                    rows="4"
-                                    placeholder="Detailed explanation shown when user answers incorrectly. Explain why the correct answer is what it is..."
-                                />
+                                <div className="quill-editor-wrapper quill-editor-black-text">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={questionForm.explanation}
+                                        onChange={(content) => setQuestionForm({ ...questionForm, explanation: content })}
+                                        className="bg-white rounded-lg"
+                                        style={{ minHeight: '200px' }}
+                                        modules={{
+                                            toolbar: [
+                                                [{ 'header': [1, 2, 3, false] }],
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'color': [] }, { 'background': [] }],
+                                                [{ 'script': 'sub' }, { 'script': 'super' }],
+                                                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                                ['link', 'image', 'video'],
+                                                ['blockquote', 'code-block'],
+                                                ['clean']
+                                            ]
+                                        }}
+                                        placeholder="Detailed explanation shown when user answers incorrectly. Explain why the correct answer is what it is..."
+                                    />
+                                </div>
                                 <p className="text-xs text-gray-500 mt-1">This will be displayed in the concept card when users get the answer wrong</p>
+                            </div>
+
+                            {/* Video URLs */}
+                            <div>
+                                <label className="block text-gray-300 mb-2 font-semibold">
+                                    Videos <span className="text-gray-500 text-sm">(upload files or paste URLs)</span>
+                                </label>
+
+                                {/* Video File Upload */}
+                                <div className="mb-3">
+                                    <label className="block text-gray-400 text-sm mb-1">Upload Video Files:</label>
+                                    <input
+                                        type="file"
+                                        accept="video/*"
+                                        multiple
+                                        onChange={handleVideoFileUpload}
+                                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
+                                    />
+                                </div>
+
+                                {/* Video URL Input */}
+                                <div>
+                                    <label className="block text-gray-400 text-sm mb-1">Or paste YouTube/Vimeo URL:</label>
+                                    <input
+                                        type="text"
+                                        onKeyDown={handleVideoUrlInput}
+                                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
+                                        placeholder="https://www.youtube.com/embed/VIDEO_ID (press Enter)"
+                                    />
+                                </div>
+
+                                {/* Video List */}
+                                <div className="flex flex-col gap-2 mt-3">
+                                    {questionForm.videoUrls.map((url, index) => (
+                                        <div
+                                            key={index}
+                                            className="px-3 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-sm flex items-center justify-between gap-2"
+                                        >
+                                            <span className="truncate flex-1">
+                                                <i className="fas fa-video mr-2"></i>
+                                                {url}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeVideoUrl(url)}
+                                                className="hover:text-red-400 flex-shrink-0"
+                                            >
+                                                <i className="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <p className="text-gray-500 text-xs mt-2">
+                                    <i className="fas fa-info-circle mr-1"></i>
+                                    Upload video files or paste embed URLs. Videos will be shown in the explanation.
+                                </p>
+                            </div>
+
+                            {/* Additional Images */}
+                            <div>
+                                <label className="block text-gray-300 mb-2 font-semibold">
+                                    Additional Images <span className="text-gray-500 text-sm">(select multiple files)</span>
+                                </label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleAdditionalImageUpload}
+                                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
+                                />
+                                <div className="grid grid-cols-2 gap-2 mt-2">
+                                    {questionForm.additionalImages.map((image, index) => (
+                                        <div key={index} className="relative group">
+                                            <img
+                                                src={image}
+                                                alt={`Additional ${index + 1}`}
+                                                className="w-full h-24 object-cover rounded-lg"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeAdditionalImage(image)}
+                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                                            >
+                                                <i className="fas fa-times text-xs"></i>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <p className="text-gray-500 text-xs mt-1">
+                                    <i className="fas fa-info-circle mr-1"></i>
+                                    Select multiple images at once. They will be displayed in the explanation.
+                                </p>
                             </div>
 
                             <div>

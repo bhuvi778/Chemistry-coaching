@@ -46,6 +46,7 @@ const conceptNoteRoutes = require('./routes/conceptNoteRoutes');
 const flashCardRoutes = require('./routes/flashCardRoutes');
 const assertionReasonRoutes = require('./routes/assertionReason');
 const practiceTestRoutes = require('./routes/practiceTest');
+const blogRoutes = require('./routes/blogRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
@@ -159,6 +160,7 @@ app.use('/api/concept-notes', cacheMiddleware('concept-notes', 30 * 60 * 1000), 
 app.use('/api/flashcards', cacheMiddleware('flashcards', 30 * 60 * 1000), flashCardRoutes);
 app.use('/api/assertion-reason', assertionReasonRoutes);
 app.use('/api/practice-tests', cacheMiddleware('practice-tests', 30 * 60 * 1000), practiceTestRoutes);
+app.use('/api/blogs', cacheMiddleware('blogs', 30 * 60 * 1000), blogRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

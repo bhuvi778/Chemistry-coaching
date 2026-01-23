@@ -9,20 +9,20 @@ const ScrollToTopButton = () => {
     };
 
     return (
-        <div 
+        <div
             style={{
                 position: 'fixed',
-                bottom: '150px',
+                bottom: '89px',
                 right: '20px',
                 zIndex: 999999
             }}
         >
             <button
                 onClick={scrollToTop}
-                style={{ 
+                style={{
                     position: 'relative',
-                    width: '60px',
-                    height: '60px',
+                    width: '42px',
+                    height: '42px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -47,8 +47,8 @@ const ScrollToTopButton = () => {
             >
                 <svg
                     style={{
-                        width: '24px',
-                        height: '24px'
+                        width: '18px',
+                        height: '18px'
                     }}
                     fill="none"
                     stroke="currentColor"
