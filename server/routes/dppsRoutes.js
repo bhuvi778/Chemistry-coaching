@@ -72,12 +72,13 @@ router.put('/settings', async (req, res) => {
 // Get all chapters (with optional class and difficulty filter)
 router.get('/chapters', async (req, res) => {
     try {
-        const { classLevel, difficultyLevel, isActive } = req.query;
+        const { classLevel, difficultyLevel, isActive, subject } = req.query;
 
         let filter = {};
         if (classLevel) filter.classLevel = classLevel;
         if (difficultyLevel) filter.difficultyLevel = difficultyLevel;
         if (isActive !== undefined) filter.isActive = isActive === 'true';
+        if (subject) filter.subject = subject;
 
         const chapters = await DPPSChapter.find(filter)
             .sort({ order: 1, createdAt: -1 });
@@ -109,7 +110,11 @@ router.get('/chapters/:id', async (req, res) => {
         if (!chapter) {
             return res.status(404).json({ error: 'Chapter not found' });
         }
-        res.json(chapter);
+        const questionCount = await DPPSQuestion.countDocuments({
+            chapterId: chapter._id,
+            isActive: true
+        });
+        res.json({ ...chapter.toObject(), questionCount });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -396,13 +401,11 @@ router.post('/test-sessions', async (req, res) => {
         // Get all questions for this chapter
         const questions = await DPPSQuestion.find({
             chapterId: chapterId,
-            classLevel: chapter.classLevel,
-            difficultyLevel: chapter.difficultyLevel,
             isActive: true
         }).sort({ order: 1 });
 
         if (questions.length === 0) {
-            return res.status(404).json({ error: 'No questions found for this test' });
+            return res.status(400).json({ error: 'No questions have been added to this chapter yet. Please add questions first.' });
         }
 
         // Create test session

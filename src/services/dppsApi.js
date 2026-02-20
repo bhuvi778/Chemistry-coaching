@@ -18,6 +18,7 @@ export const fetchDPPSChapters = async (filters = {}) => {
     const params = new URLSearchParams();
     if (filters.classLevel) params.append('classLevel', filters.classLevel);
     if (filters.difficultyLevel) params.append('difficultyLevel', filters.difficultyLevel);
+    if (filters.subject) params.append('subject', filters.subject);
     if (filters.isActive !== undefined) params.append('isActive', filters.isActive);
 
     const response = await axios.get(`${API_URL}/chapters?${params.toString()}`);

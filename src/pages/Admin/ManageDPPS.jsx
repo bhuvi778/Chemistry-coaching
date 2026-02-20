@@ -52,7 +52,7 @@ const ManageDPPS = () => {
     // Form Data
     const [chapterForm, setChapterForm] = useState({
         name: '',
-        subject: 'Chemistry',
+        subject: 'Physical Chemistry',
         description: '',
         classLevel: '11',
         difficultyLevel: 'Medium',
@@ -228,7 +228,7 @@ const ManageDPPS = () => {
         setEditingItem(chapter);
         setChapterForm({
             name: chapter.name,
-            subject: chapter.subject,
+            subject: chapter.subject || 'Physical Chemistry',
             description: chapter.description,
             classLevel: chapter.classLevel || '11',
             difficultyLevel: chapter.difficultyLevel,
@@ -265,7 +265,7 @@ const ManageDPPS = () => {
         setEditingItem(null);
         setChapterForm({
             name: '',
-            subject: 'Chemistry',
+            subject: 'Physical Chemistry',
             description: '',
             classLevel: '11',
             difficultyLevel: 'Medium',
@@ -385,6 +385,16 @@ const ManageDPPS = () => {
                                                 </span>
                                             </div>
                                             <h4 className="text-xl font-bold text-white mb-2 line-clamp-1">{chapter.name}</h4>
+                                            {chapter.subject && (
+                                                <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold mb-2 ${
+                                                    chapter.subject === 'Physical Chemistry' ? 'bg-purple-500/20 text-purple-400' :
+                                                    chapter.subject === 'Inorganic Chemistry' ? 'bg-green-500/20 text-green-400' :
+                                                    chapter.subject === 'Organic Chemistry' ? 'bg-orange-500/20 text-orange-400' :
+                                                    'bg-blue-500/20 text-blue-400'
+                                                }`}>
+                                                    {chapter.subject}
+                                                </span>
+                                            )}
                                             <p className="text-sm text-gray-500 line-clamp-2 mb-2">{chapter.description}</p>
                                             <div className="flex items-center gap-3 text-xs text-gray-400">
                                                 <span>
@@ -436,13 +446,18 @@ const ManageDPPS = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-gray-400 mb-2">Subject</label>
-                                    <input
-                                        type="text"
+                                    <label className="block text-gray-400 mb-2">Subject *</label>
+                                    <select
                                         value={chapterForm.subject}
                                         onChange={(e) => setChapterForm({ ...chapterForm, subject: e.target.value })}
                                         className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none"
-                                    />
+                                        required
+                                    >
+                                        <option value="Physical Chemistry">⚛️ Physical Chemistry</option>
+                                        <option value="Inorganic Chemistry">🧪 Inorganic Chemistry</option>
+                                        <option value="Organic Chemistry">🌿 Organic Chemistry</option>
+                                        <option value="Practical">🔬 Practical</option>
+                                    </select>
                                 </div>
 
                                 <div>

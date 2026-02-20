@@ -256,8 +256,8 @@ const DPPSTestResults = () => {
                                     <div className="space-y-2 mb-4">
                                         {question?.options?.map((option, optIndex) => {
                                             const optionLabel = String.fromCharCode(65 + optIndex);
-                                            const isUserAnswer = q.selectedAnswer === option;
-                                            const isCorrectAnswer = question.correctAnswer === option;
+                                            const isUserAnswer = q.selectedAnswer === optionLabel;
+                                            const isCorrectAnswer = question.correctAnswer === optionLabel;
 
                                             return (
                                                 <div

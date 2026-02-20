@@ -238,7 +238,7 @@ const SelfLearnChapters = () => {
                                                     className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shadow-lg shadow-black/20"
                                                     style={{ backgroundColor: `${iconColor}20`, color: iconColor }}
                                                 >
-                                                    <i className={chapter.icon || 'fas fa-book'}></i>
+                                                    <i className={chapter.icon ? (chapter.icon.startsWith('fa-') ? `fas ${chapter.icon}` : chapter.icon) : 'fas fa-book'}></i>
                                                 </div>
                                                 <span className="text-xs font-mono text-gray-500 bg-gray-900/50 px-2 py-1 rounded">
                                                     CH-{String(index + 1).padStart(2, '0')}
@@ -273,13 +273,22 @@ const SelfLearnChapters = () => {
                                             <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
                                                 <span>
                                                     <i className="fas fa-play-circle mr-1.5 opacity-70"></i>
-                                                    {chapter.learn?.videoLectures?.length || 0} Videos
+                                                    {chapter.videoCount || 0} Videos
                                                 </span>
                                                 <span className="w-1 h-1 rounded-full bg-gray-600"></span>
                                                 <span>
                                                     <i className="fas fa-file-pdf mr-1.5 opacity-70"></i>
-                                                    {chapter.learn?.classNotes?.length || 0} Notes
+                                                    {chapter.sheetCount || 0} Notes
                                                 </span>
+                                                {(chapter.exerciseCount || 0) > 0 && (
+                                                    <>
+                                                        <span className="w-1 h-1 rounded-full bg-gray-600"></span>
+                                                        <span>
+                                                            <i className="fas fa-pencil-alt mr-1.5 opacity-70"></i>
+                                                            {chapter.exerciseCount} Exercises
+                                                        </span>
+                                                    </>
+                                                )}
                                             </div>
 
                                             {/* Progress Bar (if progress exists) */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import MobilePdfViewer from '../../components/MobilePdfViewer';
 
 const TopicDetail = () => {
     const { topicId } = useParams();
@@ -644,18 +645,10 @@ const TopicDetail = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    {/* PDF Viewer - Collapsible */}
+                                    {/* PDF Viewer - Collapsible on all screen sizes */}
                                     {expandedSheets[idx] && (
-                                        <div className="relative bg-gray-800" style={{ height: 'clamp(400px, 70vh, 800px)' }}>
-                                            <iframe
-                                                src={`${sheet.pdfUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                                                className="w-full h-full"
-                                                style={{ border: 'none' }}
-                                                title={sheet.title}
-                                                onContextMenu={(e) => e.preventDefault()}
-                                            />
-                                            {/* Overlay to prevent right-click download */}
-                                            <div className="absolute inset-0 pointer-events-none"></div>
+                                        <div className="relative bg-gray-800 overflow-y-auto" style={{ maxHeight: 'clamp(400px, 70vh, 800px)' }}>
+                                            <MobilePdfViewer url={sheet.pdfUrl} title={sheet.title} />
                                         </div>
                                     )}
                                 </div>

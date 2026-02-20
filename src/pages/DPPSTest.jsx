@@ -54,11 +54,11 @@ const DPPSTest = () => {
 
     const handleStartTest = async () => {
         try {
-            const userId = localStorage.getItem('userId');
+            let userId = localStorage.getItem('userId');
             if (!userId) {
-                toast.error('Please login to start the test');
-                navigate('/login');
-                return;
+                // Auto-generate userId instead of redirecting to login
+                userId = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now();
+                localStorage.setItem('userId', userId);
             }
 
             setLoading(true);
@@ -70,7 +70,12 @@ const DPPSTest = () => {
             toast.success('Test started! Good luck!');
         } catch (error) {
             console.error('Failed to start test:', error);
-            toast.error(error.response?.data?.error || 'Failed to start test');
+            const errMsg = error.response?.data?.error || 'Failed to start test';
+            if (errMsg.includes('No questions')) {
+                toast.error('This chapter has no questions yet. Please check back later!');
+            } else {
+                toast.error(errMsg);
+            }
         } finally {
             setLoading(false);
         }
@@ -198,6 +203,7 @@ const DPPSTest = () => {
 
     // Test Instructions View
     if (!testStarted) {
+        const hasQuestions = (chapter?.questionCount ?? 1) > 0;
         return (
             <div className="min-h-screen pt-32 pb-20">
                 <div className="max-w-4xl mx-auto px-4">
@@ -207,7 +213,7 @@ const DPPSTest = () => {
                             <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
                                 {chapter?.name}
                             </h1>
-                            <div className="flex items-center justify-center gap-6 text-gray-400">
+                            <div className="flex items-center justify-center gap-6 text-gray-400 flex-wrap">
                                 <span>
                                     <i className="fas fa-graduation-cap mr-2"></i>
                                     Class {chapter?.classLevel}
@@ -220,10 +226,24 @@ const DPPSTest = () => {
                                     <i className="fas fa-clock mr-2"></i>
                                     {chapter?.timeLimit || 60} minutes
                                 </span>
+                                <span className={`font-semibold ${hasQuestions ? 'text-cyan-400' : 'text-red-400'}`}>
+                                    <i className="fas fa-question-circle mr-2"></i>
+                                    {chapter?.questionCount ?? '...'} questions
+                                </span>
                             </div>
                         </div>
 
+                        {/* No questions warning */}
+                        {!hasQuestions && (
+                            <div className="mb-8 p-5 bg-red-500/10 border border-red-500/40 rounded-xl text-center">
+                                <i className="fas fa-exclamation-triangle text-red-400 text-3xl mb-3"></i>
+                                <p className="text-red-300 text-lg font-semibold">No questions available yet</p>
+                                <p className="text-gray-400 text-sm mt-1">This chapter doesn't have any questions added. Please check back later or try a different chapter.</p>
+                            </div>
+                        )}
+
                         {/* Instructions */}
+                        {hasQuestions && (
                         <div className="mb-8">
                             <h2 className="text-2xl font-bold text-white mb-4">Test Instructions</h2>
                             <div className="space-y-3 text-gray-400">
@@ -253,6 +273,7 @@ const DPPSTest = () => {
                                 </div>
                             </div>
                         </div>
+                        )}
 
                         {/* Action Buttons */}
                         <div className="flex items-center justify-between pt-6 border-t border-gray-700">
@@ -265,10 +286,18 @@ const DPPSTest = () => {
                             </button>
                             <button
                                 onClick={handleStartTest}
-                                className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg transition transform hover:scale-105"
+                                disabled={!hasQuestions}
+                                className={`px-8 py-3 font-semibold rounded-lg transition transform ${
+                                    hasQuestions
+                                        ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white hover:scale-105'
+                                        : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                                }`}
                             >
-                                <i className="fas fa-play mr-2"></i>
-                                Start Test
+                                {hasQuestions ? (
+                                    <><i className="fas fa-play mr-2"></i>Start Test</>
+                                ) : (
+                                    <><i className="fas fa-lock mr-2"></i>No Questions Yet</>
+                                )}
                             </button>
                         </div>
                     </div>
@@ -344,12 +373,12 @@ const DPPSTest = () => {
                             <div className="space-y-3">
                                 {questionData?.options?.map((option, index) => {
                                     const optionLabel = String.fromCharCode(65 + index); // A, B, C, D
-                                    const isSelected = selectedAnswers[questionData._id] === option;
+                                    const isSelected = selectedAnswers[questionData._id] === optionLabel;
 
                                     return (
                                         <div
                                             key={index}
-                                            onClick={() => handleAnswerSelect(questionData._id, option)}
+                                            onClick={() => handleAnswerSelect(questionData._id, optionLabel)}
                                             className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${isSelected
                                                     ? 'border-cyan-500 bg-cyan-500/10'
                                                     : 'border-gray-700 hover:border-gray-600 bg-gray-800/50'
@@ -409,7 +438,7 @@ const DPPSTest = () => {
                             <h3 className="text-lg font-bold text-white mb-4">Questions</h3>
                             <div className="grid grid-cols-5 gap-2 mb-6">
                                 {testSession?.questions.map((q, index) => {
-                                    const isAnswered = selectedAnswers[q.questionId._id];
+                                    const isAnswered = !!selectedAnswers[q.questionId._id];
                                     const isCurrent = index === currentQuestionIndex;
 
                                     return (

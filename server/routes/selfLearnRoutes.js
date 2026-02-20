@@ -65,7 +65,29 @@ router.get('/chapters', async (req, res) => {
         const chapters = await SelfLearnChapter.find(filter)
             .sort({ order: 1, chapterName: 1 });
 
-        res.json(chapters);
+        // Aggregate topic-level stats for each chapter
+        const chapterIds = chapters.map(c => c._id);
+        const topics = await SelfLearnTopic.find({ chapterId: { $in: chapterIds }, isActive: true });
+
+        const statsMap = {};
+        topics.forEach(topic => {
+            const cId = topic.chapterId.toString();
+            if (!statsMap[cId]) statsMap[cId] = { topicCount: 0, videoCount: 0, sheetCount: 0, exerciseCount: 0 };
+            statsMap[cId].topicCount++;
+            statsMap[cId].videoCount += (topic.learn?.videos?.length || 0);
+            statsMap[cId].sheetCount += (topic.learn?.sheets?.length || 0);
+            statsMap[cId].exerciseCount += (topic.learn?.exercises || []).reduce((sum, ex) => sum + (ex.questions?.length || 0), 0);
+        });
+
+        const chaptersWithStats = chapters.map(ch => ({
+            ...ch.toObject(),
+            topicCount: statsMap[ch._id.toString()]?.topicCount || 0,
+            videoCount: statsMap[ch._id.toString()]?.videoCount || 0,
+            sheetCount: statsMap[ch._id.toString()]?.sheetCount || 0,
+            exerciseCount: statsMap[ch._id.toString()]?.exerciseCount || 0
+        }));
+
+        res.json(chaptersWithStats);
     } catch (error) {
         console.error('Error fetching chapters:', error);
         res.status(500).json({ error: error.message });
@@ -166,7 +188,17 @@ router.get('/chapters/:chapterId/topics', async (req, res) => {
             chapterId: req.params.chapterId,
             isActive: true 
         }).sort({ order: 1, topicName: 1 });
-        res.json(topics);
+
+        // Compute content counts for each topic
+        const topicsWithStats = topics.map(topic => {
+            const t = topic.toObject();
+            t.videoCount = t.learn?.videos?.length || 0;
+            t.sheetCount = t.learn?.sheets?.length || 0;
+            t.exerciseCount = (t.learn?.exercises || []).reduce((sum, ex) => sum + (ex.questions?.length || 0), 0);
+            return t;
+        });
+
+        res.json(topicsWithStats);
     } catch (error) {
         console.error('Error fetching topics:', error);
         res.status(500).json({ error: error.message });

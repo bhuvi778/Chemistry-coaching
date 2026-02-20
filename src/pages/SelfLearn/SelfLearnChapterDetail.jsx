@@ -157,6 +157,11 @@ const SelfLearnChapterDetail = () => {
                                                 📄 {topic.sheetCount} Sheets
                                             </span>
                                         )}
+                                        {topic.exerciseCount > 0 && (
+                                            <span className="px-2 py-1 rounded text-xs font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                                                ✏️ {topic.exerciseCount} Exercises
+                                            </span>
+                                        )}
                                     </>
                                 )}
                                 {activeTab === 'practice' && topic.exerciseCount > 0 && (
