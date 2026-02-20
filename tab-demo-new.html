@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCERT Toolbox Tabs - Like Your Screenshot</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0f1419;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Tab container with bottom border */
+        .tabs-wrapper {
+            border-bottom: 1px solid #38444d;
+            margin-bottom: 30px;
+        }
+        
+        /* Horizontal tab buttons */
+        .tabs {
+            display: flex;
+            gap: 0;
+        }
+        
+        .tab-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: none;
+            border: none;
+            color: #8899a6;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .tab-button:hover {
+            color: #ffffff;
+        }
+        
+        .tab-button.active {
+            color: #1da1f2;
+        }
+        
+        /* Cyan underline for active tab */
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #1da1f2;
+        }
+        
+        .tab-icon {
+            font-size: 20px;
+        }
+        
+        /* Content area */
+        .tab-content {
+            display: none;
+            color: white;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        h2 {
+            color: white;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: white; margin-bottom: 30px;">NCERT Toolbox</h1>
+        
+        <!-- Tabs exactly like your screenshot -->
+        <div class="tabs-wrapper">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="linebyline">
+                    <i class="fas fa-book-open tab-icon"></i>
+                    <span>Line by Line</span>
+                </button>
+                <button class="tab-button" data-tab="questions">
+                    <i class="fas fa-question-circle tab-icon"></i>
+                    <span>Questions</span>
+                </button>
+                <button class="tab-button" data-tab="exemplars">
+                    <i class="fas fa-graduation-cap tab-icon"></i>
+                    <span>Exemplars</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tab content -->
+        <div class="tab-content active" id="linebyline">
+            <h2>📖 NCERT Line by Line</h2>
+            <p>Access detailed line-by-line explanations of NCERT textbooks.</p>
+        </div>
+        
+        <div class="tab-content" id="questions">
+            <h2>❓ NCERT Questions</h2>
+            <p>Practice NCERT questions with detailed solutions.</p>
+        </div>
+        
+        <div class="tab-content" id="exemplars">
+            <h2>🎓 NCERT Exemplars</h2>
+            <p>Master advanced concepts with NCERT Exemplar problems.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching logic
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -18,6 +18,7 @@ const ManageFreeQuizzes = () => {
         chapter: '',
         topic: '',
         difficulty: 'Medium',
+        quizCategory: 'Quiz',
         quizType: 'LINK',
         quizLink: '',
         quizPdf: null
@@ -36,6 +37,7 @@ const ManageFreeQuizzes = () => {
             chapter: quiz.chapter,
             topic: quiz.topic || '',
             difficulty: quiz.difficulty,
+            quizCategory: quiz.quizCategory || 'Quiz',
             quizType: quiz.quizType,
             quizLink: quiz.quizLink || '',
             quizPdf: quiz.quizPdf || null
@@ -134,7 +136,7 @@ const ManageFreeQuizzes = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Basic Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <input
                             type="text"
                             placeholder="Quiz Title"
@@ -152,6 +154,15 @@ const ManageFreeQuizzes = () => {
                             <option value="Medium">Medium</option>
                             <option value="Hard">Hard</option>
                         </select>
+                        <select
+                            value={formData.quizCategory}
+                            onChange={e => setFormData({ ...formData, quizCategory: e.target.value })}
+                            className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
+                        >
+                            <option value="Quiz">Quiz</option>
+                            <option value="Mock Test">Mock Test</option>
+                            <option value="PYPs">PYPs (Previous Year Papers)</option>
+                        </select>
                     </div>
 
                     <textarea
@@ -168,13 +179,35 @@ const ManageFreeQuizzes = () => {
                             onChange={e => setFormData({ ...formData, examType: e.target.value })}
                             className="bg-gray-900 border border-gray-700 rounded p-3 text-white w-full"
                         >
-                            <option value="JEE">JEE</option>
-                            <option value="NEET">NEET</option>
-                            <option value="BOARDS">BOARDS</option>
-                            <option value="KVPY">KVPY</option>
-                            <option value="OLYMPIAD">OLYMPIAD</option>
-                            <option value="FOUNDATION">FOUNDATION</option>
-                            <option value="OTHER">OTHER</option>
+                            <optgroup label="UG Entrance Exams">
+                                <option value="NEET">NEET</option>
+                                <option value="JEE">JEE (Main & Advanced)</option>
+                                <option value="IAT">IAT</option>
+                                <option value="NEST">NEST</option>
+                                <option value="CUET UG">CUET UG</option>
+                                <option value="BITSAT">BITSAT</option>
+                            </optgroup>
+                            <optgroup label="PG Entrance Exams">
+                                <option value="IIT JAM">IIT JAM</option>
+                                <option value="CUET PG">CUET PG</option>
+                            </optgroup>
+                            <optgroup label="Research Level Exams">
+                                <option value="CSIR NET">CSIR NET</option>
+                                <option value="GATE">GATE</option>
+                                <option value="TIFR">TIFR</option>
+                            </optgroup>
+                            <optgroup label="Competitive Exams (Govt. Job)">
+                                <option value="PSTET">PSTET</option>
+                                <option value="Master Cadre">Master Cadre</option>
+                                <option value="UPSC - Mains (Chemistry)">UPSC - Mains (Chemistry)</option>
+                            </optgroup>
+                            <optgroup label="Other">
+                                <option value="BOARDS">BOARDS</option>
+                                <option value="KVPY">KVPY</option>
+                                <option value="OLYMPIAD">OLYMPIAD</option>
+                                <option value="FOUNDATION">FOUNDATION</option>
+                                <option value="OTHER">OTHER</option>
+                            </optgroup>
                         </select>
                         <input
                             type="text"
@@ -295,6 +328,9 @@ const ManageFreeQuizzes = () => {
                                     <span className={`text-xs px-2 py-0.5 rounded border ${quiz.quizType === 'PDF' ? 'border-red-500 text-red-500' : 'border-blue-500 text-blue-500'
                                         }`}>
                                         {quiz.quizType}
+                                    </span>
+                                    <span className="text-xs px-2 py-0.5 rounded border border-purple-500 text-purple-400">
+                                        {quiz.quizCategory || 'Quiz'}
                                     </span>
                                 </h3>
                                 <div className="flex gap-3 text-sm text-gray-400 mt-1">

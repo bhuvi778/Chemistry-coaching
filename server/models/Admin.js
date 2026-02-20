@@ -12,6 +12,17 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    role: {
+        type: String,
+        enum: ['superadmin', 'admin', 'user'],
+        default: 'user'
+    },
+    permissions: {
+        canViewAllEnquiries: { type: Boolean, default: false },
+        canEditEnquiries: { type: Boolean, default: false },
+        canDeleteEnquiries: { type: Boolean, default: false },
+        canManageUsers: { type: Boolean, default: false }
+    },
     createdAt: {
         type: Date,
         default: Date.now

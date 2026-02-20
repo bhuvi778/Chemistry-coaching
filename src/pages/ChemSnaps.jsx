@@ -6,7 +6,7 @@ import Pagination from '../components/UI/Pagination';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Set worker to local file (hosted in public directory)
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 const ChemSnaps = () => {
     const { chemSnaps } = useData();
@@ -27,50 +27,52 @@ const ChemSnaps = () => {
 
     const materialsPerPage = 10; // 2 rows × 5 columns
 
-    // Load and render PDF using PDF.js (works for all devices)
+    // Load and render PDF incrementally
     const loadPdfPages = async (url) => {
         setLoadingPdf(true);
         setPdfPages([]);
 
         try {
-            // Fetch PDF as blob to avoid CORS issues
+            // Fetch PDF as blob
             const response = await fetch(url);
             const blob = await response.blob();
             const arrayBuffer = await blob.arrayBuffer();
 
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            const pages = [];
-
-            // Use higher scale for better quality on desktop
             const scale = window.innerWidth > 768 ? 2.0 : 1.5;
 
+            // Render pages one by one
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
                 const viewport = page.getViewport({ scale });
 
-                // Create canvas
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
 
-                // Render page
                 await page.render({
                     canvasContext: context,
                     viewport: viewport
                 }).promise;
 
-                // Convert canvas to image
-                const imageData = canvas.toDataURL('image/png');
-                pages.push({ pageNum, imageData, width: viewport.width, height: viewport.height });
-            }
+                const imageData = canvas.toDataURL('image/jpeg', 0.8); // Use JPEG with 0.8 quality for faster processing and smaller memory footprint
 
-            setPdfPages(pages);
+                setPdfPages(prev => [...prev, {
+                    pageNum,
+                    imageData,
+                    width: viewport.width,
+                    height: viewport.height
+                }]);
+
+                // Hide loader after first page is ready so user can start reading immediately
+                if (pageNum === 1) {
+                    setLoadingPdf(false);
+                }
+            }
         } catch (error) {
             console.error('Error loading PDF:', error);
-            console.error('Error details:', error.message);
-        } finally {
-            setLoadingPdf(false);
+            setLoadingPdf(false); // Ensure loader is turned off on error
         }
     };
 

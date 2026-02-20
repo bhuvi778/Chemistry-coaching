@@ -50,7 +50,7 @@ const createChapter = async (req, res) => {
     const chapter = new FlashCardChapter(req.body);
     try {
         const newChapter = await chapter.save();
-        clearCache('flashCardChapters');
+        clearCache('flashcards'); // Match the cache key from app.js route
         res.status(201).json(newChapter);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -62,7 +62,7 @@ const updateChapter = async (req, res) => {
     try {
         const chapter = await FlashCardChapter.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!chapter) return res.status(404).json({ message: 'Chapter not found' });
-        clearCache('flashCardChapters');
+        clearCache('flashcards');
         res.json(chapter);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -79,7 +79,7 @@ const deleteChapter = async (req, res) => {
         await FlashCardTopic.deleteMany({ chapterId: req.params.id });
         await FlashCard.deleteMany({ chapterId: req.params.id });
 
-        clearCache('flashCardChapters');
+        clearCache('flashcards');
         res.json({ message: 'Chapter and all related content deleted' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -116,7 +116,7 @@ const createTopic = async (req, res) => {
     const topic = new FlashCardTopic(req.body);
     try {
         const newTopic = await topic.save();
-        clearCache('flashCardTopics');
+        clearCache('flashcards');
         res.status(201).json(newTopic);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -128,7 +128,7 @@ const updateTopic = async (req, res) => {
     try {
         const topic = await FlashCardTopic.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!topic) return res.status(404).json({ message: 'Topic not found' });
-        clearCache('flashCardTopics');
+        clearCache('flashcards');
         res.json(topic);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -144,7 +144,7 @@ const deleteTopic = async (req, res) => {
         // Delete all cards in this topic
         await FlashCard.deleteMany({ topicId: req.params.id });
 
-        clearCache('flashCardTopics');
+        clearCache('flashcards');
         res.json({ message: 'Topic and all related cards deleted' });
     } catch (error) {
         res.status(500).json({ message: error.message });

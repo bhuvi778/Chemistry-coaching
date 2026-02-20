@@ -68,6 +68,9 @@ export const DataProvider = ({ children }) => {
       try {
         // Add cache-busting timestamp to force fresh data
         const cacheBuster = `?_t=${Date.now()}`;
+        
+        // Get current admin username for permissions
+        const adminUsername = localStorage.getItem('admin_username') || 'admin';
 
         // Fetch all data in parallel with timeout
         const [coursesData, videosData, audioBooksResponse, studyMaterialsData, chemSnapsData, magazinesData, scoreMatchBatchesData, freeQuizzesData, enquiriesData, contactsData] = await Promise.all([
@@ -88,8 +91,8 @@ export const DataProvider = ({ children }) => {
           fetchWithTimeout(`${API_URL}/magazines${cacheBuster}`).then(r => r.json()).catch(() => []),
           fetchWithTimeout(`${API_URL}/score-match-batches${cacheBuster}`).then(r => r.json()).catch(() => []),
           fetchWithTimeout(`${API_URL}/free-quizzes${cacheBuster}`).then(r => r.json()).catch(() => []),
-          isAdmin ? fetchWithTimeout(`${API_URL}/enquiries${cacheBuster}`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
-          isAdmin ? fetchWithTimeout(`${API_URL}/contacts${cacheBuster}`).then(r => r.json()).catch(() => []) : Promise.resolve([])
+          isAdmin ? fetchWithTimeout(`${API_URL}/enquiries?username=${encodeURIComponent(adminUsername)}&_t=${Date.now()}`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
+          isAdmin ? fetchWithTimeout(`${API_URL}/contacts?username=${encodeURIComponent(adminUsername)}&_t=${Date.now()}`).then(r => r.json()).catch(() => []) : Promise.resolve([])
         ]);
 
         // Ensure array helper

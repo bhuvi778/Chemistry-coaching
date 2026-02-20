@@ -1,0 +1,24 @@
+npm warn config init.module Use `--init-module` instead.
+
+> reaction-lab@0.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+
+/assets/index-B4D-lu13.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+transforming...
+✓ 2 modules transformed.
+x Build failed in 64ms
+error during build:
+[vite]: Rollup failed to resolve import "/assets/index-CReGrx2B-1769454571304.js" from "/www/wwwroot/reaction-lab/index.html".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+    at viteWarn (file:///www/wwwroot/reaction-lab/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65855:17)
+    at onwarn (file:///www/wwwroot/reaction-lab/node_modules/@vitejs/plugin-react/dist/index.js:90:7)
+    at onRollupWarning (file:///www/wwwroot/reaction-lab/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65885:5)
+    at onwarn (file:///www/wwwroot/reaction-lab/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65550:7)
+    at file:///www/wwwroot/reaction-lab/node_modules/rollup/dist/es/shared/node-entry.js:20975:13
+    at Object.logger [as onLog] (file:///www/wwwroot/reaction-lab/node_modules/rollup/dist/es/shared/node-entry.js:22848:9)
+    at ModuleLoader.handleInvalidResolvedId (file:///www/wwwroot/reaction-lab/node_modules/rollup/dist/es/shared/node-entry.js:21592:26)
+    at file:///www/wwwroot/reaction-lab/node_modules/rollup/dist/es/shared/node-entry.js:21550:26

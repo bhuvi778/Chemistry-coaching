@@ -147,7 +147,10 @@ const PracticeTest = () => {
                                 Marks: {currentQ.marks} | Negative: {currentQ.negativeMarks}
                             </span>
                         </div>
-                        <p className="text-white text-lg leading-relaxed">{currentQ.question}</p>
+                        <div
+                            className="text-white text-lg leading-relaxed ql-editor-content"
+                            dangerouslySetInnerHTML={{ __html: currentQ.question }}
+                        />
                     </div>
 
                     {/* Options */}
@@ -163,12 +166,15 @@ const PracticeTest = () => {
                                         : 'bg-gray-800/50 border-2 border-gray-700 text-gray-300 hover:border-gray-600'
                                         }`}
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${isSelected ? 'bg-cyan-500 text-white' : 'bg-gray-700 text-gray-400'
+                                    <div className="flex items-start gap-3">
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 ${isSelected ? 'bg-cyan-500 text-white' : 'bg-gray-700 text-gray-400'
                                             }`}>
                                             {String.fromCharCode(65 + index)}
                                         </div>
-                                        <span>{option}</span>
+                                        <span
+                                            className="ql-editor-content flex-1"
+                                            dangerouslySetInnerHTML={{ __html: option }}
+                                        />
                                     </div>
                                 </button>
                             );

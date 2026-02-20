@@ -112,8 +112,8 @@ const PracticeTestResults = () => {
                                         </span>
                                         {wasAttempted ? (
                                             <span className={`px-3 py-1 rounded-full text-sm font-semibold ${isCorrect
-                                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                                    : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                                : 'bg-red-500/20 text-red-400 border border-red-500/30'
                                                 }`}>
                                                 {isCorrect ? '✓ Correct' : '✗ Incorrect'}
                                             </span>
@@ -129,7 +129,10 @@ const PracticeTestResults = () => {
                                 </div>
 
                                 {/* Question Text */}
-                                <p className="text-white text-lg mb-4">{question.question}</p>
+                                <div
+                                    className="text-white text-lg mb-4 ql-editor-content"
+                                    dangerouslySetInnerHTML={{ __html: question.question }}
+                                />
 
                                 {/* Options */}
                                 <div className="space-y-2 mb-4">
@@ -141,22 +144,25 @@ const PracticeTestResults = () => {
                                             <div
                                                 key={optIndex}
                                                 className={`p-4 rounded-lg border-2 ${isCorrectOption
-                                                        ? 'bg-green-500/10 border-green-500 text-green-400'
-                                                        : isSelectedOption
-                                                            ? 'bg-red-500/10 border-red-500 text-red-400'
-                                                            : 'bg-gray-800/50 border-gray-700 text-gray-400'
+                                                    ? 'bg-green-500/10 border-green-500 text-green-400'
+                                                    : isSelectedOption
+                                                        ? 'bg-red-500/10 border-red-500 text-red-400'
+                                                        : 'bg-gray-800/50 border-gray-700 text-gray-400'
                                                     }`}
                                             >
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${isCorrectOption
-                                                            ? 'bg-green-500 text-white'
-                                                            : isSelectedOption
-                                                                ? 'bg-red-500 text-white'
-                                                                : 'bg-gray-700 text-gray-400'
+                                                <div className="flex items-start gap-3">
+                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 ${isCorrectOption
+                                                        ? 'bg-green-500 text-white'
+                                                        : isSelectedOption
+                                                            ? 'bg-red-500 text-white'
+                                                            : 'bg-gray-700 text-gray-400'
                                                         }`}>
                                                         {String.fromCharCode(65 + optIndex)}
                                                     </div>
-                                                    <span className="flex-1">{option}</span>
+                                                    <span
+                                                        className="flex-1 ql-editor-content"
+                                                        dangerouslySetInnerHTML={{ __html: option }}
+                                                    />
                                                     {isCorrectOption && (
                                                         <i className="fas fa-check-circle text-green-400"></i>
                                                     )}
@@ -176,7 +182,10 @@ const PracticeTestResults = () => {
                                             <i className="fas fa-lightbulb text-blue-400 mt-1"></i>
                                             <div>
                                                 <div className="text-blue-400 font-semibold mb-1">Explanation:</div>
-                                                <p className="text-gray-300 text-sm">{question.explanation}</p>
+                                                <div
+                                                    className="text-gray-300 text-sm ql-editor-content"
+                                                    dangerouslySetInnerHTML={{ __html: question.explanation }}
+                                                />
                                             </div>
                                         </div>
                                     </div>

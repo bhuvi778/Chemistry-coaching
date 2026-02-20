@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Test - Working Demo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(90deg, #00d4ff, #9d00ff);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .tabs {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        .tab {
+            padding: 30px 40px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            color: white;
+            min-width: 250px;
+            text-align: center;
+        }
+        .tab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .tab.active {
+            box-shadow: 0 0 30px currentColor;
+        }
+        .tab-cyan { background: linear-gradient(135deg, #00d4ff, #0099cc); }
+        .tab-cyan.active { box-shadow: 0 0 30px #00d4ff; }
+        
+        .tab-pink { background: linear-gradient(135deg, #ff006e, #cc0055); }
+        .tab-pink.active { box-shadow: 0 0 30px #ff006e; }
+        
+        .tab-purple { background: linear-gradient(135deg, #9d00ff, #7700cc); }
+        .tab-purple.active { box-shadow: 0 0 30px #9d00ff; }
+        
+        .tab i { display: block; font-size: 40px; margin-bottom: 10px; }
+        .tab .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .content {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            color: white;
+            min-height: 300px;
+            display: none;
+        }
+        .content.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .content h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .card {
+            background: rgba(0,0,0,0.3);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .card p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        .success-msg {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #00ff88;
+            color: black;
+            padding: 20px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 5px 20px rgba(0,255,136,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-msg">✅ TABS ARE WORKING! If you see this page, your browser is fine!</div>
+    
+    <div class="container">
+        <div class="header">
+            📚 NCERT TOOLBOX - TAB DEMO 📚
+        </div>
+
+        <div class="tabs">
+            <button class="tab tab-cyan active" onclick="switchTab('line-by-line')">
+                <i class="fas fa-list-ol"></i>
+                <div>NCERT Line</div>
+                <div>by Line</div>
+                <div class="badge">6 Sections</div>
+            </button>
+
+            <button class="tab tab-pink" onclick="switchTab('questions')">
+                <i class="fas fa-question-circle"></i>
+                <div>NCERT</div>
+                <div>Questions</div>
+                <div class="badge">6 Sections</div>
+            </button>
+
+            <button class="tab tab-purple" onclick="switchTab('exemplars')">
+                <i class="fas fa-chart-bar"></i>
+                <div>NCERT</div>
+                <div>Exemplars</div>
+                <div class="badge">6 Sections</div>
+            </button>
+        </div>
+
+        <div id="content-line-by-line" class="content active">
+            <h2>NCERT Line by Line Questions</h2>
+            <p style="font-size: 18px; margin-bottom: 30px;">Deep dive into every line of NCERT with comprehensive questions organized by chapters and topics</p>
+            <div class="cards">
+                <div class="card">
+                    <h3>⚗️ Chemical Reactions</h3>
+                    <p>Chapter 1 • 45 Topics</p>
+                </div>
+                <div class="card">
+                    <h3>💧 Solutions</h3>
+                    <p>Chapter 2 • 38 Topics</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ Electrochemistry</h3>
+                    <p>Chapter 3 • 42 Topics</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="content-questions" class="content">
+            <h2>NCERT Questions</h2>
+            <p style="font-size: 18px; margin-bottom: 30px;">Complete NCERT back exercise questions with detailed solutions</p>
+            <div class="cards">
+                <div class="card">
+                    <h3>📖 Intext Questions</h3>
+                    <p>All Chapters • 180+ Questions</p>
+                </div>
+                <div class="card">
+                    <h3>📝 Exercise Questions</h3>
+                    <p>All Chapters • 250+ Questions</p>
+                </div>
+                <div class="card">
+                    <h3>✅ MCQ Based</h3>
+                    <p>Practice Set • 120+ Questions</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="content-exemplars" class="content">
+            <h2>NCERT Exemplars & Diagram Based</h2>
+            <p style="font-size: 18px; margin-bottom: 30px;">NCERT Exemplar problems and diagram-based questions for advanced practice</p>
+            <div class="cards">
+                <div class="card">
+                    <h3>⭐ Exemplar MCQs</h3>
+                    <p>All Chapters • 200+ Questions</p>
+                </div>
+                <div class="card">
+                    <h3>✏️ Exemplar SAQs</h3>
+                    <p>All Chapters • 140+ Questions</p>
+                </div>
+                <div class="card">
+                    <h3>📊 Diagram Based</h3>
+                    <p>All Chapters • 110+ Questions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            event.currentTarget.classList.add('active');
+            
+            // Show corresponding content
+            document.getElementById('content-' + tabId).classList.add('active');
+            
+            console.log('Tab switched to:', tabId);
+        }
+    </script>
+</body>
+</html>

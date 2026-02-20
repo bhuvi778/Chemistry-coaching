@@ -25,7 +25,10 @@ const flashCardChapterSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ['Physical', 'Organic', 'Inorganic'],
+        enum: {
+            values: ['Physical', 'Organic', 'Inorganic', ''],
+            message: '{VALUE} is not a valid category'
+        },
         trim: true
     },
     order: {

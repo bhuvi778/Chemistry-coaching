@@ -9,18 +9,23 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     copyPublicDir: true,
-    // Force unique hashes on every build
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        entryFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
-        chunkFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name.endsWith('.js')) {
-            return `assets/[name]-[hash]-${Date.now()}.js`;
-          }
-          return `assets/[name]-[hash].[ext]`;
-        }
+        manualChunks: undefined
       }
     }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
+  optimizeDeps: {
+    force: true
   }
 })

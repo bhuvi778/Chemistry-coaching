@@ -1,7 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const ManageFlashCards = () => {
+    // Refs for Quill editors
+    const questionQuillRef = useRef(null);
+    const answerQuillRef = useRef(null);
+
     const [chapters, setChapters] = useState([]);
     const [topics, setTopics] = useState([]);
     const [cards, setCards] = useState([]);
@@ -47,6 +53,41 @@ const ManageFlashCards = () => {
 
     const API_URL = import.meta.env.VITE_API_URL || 'https://ace2examz.com/api';
 
+    // Quill editor configuration
+    const quillModules = {
+        toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['link', 'formula'],
+            ['clean']
+        ],
+    };
+
+    // Handler to clear selection after paste
+    const handleQuillChange = (content, delta, source, editor, field) => {
+        // Update the form state
+        setCardForm({ ...cardForm, [field]: content });
+
+        // Clear selection after a short delay to allow paste to complete
+        setTimeout(() => {
+            const quillRef = field === 'question' ? questionQuillRef : answerQuillRef;
+            if (quillRef.current) {
+                const quill = quillRef.current.getEditor();
+                if (quill) {
+                    // Get current selection
+                    const selection = quill.getSelection();
+                    if (selection) {
+                        // Move cursor to end of selection and collapse it
+                        quill.setSelection(selection.index + selection.length, 0);
+                    }
+                }
+            }
+        }, 10);
+    };
+
     useEffect(() => {
         fetchChapters();
     }, []);
@@ -56,7 +97,9 @@ const ManageFlashCards = () => {
     const fetchChapters = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${API_URL}/flashcards/chapters`);
+            // Add timestamp to bypass cache
+            const timestamp = Date.now();
+            const response = await axios.get(`${API_URL}/flashcards/chapters?_t=${timestamp}`);
             setChapters(response.data);
         } catch (error) {
             console.error('Error fetching chapters:', error);
@@ -68,7 +111,8 @@ const ManageFlashCards = () => {
 
     const fetchTopics = async (chapterId) => {
         try {
-            const response = await axios.get(`${API_URL}/flashcards/chapters/${chapterId}/topics`);
+            const timestamp = Date.now();
+            const response = await axios.get(`${API_URL}/flashcards/chapters/${chapterId}/topics?_t=${timestamp}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching topics:', error);
@@ -81,7 +125,8 @@ const ManageFlashCards = () => {
             console.log('=== FETCH CARDS DEBUG ===');
             console.log('Topic ID:', topicId);
             console.log('API URL:', API_URL);
-            const fullUrl = `${API_URL}/flashcards/topics/${topicId}/cards`;
+            const timestamp = Date.now();
+            const fullUrl = `${API_URL}/flashcards/topics/${topicId}/cards?_t=${timestamp}`;
             console.log('Full URL:', fullUrl);
 
             const response = await axios.get(fullUrl);
@@ -220,6 +265,8 @@ const ManageFlashCards = () => {
             // Refresh the expanded chapter
             const topicsData = await fetchTopics(topicForm.chapterId);
             setExpandedChapters({ ...expandedChapters, [topicForm.chapterId]: topicsData });
+            // Also refresh chapters to update topic count
+            await fetchChapters();
         } catch (error) {
             console.error('Error saving topic:', error);
             alert('Failed to save topic');
@@ -233,6 +280,8 @@ const ManageFlashCards = () => {
             alert('Topic deleted successfully!');
             const topicsData = await fetchTopics(chapterId);
             setExpandedChapters({ ...expandedChapters, [chapterId]: topicsData });
+            // Also refresh chapters to update topic count
+            await fetchChapters();
         } catch (error) {
             console.error('Error deleting topic:', error);
             alert('Failed to delete topic');
@@ -325,6 +374,13 @@ const ManageFlashCards = () => {
             // Immediately refresh cards list
             console.log('Immediately fetching cards for topic:', savedTopicId);
             await fetchCards(savedTopicId);
+
+            // Refresh topics to update card count in topic list
+            const topicsData = await fetchTopics(savedChapterId);
+            setExpandedChapters({ ...expandedChapters, [savedChapterId]: topicsData });
+
+            // Refresh chapters to update card count in chapter list
+            await fetchChapters();
         } catch (error) {
             console.error('Error saving card:', error);
             console.error('Error details:', error.response?.data);
@@ -338,6 +394,13 @@ const ManageFlashCards = () => {
             await axios.delete(`${API_URL}/flashcards/cards/${cardId}`);
             alert('Card deleted successfully!');
             await fetchCards(cardForm.topicId);
+
+            // Refresh topics to update card count in topic list
+            const topicsData = await fetchTopics(cardForm.chapterId);
+            setExpandedChapters({ ...expandedChapters, [cardForm.chapterId]: topicsData });
+
+            // Refresh chapters to update card count in chapter list
+            await fetchChapters();
         } catch (error) {
             console.error('Error deleting card:', error);
             alert('Failed to delete card');
@@ -749,26 +812,32 @@ const ManageFlashCards = () => {
                                 <form onSubmit={handleCardSubmit} className="space-y-4">
                                     <div>
                                         <label className="block text-gray-300 mb-2 font-semibold">Question *</label>
-                                        <textarea
-                                            value={cardForm.question}
-                                            onChange={(e) => setCardForm({ ...cardForm, question: e.target.value })}
-                                            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
-                                            rows="4"
-                                            placeholder="Enter the question..."
-                                            required
-                                        />
+                                        <div className="bg-white rounded-lg">
+                                            <ReactQuill
+                                                ref={questionQuillRef}
+                                                theme="snow"
+                                                value={cardForm.question}
+                                                onChange={(content, delta, source, editor) => handleQuillChange(content, delta, source, editor, 'question')}
+                                                modules={quillModules}
+                                                style={{ height: '200px', marginBottom: '42px' }}
+                                                placeholder="Enter the question..."
+                                            />
+                                        </div>
                                     </div>
 
                                     <div>
                                         <label className="block text-gray-300 mb-2 font-semibold">Answer *</label>
-                                        <textarea
-                                            value={cardForm.answer}
-                                            onChange={(e) => setCardForm({ ...cardForm, answer: e.target.value })}
-                                            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
-                                            rows="4"
-                                            placeholder="Enter the answer..."
-                                            required
-                                        />
+                                        <div className="bg-white rounded-lg">
+                                            <ReactQuill
+                                                ref={answerQuillRef}
+                                                theme="snow"
+                                                value={cardForm.answer}
+                                                onChange={(content, delta, source, editor) => handleQuillChange(content, delta, source, editor, 'answer')}
+                                                modules={quillModules}
+                                                style={{ height: '200px', marginBottom: '42px' }}
+                                                placeholder="Enter the answer..."
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
@@ -854,11 +923,17 @@ const ManageFlashCards = () => {
                                                 </div>
                                                 <div className="mb-2">
                                                     <div className="text-xs text-purple-400 mb-1 font-semibold">Q:</div>
-                                                    <p className="text-white text-sm">{card.question}</p>
+                                                    <div
+                                                        className="text-white text-sm prose prose-sm max-w-none prose-invert"
+                                                        dangerouslySetInnerHTML={{ __html: card.question }}
+                                                    />
                                                 </div>
                                                 <div className="mb-3">
                                                     <div className="text-xs text-cyan-400 mb-1 font-semibold">A:</div>
-                                                    <p className="text-gray-300 text-sm">{card.answer}</p>
+                                                    <div
+                                                        className="text-gray-300 text-sm prose prose-sm max-w-none prose-invert"
+                                                        dangerouslySetInnerHTML={{ __html: card.answer }}
+                                                    />
                                                 </div>
                                                 {card.tags && card.tags.length > 0 && (
                                                     <div className="mb-3 flex flex-wrap gap-1">
@@ -894,6 +969,98 @@ const ManageFlashCards = () => {
                     </div>
                 </div>
             )}
+
+            {/* Custom Quill Editor Styling */}
+            <style jsx global>{`
+                /* Quill Editor Dark Theme Customization */
+                .ql-toolbar.ql-snow {
+                    background: #1f2937;
+                    border: 1px solid #374151;
+                    border-radius: 8px 8px 0 0;
+                }
+                
+                .ql-container.ql-snow {
+                    background: #111827;
+                    border: 1px solid #374151;
+                    border-radius: 0 0 8px 8px;
+                    color: #fff;
+                }
+                
+                .ql-editor {
+                    color: #fff;
+                    min-height: 200px;
+                }
+                
+                .ql-editor.ql-blank::before {
+                    color: #6b7280;
+                    font-style: normal;
+                }
+                
+                /* Toolbar buttons */
+                .ql-snow .ql-stroke {
+                    stroke: #9ca3af;
+                }
+                
+                .ql-snow .ql-fill {
+                    fill: #9ca3af;
+                }
+                
+                .ql-snow .ql-picker-label {
+                    color: #9ca3af;
+                }
+                
+                .ql-snow.ql-toolbar button:hover .ql-stroke,
+                .ql-snow .ql-toolbar button:hover .ql-stroke,
+                .ql-snow.ql-toolbar button:focus .ql-stroke,
+                .ql-snow .ql-toolbar button:focus .ql-stroke,
+                .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+                .ql-snow .ql-toolbar button.ql-active .ql-stroke {
+                    stroke: #06b6d4;
+                }
+                
+                .ql-snow.ql-toolbar button:hover .ql-fill,
+                .ql-snow .ql-toolbar button:hover .ql-fill,
+                .ql-snow.ql-toolbar button:focus .ql-fill,
+                .ql-snow .ql-toolbar button:focus .ql-fill,
+                .ql-snow.ql-toolbar button.ql-active .ql-fill,
+                .ql-snow .ql-toolbar button.ql-active .ql-fill {
+                    fill: #06b6d4;
+                }
+                
+                .ql-snow.ql-toolbar button:hover,
+                .ql-snow .ql-toolbar button:hover,
+                .ql-snow.ql-toolbar button:focus,
+                .ql-snow .ql-toolbar button:focus,
+                .ql-snow.ql-toolbar button.ql-active,
+                .ql-snow .ql-toolbar button.ql-active {
+                    background: #374151;
+                }
+                
+                /* Dropdown menus */
+                .ql-snow .ql-picker-options {
+                    background: #1f2937;
+                    border: 1px solid #374151;
+                }
+                
+                .ql-snow .ql-picker-item {
+                    color: #9ca3af;
+                }
+                
+                .ql-snow .ql-picker-item:hover {
+                    background: #374151;
+                    color: #06b6d4;
+                }
+                
+                /* Remove white background wrapper */
+                .bg-white.rounded-lg {
+                    background: transparent !important;
+                }
+                
+                /* Ensure proper spacing */
+                .ql-container {
+                    font-family: inherit;
+                }
+            `}</style>
         </div>
     );
 };

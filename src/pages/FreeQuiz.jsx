@@ -32,6 +32,30 @@ const FreeQuiz = () => {
         return examMatch && subjectMatch && chapterMatch && quizTypeMatch;
     });
 
+    // Debug logging (can be removed after testing)
+    useEffect(() => {
+        console.log('🔍 Free Quiz Filter Debug:', {
+            totalQuizzes: safeQuizzes.length,
+            filteredQuizzes: filteredQuizzes.length,
+            filters: {
+                exam: selectedExam,
+                subject: selectedSubject,
+                chapter: selectedChapter,
+                quizType: selectedQuizType
+            },
+            quizCategories: safeQuizzes.map(q => ({
+                title: q.title,
+                category: q.quizCategory,
+                hasCategory: !!q.quizCategory
+            }))
+        });
+
+        // Log first quiz details for debugging
+        if (safeQuizzes.length > 0) {
+            console.log('📝 First Quiz Details:', safeQuizzes[0]);
+        }
+    }, [selectedExam, selectedSubject, selectedChapter, selectedQuizType, safeQuizzes, filteredQuizzes]);
+
     // Pagination Logic - 6 items per page (2 rows × 3 columns)
     const itemsPerPage = 6;
     const totalPages = Math.ceil(filteredQuizzes.length / itemsPerPage);
@@ -210,10 +234,19 @@ const FreeQuiz = () => {
                             {currentQuizzes.map(quiz => (
                                 <div key={quiz._id} className="glass-panel group hover:border-cyan-500/50 transition-all duration-300 rounded-xl overflow-hidden relative">
                                     <div className="p-6">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <span className="px-3 py-1 text-xs font-bold rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-                                                {quiz.examType}
-                                            </span>
+                                        <div className="flex justify-between items-start mb-4 flex-wrap gap-2">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <span className="px-3 py-1 text-xs font-bold rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                                                    {quiz.examType}
+                                                </span>
+                                                <span className={`px-3 py-1 text-xs font-bold rounded-full border ${(quiz.quizCategory || 'Quiz') === 'Quiz' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
+                                                        (quiz.quizCategory || 'Quiz') === 'Mock Test' ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' :
+                                                            (quiz.quizCategory || 'Quiz') === 'PYPs' ? 'bg-pink-500/20 text-pink-400 border-pink-500/30' :
+                                                                'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                                                    }`}>
+                                                    {quiz.quizCategory || 'Quiz'}
+                                                </span>
+                                            </div>
                                             <span className={`px-3 py-1 text-xs font-bold rounded-full border ${quiz.difficulty === 'Easy' ? 'bg-green-500/10 text-green-400 border-green-500/30' :
                                                 quiz.difficulty === 'Medium' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' :
                                                     'bg-red-500/10 text-red-400 border-red-500/30'

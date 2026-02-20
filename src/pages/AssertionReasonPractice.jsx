@@ -163,13 +163,21 @@ const AssertionReasonPractice = () => {
             const isCorrect = answer === currentQuestion.correctAnswer;
 
             if (!isCorrect) {
+                // Wrong answer - show feedback
                 setShowConceptCard(true);
                 return;
             }
 
-            // If correct: Show success card with quality rating
+            // If correct: Update score and advance to next question
             setScore(prev => ({ ...prev, correct: prev.correct + 1 }));
-            setShowConceptCard(true); // Show feedback card even for correct answers
+
+            // Save progress with quality 5 (easy) for correct answers
+            saveProgress(5);
+
+            // Advance to next question after a short delay
+            setTimeout(() => {
+                advanceToNext();
+            }, 600);
         }
     };
 

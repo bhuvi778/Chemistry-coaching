@@ -442,13 +442,13 @@ const ManageAssertionReason = () => {
                                                                     <div className="p-3 rounded bg-blue-500/10 border border-blue-500/30">
                                                                         <div className="flex items-start gap-2">
                                                                             <span className="text-blue-400 font-bold">A:</span>
-                                                                            <p className="text-white text-sm">{question.assertion}</p>
+                                                                            <div className="text-white text-sm prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: question.assertion }} />
                                                                         </div>
                                                                     </div>
                                                                     <div className="p-3 rounded bg-purple-500/10 border border-purple-500/30">
                                                                         <div className="flex items-start gap-2">
                                                                             <span className="text-purple-400 font-bold">R:</span>
-                                                                            <p className="text-white text-sm">{question.reason}</p>
+                                                                            <div className="text-white text-sm prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: question.reason }} />
                                                                         </div>
                                                                     </div>
                                                                     <div className="flex gap-2 text-xs">

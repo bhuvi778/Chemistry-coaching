@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import AssertionReasonFAQ from '../components/AssertionReasonFAQ';
 
 const AssertionReason = () => {
     const navigate = useNavigate();
@@ -259,6 +260,9 @@ const AssertionReason = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* FAQ Section */}
+                <AssertionReasonFAQ />
             </div>
         </div>
     );

@@ -12,7 +12,7 @@ const Blogs = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-    const categories = ['All', 'JEE', 'NEET', 'Boards', 'Study Tips', 'Career Guidance', 'Chemistry', 'General'];
+    const categories = ['All', 'JEE', 'NEET', 'PSTET', 'Boards', 'Study Tips', 'Career Guidance', 'Chemistry', 'General'];
 
     useEffect(() => {
         fetchBlogs();
@@ -23,7 +23,8 @@ const Blogs = () => {
             setLoading(true);
             const params = {
                 page: currentPage,
-                limit: 12
+                limit: 9, // 3 rows × 3 columns
+                _: Date.now() // Cache-busting parameter
             };
 
             if (selectedCategory !== 'All') {
@@ -65,7 +66,7 @@ const Blogs = () => {
                 {/* Header Section */}
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-                        Chemistry Learning Blog
+                        Chemistry Learning Blogs
                     </h1>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
                         Expert insights, study tips, and career guidance for JEE, NEET, and Board exam aspirants
@@ -102,8 +103,8 @@ const Blogs = () => {
                                     setCurrentPage(1);
                                 }}
                                 className={`px-6 py-2.5 rounded-lg font-medium transition-all ${selectedCategory === category
-                                        ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg shadow-cyan-500/30'
-                                        : 'bg-gray-800/50 text-gray-300 border border-gray-700 hover:border-cyan-500 hover:text-cyan-400'
+                                    ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg shadow-cyan-500/30'
+                                    : 'bg-gray-800/50 text-gray-300 border border-gray-700 hover:border-cyan-500 hover:text-cyan-400'
                                     }`}
                             >
                                 {category}
@@ -139,6 +140,9 @@ const Blogs = () => {
                                                 src={blog.featuredImage}
                                                 alt={blog.title}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                }}
                                             />
                                             <div className="absolute top-3 left-3">
                                                 <span className="px-3 py-1 bg-purple-600 text-white text-xs font-semibold rounded-full">
@@ -207,8 +211,8 @@ const Blogs = () => {
                                             key={index + 1}
                                             onClick={() => setCurrentPage(index + 1)}
                                             className={`px-4 py-2 rounded-lg font-medium transition ${currentPage === index + 1
-                                                    ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white'
-                                                    : 'bg-gray-800 border border-gray-700 text-gray-300 hover:border-cyan-500'
+                                                ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white'
+                                                : 'bg-gray-800 border border-gray-700 text-gray-300 hover:border-cyan-500'
                                                 }`}
                                         >
                                             {index + 1}

@@ -1,4 +1,5 @@
 const Blog = require('../models/Blog');
+const { clearCache } = require('../middleware/cache');
 
 // Helper function to generate slug from title
 const generateSlug = (title) => {
@@ -156,6 +157,10 @@ exports.createBlog = async (req, res) => {
         const blog = new Blog(blogData);
         await blog.save();
 
+        // Clear blog cache to ensure fresh data
+        clearCache('blogs');
+        console.log('✅ Blog cache cleared after creation');
+
         res.status(201).json({ message: 'Blog created successfully', blog });
     } catch (error) {
         console.error('Error creating blog:', error);
@@ -193,6 +198,10 @@ exports.updateBlog = async (req, res) => {
             return res.status(404).json({ message: 'Blog not found' });
         }
 
+        // Clear blog cache to ensure fresh data
+        clearCache('blogs');
+        console.log('✅ Blog cache cleared after update');
+
         res.json({ message: 'Blog updated successfully', blog });
     } catch (error) {
         console.error('Error updating blog:', error);
@@ -205,15 +214,27 @@ exports.deleteBlog = async (req, res) => {
     try {
         const { id } = req.params;
 
+        console.log('🗑️ [DELETE BLOG] Attempting to delete blog with ID:', id);
+
         const blog = await Blog.findByIdAndDelete(id);
 
         if (!blog) {
+            console.log('❌ [DELETE BLOG] Blog not found with ID:', id);
             return res.status(404).json({ message: 'Blog not found' });
         }
 
-        res.json({ message: 'Blog deleted successfully' });
+        console.log('✅ [DELETE BLOG] Successfully deleted blog:', {
+            id: blog._id,
+            title: blog.title
+        });
+
+        // Clear blog cache to ensure fresh data
+        clearCache('blogs');
+        console.log('✅ Blog cache cleared after deletion');
+
+        res.json({ message: 'Blog deleted successfully', deletedBlog: { id: blog._id, title: blog.title } });
     } catch (error) {
-        console.error('Error deleting blog:', error);
+        console.error('❌ [DELETE BLOG] Error deleting blog:', error);
         res.status(500).json({ message: 'Error deleting blog', error: error.message });
     }
 };
@@ -230,6 +251,10 @@ exports.togglePublishStatus = async (req, res) => {
 
         blog.isPublished = !blog.isPublished;
         await blog.save();
+
+        // Clear blog cache to ensure fresh data
+        clearCache('blogs');
+        console.log('✅ Blog cache cleared after publish status toggle');
 
         res.json({ message: 'Blog publish status updated', blog });
     } catch (error) {
@@ -264,5 +289,29 @@ exports.getBlogStats = async (req, res) => {
     } catch (error) {
         console.error('Error fetching blog stats:', error);
         res.status(500).json({ message: 'Error fetching statistics', error: error.message });
+    }
+};
+
+// Increment share count
+exports.incrementShareCount = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const blog = await Blog.findByIdAndUpdate(
+            id,
+            { $inc: { shareCount: 1 } },
+            { new: true }
+        );
+
+        if (!blog) {
+            return res.status(404).json({ message: 'Blog not found' });
+        }
+
+        console.log('✅ [SHARE BLOG] Share count incremented for:', blog.title);
+
+        res.json({ message: 'Share count updated', shareCount: blog.shareCount });
+    } catch (error) {
+        console.error('❌ [SHARE BLOG] Error:', error);
+        res.status(500).json({ message: 'Error updating share count', error: error.message });
     }
 };

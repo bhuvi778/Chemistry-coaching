@@ -12,6 +12,8 @@ const Navbar = () => {
   const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
   const [isMobileStudyMaterialOpen, setIsMobileStudyMaterialOpen] = useState(false);
   const [isMobileMoreOpen, setIsMobileMoreOpen] = useState(false);
+  const [isPrepArenaOpen, setIsPrepArenaOpen] = useState(false);
+  const [isMobilePrepArenaOpen, setIsMobilePrepArenaOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
 
@@ -51,7 +53,7 @@ const Navbar = () => {
                   onMouseEnter={() => setIsCoursesOpen(true)}
                   onMouseLeave={() => setIsCoursesOpen(false)}
                 >
-                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/courses') || location.pathname.includes('/score-max-batches')
+                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/courses') || location.pathname.includes('/score-max-batches') || location.pathname.includes('/uae-courses') || location.pathname.includes('/ncert-toolbox') || location.pathname.includes('/dpps')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
                     <span className="flex items-center gap-1.5">
@@ -61,7 +63,7 @@ const Navbar = () => {
                     </span>
                   </button>
 
-                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isCoursesOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg transition-all duration-300 ${isCoursesOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                     }`}>
                     <Link
                       to="/courses"
@@ -87,6 +89,16 @@ const Navbar = () => {
                       <i className="fas fa-bullseye text-green-500"></i>
                       <span>My Daily Target</span>
                     </Link>
+                    <Link
+                      to="/uae-courses"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsCoursesOpen(false)}
+                    >
+                      <i className="fas fa-globe text-purple-500"></i>
+                      <span>UAE Courses</span>
+                    </Link>
+
+
                   </div>
                 </div>
 
@@ -196,12 +208,77 @@ const Navbar = () => {
                   </div>
                 </div>
 
-                <Link to="/book-meeting" className={getNavLinkClass('/book-meeting')}>
-                  <span className="flex items-center gap-1.5">
-                    <i className="fas fa-calendar-alt text-green-500"></i>
-                    Book Your Meet
-                  </span>
-                </Link>
+                {/* Prep Arena Dropdown */}
+                <div
+                  className="relative group"
+                  onMouseEnter={() => setIsPrepArenaOpen(true)}
+                  onMouseLeave={() => setIsPrepArenaOpen(false)}
+                >
+                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/ncert-toolbox') ||
+                    location.pathname.includes('/dpps') ||
+                    location.pathname.includes('/book-meeting') ||
+                    location.pathname.includes('/self-learn')
+                    ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+                    }`}>
+                    <span className="flex items-center gap-1.5">
+                      <i className="fas fa-dumbbell text-red-500"></i>
+                      Prep Arena
+                      <i className={`fas fa-chevron-down text-xs transition-transform ${isPrepArenaOpen ? 'rotate-180' : ''}`}></i>
+                    </span>
+                  </button>
+
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isPrepArenaOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                    }`}>
+                    <Link
+                      to="/ncert-toolbox"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsPrepArenaOpen(false)}
+                    >
+                      <i className="fas fa-tools text-yellow-500"></i>
+                      <span>NCERT Toolbox</span>
+                    </Link>
+                    <Link
+                      to="/dpps"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsPrepArenaOpen(false)}
+                    >
+                      <i className="fas fa-clipboard-list text-blue-500"></i>
+                      <span>DPPs</span>
+                    </Link>
+                    <Link
+                      to="/pyq"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsPrepArenaOpen(false)}
+                    >
+                      <i className="fas fa-layer-group text-indigo-500"></i>
+                      <span>Chapter wise PYQs</span>
+                    </Link>
+                    <Link
+                      to="/infinite-practice"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsPrepArenaOpen(false)}
+                    >
+                      <i className="fas fa-infinity text-pink-500"></i>
+                      <span>Infinite Practice</span>
+                    </Link>
+                    <Link
+                      to="/self-learn"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsPrepArenaOpen(false)}
+                    >
+                      <i className="fas fa-graduation-cap text-orange-500"></i>
+                      <span>Self Learn</span>
+                    </Link>
+                    <Link
+                      to="/book-meeting"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsPrepArenaOpen(false)}
+                    >
+                      <i className="fas fa-calendar-alt text-green-500"></i>
+                      <span>Book Your Meet</span>
+                    </Link>
+                  </div>
+                </div>
                 <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
                   <span className="flex items-center gap-1.5">
                     <i className="fas fa-robot text-cyan-400"></i>
@@ -241,7 +318,7 @@ const Navbar = () => {
                       onClick={() => setIsMoreOpen(false)}
                     >
                       <i className="fas fa-blog text-blue-500"></i>
-                      <span>Blog</span>
+                      <span>Blogs</span>
                     </Link>
                     <a
                       href="https://stories.ace2examz.com"
@@ -410,6 +487,11 @@ const Navbar = () => {
                     <Link to="/my-daily-target" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-bullseye text-green-500 mr-2"></i>My Daily Target
                     </Link>
+                    <Link to="/uae-courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-globe text-purple-500 mr-2"></i>UAE Courses
+                    </Link>
+
+
                   </div>
                 )}
               </div>
@@ -463,9 +545,40 @@ const Navbar = () => {
               </div>
 
               {/* Standalone Links */}
-              <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700 rounded-md transition">
-                <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book Your Meet
-              </Link>
+              {/* Prep Arena Mobile Dropdown */}
+              <div className="border-b border-gray-700 pb-2">
+                <button
+                  onClick={() => setIsMobilePrepArenaOpen(!isMobilePrepArenaOpen)}
+                  className="w-full flex items-center justify-between px-3 py-2 text-white hover:bg-gray-700 rounded-md transition"
+                >
+                  <span>
+                    <i className="fas fa-dumbbell mr-2"></i>Prep Arena
+                  </span>
+                  <i className={`fas fa-chevron-down text-xs transition-transform ${isMobilePrepArenaOpen ? 'rotate-180' : ''}`}></i>
+                </button>
+                {isMobilePrepArenaOpen && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    <Link to="/ncert-toolbox" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-tools text-yellow-500 mr-2"></i>NCERT Toolbox
+                    </Link>
+                    <Link to="/dpps" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-clipboard-list text-blue-500 mr-2"></i>DPPs
+                    </Link>
+                    <Link to="/pyq" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-layer-group text-indigo-500 mr-2"></i>Chapter wise PYQs
+                    </Link>
+                    <Link to="/infinite-practice" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-infinity text-pink-500 mr-2"></i>Infinite Practice
+                    </Link>
+                    <Link to="/self-learn" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-graduation-cap text-orange-500 mr-2"></i>Self Learn
+                    </Link>
+                    <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book Your Meet
+                    </Link>
+                  </div>
+                )}
+              </div>
               <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700 rounded-md transition">
                 <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask Prepiify
               </Link>
@@ -505,7 +618,7 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* Mobile Notification Panel - Only opens when bell is clicked */}
+        {/* Mobile Notification Panel */}
         {isNotificationOpen && (
           <div className="md:hidden fixed inset-0 bg-black/50 z-50" onClick={() => setIsNotificationOpen(false)}>
             <div className="absolute top-20 right-4 left-4 glass-panel rounded-lg border border-gray-700 shadow-xl" onClick={(e) => e.stopPropagation()}>
@@ -521,7 +634,6 @@ const Navbar = () => {
                 </div>
               </div>
               <div className="max-h-96 overflow-y-auto">
-                {/* Sample Notifications */}
                 <div className="p-4 border-b border-gray-700 hover:bg-cyan-500/10 cursor-pointer transition">
                   <div className="flex items-start gap-3">
                     <i className="fas fa-book text-cyan-400 mt-1"></i>

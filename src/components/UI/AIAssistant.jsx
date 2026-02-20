@@ -6,7 +6,7 @@ const AIAssistant = () => {
       <div className="glass-panel rounded-3xl p-8 md:p-12 border border-cyan-400/20 relative overflow-hidden">
         {/* Background Glow Effect */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-b from-purple-600/20 via-cyan-500/10 to-transparent blur-3xl -z-10"></div>
-        
+
         {/* Badge */}
         <div className="flex justify-center mb-6">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/30 backdrop-blur-sm">
@@ -65,17 +65,17 @@ const AIAssistant = () => {
             <i className="fas fa-bolt text-cyan-400 text-2xl mb-2 group-hover:scale-110 transition"></i>
             <p className="text-gray-300 text-sm font-medium">Course Info</p>
           </div>
-          
+
           <div className="text-center p-4 rounded-xl bg-gradient-to-br from-pink-900/30 to-transparent border border-pink-400/20 backdrop-blur-sm hover:border-pink-400/40 transition group">
             <i className="fas fa-chalkboard-teacher text-pink-400 text-2xl mb-2 group-hover:scale-110 transition"></i>
             <p className="text-gray-300 text-sm font-medium">Doubt Solving</p>
           </div>
-          
+
           <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-900/30 to-transparent border border-purple-400/20 backdrop-blur-sm hover:border-purple-400/40 transition group">
             <i className="fas fa-clock text-purple-400 text-2xl mb-2 group-hover:scale-110 transition"></i>
             <p className="text-gray-300 text-sm font-medium">24/7 Support</p>
           </div>
-          
+
           <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-900/30 to-transparent border border-yellow-400/20 backdrop-blur-sm hover:border-yellow-400/40 transition group">
             <i className="fas fa-info-circle text-yellow-400 text-2xl mb-2 group-hover:scale-110 transition"></i>
             <p className="text-gray-300 text-sm font-medium">Admission Help</p>

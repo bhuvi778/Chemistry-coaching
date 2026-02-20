@@ -77,7 +77,7 @@ const AllCourses = () => {
 
                 <div className="text-center mb-12">
                     <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        All Programs & Services
+                        All Courses
                     </h2>
                     <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
                         Choose from our comprehensive range of learning solutions tailored to your needs - from live classes to personalized mentorship.
@@ -154,9 +154,6 @@ const AllCourses = () => {
                             <option value="all">📚 All Programs</option>
                             <option value="live-batch">🎥 Live Batch</option>
                             <option value="recorded">▶️ Recorded Courses</option>
-                            <option value="1-1-tutoring">👥 1-1 Tutoring</option>
-                            <option value="mentorship">👨‍🏫 Mentorship</option>
-                            <option value="doubt-solver">❓ Doubt Solver</option>
                             <option value="test-series">📝 Test Series</option>
                             <option value="focus-test-series">🎯 Focus Test Series</option>
                         </select>
@@ -195,27 +192,6 @@ const AllCourses = () => {
                                 >
                                     <i className="fas fa-film text-xl w-6"></i>
                                     <span className="font-semibold">Recorded Courses</span>
-                                </button>
-                                <button
-                                    onClick={() => setActiveCategory('1-1-tutoring')}
-                                    className={getCategoryClass('1-1-tutoring')}
-                                >
-                                    <i className="fas fa-user-graduate text-xl w-6"></i>
-                                    <span className="font-semibold">1-1 Tutoring</span>
-                                </button>
-                                <button
-                                    onClick={() => setActiveCategory('mentorship')}
-                                    className={getCategoryClass('mentorship')}
-                                >
-                                    <i className="fas fa-user-tie text-xl w-6"></i>
-                                    <span className="font-semibold">Mentorship</span>
-                                </button>
-                                <button
-                                    onClick={() => setActiveCategory('doubt-solver')}
-                                    className={getCategoryClass('doubt-solver')}
-                                >
-                                    <i className="fas fa-hands-helping text-xl w-6"></i>
-                                    <span className="font-semibold">Doubt Solver</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('test-series')}

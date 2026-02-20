@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -19,6 +20,21 @@ const Crossword = require('./models/Crossword');
 const PuzzleSet = require('./models/PuzzleSet');
 const adminRoutes = require('./routes/adminRoutes');
 const flashCardRoutes = require('./routes/flashCardRoutes');
+const conceptNoteRoutes = require('./routes/conceptNoteRoutes');
+const ncertRoutes = require('./routes/ncertRoutes');
+const ntaAbhyasRoutes = require('./routes/ntaAbhyasRoutes');
+const dppsRoutes = require('./routes/dppsRoutes');
+const pyqRoutes = require('./routes/pyqRoutes');
+const infinitePracticeRoutes = require('./routes/infinitePracticeRoutes');
+const selfLearnRoutes = require('./routes/selfLearnRoutes');
+const chemSnapRoutes = require('./routes/chemSnapRoutes');
+const freeQuizRoutes = require('./routes/freeQuizRoutes');
+const scoreMatchBatchRoutes = require('./routes/scoreMatchBatchRoutes');
+const blogRoutes = require('./routes/blogRoutes');
+const commentRoutes = require('./routes/commentRoutes');
+const faqRoutes = require('./routes/faqRoutes');
+const examCountdownRoutes = require('./routes/examCountdownRoutes');
+const practiceTestRoutes = require('./routes/practiceTest');
 
 const app = express();
 
@@ -70,29 +86,7 @@ const clearCache = (pattern) => {
 
 // CORS configuration for production - Allow specific origins
 app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://localhost:5000',
-      'https://chemistry-coaching.vercel.app',
-      'https://www.chemistry-coaching.vercel.app',
-      'https://ace2examz.vercel.app',
-      'https://www.ace2examz.vercel.app',
-      'https://ace2examz.com',
-      'https://www.ace2examz.com',
-      'http://ace2examz.com',
-      'http://www.ace2examz.com',
-      'https://chemistry-coaching-git-main-bhupeshs-projects-f3c04cb2.vercel.app'
-    ];
-
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(null, true); // Allow all origins temporarily for debugging
-    }
-  },
+  origin: true, // Allow all origins for now to fix the specific issue reported
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -127,7 +121,7 @@ const upload = multer({
 // Serve uploaded files
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Upload Endpoint
+// Upload Endpoint - General
 app.post('/api/upload', upload.single('file'), (req, res) => {
   console.log('📤 Upload request received');
   if (!req.file) {
@@ -139,8 +133,30 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
   res.json({ fileUrl: fileUrl });
 });
 
+// PDF Upload Endpoint - Specific
+app.post('/api/upload/pdf', upload.single('pdf'), (req, res) => {
+  console.log('📄 PDF upload request received');
+  if (!req.file) {
+    console.log('❌ No PDF file in request');
+    return res.status(400).json({ message: 'No PDF file uploaded' });
+  }
+  
+  // Validate file type
+  if (req.file.mimetype !== 'application/pdf') {
+    console.log('❌ Invalid file type:', req.file.mimetype);
+    // Delete the uploaded file
+    fs.unlinkSync(req.file.path);
+    return res.status(400).json({ message: 'Only PDF files are allowed' });
+  }
+  
+  const pdfUrl = `/api/uploads/${req.file.filename}`;
+  console.log('✅ PDF uploaded:', req.file.filename, 'Size:', (req.file.size / (1024 * 1024)).toFixed(2), 'MB');
+  res.json({ url: pdfUrl, filename: req.file.filename });
+});
+
 // Connect to MongoDB - using local instance
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/test';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/chemistry_coaching';
+console.log('STARTING SERVER WITH CHEMISTRY_COACHING DB URI:', MONGODB_URI);
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -177,11 +193,40 @@ mongoose.connection.on('disconnected', () => {
   console.log('⚠️  MongoDB disconnected');
 });
 
-// Routes
 // Admin routes
 app.use('/api/admin', adminRoutes);
 // Flash Card routes
 app.use('/api/flashcards', flashCardRoutes);
+// Concept Notes routes
+app.use('/api/concept-notes', conceptNoteRoutes);
+// NCERT Toolbox routes
+app.use('/api/ncert', ncertRoutes);
+// NTA Abhyas routes
+app.use('/api/nta-abhyas', ntaAbhyasRoutes);
+// DPPS routes
+app.use('/api/dpps', dppsRoutes);
+// PYQ routes
+app.use('/api/pyq', pyqRoutes);
+// Infinite Practice routes
+app.use('/api/infinite-practice', infinitePracticeRoutes);
+// Self Learn routes
+app.use('/api/self-learn', cacheMiddleware('self-learn', 30 * 60 * 1000), selfLearnRoutes);
+// ChemSnaps routes
+app.use('/api/chemsnaps', chemSnapRoutes);
+// Free Quiz routes
+app.use('/api/free-quizzes', freeQuizRoutes);
+// Score Match Batch routes
+app.use('/api/score-match-batches', scoreMatchBatchRoutes);
+// Blog routes
+app.use('/api/blogs', blogRoutes);
+// Comment routes
+app.use('/api/comments', commentRoutes);
+// FAQ routes
+app.use('/api/faqs', faqRoutes);
+// Exam Countdown routes
+app.use('/api/exam-countdown', examCountdownRoutes);
+// Practice Test routes
+app.use('/api/practice-tests', practiceTestRoutes);
 
 // Courses
 app.get('/api/courses', cacheMiddleware('courses', 30 * 60 * 1000), async (req, res) => {
@@ -1397,5 +1442,6 @@ app.post('/api/send-whatsapp', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📍 API Base: http://localhost:${PORT}/api`);
 });

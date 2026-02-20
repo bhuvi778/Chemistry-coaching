@@ -30,7 +30,6 @@ const JoinCommunity = () => {
                             Join our vibrant community of chemistry students preparing for JEE, NEET, and other competitive exams.
                             Get instant doubt clearing, exclusive study materials, and guidance from experienced mentors.
                         </p>
-
                         {/* Benefits Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                             <div className="flex items-center gap-3 text-gray-300">
@@ -61,7 +60,7 @@ const JoinCommunity = () => {
 
                         {/* CTA Button */}
                         <a
-                            href="https://whatsapp.com/channel/0029Vb79CnNJJhzVMjDHFv0U"
+                            href="https://whatsapp.com/channel/0029Vb6vGgl7oQhVzPOMuL05"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold text-lg rounded-lg hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-all duration-300 transform hover:scale-105"

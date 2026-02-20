@@ -5,7 +5,7 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "What is the batch size at Ace2examz?",
+      question: "What is the batch size at Prepiify?",
       answer: "We maintain a maximum batch size of 25 students to ensure personalized attention and effective doubt clearing. This allows our faculty to focus on each student's individual learning needs."
     },
     {
@@ -17,8 +17,8 @@ const FAQ = () => {
       answer: "Our fees vary based on the course and batch type.For programs, fees range from ₹149 to ₹1,50,000 per year. We also offer flexible payment plans and scholarship opportunities for deserving students."
     },
     {
-      question: "Is Ace2examz AI free to use?",
-      answer: "Basic access to Ace2examz AI is free for all visitors. Enrolled students get premium access with unlimited questions, advanced explanations, and personalized study plans."
+      question: "Is Prepiify AI free to use?",
+      answer: "Basic access to Prepiify AI is free for all visitors. Enrolled students get premium access with unlimited questions, advanced explanations, and personalized study plans."
     },
     {
       question: "Do you offer online classes?",
@@ -49,7 +49,7 @@ const FAQ = () => {
           Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Questions</span>
         </h2>
         <p className="text-gray-400 text-lg">
-          Got questions? We've got answers! Find everything you need to know about Ace2examz.
+          Got questions? We've got answers! Find everything you need to know about Prepiify.
         </p>
       </div>
 
@@ -86,14 +86,14 @@ const FAQ = () => {
         <p className="text-gray-400 mb-6">Our counseling team is here to help you with any queries.</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="tel:+919876543210"
+            href="tel:+919115179935"
             className="px-6 py-3 bg-cyan-500 text-black font-bold rounded-lg hover:shadow-[0_0_20px_rgba(0,243,255,0.5)] transition inline-flex items-center justify-center"
           >
             <i className="fas fa-phone mr-2"></i>
             Call Now
           </a>
           <a
-            href="https://wa.me/919876543210?text=Hello%2C%20I%20want%20to%20know%20more%20about%20Reaction%20Lab%20courses"
+            href="https://wa.me/919115179935?text=Hello%2C%20I%20want%20to%20know%20more%20about%20Prepiify%20courses"
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:shadow-[0_0_20px_rgba(34,197,94,0.5)] transition inline-flex items-center justify-center"

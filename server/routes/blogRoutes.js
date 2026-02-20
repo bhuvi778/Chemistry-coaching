@@ -16,4 +16,8 @@ router.put('/admin/:id', blogController.updateBlog);
 router.delete('/admin/:id', blogController.deleteBlog);
 router.patch('/admin/:id/toggle-publish', blogController.togglePublishStatus);
 
+// Share endpoint
+router.patch('/:id/share', blogController.incrementShareCount);
+
+
 module.exports = router;

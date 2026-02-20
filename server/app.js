@@ -24,6 +24,7 @@ const examCountdownController = require('./controllers/examCountdownController')
 const conceptNoteController = require('./controllers/conceptNoteController');
 const flashCardController = require('./controllers/flashCardController');
 const practiceTestController = require('./controllers/practiceTestController');
+const globalCourseController = require('./controllers/globalCourseController');
 
 // Import routes
 const videoRoutes = require('./routes/videoRoutes');
@@ -47,7 +48,15 @@ const flashCardRoutes = require('./routes/flashCardRoutes');
 const assertionReasonRoutes = require('./routes/assertionReason');
 const practiceTestRoutes = require('./routes/practiceTest');
 const blogRoutes = require('./routes/blogRoutes');
+const commentRoutes = require('./routes/commentRoutes');
+const faqRoutes = require('./routes/faqRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const globalCourseRoutes = require('./routes/globalCourseRoutes');
+const ncertRoutes = require('./routes/ncertRoutes');
+const ntaAbhyasRoutes = require('./routes/ntaAbhyasRoutes');
+const dppsRoutes = require('./routes/dppsRoutes');
+const pyqRoutes = require('./routes/pyqRoutes');
+const selfLearnRoutes = require('./routes/selfLearnRoutes');
 
 const app = express();
 
@@ -105,7 +114,28 @@ const upload = multer({
 // Serve uploaded files
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Upload Endpoint
+// PDF Upload Endpoint - Specific (must come before general upload)
+app.post('/api/upload/pdf', upload.single('pdf'), (req, res) => {
+  console.log('📄 PDF upload request received');
+  if (!req.file) {
+    console.log('❌ No PDF file in request');
+    return res.status(400).json({ message: 'No PDF file uploaded' });
+  }
+  
+  // Validate file type
+  if (req.file.mimetype !== 'application/pdf') {
+    console.log('❌ Invalid file type:', req.file.mimetype);
+    // Delete the uploaded file
+    fs.unlinkSync(req.file.path);
+    return res.status(400).json({ message: 'Only PDF files are allowed' });
+  }
+  
+  const pdfUrl = `/api/uploads/${req.file.filename}`;
+  console.log('✅ PDF uploaded:', req.file.filename, 'Size:', (req.file.size / (1024 * 1024)).toFixed(2), 'MB');
+  res.json({ url: pdfUrl, filename: req.file.filename });
+});
+
+// Upload Endpoint - General
 app.post('/api/upload', upload.single('file'), (req, res) => {
   console.log('📤 Upload request received');
   if (!req.file) {
@@ -137,6 +167,7 @@ examCountdownController.setClearCacheFunction(clearCache);
 conceptNoteController.setClearCacheFunction(clearCache);
 flashCardController.setClearCacheFunction(clearCache);
 practiceTestController.setClearCacheFunction(clearCache);
+globalCourseController.setClearCacheFunction(clearCache);
 
 // API Routes with caching
 app.use('/api/admin', adminRoutes);
@@ -161,6 +192,14 @@ app.use('/api/flashcards', cacheMiddleware('flashcards', 30 * 60 * 1000), flashC
 app.use('/api/assertion-reason', assertionReasonRoutes);
 app.use('/api/practice-tests', cacheMiddleware('practice-tests', 30 * 60 * 1000), practiceTestRoutes);
 app.use('/api/blogs', cacheMiddleware('blogs', 30 * 60 * 1000), blogRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/faqs', cacheMiddleware('faqs', 30 * 60 * 1000), faqRoutes);
+app.use('/api/global-courses', cacheMiddleware('global-courses', 30 * 60 * 1000), globalCourseRoutes);
+app.use('/api/ncert', ncertRoutes);
+app.use('/api/nta-abhyas', ntaAbhyasRoutes);
+app.use('/api/dpps', dppsRoutes);
+app.use('/api/pyq', cacheMiddleware('pyq', 30 * 60 * 1000), pyqRoutes);
+app.use('/api/self-learn', cacheMiddleware('self-learn', 30 * 60 * 1000), selfLearnRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

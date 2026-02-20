@@ -258,6 +258,24 @@ const deleteTopic = async (req, res) => {
     }
 };
 
+// Get topic details with concepts (for frontend display)
+const getTopicWithConcepts = async (req, res) => {
+    try {
+        const { topicId } = req.params;
+        const topic = await ConceptTopic.findById(topicId).lean();
+
+        if (!topic) {
+            return res.status(404).json({ message: 'Topic not found' });
+        }
+
+        // Concepts are already embedded in the topic
+        res.json(topic);
+    } catch (error) {
+        console.error('Error fetching topic with concepts:', error);
+        res.status(500).json({ message: 'Error fetching topic details' });
+    }
+};
+
 module.exports = {
     getSubjects,
     getChaptersBySubject,
@@ -270,5 +288,6 @@ module.exports = {
     createTopic,
     updateTopic,
     deleteTopic,
+    getTopicWithConcepts,
     setClearCacheFunction
 };

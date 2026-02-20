@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const ManagePracticeTests = () => {
     const [tests, setTests] = useState([]);
     const [expandedTests, setExpandedTests] = useState({});
     const [loading, setLoading] = useState(false);
+
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const testsPerPage = 12;
 
     // Modals
     const [showTestModal, setShowTestModal] = useState(false);
@@ -39,6 +45,31 @@ const ManagePracticeTests = () => {
     const [selectedTest, setSelectedTest] = useState(null);
 
     const API_URL = import.meta.env.VITE_API_URL || 'https://ace2examz.com/api';
+
+    // ReactQuill modules configuration for rich text editor
+    const quillModules = {
+        toolbar: [
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'align': [] }],
+            ['link', 'image'],
+            ['clean']
+        ]
+    };
+
+    const quillFormats = [
+        'header', 'size',
+        'bold', 'italic', 'underline', 'strike',
+        'script',
+        'color', 'background',
+        'list', 'bullet',
+        'align',
+        'link', 'image'
+    ];
 
     useEffect(() => {
         fetchTests();
@@ -160,6 +191,27 @@ const ManagePracticeTests = () => {
         }
     };
 
+    const handleToggleActive = async (testId, currentStatus) => {
+        try {
+            const newStatus = !currentStatus;
+            await axios.put(`${API_URL}/practice-tests/admin/tests/${testId}`, {
+                isActive: newStatus
+            });
+
+            // Update local state immediately for better UX
+            setTests(prevTests =>
+                prevTests.map(test =>
+                    test._id === testId ? { ...test, isActive: newStatus } : test
+                )
+            );
+
+            alert(`Test ${newStatus ? 'activated' : 'deactivated'} successfully! ${newStatus ? 'It will now appear on the frontend.' : 'It is now hidden from the frontend.'}`);
+        } catch (error) {
+            console.error('Error toggling test status:', error);
+            alert('Failed to update test status');
+        }
+    };
+
     const resetTestForm = () => {
         setTestForm({
             title: '',
@@ -275,6 +327,17 @@ const ManagePracticeTests = () => {
         setQuestionForm({ ...questionForm, options: newOptions });
     };
 
+    // Pagination calculations
+    const indexOfLastTest = currentPage * testsPerPage;
+    const indexOfFirstTest = indexOfLastTest - testsPerPage;
+    const currentTests = tests.slice(indexOfFirstTest, indexOfLastTest);
+    const totalPages = Math.ceil(tests.length / testsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <div className="p-6">
             <div className="flex items-center justify-between mb-6">
@@ -309,113 +372,187 @@ const ManagePracticeTests = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="space-y-4">
-                        {tests.map((test) => (
-                            <div key={test._id} className="bg-gray-800/50 rounded-lg overflow-hidden">
-                                {/* Test Header */}
-                                <div className="p-4 flex items-center justify-between">
-                                    <div className="flex items-center gap-4 flex-1">
-                                        <button
-                                            onClick={() => toggleTest(test._id)}
-                                            className="text-gray-400 hover:text-cyan-400 transition"
-                                        >
-                                            <i className={`fas fa-chevron-${expandedTests[test._id] ? 'down' : 'right'} text-lg`}></i>
-                                        </button>
-                                        <div className="flex-1">
-                                            <h3 className="text-white font-semibold text-lg">{test.title}</h3>
-                                            <p className="text-gray-400 text-sm">{test.description}</p>
-                                            <div className="flex gap-4 mt-1 text-xs text-gray-500">
-                                                <span><i className="fas fa-question-circle mr-1"></i>{test.questionCount || 0} questions</span>
-                                                <span><i className="fas fa-clock mr-1"></i>{test.duration} min</span>
-                                                <span><i className="fas fa-play-circle mr-1"></i>Starts: {new Date(test.startDate).toLocaleString()}</span>
+                    <>
+                        <div className="space-y-4">
+                            {currentTests.map((test) => (
+                                <div key={test._id} className="bg-gray-800/50 rounded-lg overflow-hidden">
+                                    {/* Test Header */}
+                                    <div className="p-4 flex items-center justify-between">
+                                        <div className="flex items-center gap-4 flex-1">
+                                            <button
+                                                onClick={() => toggleTest(test._id)}
+                                                className="text-gray-400 hover:text-cyan-400 transition"
+                                            >
+                                                <i className={`fas fa-chevron-${expandedTests[test._id] ? 'down' : 'right'} text-lg`}></i>
+                                            </button>
+                                            <div className="flex-1">
+                                                <h3 className="text-white font-semibold text-lg">{test.title}</h3>
+                                                <p className="text-gray-400 text-sm">{test.description}</p>
+                                                <div className="flex gap-4 mt-1 text-xs text-gray-500">
+                                                    <span><i className="fas fa-question-circle mr-1"></i>{test.questionCount || 0} questions</span>
+                                                    <span><i className="fas fa-clock mr-1"></i>{test.duration} min</span>
+                                                    <span><i className="fas fa-play-circle mr-1"></i>Starts: {new Date(test.startDate).toLocaleString()}</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="flex gap-2 items-center">
+                                            {/* Active/Inactive Toggle */}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleToggleActive(test._id, test.isActive);
+                                                }}
+                                                className={`px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2 ${test.isActive
+                                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
+                                                    : 'bg-gray-500/20 text-gray-400 border border-gray-500/30 hover:bg-gray-500/30'
+                                                    }`}
+                                                title={test.isActive ? 'Click to hide from frontend' : 'Click to show on frontend'}
+                                            >
+                                                <i className={`fas ${test.isActive ? 'fa-eye' : 'fa-eye-slash'}`}></i>
+                                                <span className="text-xs">{test.isActive ? 'Active' : 'Inactive'}</span>
+                                            </button>
+                                            <button
+                                                onClick={() => openQuestionModal(test._id)}
+                                                className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition"
+                                            >
+                                                <i className="fas fa-plus mr-2"></i>
+                                                Add Question
+                                            </button>
+                                            <button
+                                                onClick={() => openTestModal(test)}
+                                                className="px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition"
+                                            >
+                                                <i className="fas fa-edit"></i>
+                                            </button>
+                                            <button
+                                                onClick={() => deleteTest(test._id)}
+                                                className="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition"
+                                            >
+                                                <i className="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => openQuestionModal(test._id)}
-                                            className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition"
-                                        >
-                                            <i className="fas fa-plus mr-2"></i>
-                                            Add Question
-                                        </button>
-                                        <button
-                                            onClick={() => openTestModal(test)}
-                                            className="px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition"
-                                        >
-                                            <i className="fas fa-edit"></i>
-                                        </button>
-                                        <button
-                                            onClick={() => deleteTest(test._id)}
-                                            className="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition"
-                                        >
-                                            <i className="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
 
-                                {/* Questions List (Expanded) */}
-                                {expandedTests[test._id] && (
-                                    <div className="border-t border-gray-700 bg-gray-900/30 p-4">
-                                        {expandedTests[test._id].length === 0 ? (
-                                            <div className="text-center py-8">
-                                                <p className="text-gray-400 mb-3">No questions in this test yet</p>
-                                                <button
-                                                    onClick={() => openQuestionModal(test._id)}
-                                                    className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition text-sm"
-                                                >
-                                                    <i className="fas fa-plus mr-2"></i>
-                                                    Add First Question
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-3">
-                                                {expandedTests[test._id].map((question, index) => (
-                                                    <div key={question._id} className="bg-gray-800/50 rounded-lg p-4">
-                                                        <div className="flex items-start justify-between gap-4">
-                                                            <div className="flex-1">
-                                                                <div className="flex items-center gap-2 mb-2">
-                                                                    <span className="text-cyan-400 font-semibold">Q{index + 1}</span>
-                                                                    <span className="text-xs text-gray-500">
-                                                                        Marks: {question.marks} | Negative: {question.negativeMarks}
-                                                                    </span>
+                                    {/* Questions List (Expanded) */}
+                                    {expandedTests[test._id] && (
+                                        <div className="border-t border-gray-700 bg-gray-900/30 p-4">
+                                            {expandedTests[test._id].length === 0 ? (
+                                                <div className="text-center py-8">
+                                                    <p className="text-gray-400 mb-3">No questions in this test yet</p>
+                                                    <button
+                                                        onClick={() => openQuestionModal(test._id)}
+                                                        className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition text-sm"
+                                                    >
+                                                        <i className="fas fa-plus mr-2"></i>
+                                                        Add First Question
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-3">
+                                                    {expandedTests[test._id].map((question, index) => (
+                                                        <div key={question._id} className="bg-gray-800/50 rounded-lg p-4">
+                                                            <div className="flex items-start justify-between gap-4">
+                                                                <div className="flex-1">
+                                                                    <div className="flex items-center gap-2 mb-2">
+                                                                        <span className="text-cyan-400 font-semibold">Q{index + 1}</span>
+                                                                        <span className="text-xs text-gray-500">
+                                                                            Marks: {question.marks} | Negative: {question.negativeMarks}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div
+                                                                        className="text-white text-sm mb-2 ql-editor-content"
+                                                                        dangerouslySetInnerHTML={{ __html: question.question }}
+                                                                    />
+                                                                    <div className="space-y-1">
+                                                                        {question.options.map((opt, i) => (
+                                                                            <div key={i} className={`text-xs p-2 rounded ${i === question.correctAnswer
+                                                                                ? 'bg-green-500/20 text-green-400'
+                                                                                : 'bg-gray-700/50 text-gray-400'
+                                                                                }`}>
+                                                                                <span className="font-semibold">{String.fromCharCode(65 + i)}. </span>
+                                                                                <span
+                                                                                    className="ql-editor-content"
+                                                                                    dangerouslySetInnerHTML={{ __html: opt }}
+                                                                                />
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
                                                                 </div>
-                                                                <p className="text-white text-sm mb-2">{question.question}</p>
-                                                                <div className="space-y-1">
-                                                                    {question.options.map((opt, i) => (
-                                                                        <div key={i} className={`text-xs p-2 rounded ${i === question.correctAnswer
-                                                                            ? 'bg-green-500/20 text-green-400'
-                                                                            : 'bg-gray-700/50 text-gray-400'
-                                                                            }`}>
-                                                                            {String.fromCharCode(65 + i)}. {opt}
-                                                                        </div>
-                                                                    ))}
+                                                                <div className="flex gap-2">
+                                                                    <button
+                                                                        onClick={() => openQuestionModal(test._id, question)}
+                                                                        className="px-3 py-1.5 bg-cyan-500/20 text-cyan-400 rounded hover:bg-cyan-500/30 transition text-sm"
+                                                                    >
+                                                                        <i className="fas fa-edit"></i>
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => deleteQuestion(question._id, test._id)}
+                                                                        className="px-3 py-1.5 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition text-sm"
+                                                                    >
+                                                                        <i className="fas fa-trash"></i>
+                                                                    </button>
                                                                 </div>
-                                                            </div>
-                                                            <div className="flex gap-2">
-                                                                <button
-                                                                    onClick={() => openQuestionModal(test._id, question)}
-                                                                    className="px-3 py-1.5 bg-cyan-500/20 text-cyan-400 rounded hover:bg-cyan-500/30 transition text-sm"
-                                                                >
-                                                                    <i className="fas fa-edit"></i>
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => deleteQuestion(question._id, test._id)}
-                                                                    className="px-3 py-1.5 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition text-sm"
-                                                                >
-                                                                    <i className="fas fa-trash"></i>
-                                                                </button>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="mt-8 flex items-center justify-center gap-2">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <i className="fas fa-chevron-left"></i>
+                                </button>
+
+                                {[...Array(totalPages)].map((_, index) => {
+                                    const pageNumber = index + 1;
+                                    // Show first page, last page, current page, and pages around current
+                                    if (
+                                        pageNumber === 1 ||
+                                        pageNumber === totalPages ||
+                                        (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                                    ) {
+                                        return (
+                                            <button
+                                                key={pageNumber}
+                                                onClick={() => handlePageChange(pageNumber)}
+                                                className={`px-4 py-2 rounded-lg font-semibold transition ${currentPage === pageNumber
+                                                    ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white'
+                                                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                                    }`}
+                                            >
+                                                {pageNumber}
+                                            </button>
+                                        );
+                                    } else if (
+                                        pageNumber === currentPage - 2 ||
+                                        pageNumber === currentPage + 2
+                                    ) {
+                                        return <span key={pageNumber} className="text-gray-500">...</span>;
+                                    }
+                                    return null;
+                                })}
+
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <i className="fas fa-chevron-right"></i>
+                                </button>
                             </div>
-                        ))}
-                    </div>
+                        )}
+                    </>
                 )}
             </div>
 
@@ -623,28 +760,35 @@ const ManagePracticeTests = () => {
                         <form onSubmit={handleQuestionSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-gray-300 mb-2 font-semibold">Question *</label>
-                                <textarea
-                                    value={questionForm.question}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
-                                    rows="3"
-                                    placeholder="Enter the question..."
-                                    required
-                                />
+                                <div className="quill-wrapper practice-test-question-editor">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={questionForm.question}
+                                        onChange={(content) => setQuestionForm({ ...questionForm, question: content })}
+                                        modules={quillModules}
+                                        formats={quillFormats}
+                                        placeholder="Enter the question..."
+                                        className="bg-gray-900 text-white rounded-lg"
+                                    />
+                                </div>
                             </div>
 
                             <div>
                                 <label className="block text-gray-300 mb-2 font-semibold">Options *</label>
                                 {questionForm.options.map((option, index) => (
-                                    <div key={index} className="mb-2">
-                                        <input
-                                            type="text"
-                                            value={option}
-                                            onChange={(e) => updateOption(index, e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
-                                            placeholder={`Option ${String.fromCharCode(65 + index)}`}
-                                            required
-                                        />
+                                    <div key={index} className="mb-3">
+                                        <label className="block text-gray-400 text-sm mb-1">Option {String.fromCharCode(65 + index)}</label>
+                                        <div className="practice-test-option-editor">
+                                            <ReactQuill
+                                                theme="snow"
+                                                value={option}
+                                                onChange={(content) => updateOption(index, content)}
+                                                modules={quillModules}
+                                                formats={quillFormats}
+                                                placeholder={`Enter option ${String.fromCharCode(65 + index)}...`}
+                                                className="bg-gray-900 text-white rounded-lg"
+                                            />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -688,13 +832,17 @@ const ManagePracticeTests = () => {
 
                             <div>
                                 <label className="block text-gray-300 mb-2 font-semibold">Explanation</label>
-                                <textarea
-                                    value={questionForm.explanation}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
-                                    rows="3"
-                                    placeholder="Explain the correct answer..."
-                                />
+                                <div className="practice-test-explanation-editor">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={questionForm.explanation}
+                                        onChange={(content) => setQuestionForm({ ...questionForm, explanation: content })}
+                                        modules={quillModules}
+                                        formats={quillFormats}
+                                        placeholder="Explain the correct answer..."
+                                        className="bg-gray-900 text-white rounded-lg"
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex gap-3 pt-4">
@@ -724,4 +872,141 @@ const ManagePracticeTests = () => {
     );
 };
 
+// Add custom styles to scope ReactQuill properly
+const styleSheet = document.createElement("style");
+styleSheet.textContent = `
+    /* Style for Question Editor */
+    .practice-test-question-editor .ql-toolbar {
+        display: block !important;
+        background-color: rgb(31, 41, 55);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    
+    .practice-test-question-editor .ql-container {
+        background-color: rgb(17, 24, 39);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0 0 0.5rem 0.5rem;
+        min-height: 150px;
+    }
+    
+    .practice-test-question-editor .ql-editor {
+        color: white;
+        min-height: 150px;
+    }
+    
+    /* Style for Option Editors */
+    .practice-test-option-editor .ql-toolbar {
+        display: block !important;
+        background-color: rgb(31, 41, 55);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    
+    .practice-test-option-editor .ql-container {
+        background-color: rgb(17, 24, 39);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0 0 0.5rem 0.5rem;
+        min-height: 80px;
+    }
+    
+    .practice-test-option-editor .ql-editor {
+        color: white;
+        min-height: 80px;
+    }
+    
+    /* Style for Explanation Editor */
+    .practice-test-explanation-editor .ql-toolbar {
+        display: block !important;
+        background-color: rgb(31, 41, 55);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    
+    .practice-test-explanation-editor .ql-container {
+        background-color: rgb(17, 24, 39);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0 0 0.5rem 0.5rem;
+        min-height: 120px;
+    }
+    
+    .practice-test-explanation-editor .ql-editor {
+        color: white;
+        min-height: 120px;
+    }
+    
+    /* General Quill toolbar styling */
+    .ql-toolbar.ql-snow {
+        border-color: rgb(55, 65, 81) !important;
+    }
+    
+    .ql-container.ql-snow {
+        border-color: rgb(55, 65, 81) !important;
+    }
+    
+    /* Quill toolbar button colors */
+    .ql-toolbar .ql-stroke {
+        stroke: rgb(156, 163, 175);
+    }
+    
+    .ql-toolbar .ql-fill {
+        fill: rgb(156, 163, 175);
+    }
+    
+    .ql-toolbar button:hover .ql-stroke,
+    .ql-toolbar button.ql-active .ql-stroke {
+        stroke: rgb(6, 182, 212);
+    }
+    
+    .ql-toolbar button:hover .ql-fill,
+    .ql-toolbar button.ql-active .ql-fill {
+        fill: rgb(6, 182, 212);
+    }
+    
+    /* Quill editor placeholder text */
+    .ql-editor.ql-blank::before {
+        color: rgb(107, 114, 128);
+        font-style: normal;
+    }
+    
+    /* Style for rendered HTML content in list view */
+    .ql-editor-content {
+        display: inline;
+    }
+    
+    .ql-editor-content p {
+        display: inline;
+        margin: 0;
+    }
+    
+    .ql-editor-content strong {
+        font-weight: bold;
+    }
+    
+    .ql-editor-content em {
+        font-style: italic;
+    }
+    
+    .ql-editor-content u {
+        text-decoration: underline;
+    }
+    
+    .ql-editor-content sub {
+        vertical-align: sub;
+        font-size: smaller;
+    }
+    
+    .ql-editor-content sup {
+        vertical-align: super;
+        font-size: smaller;
+    }
+`;
+
+if (!document.head.querySelector('#practice-test-quill-styles')) {
+    styleSheet.id = 'practice-test-quill-styles';
+    document.head.appendChild(styleSheet);
+}
+
 export default ManagePracticeTests;
+
+

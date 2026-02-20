@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import CommentSection from '../components/Blog/CommentSection';
+import ShareButtons from '../components/Blog/ShareButtons';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -8,7 +10,9 @@ const BlogDetail = () => {
     const { slug } = useParams();
     const [blog, setBlog] = useState(null);
     const [relatedBlogs, setRelatedBlogs] = useState([]);
+    const [faqs, setFaqs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [expandedFaq, setExpandedFaq] = useState(null);
 
     useEffect(() => {
         fetchBlog();
@@ -18,15 +22,22 @@ const BlogDetail = () => {
     const fetchBlog = async () => {
         try {
             setLoading(true);
-            const [blogResponse, relatedResponse] = await Promise.all([
-                axios.get(`${API_URL}/blogs/slug/${slug}`),
-                axios.get(`${API_URL}/blogs/related/${slug}?limit=4`)
-            ]);
+            // Add cache-busting parameter to ensure fresh data
+            const timestamp = Date.now();
 
-            setBlog(blogResponse.data);
+            // First fetch the blog to get its category
+            const blogResponse = await axios.get(`${API_URL}/blogs/slug/${slug}?_=${timestamp}`);
+            const blogData = blogResponse.data;
+            setBlog(blogData);
+
+            // Set blog-specific FAQs
+            setFaqs(blogData.faqs || []);
+
+            // Fetch related blogs
+            const relatedResponse = await axios.get(`${API_URL}/blogs/related/${slug}?limit=4&_=${timestamp}`);
             setRelatedBlogs(relatedResponse.data);
         } catch (error) {
-            console.error('Error fetching blog:', error);
+            console.error('Error fetching blog data:', error);
         } finally {
             setLoading(false);
         }
@@ -199,69 +210,48 @@ const BlogDetail = () => {
                     </div>
                 )}
 
-                {/* Students Also Asked Section (if available) */}
-                <div className="glass-panel rounded-xl p-8 border border-gray-700 mb-12">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
-                            <i className="fas fa-comments text-orange-500 text-2xl"></i>
-                            <h2 className="text-2xl font-bold text-white">Students also asked</h2>
+                {/* FAQs Section */}
+                {faqs.length > 0 && (
+                    <div className="glass-panel rounded-xl p-8 border border-gray-700 mb-12">
+                        <div className="flex items-center gap-3 mb-6">
+                            <i className="fas fa-question-circle text-cyan-500 text-2xl"></i>
+                            <h2 className="text-2xl font-bold text-white">Frequently Asked Questions</h2>
                         </div>
-                        <Link
-                            to="/faq"
-                            className="text-cyan-400 hover:text-cyan-300 text-sm font-medium flex items-center gap-2 transition"
-                        >
-                            View All FAQs
-                            <i className="fas fa-arrow-right"></i>
-                        </Link>
+                        <div className="space-y-3">
+                            {faqs.map((faq, index) => (
+                                <div
+                                    key={faq._id || index}
+                                    className="border border-gray-700 rounded-xl overflow-hidden hover:border-cyan-500/50 transition"
+                                >
+                                    <button
+                                        onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                                        className="w-full p-4 bg-gray-800/50 hover:bg-gray-800 transition text-left flex items-center justify-between gap-3"
+                                    >
+                                        <div className="flex items-start gap-3 flex-1">
+                                            <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-cyan-400 font-bold text-sm">Q{index + 1}</span>
+                                            </div>
+                                            <p className="text-white font-medium flex-1">{faq.question}</p>
+                                        </div>
+                                        <i className={`fas fa-chevron-${expandedFaq === index ? 'up' : 'down'} text-gray-400 transition-transform`}></i>
+                                    </button>
+                                    {expandedFaq === index && (
+                                        <div className="p-4 bg-gray-900/50 border-t border-gray-700">
+                                            <div className="flex gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                                                    <i className="fas fa-check text-green-400 text-sm"></i>
+                                                </div>
+                                                <p className="text-gray-300 leading-relaxed flex-1 whitespace-pre-line">
+                                                    {faq.answer}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="space-y-3">
-                        {/* These would come from the blog data or be static examples */}
-                        <Link
-                            to="/faq"
-                            className="block p-4 bg-gray-800/50 border border-gray-700 rounded-lg hover:border-cyan-500 transition cursor-pointer group"
-                        >
-                            <div className="flex items-center justify-between">
-                                <p className="text-gray-300 group-hover:text-cyan-400 transition">
-                                    How can I complete Chemistry in 2 months for boards?
-                                </p>
-                                <i className="fas fa-chevron-right text-gray-500 group-hover:text-cyan-400 transition"></i>
-                            </div>
-                        </Link>
-                        <Link
-                            to="/faq"
-                            className="block p-4 bg-gray-800/50 border border-gray-700 rounded-lg hover:border-orange-400 transition cursor-pointer group"
-                        >
-                            <div className="flex items-center justify-between">
-                                <p className="text-gray-300 group-hover:text-orange-400 transition">
-                                    What are the most important topics of Class 12 Biology for boards?
-                                </p>
-                                <i className="fas fa-chevron-right text-gray-500 group-hover:text-orange-400 transition"></i>
-                            </div>
-                        </Link>
-                        <Link
-                            to="/faq"
-                            className="block p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg hover:border-blue-400 transition cursor-pointer group"
-                        >
-                            <div className="flex items-center justify-between">
-                                <p className="text-gray-300 group-hover:text-blue-400 transition">
-                                    How should I start preparing for board exams if I'm already late?
-                                </p>
-                                <i className="fas fa-chevron-right text-gray-500 group-hover:text-blue-400 transition"></i>
-                            </div>
-                        </Link>
-                        <Link
-                            to="/faq"
-                            className="block p-4 bg-gray-800/50 border border-gray-700 rounded-lg hover:border-cyan-500 transition cursor-pointer group"
-                        >
-                            <div className="flex items-center justify-between">
-                                <p className="text-gray-300 group-hover:text-cyan-400 transition">
-                                    How to prepare for practical and viva in Biology?
-                                </p>
-                                <i className="fas fa-chevron-right text-gray-500 group-hover:text-cyan-400 transition"></i>
-                            </div>
-                        </Link>
-                    </div>
-                </div>
+                )}
 
                 {/* Related Blogs */}
                 {relatedBlogs.length > 0 && (
@@ -318,6 +308,18 @@ const BlogDetail = () => {
                         </div>
                     </div>
                 )}
+
+                {/* Share Buttons */}
+                <ShareButtons
+                    blogId={blog._id}
+                    blogTitle={blog.title}
+                    blogSlug={blog.slug}
+                />
+
+                {/* Comment Section */}
+                <div className="mt-12">
+                    <CommentSection blogId={blog._id} />
+                </div>
             </div>
 
             {/* Custom Styles for Blog Content */}
@@ -325,6 +327,15 @@ const BlogDetail = () => {
         .blog-content {
           color: #e5e7eb;
           line-height: 1.8;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          word-break: break-word;
+        }
+        
+        .blog-content * {
+          max-width: 100%;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
         
         .blog-content h2 {
@@ -333,6 +344,7 @@ const BlogDetail = () => {
           font-weight: 700;
           margin-top: 2rem;
           margin-bottom: 1rem;
+          word-break: break-word;
         }
         
         .blog-content h3 {
@@ -341,21 +353,26 @@ const BlogDetail = () => {
           font-weight: 600;
           margin-top: 1.5rem;
           margin-bottom: 0.75rem;
+          word-break: break-word;
         }
         
         .blog-content p {
           margin-bottom: 1rem;
           color: #d1d5db;
+          word-break: break-word;
+          overflow-wrap: break-word;
         }
         
         .blog-content ul, .blog-content ol {
           margin-left: 1.5rem;
           margin-bottom: 1rem;
+          padding-right: 1rem;
         }
         
         .blog-content li {
           margin-bottom: 0.5rem;
           color: #d1d5db;
+          word-break: break-word;
         }
         
         .blog-content strong {
@@ -366,6 +383,7 @@ const BlogDetail = () => {
         .blog-content a {
           color: #06b6d4;
           text-decoration: underline;
+          word-break: break-all;
         }
         
         .blog-content a:hover {
@@ -375,9 +393,11 @@ const BlogDetail = () => {
         .blog-content blockquote {
           border-left: 4px solid #06b6d4;
           padding-left: 1rem;
+          padding-right: 1rem;
           margin: 1.5rem 0;
           font-style: italic;
           color: #9ca3af;
+          word-break: break-word;
         }
         
         .blog-content code {
@@ -386,6 +406,8 @@ const BlogDetail = () => {
           border-radius: 0.25rem;
           font-size: 0.875rem;
           color: #06b6d4;
+          word-break: break-all;
+          overflow-wrap: break-word;
         }
         
         .blog-content pre {
@@ -394,11 +416,21 @@ const BlogDetail = () => {
           border-radius: 0.5rem;
           overflow-x: auto;
           margin: 1rem 0;
+          max-width: 100%;
+        }
+        
+        .blog-content pre code {
+          background-color: transparent;
+          padding: 0;
+          word-break: normal;
+          overflow-wrap: normal;
         }
         
         .blog-content img {
           border-radius: 0.5rem;
           margin: 1.5rem 0;
+          max-width: 100%;
+          height: auto;
         }
         
         .blog-content iframe {
@@ -406,6 +438,28 @@ const BlogDetail = () => {
           aspect-ratio: 16/9;
           border-radius: 0.5rem;
           margin: 1.5rem 0;
+          max-width: 100%;
+        }
+        
+        .blog-content table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1rem 0;
+          overflow-x: auto;
+          display: block;
+        }
+        
+        .blog-content table th,
+        .blog-content table td {
+          border: 1px solid #374151;
+          padding: 0.5rem;
+          word-break: break-word;
+        }
+        
+        .blog-content table th {
+          background-color: #1f2937;
+          color: #06b6d4;
+          font-weight: 600;
         }
       `}</style>
         </div>

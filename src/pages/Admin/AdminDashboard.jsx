@@ -13,6 +13,7 @@ import ManageCommunity from './ManageCommunity';
 import ManageWebinarCards from './ManageWebinarCards';
 import ManageFeedback from './ManageFeedback';
 import ManageScoreMatchBatches from './ManageScoreMatchBatches';
+import ManageGlobalCourses from './ManageGlobalCourses';
 import ManageFreeQuizzes from './ManageFreeQuizzes';
 import ManageExamCountdown from './ManageExamCountdown';
 import ManageConceptNotes from './ManageConceptNotes';
@@ -21,7 +22,14 @@ import ManageAssertionReason from './ManageAssertionReason';
 import ManagePracticeTests from './ManagePracticeTests';
 import ManageTestRegistrations from './ManageTestRegistrations';
 import ManageBlogs from './ManageBlogs';
+import ManageComments from './ManageComments';
+import ManageFAQs from './ManageFAQs';
 import Enquiries from './Enquiries';
+import ManageNCERT from './ManageNCERT';
+import ManageDPPS from './ManageDPPS';
+import ManagePYQ from './ManagePYQ';
+import ManageInfinitePractice from './ManageInfinitePractice';
+import ManageSelfLearn from './ManageSelfLearn';
 import AdminSettings from './AdminSettings';
 
 const AdminDashboard = () => {
@@ -120,6 +128,12 @@ const AdminDashboard = () => {
               <i className="fas fa-trophy mr-2"></i> Score Max Batches
             </button>
             <button
+              onClick={() => setActiveTab('globalcourses')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'globalcourses' ? 'bg-purple-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-globe mr-2"></i> UAE Courses
+            </button>
+            <button
               onClick={() => setActiveTab('freequizzes')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'freequizzes' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
@@ -130,6 +144,36 @@ const AdminDashboard = () => {
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'examcountdown' ? 'bg-orange-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
               <i className="fas fa-clock mr-2"></i> Exam Countdown
+            </button>
+            <button
+              onClick={() => setActiveTab('ncert')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'ncert' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-book-open mr-2"></i> Manage NCERT Toolbox
+            </button>
+            <button
+              onClick={() => setActiveTab('dpps')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'dpps' ? 'bg-blue-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-clipboard-list mr-2"></i> Manage DPPs
+            </button>
+            <button
+              onClick={() => setActiveTab('pyq')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'pyq' ? 'bg-purple-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-history mr-2"></i> Manage PYQ
+            </button>
+            <button
+              onClick={() => setActiveTab('infinitepractice')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'infinitepractice' ? 'bg-pink-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-infinity mr-2"></i> Infinite Practice
+            </button>
+            <button
+              onClick={() => setActiveTab('selflearn')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'selflearn' ? 'bg-indigo-600 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-graduation-cap mr-2"></i> Manage Self Learn
             </button>
             <button
               onClick={() => setActiveTab('conceptnotes')}
@@ -173,6 +217,7 @@ const AdminDashboard = () => {
             >
               <i className="fas fa-blog mr-2"></i> Manage Blogs
             </button>
+
             <div className="border-t border-gray-700 my-2"></div>
             <button
               onClick={() => setActiveTab('settings')}
@@ -197,11 +242,17 @@ const AdminDashboard = () => {
           {activeTab === 'webinars' && <ManageWebinarCards />}
           {activeTab === 'feedback' && <ManageFeedback />}
           {activeTab === 'scorematch' && <ManageScoreMatchBatches />}
+          {activeTab === 'globalcourses' && <ManageGlobalCourses />}
           {activeTab === 'freequizzes' && <ManageFreeQuizzes />}
           {activeTab === 'examcountdown' && <ManageExamCountdown />}
           {activeTab === 'conceptnotes' && <ManageConceptNotes />}
           {activeTab === 'flashcards' && <ManageFlashCards />}
           {activeTab === 'assertionreason' && <ManageAssertionReason />}
+          {activeTab === 'ncert' && <ManageNCERT />}
+          {activeTab === 'dpps' && <ManageDPPS />}
+          {activeTab === 'pyq' && <ManagePYQ />}
+          {activeTab === 'infinitepractice' && <ManageInfinitePractice />}
+          {activeTab === 'selflearn' && <ManageSelfLearn />}
           {activeTab === 'practicetests' && <ManagePracticeTests />}
           {activeTab === 'registrations' && <ManageTestRegistrations />}
           {activeTab === 'enquiries' && <Enquiries />}

@@ -10,6 +10,9 @@
     # Don't rewrite API calls
     RewriteCond %{REQUEST_URI} !^/api/
     
+    # Don't rewrite asset files (let them 404 if missing)
+    RewriteCond %{REQUEST_URI} !^/assets/
+    
     # Rewrite everything else to index.html
     RewriteRule ^ index.html [L]
 </IfModule>

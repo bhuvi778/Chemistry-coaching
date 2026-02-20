@@ -262,19 +262,36 @@ const FlashCardTopics = () => {
                                 )}
                                 <button
                                     onClick={() => {
-                                        // Select only topics with due cards
-                                        const dueTopics = topics.filter(t => (t.dueCount || 0) > 0).map(t => t._id);
+                                        // Respect selection if active
+                                        const sourceTopics = selectedTopics.length > 0
+                                            ? topics.filter(t => selectedTopics.includes(t._id))
+                                            : topics;
+
+                                        // Select only topics with due cards from the source (subset or all)
+                                        const dueTopics = sourceTopics.filter(t => (t.dueCount || 0) > 0).map(t => t._id);
+
                                         if (dueTopics.length > 0) {
                                             navigate(`/flash-cards/${chapterId}/practice`, {
                                                 state: { topicIds: dueTopics }
                                             });
                                         } else {
-                                            alert('No due cards available. All cards are mastered!');
+                                            const message = selectedTopics.length > 0
+                                                ? 'No due cards available in the selected specific topics!'
+                                                : 'No due cards available. All cards are mastered!';
+                                            alert(message);
                                         }
                                     }}
                                     className="flex-1 min-w-[200px] px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:shadow-lg hover:shadow-amber-500/50 transition-all flex items-center justify-center gap-2">
                                     <i className="fas fa-clock"></i>
-                                    <span>Review Due Cards ({topics.reduce((sum, t) => sum + (t.dueCount || 0), 0)})</span>
+                                    <span>
+                                        {selectedTopics.length > 0 ? 'Review Selected Due' : 'Review Due Cards'}
+                                        ({
+                                            (selectedTopics.length > 0
+                                                ? topics.filter(t => selectedTopics.includes(t._id))
+                                                : topics
+                                            ).reduce((sum, t) => sum + (t.dueCount || 0), 0)
+                                        })
+                                    </span>
                                 </button>
                                 <button
                                     onClick={() => {

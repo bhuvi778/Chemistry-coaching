@@ -243,9 +243,10 @@ const FlashCardPractice = () => {
                                 <div className="text-sm text-purple-300 mb-6 uppercase tracking-widest font-semibold">
                                     QUESTION
                                 </div>
-                                <p className="text-2xl md:text-3xl text-white text-center font-medium mb-8 leading-relaxed">
-                                    {currentCard.question}
-                                </p>
+                                <div
+                                    className="text-2xl md:text-3xl text-white text-center font-medium mb-8 leading-relaxed prose prose-lg max-w-none prose-invert"
+                                    dangerouslySetInnerHTML={{ __html: currentCard.question }}
+                                />
                                 <div className="text-sm text-purple-300/70 flex items-center gap-2 mt-auto">
                                     <span>Click to reveal answer</span>
                                 </div>
@@ -268,9 +269,10 @@ const FlashCardPractice = () => {
                                 <div className="text-sm text-teal-300 mb-6 uppercase tracking-widest font-semibold">
                                     ANSWER
                                 </div>
-                                <p className="text-2xl md:text-3xl text-white text-center font-medium leading-relaxed">
-                                    {currentCard.answer}
-                                </p>
+                                <div
+                                    className="text-2xl md:text-3xl text-white text-center font-medium leading-relaxed prose prose-lg max-w-none prose-invert"
+                                    dangerouslySetInnerHTML={{ __html: currentCard.answer }}
+                                />
                             </div>
                         </div>
                     </div>

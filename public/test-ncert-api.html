@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCERT API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        .success {
+            color: #4ade80;
+        }
+
+        .error {
+            color: #f87171;
+        }
+
+        .warning {
+            color: #fbbf24;
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        pre {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #444;
+        }
+
+        .question-card {
+            background: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 NCERT Toolbox API Test</h1>
+    <p>This page tests if the frontend can fetch questions from the backend.</p>
+
+    <div class="test-section">
+        <h2>Test 1: Direct Backend API</h2>
+        <button onclick="testDirectBackend()">Test Backend (Port 5000)</button>
+        <div id="backend-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Frontend Proxy API</h2>
+        <button onclick="testProxyAPI()">Test Proxy (/api)</button>
+        <div id="proxy-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Fetch Questions Tab Questions</h2>
+        <button onclick="testQuestionsTab()">Fetch In-text Questions</button>
+        <div id="questions-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Fetch Exemplars Tab Questions</h2>
+        <button onclick="testExemplarsTab()">Fetch Exemplar MCQs</button>
+        <div id="exemplars-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 5: Fetch Diagrams Tab Questions</h2>
+        <button onclick="testDiagramsTab()">Fetch Diagram Questions</button>
+        <div id="diagrams-result"></div>
+    </div>
+
+    <script>
+        async function testDirectBackend() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = '<p class="warning">Testing...</p>';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/ncert/questions');
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Success! Backend is responding</p>
+                    <p>Total questions: ${data.length}</p>
+                    <pre>${JSON.stringify(data.slice(0, 2), null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ Error: ${error.message}</p>
+                    <p>Backend might not be running or CORS issue</p>
+                `;
+            }
+        }
+
+        async function testProxyAPI() {
+            const resultDiv = document.getElementById('proxy-result');
+            resultDiv.innerHTML = '<p class="warning">Testing...</p>';
+
+            try {
+                const response = await fetch('/api/ncert/questions');
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Success! Proxy is working</p>
+                    <p>Total questions: ${data.length}</p>
+                    <pre>${JSON.stringify(data.slice(0, 2), null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ Error: ${error.message}</p>
+                    <p class="warning">⚠️ Proxy might not be configured. Did you restart the dev server?</p>
+                `;
+            }
+        }
+
+        async function testQuestionsTab() {
+            const resultDiv = document.getElementById('questions-result');
+            resultDiv.innerHTML = '<p class="warning">Testing...</p>';
+
+            try {
+                const response = await fetch('/api/ncert/questions?category=questions&badgeType=in-text');
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    resultDiv.innerHTML = `
+                        <p class="warning">⚠️ No questions found for Questions tab (in-text)</p>
+                        <p>Check if questions are added in admin panel with correct badgeType</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ Found ${data.length} questions!</p>
+                        ${data.map((q, i) => `
+                            <div class="question-card">
+                                <strong>Q${i + 1}:</strong> ${q.question}<br>
+                                <small>Category: ${q.category} | BadgeType: ${q.badgeType}</small>
+                            </div>
+                        `).join('')}
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testExemplarsTab() {
+            const resultDiv = document.getElementById('exemplars-result');
+            resultDiv.innerHTML = '<p class="warning">Testing...</p>';
+
+            try {
+                const response = await fetch('/api/ncert/questions?category=exemplars&badgeType=exemplar-mcq');
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    resultDiv.innerHTML = `
+                        <p class="warning">⚠️ No questions found for Exemplars tab (exemplar-mcq)</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ Found ${data.length} questions!</p>
+                        ${data.map((q, i) => `
+                            <div class="question-card">
+                                <strong>Q${i + 1}:</strong> ${q.question}<br>
+                                <small>Category: ${q.category} | BadgeType: ${q.badgeType}</small>
+                            </div>
+                        `).join('')}
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testDiagramsTab() {
+            const resultDiv = document.getElementById('diagrams-result');
+            resultDiv.innerHTML = '<p class="warning">Testing...</p>';
+
+            try {
+                const response = await fetch('/api/ncert/questions?category=diagrams&badgeType=diagram-label');
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    resultDiv.innerHTML = `
+                        <p class="warning">⚠️ No questions found for Diagrams tab (diagram-label)</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ Found ${data.length} questions!</p>
+                        ${data.map((q, i) => `
+                            <div class="question-card">
+                                <strong>Q${i + 1}:</strong> ${q.question}<br>
+                                <small>Category: ${q.category} | BadgeType: ${q.badgeType}</small>
+                            </div>
+                        `).join('')}
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testProxyAPI();
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>

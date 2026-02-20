@@ -24,23 +24,37 @@ const MyDailyTarget = () => {
         if (storedEmail) {
             setUserEmail(storedEmail);
         }
+
         // Update current time every second for accurate countdown
         const timer = setInterval(() => {
             setCurrentTime(new Date());
         }, 1000);
-        return () => clearInterval(timer);
+
+        // Poll for test updates every 10 seconds to reflect admin changes immediately
+        const pollInterval = setInterval(() => {
+            fetchTests(true); // Silent update - no loading spinner
+        }, 10000); // 10 seconds
+
+        return () => {
+            clearInterval(timer);
+            clearInterval(pollInterval);
+        };
     }, []);
 
-    const fetchTests = async () => {
+    const fetchTests = async (silent = false) => {
         try {
-            setLoading(true);
+            if (!silent) {
+                setLoading(true);
+            }
             const response = await axios.get(`${API_URL}/practice-tests/tests?_t=${Date.now()}`);
             setActiveTests(response.data.active || []);
             setUpcomingTests(response.data.upcoming || []);
         } catch (error) {
             console.error('Error fetching tests:', error);
         } finally {
-            setLoading(false);
+            if (!silent) {
+                setLoading(false);
+            }
         }
     };
 

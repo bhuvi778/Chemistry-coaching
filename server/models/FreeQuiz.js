@@ -13,7 +13,18 @@ const freeQuizSchema = new mongoose.Schema({
     examType: {
         type: String,
         required: true,
-        enum: ['JEE', 'NEET', 'BOARDS', 'KVPY', 'OLYMPIAD', 'FOUNDATION', 'OTHER'],
+        enum: [
+            // UG Entrance Exams
+            'NEET', 'JEE', 'IAT', 'NEST', 'CUET UG', 'BITSAT',
+            // PG Entrance Exams
+            'IIT JAM', 'CUET PG',
+            // Research Level Exams
+            'CSIR NET', 'GATE', 'TIFR',
+            // Competitive Exams (Govt. Job)
+            'PSTET', 'Master Cadre', 'UPSC - Mains (Chemistry)',
+            // Legacy/Other
+            'BOARDS', 'KVPY', 'OLYMPIAD', 'FOUNDATION', 'OTHER'
+        ],
         default: 'JEE'
     },
     subject: {
@@ -31,6 +42,11 @@ const freeQuizSchema = new mongoose.Schema({
         type: String,
         enum: ['Easy', 'Medium', 'Hard'],
         default: 'Medium'
+    },
+    quizCategory: {
+        type: String,
+        enum: ['Quiz', 'Mock Test', 'PYPs'],
+        default: 'Quiz'
     },
     quizType: {
         type: String,

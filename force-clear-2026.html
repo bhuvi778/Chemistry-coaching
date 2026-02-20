@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Cache - Force Reload</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body style="background: #000; color: #0f0; font-family: monospace; padding: 40px;">
+    <h1>🔄 CLEARING ALL CACHE...</h1>
+    <div id="status"></div>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        async function clearEverything() {
+            status.innerHTML = '<p>⏳ Step 1/6: Clearing Cache Storage...</p>';
+            
+            // Clear Cache API
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                for (let name of cacheNames) {
+                    await caches.delete(name);
+                    status.innerHTML += `<p>✅ Deleted cache: ${name}</p>`;
+                }
+            }
+            
+            status.innerHTML += '<p>⏳ Step 2/6: Clearing IndexedDB...</p>';
+            
+            // Clear IndexedDB
+            if ('indexedDB' in window) {
+                const dbs = await indexedDB.databases();
+                for (let db of dbs) {
+                    indexedDB.deleteDatabase(db.name);
+                    status.innerHTML += `<p>✅ Deleted IndexedDB: ${db.name}</p>`;
+                }
+            }
+            
+            status.innerHTML += '<p>⏳ Step 3/6: Clearing Local Storage...</p>';
+            localStorage.clear();
+            status.innerHTML += '<p>✅ Cleared localStorage</p>';
+            
+            status.innerHTML += '<p>⏳ Step 4/6: Clearing Session Storage...</p>';
+            sessionStorage.clear();
+            status.innerHTML += '<p>✅ Cleared sessionStorage</p>';
+            
+            status.innerHTML += '<p>⏳ Step 5/6: Unregistering Service Workers...</p>';
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) {
+                    await registration.unregister();
+                    status.innerHTML += '<p>✅ Unregistered service worker</p>';
+                }
+            }
+            
+            status.innerHTML += '<p>⏳ Step 6/6: Clearing Cookies...</p>';
+            document.cookie.split(";").forEach(c => {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+            status.innerHTML += '<p>✅ Cleared cookies</p>';
+            
+            status.innerHTML += '<h2 style="color: #0f0; margin-top: 40px;">✅ ALL CACHE CLEARED!</h2>';
+            status.innerHTML += '<p style="font-size: 20px; margin-top: 20px;">Redirecting to NCERT Toolbox in <span id="countdown">3</span> seconds...</p>';
+            
+            let count = 3;
+            const interval = setInterval(() => {
+                count--;
+                document.getElementById('countdown').textContent = count;
+                if (count === 0) {
+                    clearInterval(interval);
+                    window.location.href = '/ncert-toolbox?' + Date.now();
+                }
+            }, 1000);
+        }
+        
+        clearEverything();
+    </script>
+</body>
+</html>
