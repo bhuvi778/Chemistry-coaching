@@ -93,7 +93,7 @@ const Footer = () => {
                             <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</Link></li>
                             <li><Link to="/lectures" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-play-circle text-xs"></i> Video Lectures</Link></li>
                             <li><Link to="/community" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-users text-xs"></i> Community</Link></li>
-                            <li><Link to="/book-meeting" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-calendar-check text-xs"></i> Book Your Meet</Link></li>
+                            <li><Link to="/book-your-session" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-calendar-check text-xs"></i> Book Your Meet</Link></li>
                         </ul>
                     </div>
 

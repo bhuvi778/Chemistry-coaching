@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import SubjectTag from '../../components/SubjectTag';
 
 const ManagePYQ = () => {
@@ -49,11 +51,35 @@ const ManagePYQ = () => {
         hint: '',
         difficulty: 'Medium',
         yearBadge: '',
-        examYear: new Date().getFullYear(),
         isActive: true
     });
 
     const API_URL = '/api/pyq';
+
+    const quillModules = {
+        toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'color': [] }, { 'background': [] }],
+            ['clean']
+        ]
+    };
+
+    const quillModulesSimple = {
+        toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'color': [] }],
+            ['clean']
+        ]
+    };
+
+    const quillFormats = [
+        'bold', 'italic', 'underline', 'strike',
+        'script', 'list', 'bullet',
+        'color', 'background'
+    ];
 
     useEffect(() => {
         fetchChapters();
@@ -296,7 +322,6 @@ const ManagePYQ = () => {
             hint: question.hint || '',
             difficulty: question.difficulty,
             yearBadge: question.yearBadge,
-            examYear: question.examYear,
             isActive: question.isActive
         });
         setShowQuestionForm(true);
@@ -342,7 +367,6 @@ const ManagePYQ = () => {
             hint: '',
             difficulty: 'Medium',
             yearBadge: '',
-            examYear: new Date().getFullYear(),
             isActive: true
         });
     };
@@ -872,7 +896,7 @@ const ManagePYQ = () => {
                                                 {question.questionType}
                                             </span>
                                         </div>
-                                        <div className="text-white mb-3">{question.question}</div>
+                                        <div className="text-white mb-3" dangerouslySetInnerHTML={{ __html: question.question }} />
                                         {question.options && question.options.length > 0 && (
                                             <div className="grid grid-cols-2 gap-2 mb-3">
                                                 {question.options.map((option, idx) => (
@@ -883,7 +907,8 @@ const ManagePYQ = () => {
                                                             : 'border-gray-700 text-gray-400'
                                                             }`}
                                                     >
-                                                        {String.fromCharCode(65 + idx)}. {option}
+                                                        <span className="font-semibold">{String.fromCharCode(65 + idx)}.</span>{' '}
+                                                        <span dangerouslySetInnerHTML={{ __html: option }} />
                                                     </div>
                                                 ))}
                                             </div>
@@ -895,14 +920,15 @@ const ManagePYQ = () => {
                                             </div>
                                         )}
                                         {question.hint && (
-                                            <div className="text-sm text-yellow-400 mb-2">
-                                                <i className="fas fa-lightbulb mr-2"></i>
-                                                Hint: {question.hint}
+                                            <div className="text-sm text-yellow-400 mb-2 flex items-start gap-2">
+                                                <i className="fas fa-lightbulb mt-1"></i>
+                                                <span>Hint: <span dangerouslySetInnerHTML={{ __html: question.hint }} /></span>
                                             </div>
                                         )}
                                         {question.solution && (
                                             <div className="text-sm text-gray-400 bg-gray-900/50 p-3 rounded">
-                                                <strong className="text-green-400">Solution:</strong> {question.solution}
+                                                <strong className="text-green-400">Solution:</strong>{' '}
+                                                <span dangerouslySetInnerHTML={{ __html: question.solution }} />
                                             </div>
                                         )}
                                     </div>
@@ -923,16 +949,19 @@ const ManagePYQ = () => {
                         <form onSubmit={handleQuestionSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-gray-400 mb-2">Question *</label>
-                                <textarea
-                                    value={questionForm.question}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
-                                    className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none"
-                                    rows="3"
-                                    required
-                                />
+                                <div className="quill-wrapper">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={questionForm.question}
+                                        onChange={(value) => setQuestionForm({ ...questionForm, question: value })}
+                                        modules={quillModules}
+                                        formats={quillFormats}
+                                        placeholder="Enter question text..."
+                                    />
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-gray-400 mb-2">Question Type *</label>
                                     <select
@@ -959,16 +988,6 @@ const ManagePYQ = () => {
                                         <option value="Hard">Hard</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label className="block text-gray-400 mb-2">Exam Year *</label>
-                                    <input
-                                        type="number"
-                                        value={questionForm.examYear}
-                                        onChange={(e) => setQuestionForm({ ...questionForm, examYear: parseInt(e.target.value) })}
-                                        className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none"
-                                        required
-                                    />
-                                </div>
                             </div>
 
                             <div>
@@ -987,18 +1006,20 @@ const ManagePYQ = () => {
                                 <div>
                                     <label className="block text-gray-400 mb-2">Options</label>
                                     {questionForm.options.map((option, idx) => (
-                                        <input
-                                            key={idx}
-                                            type="text"
-                                            value={option}
-                                            onChange={(e) => {
-                                                const newOptions = [...questionForm.options];
-                                                newOptions[idx] = e.target.value;
-                                                setQuestionForm({ ...questionForm, options: newOptions });
-                                            }}
-                                            className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none mb-2"
-                                            placeholder={`Option ${String.fromCharCode(65 + idx)}`}
-                                        />
+                                        <div key={idx} className="quill-wrapper quill-wrapper-sm mb-2">
+                                            <ReactQuill
+                                                theme="snow"
+                                                value={option}
+                                                onChange={(value) => {
+                                                    const newOptions = [...questionForm.options];
+                                                    newOptions[idx] = value;
+                                                    setQuestionForm({ ...questionForm, options: newOptions });
+                                                }}
+                                                modules={quillModulesSimple}
+                                                formats={quillFormats}
+                                                placeholder={`Option ${String.fromCharCode(65 + idx)}`}
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             )}
@@ -1017,22 +1038,30 @@ const ManagePYQ = () => {
 
                             <div>
                                 <label className="block text-gray-400 mb-2">Hint</label>
-                                <input
-                                    type="text"
-                                    value={questionForm.hint}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, hint: e.target.value })}
-                                    className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none"
-                                />
+                                <div className="quill-wrapper quill-wrapper-sm">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={questionForm.hint}
+                                        onChange={(value) => setQuestionForm({ ...questionForm, hint: value })}
+                                        modules={quillModulesSimple}
+                                        formats={quillFormats}
+                                        placeholder="Optional hint..."
+                                    />
+                                </div>
                             </div>
 
                             <div>
                                 <label className="block text-gray-400 mb-2">Solution</label>
-                                <textarea
-                                    value={questionForm.solution}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, solution: e.target.value })}
-                                    className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none"
-                                    rows="3"
-                                />
+                                <div className="quill-wrapper">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={questionForm.solution}
+                                        onChange={(value) => setQuestionForm({ ...questionForm, solution: value })}
+                                        modules={quillModules}
+                                        formats={quillFormats}
+                                        placeholder="Enter solution/explanation..."
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex items-center gap-2">

@@ -222,7 +222,7 @@ const GlobalCourses = () => {
                                             {course.price && (
                                                 <div className="flex items-center gap-2 text-sm">
                                                     <span className="font-bold text-cyan-400 text-lg">
-                                                        <i className="fas fa-dollar-sign"></i> {course.price}
+                                                        {course.price}
                                                     </span>
                                                     {course.originalPrice && (
                                                         <span className="text-gray-500 line-through text-sm">

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData } from '../../context/DataContext';
 import Pagination from '../../components/UI/Pagination';
 
 const ManageChemSnaps = () => {
-    const { chemSnaps, addChemSnap, updateChemSnap, deleteChemSnap } = useData();
+    const { chemSnaps, ensureChemSnapsLoaded, addChemSnap, updateChemSnap, deleteChemSnap } = useData();
+    useEffect(() => { ensureChemSnapsLoaded(); }, []);
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     const [isEditing, setIsEditing] = useState(false);
     const [currentChemSnap, setCurrentChemSnap] = useState(null);

@@ -1,10 +1,10 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const compression = require('compression');
 const multer = require('multer');
-const path = require('path');
 const fs = require('fs');
 const Course = require('./models/Course');
 const Enquiry = require('./models/Enquiry');
@@ -35,6 +35,9 @@ const commentRoutes = require('./routes/commentRoutes');
 const faqRoutes = require('./routes/faqRoutes');
 const examCountdownRoutes = require('./routes/examCountdownRoutes');
 const practiceTestRoutes = require('./routes/practiceTest');
+const globalCourseRoutes = require('./routes/globalCourseRoutes');
+const assertionReasonRoutes = require('./routes/assertionReason');
+const communityRoutes = require('./routes/communityRoutes');
 
 const app = express();
 
@@ -140,7 +143,7 @@ app.post('/api/upload/pdf', upload.single('pdf'), (req, res) => {
     console.log('❌ No PDF file in request');
     return res.status(400).json({ message: 'No PDF file uploaded' });
   }
-  
+
   // Validate file type
   if (req.file.mimetype !== 'application/pdf') {
     console.log('❌ Invalid file type:', req.file.mimetype);
@@ -148,7 +151,7 @@ app.post('/api/upload/pdf', upload.single('pdf'), (req, res) => {
     fs.unlinkSync(req.file.path);
     return res.status(400).json({ message: 'Only PDF files are allowed' });
   }
-  
+
   const pdfUrl = `/api/uploads/${req.file.filename}`;
   console.log('✅ PDF uploaded:', req.file.filename, 'Size:', (req.file.size / (1024 * 1024)).toFixed(2), 'MB');
   res.json({ url: pdfUrl, filename: req.file.filename });
@@ -211,8 +214,8 @@ app.use('/api/pyq', pyqRoutes);
 app.use('/api/infinite-practice', infinitePracticeRoutes);
 // Self Learn routes
 app.use('/api/self-learn', cacheMiddleware('self-learn', 30 * 60 * 1000), selfLearnRoutes);
-// ChemSnaps routes
-app.use('/api/chemsnaps', chemSnapRoutes);
+// ChemSnaps routes — cached 30 min
+app.use('/api/chemsnaps', cacheMiddleware('chemsnaps', 30 * 60 * 1000), chemSnapRoutes);
 // Free Quiz routes
 app.use('/api/free-quizzes', freeQuizRoutes);
 // Score Match Batch routes
@@ -227,6 +230,12 @@ app.use('/api/faqs', faqRoutes);
 app.use('/api/exam-countdown', examCountdownRoutes);
 // Practice Test routes
 app.use('/api/practice-tests', practiceTestRoutes);
+// Global Courses routes
+app.use('/api/global-courses', globalCourseRoutes);
+// Assertion Reason routes
+app.use('/api/assertion-reason', assertionReasonRoutes);
+// Community routes — cached 5 min (user-generated content)
+app.use('/api/community', cacheMiddleware('community', 5 * 60 * 1000), communityRoutes);
 
 // Courses
 app.get('/api/courses', cacheMiddleware('courses', 30 * 60 * 1000), async (req, res) => {
@@ -276,6 +285,43 @@ app.delete('/api/courses/:id', async (req, res) => {
   }
 });
 
+// ─── BotBiz WhatsApp Template Helper ───────────────────────────────────────
+const BOTBIZ_API_KEY_GLOBAL  = process.env.BOTBIZ_API_KEY         || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
+const BOTBIZ_PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || '884991348021443';
+
+function sendBotBizTemplate(phone, templateId, name = '') {
+  if (!phone) return;
+  const https = require('https');
+  let sanitizedPhone = String(phone).replace(/\D/g, '');
+  if (sanitizedPhone.length === 10) sanitizedPhone = '91' + sanitizedPhone;
+  const parts = [
+    `apiToken=${encodeURIComponent(BOTBIZ_API_KEY_GLOBAL)}`,
+    `phone_number_id=${encodeURIComponent(BOTBIZ_PHONE_NUMBER_ID)}`,
+    `template_id=${encodeURIComponent(templateId)}`,
+    `phone_number=${encodeURIComponent(sanitizedPhone)}`
+  ];
+  // Pass student name as {{1}} variable if provided
+  if (name && name.trim()) {
+    parts.push(`variables=${encodeURIComponent(JSON.stringify([name.trim()]))}`);
+  }
+  const formBody = parts.join('&');
+  const options = {
+    hostname: 'dash.botbiz.io',
+    path: '/api/v1/whatsapp/send/template',
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(formBody) }
+  };
+  const req = https.request(options, (res) => {
+    let data = '';
+    res.on('data', c => data += c);
+    res.on('end', () => console.log(`✅ BotBiz template ${templateId} → ${sanitizedPhone}:`, data));
+  });
+  req.on('error', (e) => console.error(`❌ BotBiz template ${templateId} error:`, e.message));
+  req.write(formBody);
+  req.end();
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Enquiries
 app.get('/api/enquiries', cacheMiddleware('enquiries', 5 * 60 * 1000), async (req, res) => {
   try {
@@ -295,6 +341,8 @@ app.post('/api/enquiries', async (req, res) => {
   try {
     const enquiry = new Enquiry(req.body);
     await enquiry.save();
+    // Send WhatsApp callback template (ID: 305069)
+    sendBotBizTemplate(req.body.phone, '305069', req.body.name);
     res.json(enquiry);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -332,6 +380,8 @@ app.post('/api/contacts', async (req, res) => {
   try {
     const contact = new Contact(req.body);
     await contact.save();
+    // Send WhatsApp enquiry template (ID: 305067)
+    sendBotBizTemplate(req.body.phone, '305067', req.body.name);
     res.json(contact);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -1354,76 +1404,61 @@ app.post('/api/send-whatsapp', async (req, res) => {
     const { phone } = req.body;
 
     if (!phone) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing required fields',
-        details: 'Phone number is required'
-      });
+      return res.status(400).json({ success: false, error: 'Phone number is required' });
     }
 
-    console.log('=== BotBiz WhatsApp Template API ===');
-    console.log('Phone:', phone);
+    // Sanitize: strip non-digits, add 91 if 10-digit Indian number
+    let sanitizedPhone = String(phone).replace(/\D/g, '');
+    if (sanitizedPhone.length === 10) sanitizedPhone = '91' + sanitizedPhone;
 
-    // BotBiz API Configuration
-    const BOTBIZ_API_KEY = process.env.BOTBIZ_API_KEY || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
-    const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID || '884991348021443';
-    const TEMPLATE_ID = '286421';
+    const BOTBIZ_API_KEY  = process.env.BOTBIZ_API_KEY         || '16122|Ot9YpB7Zp4v0U9i9MI7A9ns4HYo6BtTy2zij0tTD41fabf26';
+    const PHONE_NUMBER_ID = process.env.BOTBIZ_PHONE_NUMBER_ID  || '884991348021443';
+    const TEMPLATE_ID     = '304405'; // get_link_new template
 
-    console.log('API Key (first 10 chars):', BOTBIZ_API_KEY.substring(0, 10) + '...');
-    console.log('Phone Number ID:', PHONE_NUMBER_ID);
-    console.log('Template ID:', TEMPLATE_ID);
+    console.log('=== BotBiz WhatsApp Template ===');
+    console.log('Recipient:', sanitizedPhone, '| Template ID:', TEMPLATE_ID);
 
-    if (!PHONE_NUMBER_ID) {
-      console.error('⚠ PHONE_NUMBER_ID not configured');
-      return res.status(500).json({
-        success: false,
-        error: 'WhatsApp configuration incomplete',
-        details: 'PHONE_NUMBER_ID is required',
-        suggestion: 'Add BOTBIZ_PHONE_NUMBER_ID to environment variables'
+    const https = require('https');
+    const formBody = [
+      `apiToken=${encodeURIComponent(BOTBIZ_API_KEY)}`,
+      `phone_number_id=${encodeURIComponent(PHONE_NUMBER_ID)}`,
+      `template_id=${encodeURIComponent(TEMPLATE_ID)}`,
+      `phone_number=${encodeURIComponent(sanitizedPhone)}`
+    ].join('&');
+
+    const responseText = await new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'dash.botbiz.io',
+        path: '/api/v1/whatsapp/send/template',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(formBody)
+        }
+      };
+      const request = https.request(options, (response) => {
+        let data = '';
+        response.on('data', chunk => data += chunk);
+        response.on('end', () => {
+          console.log('HTTP Status:', response.statusCode, '| Body:', data);
+          resolve(data);
+        });
       });
-    }
-
-    const apiUrl = 'https://dash.botbiz.io/api/v1/whatsapp/send/template';
-    const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
-
-    const formData = new URLSearchParams();
-    formData.append('apiToken', BOTBIZ_API_KEY);
-    formData.append('phone', phone);
-    formData.append('phoneNumberId', PHONE_NUMBER_ID);
-    formData.append('templateId', TEMPLATE_ID);
-
-    console.log('Sending request to BotBiz API...');
-
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString()
+      request.on('error', reject);
+      request.write(formBody);
+      request.end();
     });
 
-    const responseText = await response.text();
-    console.log('=== BotBiz API Response ===');
-    console.log('Status:', response.status);
-    console.log('Response:', responseText);
-    console.log('========================');
-
     let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-    } catch (e) {
-      console.error('Could not parse response as JSON');
-      responseData = { raw: responseText };
-    }
+    try { responseData = JSON.parse(responseText); } catch (e) { responseData = { raw: responseText }; }
 
-    if (response.ok && (responseData.success || responseData.status === 'success')) {
-      return res.json({
-        success: true,
-        message: 'WhatsApp message sent successfully',
-        details: responseData
-      });
+    // BotBiz returns { status: "1", ... } on success
+    if (responseData.status === '1' || responseData.status === 1) {
+      console.log('✅ Template sent successfully!');
+      return res.json({ success: true, message: 'WhatsApp message sent successfully' });
     } else {
-      return res.status(response.status || 500).json({
+      console.error('❌ BotBiz error:', responseData);
+      return res.status(400).json({
         success: false,
         error: 'Failed to send WhatsApp message',
         details: responseData.message || responseData.error || responseText,
@@ -1432,11 +1467,7 @@ app.post('/api/send-whatsapp', async (req, res) => {
     }
   } catch (error) {
     console.error('Error sending WhatsApp:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Server error',
-      details: error.message
-    });
+    return res.status(500).json({ success: false, error: 'Server error', details: error.message });
   }
 });
 

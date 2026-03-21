@@ -222,18 +222,18 @@ const PYQTopicList = () => {
                 </button>
 
                 {/* Chapter Header */}
-                <div className="glass-panel rounded-xl p-8 mb-8 border border-gray-700">
-                    <div className="flex items-start justify-between mb-6">
-                        <div className="flex-1">
-                            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                <div className="glass-panel rounded-xl p-6 md:p-8 mb-8 border border-gray-700">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
+                        <div className="flex-1 min-w-0">
+                            <h1 className="text-2xl md:text-4xl font-bold text-white mb-2 leading-tight">
                                 {chapter?.chapterName}
                             </h1>
-                            <p className="text-gray-400 mb-4">
+                            <p className="text-gray-400 mb-2">
                                 {chapter?.description || examDisplayName}
                             </p>
                         </div>
                         {/* Overall Chapter Progress */}
-                        <div className="ml-6 bg-gray-800/50 rounded-lg p-4 min-w-[200px]">
+                        <div className="sm:ml-6 bg-gray-800/50 rounded-lg p-4 w-full sm:w-auto sm:min-w-[200px] flex-shrink-0">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm text-gray-400">Overall Progress</span>
                                 <span className="text-lg font-bold text-green-400">

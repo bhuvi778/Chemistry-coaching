@@ -859,7 +859,6 @@ const ManageNCERT = () => {
                                         <label className="block text-gray-400 mb-1">Question Type</label>
                                         <select className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white" value={newItem.questionType || 'MCQ'} onChange={e => setNewItem({ ...newItem, questionType: e.target.value })}>
                                             <option value="MCQ">MCQ</option>
-                                            <option value="Subjective">Subjective (Q&A)</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1320,7 +1319,6 @@ const ManageNCERT = () => {
                                     <label className="block text-gray-400 mb-1">Question Type</label>
                                     <select className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white" value={newItem.questionType || 'MCQ'} onChange={e => setNewItem({ ...newItem, questionType: e.target.value })}>
                                         <option value="MCQ">MCQ</option>
-                                        <option value="Subjective">Subjective (Q&A)</option>
                                     </select>
                                 </div>
                             </div>

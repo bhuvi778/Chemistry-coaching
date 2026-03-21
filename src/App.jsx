@@ -27,6 +27,7 @@ const ConceptWiseNotes = lazy(() => import('./pages/ConceptWiseNotes'));
 const ScoreMatchBatches = lazy(() => import('./pages/ScoreMatchBatches'));
 const GlobalCourses = lazy(() => import('./pages/GlobalCourses'));
 const FreeQuiz = lazy(() => import('./pages/FreeQuiz'));
+const FreeQuizSession = lazy(() => import('./pages/FreeQuizSession'));
 const BookMeeting = lazy(() => import('./pages/BookMeeting'));
 const AIAssistantPage = lazy(() => import('./pages/AIAssistantPage'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
@@ -47,7 +48,6 @@ const Blogs = lazy(() => import('./pages/Blogs'));
 const BlogDetail = lazy(() => import('./pages/BlogDetail'));
 const FAQ = lazy(() => import('./pages/FAQ'));
 const ConceptCardDemo = lazy(() => import('./pages/ConceptCardDemo'));
-const DPP = lazy(() => import('./pages/DPP'));
 const NCERTToolbox = lazy(() => import('./pages/NCERTToolbox'));
 const NCERTLineByLine = lazy(() => import('./pages/NCERTLineByLine'));
 const NCERTLineByLineTopics = lazy(() => import('./pages/NCERTLineByLineTopics'));
@@ -70,11 +70,13 @@ const PYQTopicList = lazy(() => import('./pages/PYQTopicList'));
 const PYQPractice = lazy(() => import('./pages/PYQPractice'));
 const InfinitePracticeHome = lazy(() => import('./pages/InfinitePractice/InfinitePracticeHome'));
 const InfinitePracticeSession = lazy(() => import('./pages/InfinitePractice/InfinitePracticeSession'));
+const InfinitePracticeResults = lazy(() => import('./pages/InfinitePractice/InfinitePracticeResults'));
 const SelfLearnLanding = lazy(() => import('./pages/SelfLearn/SelfLearnLanding'));
 const SelfLearnSubjects = lazy(() => import('./pages/SelfLearn/SelfLearnSubjects'));
 const SelfLearnChapters = lazy(() => import('./pages/SelfLearn/SelfLearnChapters'));
 const SelfLearnChapterDetail = lazy(() => import('./pages/SelfLearn/SelfLearnChapterDetail'));
 const TopicDetail = lazy(() => import('./pages/SelfLearn/TopicDetail'));
+const NeetExam = lazy(() => import('./pages/Exams/NeetExam'));
 import ExamCountdown from './components/ExamCountdown';
 
 const ProtectedRoute = ({ children }) => {
@@ -185,7 +187,6 @@ function AppContent() {
             <Route path="/assertion-reason/:chapterId" element={<AssertionReasonChapter />} />
             <Route path="/assertion-reason/:chapterId/practice" element={<AssertionReasonPractice />} />
             <Route path="/my-daily-target" element={<MyDailyTarget />} />
-            <Route path="/dpp" element={<DPP />} />
             <Route path="/ncert-toolbox" element={<NCERTToolbox />} />
             <Route path="/ncert-toolbox/line-by-line" element={<NCERTLineByLine />} />
             <Route path="/ncert-toolbox/line-by-line/:chapterId" element={<NCERTLineByLineTopics />} />
@@ -219,6 +220,7 @@ function AppContent() {
             <Route path="/pyq/:examName/chapters/:chapterId/:topicId" element={<PYQPractice />} />
             <Route path="/infinite-practice" element={<InfinitePracticeHome />} />
             <Route path="/infinite-practice/session/:sessionId" element={<InfinitePracticeSession />} />
+            <Route path="/infinite-practice/results/:sessionId" element={<InfinitePracticeResults />} />
             <Route path="/self-learn" element={<SelfLearnLanding />} />
             <Route path="/self-learn/:examId" element={<SelfLearnChapters />} />
             <Route path="/self-learn/:examId/:chapterId" element={<SelfLearnChapterDetail />} />
@@ -233,9 +235,13 @@ function AppContent() {
             <Route path="/uae-courses" element={<GlobalCourses />} />
             <Route path="/international-courses" element={<GlobalCourses />} />
             <Route path="/free-quiz" element={<FreeQuiz />} />
+            <Route path="/free-quiz/:quizId" element={<FreeQuizSession />} />
             <Route path="/book-meeting" element={<BookMeeting />} />
+            <Route path="/book-your-session" element={<BookMeeting />} />
             <Route path="/ai-assistant" element={<AIAssistantPage />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/exams/neet" element={<NeetExam />} />
+            <Route path="/exams/neet/:sectionId" element={<NeetExam />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />

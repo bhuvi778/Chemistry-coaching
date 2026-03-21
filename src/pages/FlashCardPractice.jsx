@@ -26,6 +26,15 @@ const FlashCardPractice = () => {
         fetchCards();
     }, [topicIds]);
 
+    const shuffleArray = (arr) => {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    };
+
     const fetchCards = async () => {
         try {
             setLoading(true);
@@ -34,7 +43,7 @@ const FlashCardPractice = () => {
                 topicIds,
                 userId
             });
-            setCards(response.data);
+            setCards(shuffleArray(response.data));
         } catch (error) {
             console.error('Error fetching cards:', error);
         } finally {

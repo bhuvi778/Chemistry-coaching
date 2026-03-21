@@ -64,21 +64,22 @@ const ManageSelfLearn = () => {
     // Quill editor modules with formatting options
     const quillModules = {
         toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
+            [{ 'header': [1, 2, false] }],
             ['bold', 'italic', 'underline', 'strike'],
-            [{ 'script': 'sub'}, { 'script': 'super' }],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'indent': '-1' }, { 'indent': '+1' }],
             [{ 'color': [] }, { 'background': [] }],
-            ['link', 'image', 'formula'],
+            ['link'],
             ['clean']
         ]
     };
 
-    // Simplified toolbar for options
+    // Option toolbar — compact but includes sub/super
     const quillModulesSimple = {
         toolbar: [
             ['bold', 'italic', 'underline'],
-            [{ 'script': 'sub'}, { 'script': 'super' }],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
             [{ 'color': [] }],
             ['clean']
         ]
@@ -86,8 +87,8 @@ const ManageSelfLearn = () => {
 
     const quillFormats = [
         'header', 'bold', 'italic', 'underline', 'strike',
-        'script', 'list', 'bullet', 'color', 'background',
-        'link', 'image', 'formula'
+        'script', 'list', 'bullet', 'indent',
+        'color', 'background', 'link'
     ];
 
     useEffect(() => {
@@ -814,7 +815,7 @@ const ManageSelfLearn = () => {
                         <form onSubmit={handleQuestionSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-gray-400 mb-2 text-sm">Question</label>
-                                <div className="quill-editor">
+                                <div className="quill-wrapper">
                                     <ReactQuill
                                         theme="snow"
                                         value={questionForm.question}
@@ -829,7 +830,7 @@ const ManageSelfLearn = () => {
                                 {questionForm.options.map((option, idx) => (
                                     <div key={idx}>
                                         <label className="block text-gray-400 mb-2 text-sm">Option {String.fromCharCode(65 + idx)}</label>
-                                        <div className="quill-option">
+                                        <div className="quill-wrapper quill-wrapper-sm">
                                             <ReactQuill
                                                 theme="snow"
                                                 value={option}
@@ -875,7 +876,7 @@ const ManageSelfLearn = () => {
                             </div>
                             <div>
                                 <label className="block text-gray-400 mb-2 text-sm">Explanation</label>
-                                <div className="quill-editor">
+                                <div className="quill-wrapper">
                                     <ReactQuill
                                         theme="snow"
                                         value={questionForm.explanation}

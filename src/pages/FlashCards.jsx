@@ -43,6 +43,15 @@ const FlashCards = () => {
         };
     }, []);
 
+    const shuffleArray = (arr) => {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    };
+
     const fetchChapters = async () => {
         try {
             setLoading(true);
@@ -50,7 +59,7 @@ const FlashCards = () => {
             const timestamp = Date.now(); // Cache buster
             const response = await axios.get(`${API_URL}/flashcards/chapters?userId=${userId}&_t=${timestamp}`);
             console.log('Chapters data received:', response.data.length, 'chapters');
-            setChapters(response.data);
+            setChapters(shuffleArray(response.data)); // 🔀 Shuffle on every load
         } catch (error) {
             console.error('Error fetching chapters:', error);
         } finally {

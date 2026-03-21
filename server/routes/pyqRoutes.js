@@ -276,13 +276,12 @@ router.delete('/topics/:id', async (req, res) => {
 // Get questions with filters
 router.get('/questions', async (req, res) => {
     try {
-        const { chapterId, topicId, examName, examYear, subject, difficulty, questionType, isActive } = req.query;
+        const { chapterId, topicId, examName, subject, difficulty, questionType, isActive } = req.query;
         const filter = {};
 
         if (chapterId) filter.chapterId = chapterId;
         if (topicId) filter.topicId = topicId;
         if (examName) filter.examName = examName;
-        if (examYear) filter.examYear = parseInt(examYear);
         if (subject) filter.subject = subject;
         if (difficulty) filter.difficulty = difficulty;
         if (questionType) filter.questionType = questionType;
@@ -291,7 +290,7 @@ router.get('/questions', async (req, res) => {
         const questions = await PYQQuestion.find(filter)
             .populate('chapterId')
             .populate('topicId')
-            .sort({ examYear: -1, order: 1 });
+            .sort({ order: 1 });
 
         res.json(questions);
     } catch (error) {
@@ -325,8 +324,12 @@ router.post('/questions', upload.fields([
     try {
         const questionData = {
             ...req.body,
-            options: req.body.options ? JSON.parse(req.body.options) : [],
-            tags: req.body.tags ? JSON.parse(req.body.tags) : []
+            options: req.body.options
+                ? (typeof req.body.options === 'string' ? JSON.parse(req.body.options) : req.body.options)
+                : [],
+            tags: req.body.tags
+                ? (typeof req.body.tags === 'string' ? JSON.parse(req.body.tags) : req.body.tags)
+                : []
         };
 
         if (req.files) {
@@ -361,9 +364,13 @@ router.put('/questions/:id', upload.fields([
 
         if (req.body.options && typeof req.body.options === 'string') {
             updateData.options = JSON.parse(req.body.options);
+        } else if (Array.isArray(req.body.options)) {
+            updateData.options = req.body.options;
         }
         if (req.body.tags && typeof req.body.tags === 'string') {
             updateData.tags = JSON.parse(req.body.tags);
+        } else if (Array.isArray(req.body.tags)) {
+            updateData.tags = req.body.tags;
         }
 
         if (req.files) {

@@ -31,6 +31,28 @@ const infinitePracticeSessionSchema = new mongoose.Schema({
         enum: ['Practice', 'Exam'],
         required: true
     },
+    timedMode: {
+        type: Boolean,
+        default: false
+    },
+    timeLimitSeconds: {
+        type: Number,
+        default: null
+    },
+    negativeMarking: {
+        type: Boolean,
+        default: false
+    },
+    negativeMarkValue: {
+        type: Number,
+        default: 0.25
+    },
+    studentInfo: {
+        name: String,
+        email: String,
+        mobile: String,
+        class: String
+    },
     questions: [{
         questionId: {
             type: mongoose.Schema.Types.ObjectId,

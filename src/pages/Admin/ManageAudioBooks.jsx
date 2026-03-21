@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../../context/DataContext';
 import Pagination from '../../components/UI/Pagination';
 
 const ManageAudioBooks = () => {
-  const { audioBooks, addAudioBook, updateAudioBook, deleteAudioBook } = useData();
+  const { audioBooks, ensureAudioBooksLoaded, addAudioBook, updateAudioBook, deleteAudioBook } = useData();
+  useEffect(() => { ensureAudioBooksLoaded(); }, []);
   const [isEditing, setIsEditing] = useState(false);
   const [currentAudioBook, setCurrentAudioBook] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);

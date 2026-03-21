@@ -85,11 +85,26 @@ exports.getAllQuestions = async (req, res) => {
 // Create a new question
 exports.createQuestion = async (req, res) => {
     try {
-        const questionData = req.body;
+        const questionData = { ...req.body };
 
         // Validate exam category
         if (!['JEE', 'NEET'].includes(questionData.examCategory)) {
             return res.status(400).json({ message: 'Invalid exam category. Must be JEE or NEET.' });
+        }
+
+        // Parse options array (comes as JSON string from FormData)
+        if (questionData.options && typeof questionData.options === 'string') {
+            try { questionData.options = JSON.parse(questionData.options); } catch (e) { }
+        }
+
+        // Attach uploaded image URLs
+        if (req.files) {
+            if (req.files.image && req.files.image[0]) {
+                questionData.imageUrl = '/api/uploads/' + req.files.image[0].filename;
+            }
+            if (req.files.solutionImage && req.files.solutionImage[0]) {
+                questionData.solutionImageUrl = '/api/uploads/' + req.files.solutionImage[0].filename;
+            }
         }
 
         const question = new NTAAbhyas(questionData);
@@ -106,11 +121,26 @@ exports.createQuestion = async (req, res) => {
 exports.updateQuestion = async (req, res) => {
     try {
         const { id } = req.params;
-        const updateData = req.body;
+        const updateData = { ...req.body };
 
         // Validate exam category if provided
         if (updateData.examCategory && !['JEE', 'NEET'].includes(updateData.examCategory)) {
             return res.status(400).json({ message: 'Invalid exam category. Must be JEE or NEET.' });
+        }
+
+        // Parse options array (comes as JSON string from FormData)
+        if (updateData.options && typeof updateData.options === 'string') {
+            try { updateData.options = JSON.parse(updateData.options); } catch (e) { }
+        }
+
+        // Attach uploaded image URLs
+        if (req.files) {
+            if (req.files.image && req.files.image[0]) {
+                updateData.imageUrl = '/api/uploads/' + req.files.image[0].filename;
+            }
+            if (req.files.solutionImage && req.files.solutionImage[0]) {
+                updateData.solutionImageUrl = '/api/uploads/' + req.files.solutionImage[0].filename;
+            }
         }
 
         const question = await NTAAbhyas.findByIdAndUpdate(

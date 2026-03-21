@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 
 const Magazines = () => {
-  const { magazines } = useData();
+  const { magazines, ensureMagazinesLoaded } = useData();
   const [selectedYear, setSelectedYear] = useState('all');
+
+  useEffect(() => { ensureMagazinesLoaded(); }, []);
 
   const safeMagazines = Array.isArray(magazines) ? magazines : [];
 

@@ -22,10 +22,6 @@ const pyqQuestionSchema = new mongoose.Schema({
         // Example: "JEE Main 2022 – 25 July, Shift 2"
         trim: true
     },
-    examYear: {
-        type: Number,
-        required: true
-    },
     subject: {
         type: String,
         required: true,
@@ -40,7 +36,7 @@ const pyqQuestionSchema = new mongoose.Schema({
     },
     hint: {
         type: String,
-        required: true,
+        default: '',
         trim: true
     },
     difficulty: {
@@ -98,7 +94,7 @@ const pyqQuestionSchema = new mongoose.Schema({
 
 // Indexes for efficient queries
 pyqQuestionSchema.index({ chapterId: 1, topicId: 1 });
-pyqQuestionSchema.index({ examName: 1, examYear: -1 });
+pyqQuestionSchema.index({ examName: 1 });
 pyqQuestionSchema.index({ subject: 1, difficulty: 1 });
 pyqQuestionSchema.index({ isActive: 1 });
 

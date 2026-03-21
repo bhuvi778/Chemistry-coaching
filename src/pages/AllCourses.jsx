@@ -12,7 +12,8 @@ const AllCourses = () => {
     const [activeExam, setActiveExam] = useState('all'); // Old exam filter (JEE, NEET, Foundation)
     const [currentPage, setCurrentPage] = useState(1);
     const coursesPerPage = 6;
-    const { courses } = useData();
+    const { courses, ensureCoursesLoaded } = useData();
+    useEffect(() => { ensureCoursesLoaded(); }, []);
 
     // Update active category when URL parameter changes
     useEffect(() => {
@@ -77,7 +78,7 @@ const AllCourses = () => {
 
                 <div className="text-center mb-12">
                     <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        All Courses
+                        Courses
                     </h2>
                     <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
                         Choose from our comprehensive range of learning solutions tailored to your needs - from live classes to personalized mentorship.

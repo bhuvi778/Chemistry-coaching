@@ -465,7 +465,7 @@ const NCERTQuestionViewer = () => {
                                                                     : (isSelected ? 'text-cyan-400' : 'text-gray-300')
                                                                     }`}>
                                                                     <span className="font-semibold mr-2">{String.fromCharCode(65 + optIndex)}.</span>
-                                                                    {option}
+                                                                    <span className="ql-editor-content" dangerouslySetInnerHTML={{ __html: option }} />
                                                                 </span>
                                                                 {showCorrect && (
                                                                     <i className="fas fa-check-circle text-green-400"></i>

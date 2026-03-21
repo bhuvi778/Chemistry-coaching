@@ -15,6 +15,15 @@ const FlashCardTopics = () => {
 
     const API_URL = import.meta.env.VITE_API_URL || 'https://ace2examz.com/api';
 
+    const shuffleArray = (arr) => {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    };
+
     // Fetch data on mount and when returning from practice
     useEffect(() => {
         fetchChapterAndTopics();
@@ -73,7 +82,7 @@ const FlashCardTopics = () => {
             });
 
             setChapter(chapterRes.data);
-            setTopics(topicsRes.data);
+            setTopics(topicsRes.data); // Topics maintain their original order
 
             // Use real stats from backend
             setStats({

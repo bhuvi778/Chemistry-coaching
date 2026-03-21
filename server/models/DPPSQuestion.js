@@ -48,6 +48,10 @@ const dppsQuestionSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
+    negativeMarks: {
+        type: Number,
+        default: 0
+    },
     imageUrl: {
         type: String,
         trim: true

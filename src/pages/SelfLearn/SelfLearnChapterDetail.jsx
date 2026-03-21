@@ -143,53 +143,55 @@ const SelfLearnChapterDetail = () => {
                                 <p className="text-gray-400 text-sm mb-4 pl-11 line-clamp-2">{topic.description}</p>
                             )}
 
-                            {/* Content Stats */}
+                            {/* Content Stats — show all available counts on every tab */}
                             <div className="pl-11 mb-3 flex flex-wrap gap-2">
-                                {activeTab === 'learn' && (
-                                    <>
-                                        {topic.videoCount > 0 && (
-                                            <span className="px-2 py-1 rounded text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                                                🎥 {topic.videoCount} Videos
-                                            </span>
-                                        )}
-                                        {topic.sheetCount > 0 && (
-                                            <span className="px-2 py-1 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                                                📄 {topic.sheetCount} Sheets
-                                            </span>
-                                        )}
-                                        {topic.exerciseCount > 0 && (
-                                            <span className="px-2 py-1 rounded text-xs font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-                                                ✏️ {topic.exerciseCount} Exercises
-                                            </span>
-                                        )}
-                                    </>
-                                )}
-                                {activeTab === 'practice' && topic.exerciseCount > 0 && (
-                                    <span className="px-2 py-1 rounded text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">
-                                        ✅ {topic.exerciseCount} {getCategoryLabel('practice')} Questions
+                                {topic.videoCount > 0 && (
+                                    <span className={`px-2 py-1 rounded text-xs font-bold border ${
+                                        activeTab === 'revise'
+                                            ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+                                            : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                                    }`}>
+                                        🎥 {topic.videoCount} Videos
                                     </span>
                                 )}
-                                {activeTab === 'revise' && (
-                                    <>
-                                        {topic.videoCount > 0 && (
-                                            <span className="px-2 py-1 rounded text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                                                🎥 {topic.videoCount} Videos
-                                            </span>
-                                        )}
-                                        {topic.sheetCount > 0 && (
-                                            <span className="px-2 py-1 rounded text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                                                📄 {topic.sheetCount} Sheets
-                                            </span>
-                                        )}
-                                    </>
+                                {topic.sheetCount > 0 && (
+                                    <span className={`px-2 py-1 rounded text-xs font-bold border ${
+                                        activeTab === 'revise'
+                                            ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+                                            : 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                    }`}>
+                                        📄 {topic.sheetCount} Sheets
+                                    </span>
                                 )}
+                                {/* Exercise / DPPs / Mock Test tag */}
+                                {(() => {
+                                    const count = topic.exerciseCount > 0
+                                        ? topic.exerciseCount
+                                        : (topic.questionCount || 0);
+                                    if (activeTab === 'practice') return (
+                                        <span className="px-2 py-1 rounded text-xs font-bold border bg-green-500/20 text-green-400 border-green-500/30">
+                                            ✅ {count > 0 ? `${count} DPPs` : 'DPPs'}
+                                        </span>
+                                    );
+                                    if (activeTab === 'revise') return (
+                                        <span className="px-2 py-1 rounded text-xs font-bold border bg-purple-500/20 text-purple-400 border-purple-500/30">
+                                            📝 {count > 0 ? `${count} Mock Test` : 'Mock Test'}
+                                        </span>
+                                    );
+                                    if (count > 0) return (
+                                        <span className="px-2 py-1 rounded text-xs font-bold border bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+                                            ✏️ {count} Exercises
+                                        </span>
+                                    );
+                                    return null;
+                                })()}
                             </div>
 
                             <div className="pl-11 flex items-center gap-3 border-t border-gray-700 pt-3 mt-auto">
                                 <span className="text-cyan-400 text-sm flex items-center gap-1">
                                     <i className="fas fa-arrow-right"></i> 
                                     {activeTab === 'learn' ? 'Start Learning' : 
-                                     activeTab === 'practice' ? 'Start Practice' : 'Start Revise'}
+                                     activeTab === 'practice' ? 'Start DPPs' : 'Start Mock Test'}
                                 </span>
                             </div>
                         </Link>

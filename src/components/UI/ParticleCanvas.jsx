@@ -10,6 +10,9 @@ const ParticleCanvas = () => {
     const ctx = canvas.getContext('2d');
     let animationFrameId;
     let particles = [];
+    let lastFrameTime = 0;
+    const isMobile = window.innerWidth < 768;
+    const FRAME_INTERVAL = 1000 / (isMobile ? 24 : 40); // 24fps mobile, 40fps desktop
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -20,32 +23,28 @@ const ParticleCanvas = () => {
     resizeCanvas();
 
     const formulas = [
-      'H₂O', 'CO₂', 'O₂', 'CH₄', 'NH₃', 'C₆H₆', 'NaCl', 'H⁺', 'OH⁻', 'e⁻',
-      'H₂SO₄', 'HCl', 'NaOH', 'KOH', 'CaCO₃', 'Fe²⁺', 'Cu²⁺', 'Zn', 'Ag⁺',
-      'C₂H₅OH', 'CH₃COOH', 'NH₄⁺', 'NO₃⁻', 'SO₄²⁻', 'Cl⁻', 'Na⁺', 'K⁺',
-      'Mg²⁺', 'Ca²⁺', 'Al³⁺', 'C₆H₁₂O₆', 'H₂O₂', 'N₂', 'Cl₂', 'Br₂'
+      'H₂O', 'CO₂', 'CH₄', 'NH₃', 'C₆H₆', 'NaCl', 'H⁺', 'OH⁻',
+      'H₂SO₄', 'HCl', 'NaOH', 'Fe²⁺', 'Cu²⁺', 'C₂H₅OH', 'CH₃COOH',
     ];
+
+    const COLORS_DARK = ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899'];
+    const COLORS_LIGHT = ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
 
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
-        this.size = Math.random() * 3 + 2;
-        const colors = isDark
-          ? ['#00f3ff', '#ff00aa', '#a855f7', '#22d3ee', '#ec4899']
-          : ['#0891b2', '#db2777', '#9333ea', '#0ea5e9', '#ec4899'];
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+        this.size = Math.random() * 2 + 1.5;
+        const colors = isDark ? COLORS_DARK : COLORS_LIGHT;
         this.color = colors[Math.floor(Math.random() * colors.length)];
-        // Increase formula probability
         const rand = Math.random();
-        if (rand < 0.5) this.type = 1; // Formula (50%)
-        else if (rand < 0.8) this.type = 2; // Bond (30%)
-        else this.type = 0; // Hexagon (20%)
-
+        // ~40% formula, ~35% bond, ~25% hexagon
+        this.type = rand < 0.4 ? 1 : rand < 0.75 ? 2 : 0;
         this.formula = formulas[Math.floor(Math.random() * formulas.length)];
         this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.015;
+        this.spin = (Math.random() - 0.5) * 0.03;
       }
       update() {
         this.x += this.vx;
@@ -60,68 +59,48 @@ const ParticleCanvas = () => {
         ctx.rotate(this.angle);
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.color;
-
-        // Adjust opacity based on theme
-        const baseOpacity = isDark ? 0.6 : 0.8;
-        ctx.globalAlpha = baseOpacity;
+        ctx.globalAlpha = isDark ? 0.30 : 0.20;
 
         if (this.type === 0) {
-          // Hexagon (Benzene Ring)
+          // Hexagon
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const hx = (this.size * 4) * Math.cos(angle);
-            const hy = (this.size * 4) * Math.sin(angle);
-            if (i === 0) ctx.moveTo(hx, hy);
-            else ctx.lineTo(hx, hy);
+            const a = (Math.PI / 3) * i;
+            const hx = this.size * 5 * Math.cos(a);
+            const hy = this.size * 5 * Math.sin(a);
+            if (i === 0) ctx.moveTo(hx, hy); else ctx.lineTo(hx, hy);
           }
           ctx.closePath();
           ctx.lineWidth = 2;
           ctx.stroke();
-
-          // Inner circle
-          ctx.beginPath();
-          ctx.arc(0, 0, this.size * 1.5, 0, Math.PI * 2);
-          ctx.globalAlpha = baseOpacity * 0.5;
-          ctx.fill();
-          ctx.globalAlpha = baseOpacity;
         } else if (this.type === 1) {
-          // Chemical Formula
-          ctx.font = `bold ${this.size * 4}px 'Orbitron', sans-serif`;
+          // Chemical formula text
+          ctx.font = `bold ${this.size * 5}px monospace`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.rotate(-this.angle); // Keep text upright
-
-          // Add shadow for better visibility in light mode
-          if (!isDark) {
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-            ctx.shadowBlur = 4;
-            ctx.shadowOffsetX = 1;
-            ctx.shadowOffsetY = 1;
-          }
-
+          ctx.rotate(-this.angle); // keep text upright
           ctx.fillText(this.formula, 0, 0);
-
-          // Reset shadow
-          ctx.shadowColor = 'transparent';
-          ctx.shadowBlur = 0;
-        } else if (this.type === 2) {
-          // Chemical Bond (Double or Triple Bond)
-          const bondType = Math.floor(Math.random() * 3) + 1;
+        } else {
+          // Bond — double line for realism
+          const len = this.size * 5;
+          const gap = this.size * 0.8;
           ctx.lineWidth = 2;
-
-          for (let i = 0; i < bondType; i++) {
-            const offset = (i - (bondType - 1) / 2) * 3;
-            ctx.beginPath();
-            ctx.moveTo(-this.size * 4, offset);
-            ctx.lineTo(this.size * 4, offset);
-            ctx.stroke();
-          }
-
-          // Atoms at ends
+          // line 1
           ctx.beginPath();
-          ctx.arc(-this.size * 4, 0, this.size * 1.5, 0, Math.PI * 2);
-          ctx.arc(this.size * 4, 0, this.size * 1.5, 0, Math.PI * 2);
+          ctx.moveTo(-len, -gap);
+          ctx.lineTo(len, -gap);
+          ctx.stroke();
+          // line 2
+          ctx.beginPath();
+          ctx.moveTo(-len, gap);
+          ctx.lineTo(len, gap);
+          ctx.stroke();
+          // end atoms
+          ctx.beginPath();
+          ctx.arc(-len, 0, this.size * 1.4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(len, 0, this.size * 1.4, 0, Math.PI * 2);
           ctx.fill();
         }
 
@@ -132,57 +111,44 @@ const ParticleCanvas = () => {
 
     const initParticles = () => {
       particles = [];
-      // Increase particle count for more bulk effect
-      const particleCount = Math.min(window.innerWidth / 8, 150);
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-      }
+      // Fewer particles on mobile to keep CPU free for the page itself
+      const isMobile = window.innerWidth < 768;
+      const maxCount = isMobile ? 40 : 120;
+      const count = Math.min(Math.floor(window.innerWidth / (isMobile ? 20 : 12)), maxCount);
+      for (let i = 0; i < count; i++) particles.push(new Particle());
     };
 
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw connecting lines between particles
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 200) {
-            const opacity = (200 - distance) / 200 * 0.15;
-            ctx.beginPath();
-            if (isDark) {
-              ctx.strokeStyle = `rgba(100, 200, 255, ${opacity})`;
-            } else {
-              ctx.strokeStyle = `rgba(8, 145, 178, ${opacity * 1.5})`;
-            }
-            ctx.lineWidth = 1.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-
+    const animate = (timestamp) => {
       animationFrameId = requestAnimationFrame(animate);
+
+      // Throttle to 30fps
+      if (timestamp - lastFrameTime < FRAME_INTERVAL) return;
+      lastFrameTime = timestamp;
+
+      // Pause when browser tab is not visible — free CPU entirely
+      if (document.hidden) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // NOTE: Connection lines removed — they were O(n²) = ~780 sqrt() per frame at 150 particles
+      particles.forEach(p => { p.update(); p.draw(); });
     };
 
     initParticles();
-    animate();
+    animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isDark]); // Re-render when theme changes
+  }, [isDark]);
 
-  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none"
+      style={{ zIndex: 0 }}
+    />
+  );
 };
 
 export default ParticleCanvas;

@@ -197,6 +197,26 @@ const TopicDetail = () => {
         const allQuestions = getAllQuestions();
         const exercise = allQuestions[currentQuestion];
 
+        if (!exercise) {
+            return (
+                <div className="min-h-screen pt-32 pb-16 px-4">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <div className="glass-panel rounded-xl p-12 border border-gray-700">
+                            <i className="fas fa-inbox text-5xl text-gray-600 mb-4"></i>
+                            <h2 className="text-2xl font-bold text-white mb-2">No Questions Available</h2>
+                            <p className="text-gray-400 mb-6">This topic has no exercise questions yet.</p>
+                            <button
+                                onClick={() => setShowExercise(false)}
+                                className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition"
+                            >
+                                <i className="fas fa-arrow-left mr-2"></i> Back to Topic
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div className="min-h-screen pt-32 pb-16 px-4">
                 <div className="max-w-4xl mx-auto">
@@ -229,7 +249,7 @@ const TopicDetail = () => {
                                     Q{currentQuestion + 1}
                                 </span>
                                 <div 
-                                    className="text-white text-lg flex-1" 
+                                    className="text-white text-lg flex-1 ql-editor-content" 
                                     dangerouslySetInnerHTML={{ __html: exercise.question }}
                                 />
                             </div>
@@ -268,7 +288,7 @@ const TopicDetail = () => {
                                             )}
                                         </div>
                                         <div 
-                                            className="font-medium flex-1" 
+                                            className="font-medium flex-1 ql-editor-content" 
                                             dangerouslySetInnerHTML={{ __html: option }}
                                         />
                                     </div>

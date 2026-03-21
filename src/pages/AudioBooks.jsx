@@ -4,8 +4,10 @@ import { useData } from '../context/DataContext';
 import Pagination from '../components/UI/Pagination';
 
 const AudioBooks = () => {
-  const { audioBooks } = useData();
+  const { audioBooks, ensureAudioBooksLoaded } = useData();
   const [selectedCategory, setSelectedCategory] = useState('all');
+
+  useEffect(() => { ensureAudioBooksLoaded(); }, []);
   const [expandedBooks, setExpandedBooks] = useState({});
   const [expandedChapters, setExpandedChapters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);

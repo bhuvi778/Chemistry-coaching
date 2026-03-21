@@ -9,7 +9,7 @@ const InfinitePracticeSession = require('../models/InfinitePracticeSession');
 router.get('/admin/questions', async (req, res) => {
     try {
         const { examName, subject, chapterName, difficulty, isActive } = req.query;
-        
+
         const filter = {};
         if (examName) filter.examName = examName;
         if (subject) filter.subject = subject;
@@ -19,7 +19,7 @@ router.get('/admin/questions', async (req, res) => {
 
         const questions = await InfinitePracticeQuestion.find(filter)
             .sort({ createdAt: -1 });
-        
+
         res.json(questions);
     } catch (error) {
         console.error('Error fetching questions:', error);
@@ -62,11 +62,11 @@ router.put('/admin/questions/:id', async (req, res) => {
             req.body,
             { new: true, runValidators: true }
         );
-        
+
         if (!question) {
             return res.status(404).json({ message: 'Question not found' });
         }
-        
+
         res.json(question);
     } catch (error) {
         console.error('Error updating question:', error);
@@ -78,11 +78,11 @@ router.put('/admin/questions/:id', async (req, res) => {
 router.delete('/admin/questions/:id', async (req, res) => {
     try {
         const question = await InfinitePracticeQuestion.findByIdAndDelete(req.params.id);
-        
+
         if (!question) {
             return res.status(404).json({ message: 'Question not found' });
         }
-        
+
         res.json({ message: 'Question deleted successfully' });
     } catch (error) {
         console.error('Error deleting question:', error);
@@ -94,7 +94,7 @@ router.delete('/admin/questions/:id', async (req, res) => {
 router.get('/admin/chapters', async (req, res) => {
     try {
         const { examName, subject } = req.query;
-        
+
         const filter = { isActive: true };
         if (examName) filter.examName = examName;
         if (subject) filter.subject = subject;
@@ -112,11 +112,17 @@ router.get('/admin/stats', async (req, res) => {
     try {
         const totalQuestions = await InfinitePracticeQuestion.countDocuments();
         const activeQuestions = await InfinitePracticeQuestion.countDocuments({ isActive: true });
-        
+
         const byExam = await InfinitePracticeQuestion.aggregate([
             { $group: { _id: '$examName', count: { $sum: 1 } } }
         ]);
-        
+
+        // Chapter count per exam
+        const chaptersByExam = await InfinitePracticeQuestion.aggregate([
+            { $group: { _id: { examName: '$examName', chapterName: '$chapterName' } } },
+            { $group: { _id: '$_id.examName', chapterCount: { $sum: 1 } } }
+        ]);
+
         const byDifficulty = await InfinitePracticeQuestion.aggregate([
             { $group: { _id: '$difficulty', count: { $sum: 1 } } }
         ]);
@@ -125,11 +131,137 @@ router.get('/admin/stats', async (req, res) => {
             totalQuestions,
             activeQuestions,
             byExam,
+            chaptersByExam,
             byDifficulty
         });
     } catch (error) {
         console.error('Error fetching stats:', error);
         res.status(500).json({ message: 'Server error while fetching stats' });
+    }
+});
+
+// Get all sessions (admin) with pagination
+router.get('/admin/sessions', async (req, res) => {
+    try {
+        const { page = 1, limit = 20, examName, status, userId, mode, search } = req.query;
+        const filter = {};
+        if (examName) filter.examName = examName;
+        if (status) filter.status = status;
+        if (userId) filter.userId = userId;
+        if (mode) filter.mode = mode;
+        if (search) {
+            filter.$or = [
+                { 'studentInfo.name': { $regex: search, $options: 'i' } },
+                { 'studentInfo.email': { $regex: search, $options: 'i' } },
+                { 'studentInfo.mobile': { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const [sessions, total] = await Promise.all([
+            InfinitePracticeSession.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parseInt(limit)),
+            InfinitePracticeSession.countDocuments(filter)
+        ]);
+
+        res.json({
+            sessions,
+            total,
+            page: parseInt(page),
+            totalPages: Math.ceil(total / parseInt(limit))
+        });
+    } catch (error) {
+        console.error('Error fetching admin sessions:', error);
+        res.status(500).json({ message: 'Server error while fetching sessions' });
+    }
+});
+
+// Get single session detail (admin)
+router.get('/admin/sessions/:sessionId', async (req, res) => {
+    try {
+        const session = await InfinitePracticeSession.findById(req.params.sessionId)
+            .populate('questions.questionId');
+        if (!session) {
+            return res.status(404).json({ message: 'Session not found' });
+        }
+        res.json(session);
+    } catch (error) {
+        console.error('Error fetching session detail:', error);
+        res.status(500).json({ message: 'Server error while fetching session detail' });
+    }
+});
+
+// Delete a single session (admin)
+router.delete('/admin/sessions/:sessionId', async (req, res) => {
+    try {
+        const session = await InfinitePracticeSession.findByIdAndDelete(req.params.sessionId);
+        if (!session) {
+            return res.status(404).json({ message: 'Session not found' });
+        }
+        res.json({ message: 'Session deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting session:', error);
+        res.status(500).json({ message: 'Server error while deleting session' });
+    }
+});
+
+// Delete all sessions (admin)
+router.delete('/admin/sessions', async (req, res) => {
+    try {
+        if (req.query.confirm !== 'true') {
+            return res.status(400).json({ message: 'Confirmation required. Pass ?confirm=true' });
+        }
+        const result = await InfinitePracticeSession.deleteMany({});
+        res.json({ message: `Deleted ${result.deletedCount} sessions successfully` });
+    } catch (error) {
+        console.error('Error deleting all sessions:', error);
+        res.status(500).json({ message: 'Server error while deleting all sessions' });
+    }
+});
+
+// Get session stats summary (admin)
+router.get('/admin/session-stats', async (req, res) => {
+    try {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+        const [totalSessions, completedSessions, activeSessions, practiceCount, examCount, recentSessions, byExam, byMode] = await Promise.all([
+            InfinitePracticeSession.countDocuments(),
+            InfinitePracticeSession.countDocuments({ status: 'completed' }),
+            InfinitePracticeSession.countDocuments({ status: 'active' }),
+            InfinitePracticeSession.countDocuments({ mode: 'Practice' }),
+            InfinitePracticeSession.countDocuments({ mode: 'Exam' }),
+            InfinitePracticeSession.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
+            InfinitePracticeSession.aggregate([
+                { $group: { _id: '$examName', count: { $sum: 1 } } }
+            ]),
+            InfinitePracticeSession.aggregate([
+                { $group: { _id: '$mode', count: { $sum: 1 } } }
+            ])
+        ]);
+
+        // Average score across completed sessions
+        const avgScoreResult = await InfinitePracticeSession.aggregate([
+            { $match: { status: 'completed' } },
+            { $group: { _id: null, avgPercentage: { $avg: '$score.percentage' } } }
+        ]);
+        const avgScore = avgScoreResult[0]?.avgPercentage || 0;
+
+        res.json({
+            totalSessions,
+            completedSessions,
+            activeSessions,
+            practiceCount,
+            examCount,
+            recentSessions,
+            avgScore: Math.round(avgScore),
+            byExam,
+            byMode
+        });
+    } catch (error) {
+        console.error('Error fetching session stats:', error);
+        res.status(500).json({ message: 'Server error while fetching session stats' });
     }
 });
 
@@ -139,7 +271,7 @@ router.get('/admin/stats', async (req, res) => {
 router.get('/chapters', async (req, res) => {
     try {
         const { examName, subject } = req.query;
-        
+
         if (!examName || !subject) {
             return res.status(400).json({ message: 'examName and subject are required' });
         }
@@ -149,17 +281,17 @@ router.get('/chapters', async (req, res) => {
             subject,
             isActive: true
         });
-        
-        // Get question count for each chapter
+
+        // Get question count and difficulty breakdown for each chapter
         const chaptersWithCounts = await Promise.all(
             chapters.map(async (chapterName) => {
-                const count = await InfinitePracticeQuestion.countDocuments({
-                    examName,
-                    subject,
-                    chapterName,
-                    isActive: true
-                });
-                return { chapterName, questionCount: count };
+                const [total, easy, medium, hard] = await Promise.all([
+                    InfinitePracticeQuestion.countDocuments({ examName, subject, chapterName, isActive: true }),
+                    InfinitePracticeQuestion.countDocuments({ examName, subject, chapterName, isActive: true, difficulty: 'Easy' }),
+                    InfinitePracticeQuestion.countDocuments({ examName, subject, chapterName, isActive: true, difficulty: 'Medium' }),
+                    InfinitePracticeQuestion.countDocuments({ examName, subject, chapterName, isActive: true, difficulty: 'Hard' })
+                ]);
+                return { chapterName, questionCount: total, easy, medium, hard };
             })
         );
 
@@ -173,10 +305,14 @@ router.get('/chapters', async (req, res) => {
 // Start a new practice session
 router.post('/session/start', async (req, res) => {
     try {
-        const { userId, examName, subject, chapters, difficulty, totalQuestions, mode } = req.body;
+        const { userId, examName, subject, subjects, chapters, difficulty, totalQuestions, mode,
+            timedMode, timeLimitSeconds, negativeMarking, negativeMarkValue, studentInfo } = req.body;
+
+        // Support both single subject (legacy) and multiple subjects array
+        const subjectList = subjects && subjects.length > 0 ? subjects : (subject ? [subject] : []);
 
         // Validate input
-        if (!userId || !examName || !subject || !chapters || chapters.length === 0) {
+        if (!userId || !examName || subjectList.length === 0 || !chapters || chapters.length === 0) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -187,7 +323,7 @@ router.post('/session/start', async (req, res) => {
         // Build query for questions
         const query = {
             examName,
-            subject,
+            subject: { $in: subjectList },
             chapterName: { $in: chapters },
             isActive: true
         };
@@ -214,11 +350,16 @@ router.post('/session/start', async (req, res) => {
         const session = new InfinitePracticeSession({
             userId,
             examName,
-            subject,
+            subject: subjectList.join(', '),
             chapters,
             difficulty,
             totalQuestions: questions.length,
             mode,
+            timedMode: timedMode || false,
+            timeLimitSeconds: timedMode ? timeLimitSeconds : null,
+            negativeMarking: negativeMarking || false,
+            negativeMarkValue: negativeMarking ? (negativeMarkValue || 0.25) : 0,
+            studentInfo: studentInfo || {},
             questions: questions.map(q => ({
                 questionId: q._id,
                 userAnswer: null,
@@ -253,7 +394,7 @@ router.get('/session/:sessionId', async (req, res) => {
     try {
         const session = await InfinitePracticeSession.findById(req.params.sessionId)
             .populate('questions.questionId');
-        
+
         if (!session) {
             return res.status(404).json({ message: 'Session not found' });
         }
@@ -288,7 +429,6 @@ router.post('/session/:sessionId/answer', async (req, res) => {
         // Check if answer is correct
         let isCorrect = false;
         if (Array.isArray(question.correctAnswer)) {
-            // Multiple correct answers
             isCorrect = JSON.stringify(userAnswer.sort()) === JSON.stringify(question.correctAnswer.sort());
         } else {
             isCorrect = userAnswer === question.correctAnswer;
@@ -297,7 +437,7 @@ router.post('/session/:sessionId/answer', async (req, res) => {
         // Update question data
         questionData.userAnswer = userAnswer;
         questionData.isCorrect = isCorrect;
-        questionData.timeTaken = timeTaken;
+        questionData.timeTaken = timeTaken || 0;
 
         // Update score
         let correctCount = 0;
@@ -314,20 +454,26 @@ router.post('/session/:sessionId/answer', async (req, res) => {
             }
         });
 
+        // Calculate score with negative marking
+        let rawScore = correctCount;
+        if (session.negativeMarking && session.negativeMarkValue) {
+            rawScore = correctCount - (incorrectCount * session.negativeMarkValue);
+        }
+
         session.score = {
             correct: correctCount,
             incorrect: incorrectCount,
             unattempted: unattemptedCount,
             total: session.totalQuestions,
-            percentage: Math.round((correctCount / session.totalQuestions) * 100)
+            percentage: Math.max(0, Math.round((rawScore / session.totalQuestions) * 100))
         };
 
         await session.save();
 
-        res.json({ 
-            success: true, 
-            isCorrect, 
-            score: session.score 
+        res.json({
+            success: true,
+            isCorrect,
+            score: session.score
         });
     } catch (error) {
         console.error('Error submitting answer:', error);

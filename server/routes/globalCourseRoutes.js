@@ -11,10 +11,11 @@ const {
 
 // Public routes
 router.get('/', getAllGlobalCourses);
-router.get('/:id', getGlobalCourseById);
 
-// Admin routes
+// Admin routes (must be before /:id to prevent /admin being captured as an id)
 router.get('/admin/all', getAllGlobalCoursesAdmin);
+
+router.get('/:id', getGlobalCourseById);
 router.post('/admin', createGlobalCourse);
 router.put('/admin/:id', updateGlobalCourse);
 router.delete('/admin/:id', deleteGlobalCourse);

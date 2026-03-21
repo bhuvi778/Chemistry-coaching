@@ -161,10 +161,8 @@ selfLearnTopicSchema.pre('save', function (next) {
     this.questionCount = this.questions?.length || 0;
     this.videoCount = this.learn?.videos?.length || 0;
     this.sheetCount = this.learn?.sheets?.length || 0;
-    // Count total questions across all exercise sets
-    this.exerciseCount = this.learn?.exercises?.reduce((total, exercise) => {
-        return total + (exercise.questions?.length || 0);
-    }, 0) || 0;
+    // Total questions across all exercise sets
+    this.exerciseCount = (this.learn?.exercises || []).reduce((total, ex) => total + (ex.questions?.length || 0), 0);
     this.updatedAt = Date.now();
     next();
 });

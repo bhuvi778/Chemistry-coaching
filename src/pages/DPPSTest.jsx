@@ -353,11 +353,16 @@ const DPPSTest = () => {
                                         Question {currentQuestionIndex + 1}
                                     </h3>
                                     <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-lg text-sm">
-                                        {questionData?.marks || 1} mark{(questionData?.marks || 1) > 1 ? 's' : ''}
+                                        +{questionData?.marks || 1} mark{(questionData?.marks || 1) > 1 ? 's' : ''}
                                     </span>
+                                    {(questionData?.negativeMarks || 0) > 0 && (
+                                        <span className="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-sm">
+                                            -{questionData.negativeMarks} for wrong
+                                        </span>
+                                    )}
                                 </div>
                                 <div
-                                    className="text-gray-300 text-lg leading-relaxed mb-4"
+                                    className="text-gray-300 text-lg leading-relaxed mb-4 ql-editor-content"
                                     dangerouslySetInnerHTML={{ __html: questionData?.question }}
                                 />
                                 {questionData?.imageUrl && (
@@ -390,7 +395,7 @@ const DPPSTest = () => {
                                                     {optionLabel}
                                                 </div>
                                                 <div
-                                                    className="text-gray-300 flex-grow"
+                                                    className="text-gray-300 flex-grow ql-editor-content"
                                                     dangerouslySetInnerHTML={{ __html: option }}
                                                 />
                                             </div>

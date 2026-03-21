@@ -72,7 +72,8 @@ const ManageDPPS = () => {
         classLevel: '11',
         difficultyLevel: 'Medium',
         questionType: 'MCQ',
-        marks: 1,
+        marks: 4,
+        negativeMarks: 1,
         tags: [],
         order: 0,
         isActive: true
@@ -253,6 +254,7 @@ const ManageDPPS = () => {
             difficultyLevel: question.difficultyLevel,
             questionType: question.questionType,
             marks: question.marks,
+            negativeMarks: question.negativeMarks ?? 1,
             tags: question.tags || [],
             order: question.order,
             isActive: question.isActive
@@ -289,7 +291,8 @@ const ManageDPPS = () => {
             classLevel: '11',
             difficultyLevel: 'Medium',
             questionType: 'MCQ',
-            marks: 1,
+            marks: 4,
+            negativeMarks: 1,
             tags: [],
             order: 0,
             isActive: true
@@ -643,7 +646,10 @@ const ManageDPPS = () => {
                                             <span className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-400">
                                                 {question.questionType}
                                             </span>
-                                            <span className="text-xs text-gray-500">{question.marks} marks</span>
+                                            <span className="text-xs text-green-500">+{question.marks} marks</span>
+                                            {(question.negativeMarks ?? 0) > 0 && (
+                                                <span className="text-xs text-red-400">-{question.negativeMarks} neg</span>
+                                            )}
                                         </div>
                                         <div
                                             className="text-white mb-3"
@@ -776,7 +782,7 @@ const ManageDPPS = () => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-gray-400 mb-2">Class Level *</label>
                                     <select
@@ -803,14 +809,29 @@ const ManageDPPS = () => {
                                         <option value="True/False">True/False</option>
                                     </select>
                                 </div>
+                            </div>
 
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-gray-400 mb-2">Marks</label>
+                                    <label className="block text-gray-400 mb-2">Marks (for correct)</label>
                                     <input
                                         type="number"
                                         value={questionForm.marks}
-                                        onChange={(e) => setQuestionForm({ ...questionForm, marks: parseInt(e.target.value) })}
+                                        onChange={(e) => setQuestionForm({ ...questionForm, marks: parseFloat(e.target.value) })}
                                         className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none"
+                                        min="0"
+                                        step="0.5"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-gray-400 mb-2">Negative Marks (for wrong)</label>
+                                    <input
+                                        type="number"
+                                        value={questionForm.negativeMarks}
+                                        onChange={(e) => setQuestionForm({ ...questionForm, negativeMarks: parseFloat(e.target.value) })}
+                                        className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-red-500 outline-none"
+                                        min="0"
+                                        step="0.25"
                                     />
                                 </div>
                             </div>

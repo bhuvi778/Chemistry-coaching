@@ -9,8 +9,10 @@ import * as pdfjsLib from 'pdfjs-dist';
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 const ChemSnaps = () => {
-    const { chemSnaps } = useData();
+    const { chemSnaps, ensureChemSnapsLoaded } = useData();
     const [selectedSubject, setSelectedSubject] = useState('all');
+
+    useEffect(() => { ensureChemSnapsLoaded(); }, []);
     const [selectedExam, setSelectedExam] = useState('all');
     const [selectedChapter, setSelectedChapter] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');

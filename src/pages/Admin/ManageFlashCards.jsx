@@ -809,17 +809,16 @@ const ManageFlashCards = () => {
                                 <h3 className="text-lg font-bold text-white mb-4">
                                     {editingId && editingType === 'card' ? 'Edit Card' : 'Add New Card'}
                                 </h3>
-                                <form onSubmit={handleCardSubmit} className="space-y-4">
+                                <form onSubmit={handleCardSubmit} className="space-y-6">
                                     <div>
                                         <label className="block text-gray-300 mb-2 font-semibold">Question *</label>
-                                        <div className="bg-white rounded-lg">
+                                        <div className="quill-wrapper" style={{ minHeight: '230px', marginBottom: '16px', position: 'relative', zIndex: 2 }}>
                                             <ReactQuill
                                                 ref={questionQuillRef}
                                                 theme="snow"
                                                 value={cardForm.question}
                                                 onChange={(content, delta, source, editor) => handleQuillChange(content, delta, source, editor, 'question')}
                                                 modules={quillModules}
-                                                style={{ height: '200px', marginBottom: '42px' }}
                                                 placeholder="Enter the question..."
                                             />
                                         </div>
@@ -827,14 +826,13 @@ const ManageFlashCards = () => {
 
                                     <div>
                                         <label className="block text-gray-300 mb-2 font-semibold">Answer *</label>
-                                        <div className="bg-white rounded-lg">
+                                        <div className="quill-wrapper" style={{ minHeight: '230px', marginBottom: '16px', position: 'relative', zIndex: 1 }}>
                                             <ReactQuill
                                                 ref={answerQuillRef}
                                                 theme="snow"
                                                 value={cardForm.answer}
                                                 onChange={(content, delta, source, editor) => handleQuillChange(content, delta, source, editor, 'answer')}
                                                 modules={quillModules}
-                                                style={{ height: '200px', marginBottom: '42px' }}
                                                 placeholder="Enter the answer..."
                                             />
                                         </div>
@@ -971,95 +969,61 @@ const ManageFlashCards = () => {
             )}
 
             {/* Custom Quill Editor Styling */}
-            <style jsx global>{`
-                /* Quill Editor Dark Theme Customization */
-                .ql-toolbar.ql-snow {
-                    background: #1f2937;
-                    border: 1px solid #374151;
-                    border-radius: 8px 8px 0 0;
+            <style>{`
+                /* Quill Editor Dark Theme - scoped to .quill-wrapper */
+                .quill-wrapper .ql-toolbar.ql-snow {
+                    background: #1f2937 !important;
+                    border: 1px solid #374151 !important;
+                    border-radius: 8px 8px 0 0 !important;
+                    border-bottom: none !important;
                 }
-                
-                .ql-container.ql-snow {
-                    background: #111827;
-                    border: 1px solid #374151;
-                    border-radius: 0 0 8px 8px;
-                    color: #fff;
+                .quill-wrapper .ql-container.ql-snow {
+                    background: #111827 !important;
+                    border: 1px solid #374151 !important;
+                    border-top: none !important;
+                    border-radius: 0 0 8px 8px !important;
+                    color: #fff !important;
+                    height: auto !important;
+                    min-height: 180px !important;
                 }
-                
-                .ql-editor {
-                    color: #fff;
-                    min-height: 200px;
+                .quill-wrapper .ql-editor {
+                    color: #fff !important;
+                    min-height: 180px !important;
+                    height: auto !important;
+                    padding: 12px 15px !important;
+                    cursor: text !important;
+                    caret-color: #fff !important;
                 }
-                
-                .ql-editor.ql-blank::before {
-                    color: #6b7280;
-                    font-style: normal;
+                .quill-wrapper .ql-editor:focus {
+                    outline: none !important;
+                    caret-color: #fff !important;
                 }
-                
-                /* Toolbar buttons */
-                .ql-snow .ql-stroke {
-                    stroke: #9ca3af;
+                .quill-wrapper .ql-editor.ql-blank::before {
+                    color: #6b7280 !important;
+                    font-style: normal !important;
+                    padding-left: 0 !important;
                 }
-                
-                .ql-snow .ql-fill {
-                    fill: #9ca3af;
+                .quill-wrapper .ql-snow .ql-stroke { stroke: #9ca3af; }
+                .quill-wrapper .ql-snow .ql-fill { fill: #9ca3af; }
+                .quill-wrapper .ql-snow .ql-picker-label { color: #9ca3af; }
+                .quill-wrapper .ql-snow.ql-toolbar button:hover .ql-stroke,
+                .quill-wrapper .ql-snow .ql-toolbar button:hover .ql-stroke,
+                .quill-wrapper .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+                .quill-wrapper .ql-snow .ql-toolbar button.ql-active .ql-stroke { stroke: #06b6d4; }
+                .quill-wrapper .ql-snow.ql-toolbar button:hover .ql-fill,
+                .quill-wrapper .ql-snow .ql-toolbar button:hover .ql-fill,
+                .quill-wrapper .ql-snow.ql-toolbar button.ql-active .ql-fill,
+                .quill-wrapper .ql-snow .ql-toolbar button.ql-active .ql-fill { fill: #06b6d4; }
+                .quill-wrapper .ql-snow.ql-toolbar button:hover,
+                .quill-wrapper .ql-snow .ql-toolbar button:hover,
+                .quill-wrapper .ql-snow.ql-toolbar button.ql-active,
+                .quill-wrapper .ql-snow .ql-toolbar button.ql-active { background: #374151; }
+                .quill-wrapper .ql-snow .ql-picker-options {
+                    background: #1f2937 !important;
+                    border: 1px solid #374151 !important;
                 }
-                
-                .ql-snow .ql-picker-label {
-                    color: #9ca3af;
-                }
-                
-                .ql-snow.ql-toolbar button:hover .ql-stroke,
-                .ql-snow .ql-toolbar button:hover .ql-stroke,
-                .ql-snow.ql-toolbar button:focus .ql-stroke,
-                .ql-snow .ql-toolbar button:focus .ql-stroke,
-                .ql-snow.ql-toolbar button.ql-active .ql-stroke,
-                .ql-snow .ql-toolbar button.ql-active .ql-stroke {
-                    stroke: #06b6d4;
-                }
-                
-                .ql-snow.ql-toolbar button:hover .ql-fill,
-                .ql-snow .ql-toolbar button:hover .ql-fill,
-                .ql-snow.ql-toolbar button:focus .ql-fill,
-                .ql-snow .ql-toolbar button:focus .ql-fill,
-                .ql-snow.ql-toolbar button.ql-active .ql-fill,
-                .ql-snow .ql-toolbar button.ql-active .ql-fill {
-                    fill: #06b6d4;
-                }
-                
-                .ql-snow.ql-toolbar button:hover,
-                .ql-snow .ql-toolbar button:hover,
-                .ql-snow.ql-toolbar button:focus,
-                .ql-snow .ql-toolbar button:focus,
-                .ql-snow.ql-toolbar button.ql-active,
-                .ql-snow .ql-toolbar button.ql-active {
-                    background: #374151;
-                }
-                
-                /* Dropdown menus */
-                .ql-snow .ql-picker-options {
-                    background: #1f2937;
-                    border: 1px solid #374151;
-                }
-                
-                .ql-snow .ql-picker-item {
-                    color: #9ca3af;
-                }
-                
-                .ql-snow .ql-picker-item:hover {
-                    background: #374151;
-                    color: #06b6d4;
-                }
-                
-                /* Remove white background wrapper */
-                .bg-white.rounded-lg {
-                    background: transparent !important;
-                }
-                
-                /* Ensure proper spacing */
-                .ql-container {
-                    font-family: inherit;
-                }
+                .quill-wrapper .ql-snow .ql-picker-item { color: #9ca3af; }
+                .quill-wrapper .ql-snow .ql-picker-item:hover { background: #374151; color: #06b6d4; }
             `}</style>
         </div>
     );

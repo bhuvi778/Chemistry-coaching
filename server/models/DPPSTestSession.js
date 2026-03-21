@@ -77,6 +77,14 @@ const dppsTestSessionSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    negativeScore: {
+        type: Number,
+        default: 0
+    },
+    totalMarks: {
+        type: Number,
+        default: 0
+    },
     percentage: {
         type: Number,
         default: 0
@@ -98,9 +106,29 @@ dppsTestSessionSchema.methods.calculateResults = function () {
     this.attemptedQuestions = this.questions.filter(q => q.isAttempted).length;
     this.correctAnswers = this.questions.filter(q => q.isCorrect === true).length;
     this.incorrectAnswers = this.attemptedQuestions - this.correctAnswers;
-    this.score = this.correctAnswers;
-    this.percentage = this.totalQuestions > 0
-        ? Math.round((this.correctAnswers / this.totalQuestions) * 100)
+
+    // Calculate marks with negative marking
+    let positiveMarks = 0;
+    let negativeMarks = 0;
+    const maxMarks = this.questions.reduce((sum, q) => {
+        const qData = q.questionId;
+        return sum + (qData?.marks || 1);
+    }, 0);
+
+    this.questions.forEach(q => {
+        const qData = q.questionId;
+        if (q.isCorrect === true) {
+            positiveMarks += (qData?.marks || 1);
+        } else if (q.isAttempted && q.isCorrect === false) {
+            negativeMarks += (qData?.negativeMarks || 0);
+        }
+    });
+
+    this.negativeScore = negativeMarks;
+    this.totalMarks = maxMarks;
+    this.score = Math.max(0, positiveMarks - negativeMarks);
+    this.percentage = maxMarks > 0
+        ? Math.round((this.score / maxMarks) * 100)
         : 0;
 };
 

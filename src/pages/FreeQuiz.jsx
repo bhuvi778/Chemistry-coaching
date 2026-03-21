@@ -1,114 +1,73 @@
 import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { useData } from '../context/DataContext';
+import { useNavigate } from 'react-router-dom';
 import Pagination from '../components/UI/Pagination';
 
 const FreeQuiz = () => {
-    const { freeQuizzes } = useData();
+    const navigate = useNavigate();
+    const [quizzes, setQuizzes] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [selectedExam, setSelectedExam] = useState('all');
     const [selectedSubject, setSelectedSubject] = useState('all');
     const [selectedChapter, setSelectedChapter] = useState('all');
     const [selectedQuizType, setSelectedQuizType] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Modal State
-    const [showQuizModal, setShowQuizModal] = useState(false);
-    const [quizUrl, setQuizUrl] = useState('');
-    const [quizTitle, setQuizTitle] = useState('');
-    const [isLoadingQuiz, setIsLoadingQuiz] = useState(false);
+    const API_URL = import.meta.env.VITE_API_URL || 'https://ace2examz.com/api';
 
-    // Derived Data for Filters
-    const safeQuizzes = Array.isArray(freeQuizzes) ? freeQuizzes : [];
+    useEffect(() => {
+        fetchQuizzes();
+    }, []);
 
-    const subjects = ['all', ...new Set(safeQuizzes.map(q => q.subject).filter(Boolean))];
-    const chapters = ['all', ...new Set(safeQuizzes.map(q => q.chapter).filter(Boolean))];
+    const fetchQuizzes = async () => {
+        try {
+            const res = await fetch(`${API_URL}/free-quizzes`);
+            const data = await res.json();
+            setQuizzes(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error fetching quizzes:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    // Filter Logic
-    const filteredQuizzes = safeQuizzes.filter(quiz => {
-        const examMatch = selectedExam === 'all' || quiz.examType === selectedExam;
-        const subjectMatch = selectedSubject === 'all' || quiz.subject === selectedSubject;
-        const chapterMatch = selectedChapter === 'all' || quiz.chapter === selectedChapter;
-        const quizTypeMatch = selectedQuizType === 'all' || quiz.quizCategory === selectedQuizType;
-        return examMatch && subjectMatch && chapterMatch && quizTypeMatch;
+    const subjects = ['all', ...new Set(quizzes.map(q => q.subject).filter(Boolean))];
+    const chapters = ['all', ...new Set(
+        quizzes
+            .filter(q => selectedSubject === 'all' || q.subject === selectedSubject)
+            .map(q => q.chapter)
+            .filter(Boolean)
+    )];
+
+    const filteredQuizzes = quizzes.filter(q => {
+        const examMatch = selectedExam === 'all' || q.examType === selectedExam;
+        const subjectMatch = selectedSubject === 'all' || q.subject === selectedSubject;
+        const chapterMatch = selectedChapter === 'all' || q.chapter === selectedChapter;
+        const typeMatch = selectedQuizType === 'all' || q.quizCategory === selectedQuizType;
+        return examMatch && subjectMatch && chapterMatch && typeMatch;
     });
 
-    // Debug logging (can be removed after testing)
-    useEffect(() => {
-        console.log('🔍 Free Quiz Filter Debug:', {
-            totalQuizzes: safeQuizzes.length,
-            filteredQuizzes: filteredQuizzes.length,
-            filters: {
-                exam: selectedExam,
-                subject: selectedSubject,
-                chapter: selectedChapter,
-                quizType: selectedQuizType
-            },
-            quizCategories: safeQuizzes.map(q => ({
-                title: q.title,
-                category: q.quizCategory,
-                hasCategory: !!q.quizCategory
-            }))
-        });
-
-        // Log first quiz details for debugging
-        if (safeQuizzes.length > 0) {
-            console.log('📝 First Quiz Details:', safeQuizzes[0]);
-        }
-    }, [selectedExam, selectedSubject, selectedChapter, selectedQuizType, safeQuizzes, filteredQuizzes]);
-
-    // Pagination Logic - 6 items per page (2 rows × 3 columns)
-    const itemsPerPage = 6;
+    const itemsPerPage = 9;
     const totalPages = Math.ceil(filteredQuizzes.length / itemsPerPage);
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentQuizzes = filteredQuizzes.slice(indexOfFirstItem, indexOfLastItem);
+    const currentQuizzes = filteredQuizzes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-    // Reset to page 1 when filters change
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [selectedExam, selectedSubject, selectedChapter, selectedQuizType]);
+    useEffect(() => { setCurrentPage(1); }, [selectedExam, selectedSubject, selectedChapter, selectedQuizType]);
+    useEffect(() => { if (selectedSubject !== 'all') setSelectedChapter('all'); }, [selectedSubject]);
 
-    // Handle Quiz Opening
-    const handleOpenQuiz = async (quiz) => {
-        setIsLoadingQuiz(true);
-        setQuizTitle(quiz.title);
+    const difficultyColor = (d) => {
+        if (d === 'Easy') return 'text-green-400 bg-green-500/10 border-green-500/30';
+        if (d === 'Hard') return 'text-red-400 bg-red-500/10 border-red-500/30';
+        return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30';
+    };
 
-        if (quiz.quizType === 'PDF') {
-            try {
-                // Fetch full quiz data including PDF
-                const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-                const apiUrl = cleanBaseUrl.endsWith('/api')
-                    ? `${cleanBaseUrl}/free-quizzes/${quiz._id}`
-                    : `${cleanBaseUrl}/api/free-quizzes/${quiz._id}`;
-
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('Failed to fetch quiz data');
-
-                const fullQuiz = await response.json();
-
-                if (fullQuiz.quizPdf && fullQuiz.quizPdf.data) {
-                    setQuizUrl(fullQuiz.quizPdf.data);
-                    setShowQuizModal(true);
-                } else {
-                    alert('Quiz PDF data is missing.');
-                }
-            } catch (error) {
-                console.error('Error opening quiz:', error);
-                alert('Failed to load quiz. Please try again.');
-            }
-        } else {
-            // Link Type
-            setQuizUrl(quiz.quizLink);
-            setShowQuizModal(true);
-        }
-
-        setIsLoadingQuiz(false);
+    const categoryColor = (c) => {
+        if (c === 'Mock Test') return 'text-orange-400 bg-orange-500/20 border-orange-500/30';
+        if (c === 'PYPs') return 'text-pink-400 bg-pink-500/20 border-pink-500/30';
+        return 'text-purple-400 bg-purple-500/20 border-purple-500/30';
     };
 
     return (
         <div className="min-h-screen py-20 animate-fadeIn">
-            {/* Hero Section */}
+            {/* Hero */}
             <section className="max-w-7xl mx-auto px-4 mb-12 text-center">
                 <div className="inline-block p-4 rounded-full bg-cyan-500/10 mb-6 animate-float">
                     <i className="fas fa-clipboard-list text-6xl text-cyan-400"></i>
@@ -118,225 +77,136 @@ const FreeQuiz = () => {
                 </h1>
                 <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
                     Master every concept with our chapter-wise and topic-wise quizzes.
-                    Designed to boost your confidence and satisfaction, these free resources help you evaluate your preparation level instantly.
+                    Attempt directly in your browser — no login required.
                 </p>
             </section>
 
-            {/* Filter Section */}
-            <section className="max-w-7xl mx-auto px-4 mb-12">
+            {/* Filters */}
+            <section className="max-w-7xl mx-auto px-4 mb-10">
                 <div className="glass-panel p-6 rounded-2xl">
-                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                        <i className="fas fa-filter text-cyan-400"></i>
-                        Filter Quizzes
+                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i className="fas fa-filter text-cyan-400"></i> Filter Quizzes
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {/* Exam Filter */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
-                            <label className="block text-sm font-semibold text-gray-400 mb-2">Filter by Exam</label>
-                            <select
-                                value={selectedExam}
-                                onChange={(e) => setSelectedExam(e.target.value)}
-                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
-                            >
+                            <label className="block text-xs font-semibold text-gray-400 mb-1">Exam</label>
+                            <select value={selectedExam} onChange={e => setSelectedExam(e.target.value)} className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-2.5 focus:border-cyan-400 outline-none transition">
                                 <option value="all">All Exams</option>
-                                <optgroup label="UG Entrance Exams">
-                                    <option value="NEET">NEET</option>
-                                    <option value="JEE">JEE (Main & Advanced)</option>
-                                    <option value="IAT">IAT</option>
-                                    <option value="NEST">NEST</option>
-                                    <option value="CUET UG">CUET UG</option>
-                                    <option value="BITSAT">BITSAT</option>
-                                </optgroup>
-                                <optgroup label="PG Entrance Exams">
-                                    <option value="IIT JAM">IIT JAM</option>
-                                    <option value="CUET PG">CUET PG</option>
-                                </optgroup>
-                                <optgroup label="Research Level Exams">
-                                    <option value="CSIR NET">CSIR NET</option>
-                                    <option value="GATE">GATE</option>
-                                    <option value="TIFR">TIFR</option>
-                                </optgroup>
-                                <optgroup label="Competitive Exams (Govt. Job)">
-                                    <option value="PSTET">PSTET</option>
-                                    <option value="Master Cadre">Master Cadre</option>
-                                    <option value="UPSC - Mains (Chemistry)">UPSC - Mains (Chemistry)</option>
-                                </optgroup>
+                                <optgroup label="UG Entrance"><option value="NEET">NEET</option><option value="JEE">JEE</option><option value="IAT">IAT</option><option value="NEST">NEST</option><option value="CUET UG">CUET UG</option><option value="BITSAT">BITSAT</option></optgroup>
+                                <optgroup label="PG Entrance"><option value="IIT JAM">IIT JAM</option><option value="CUET PG">CUET PG</option></optgroup>
+                                <optgroup label="Research"><option value="CSIR NET">CSIR NET</option><option value="GATE">GATE</option><option value="TIFR">TIFR</option></optgroup>
+                                <optgroup label="Govt. Job"><option value="PSTET">PSTET</option><option value="Master Cadre">Master Cadre</option><option value="UPSC - Mains (Chemistry)">UPSC Mains</option></optgroup>
                             </select>
                         </div>
-
-                        {/* Subject Filter */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-400 mb-2">Filter by Subject</label>
-                            <select
-                                value={selectedSubject}
-                                onChange={(e) => setSelectedSubject(e.target.value)}
-                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
-                            >
+                            <label className="block text-xs font-semibold text-gray-400 mb-1">Subject</label>
+                            <select value={selectedSubject} onChange={e => setSelectedSubject(e.target.value)} className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-2.5 focus:border-cyan-400 outline-none transition">
                                 {subjects.map(s => <option key={s} value={s}>{s === 'all' ? 'All Subjects' : s}</option>)}
                             </select>
                         </div>
-
-                        {/* Chapter Filter */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-400 mb-2">Filter by Chapter</label>
-                            <select
-                                value={selectedChapter}
-                                onChange={(e) => setSelectedChapter(e.target.value)}
-                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
-                            >
+                            <label className="block text-xs font-semibold text-gray-400 mb-1">Chapter</label>
+                            <select value={selectedChapter} onChange={e => setSelectedChapter(e.target.value)} className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-2.5 focus:border-cyan-400 outline-none transition">
                                 {chapters.map(c => <option key={c} value={c}>{c === 'all' ? 'All Chapters' : c}</option>)}
                             </select>
                         </div>
-
-                        {/* Quiz Type Filter */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-400 mb-2">Filter by Quiz Type</label>
-                            <select
-                                value={selectedQuizType}
-                                onChange={(e) => setSelectedQuizType(e.target.value)}
-                                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400 transition"
-                            >
+                            <label className="block text-xs font-semibold text-gray-400 mb-1">Quiz Type</label>
+                            <select value={selectedQuizType} onChange={e => setSelectedQuizType(e.target.value)} className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-2.5 focus:border-cyan-400 outline-none transition">
                                 <option value="all">All Types</option>
                                 <option value="Quiz">Quiz</option>
                                 <option value="Mock Test">Mock Test</option>
-                                <option value="PYPs">PYPs (Previous Year Papers)</option>
+                                <option value="PYPs">PYPs</option>
                             </select>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Grid Section */}
+            {/* Grid */}
             <section className="max-w-7xl mx-auto px-4">
-                {isLoadingQuiz && (
-                    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                        <div className="text-center">
-                            <i className="fas fa-spinner fa-spin text-5xl text-cyan-400 mb-4"></i>
-                            <h3 className="text-white text-xl font-bold">Loading Quiz...</h3>
-                        </div>
+                {loading ? (
+                    <div className="text-center py-20">
+                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent mb-4"></div>
+                        <p className="text-gray-400">Loading quizzes...</p>
                     </div>
-                )}
-
-                {filteredQuizzes.length === 0 ? (
+                ) : filteredQuizzes.length === 0 ? (
                     <div className="text-center py-20 bg-gray-800/50 rounded-2xl border border-gray-700">
                         <i className="fas fa-clipboard-list text-6xl text-gray-600 mb-4"></i>
                         <h3 className="text-2xl font-bold text-white mb-2">No Quizzes Found</h3>
-                        <p className="text-gray-400">Try adjusting your filters to find what you're looking for.</p>
+                        <p className="text-gray-400">Try adjusting your filters.</p>
                     </div>
                 ) : (
                     <>
-                        {/* Quiz Count */}
-                        <div className="mb-4 text-gray-400">
-                            Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredQuizzes.length)} of {filteredQuizzes.length} quizzes
-                        </div>
-
+                        <p className="text-gray-400 mb-4 text-sm">
+                            Showing {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, filteredQuizzes.length)} of {filteredQuizzes.length} quizzes
+                        </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {currentQuizzes.map(quiz => (
-                                <div key={quiz._id} className="glass-panel group hover:border-cyan-500/50 transition-all duration-300 rounded-xl overflow-hidden relative">
-                                    <div className="p-6">
-                                        <div className="flex justify-between items-start mb-4 flex-wrap gap-2">
-                                            <div className="flex items-center gap-2 flex-wrap">
-                                                <span className="px-3 py-1 text-xs font-bold rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-                                                    {quiz.examType}
-                                                </span>
-                                                <span className={`px-3 py-1 text-xs font-bold rounded-full border ${(quiz.quizCategory || 'Quiz') === 'Quiz' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
-                                                        (quiz.quizCategory || 'Quiz') === 'Mock Test' ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' :
-                                                            (quiz.quizCategory || 'Quiz') === 'PYPs' ? 'bg-pink-500/20 text-pink-400 border-pink-500/30' :
-                                                                'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                                                    }`}>
-                                                    {quiz.quizCategory || 'Quiz'}
-                                                </span>
-                                            </div>
-                                            <span className={`px-3 py-1 text-xs font-bold rounded-full border ${quiz.difficulty === 'Easy' ? 'bg-green-500/10 text-green-400 border-green-500/30' :
-                                                quiz.difficulty === 'Medium' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' :
-                                                    'bg-red-500/10 text-red-400 border-red-500/30'
-                                                }`}>
-                                                {quiz.difficulty}
-                                            </span>
+                                <div key={quiz._id} className="glass-panel group hover:border-cyan-500/50 transition-all duration-300 rounded-xl overflow-hidden flex flex-col">
+                                    <div className="p-6 flex flex-col flex-1">
+                                        {/* Badges */}
+                                        <div className="flex flex-wrap gap-2 mb-3">
+                                            <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">{quiz.examType}</span>
+                                            <span className={`px-2.5 py-1 text-xs font-bold rounded-full border ${categoryColor(quiz.quizCategory)}`}>{quiz.quizCategory || 'Quiz'}</span>
+                                            <span className={`px-2.5 py-1 text-xs font-bold rounded-full border ${difficultyColor(quiz.difficulty)}`}>{quiz.difficulty}</span>
                                         </div>
 
-                                        <h3 className="text-xl font-bold text-white mb-2 leading-tight group-hover:text-cyan-400 transition-colors">
+                                        {/* Title */}
+                                        <h3 className="text-lg font-bold text-white mb-2 leading-snug group-hover:text-cyan-400 transition-colors line-clamp-2 flex-1">
                                             {quiz.title}
                                         </h3>
 
-                                        <p className="text-gray-400 text-sm mb-4 line-clamp-2 min-h-[40px]">
-                                            {quiz.description || 'Test your knowledge with this interactive quiz.'}
-                                        </p>
+                                        {quiz.description && (
+                                            <p className="text-gray-400 text-sm mb-3 line-clamp-2">{quiz.description}</p>
+                                        )}
 
-                                        <div className="space-y-2 mb-6">
-                                            <div className="flex items-center text-sm text-gray-400">
-                                                <i className="fas fa-book w-6 text-center text-blue-400 mr-2"></i>
+                                        {/* Info */}
+                                        <div className="space-y-1.5 mb-4">
+                                            <div className="flex items-center text-sm text-gray-400 gap-2">
+                                                <i className="fas fa-book w-4 text-blue-400 text-center"></i>
                                                 <span className="truncate">{quiz.chapter}</span>
                                             </div>
                                             {quiz.topic && (
-                                                <div className="flex items-center text-sm text-gray-400">
-                                                    <i className="fas fa-bullseye w-6 text-center text-purple-400 mr-2"></i>
+                                                <div className="flex items-center text-sm text-gray-400 gap-2">
+                                                    <i className="fas fa-bullseye w-4 text-purple-400 text-center"></i>
                                                     <span className="truncate">{quiz.topic}</span>
                                                 </div>
                                             )}
+                                            <div className="flex items-center text-sm text-gray-400 gap-2">
+                                                <i className="fas fa-question-circle w-4 text-cyan-400 text-center"></i>
+                                                <span>{quiz.questionCount ?? 0} questions</span>
+                                                <span className="text-gray-600">•</span>
+                                                <i className="fas fa-clock w-4 text-orange-400 text-center"></i>
+                                                <span>{quiz.timeLimit ?? 30} mins</span>
+                                            </div>
                                         </div>
 
+                                        {/* CTA */}
                                         <button
-                                            onClick={() => handleOpenQuiz(quiz)}
-                                            className="w-full py-3 rounded-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transform hover:scale-[1.02] transition-all shadow-lg hover:shadow-cyan-500/25 flex items-center justify-center gap-2"
+                                            onClick={() => navigate(`/free-quiz/${quiz._id}`)}
+                                            disabled={(quiz.questionCount ?? 0) === 0}
+                                            className="w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg hover:shadow-cyan-500/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            <i className={`fas ${quiz.quizType === 'PDF' ? 'fa-file-pdf' : 'fa-link'}`}></i>
-                                            Attempt Now
+                                            {(quiz.questionCount ?? 0) === 0 ? (
+                                                <><i className="fas fa-clock"></i> Coming Soon</>
+                                            ) : (
+                                                <><i className="fas fa-play"></i> Attempt Now</>
+                                            )}
                                         </button>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Pagination */}
                         {totalPages > 1 && (
                             <div className="mt-8">
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={(page) => {
-                                        setCurrentPage(page);
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                />
+                                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={p => { setCurrentPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
                             </div>
                         )}
                     </>
                 )}
             </section>
-
-            {/* Quiz Modal */}
-            {showQuizModal && createPortal(
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-fadeIn">
-                    <div className="bg-gray-900 rounded-2xl w-full max-w-6xl h-[90vh] flex flex-col border border-gray-700 shadow-2xl relative">
-                        {/* Header */}
-                        <div className="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800/80 rounded-t-2xl">
-                            <h3 className="text-xl font-bold text-white flex items-center gap-2 truncate pr-4">
-                                <i className="fas fa-clipboard-list text-cyan-400"></i>
-                                {quizTitle}
-                            </h3>
-                            <button
-                                onClick={() => setShowQuizModal(false)}
-                                className="w-8 h-8 rounded-full bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white flex items-center justify-center transition flex-shrink-0"
-                            >
-                                <i className="fas fa-times"></i>
-                            </button>
-                        </div>
-
-                        {/* Content (Iframe) */}
-                        <div className="flex-1 bg-white relative rounded-b-2xl overflow-hidden">
-                            <iframe
-                                src={quizUrl}
-                                title="Quiz Content"
-                                className="w-full h-full border-none"
-                                allow="autoplay; encrypted-media; fullscreen"
-                                loading="lazy"
-                            ></iframe>
-                        </div>
-                    </div>
-                </div>,
-                document.body
-            )}
         </div>
     );
 };

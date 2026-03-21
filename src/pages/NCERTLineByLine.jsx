@@ -155,12 +155,6 @@ const NCERTLineByLine = () => {
                 {chapters.length} Chapters
               </span>
             </div>
-            <div className="px-5 py-2.5 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center gap-2">
-              <i className="fas fa-list-ol text-blue-400"></i>
-              <span className="text-white font-semibold">
-                {totalTopics} Topics
-              </span>
-            </div>
             <div className="px-5 py-2.5 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center gap-2">
               <i className="fas fa-question-circle text-purple-400"></i>
               <span className="text-white font-semibold">
@@ -210,8 +204,8 @@ const NCERTLineByLine = () => {
                   {chapter.classLevel && (
                     <div className="absolute top-4 right-4 z-20">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${chapter.classLevel === '11'
-                          ? 'from-purple-500 to-pink-500'
-                          : 'from-blue-500 to-cyan-500'
+                        ? 'from-purple-500 to-pink-500'
+                        : 'from-blue-500 to-cyan-500'
                         } text-white shadow-lg`}>
                         Class {chapter.classLevel}
                       </span>

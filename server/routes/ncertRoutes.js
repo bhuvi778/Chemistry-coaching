@@ -438,9 +438,19 @@ router.get('/stats/:category', async (req, res) => {
     try {
         const { category } = req.params;
 
-        const chapterCount = await NCERTChapter.countDocuments({ category });
+        let chapterCount, topicCount;
         const questionCount = await NCERTQuestion.countDocuments({ category });
-        const topicCount = await NCERTTopic.countDocuments();
+
+        if (category === 'line-by-line') {
+            chapterCount = await NCERTChapter.countDocuments({ category });
+            topicCount = await NCERTTopic.countDocuments();
+        } else {
+            // For other categories, derive chapter/topic count from question references
+            const distinctChapters = await NCERTQuestion.distinct('chapterId', { category });
+            const distinctBadges = await NCERTQuestion.distinct('badgeType', { category });
+            chapterCount = distinctChapters.filter(c => c && c.toString() !== '000000000000000000000000').length || distinctChapters.filter(Boolean).length;
+            topicCount = distinctBadges.filter(Boolean).length;
+        }
 
         res.json({
             chapters: chapterCount,

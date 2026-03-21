@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData } from '../../context/DataContext';
 import Pagination from '../../components/UI/Pagination';
 
 const ManageMagazines = () => {
-  const { magazines, addMagazine, updateMagazine, deleteMagazine } = useData();
+  const { magazines, ensureMagazinesLoaded, addMagazine, updateMagazine, deleteMagazine } = useData();
+  useEffect(() => { ensureMagazinesLoaded(); }, []);
   const [isEditing, setIsEditing] = useState(false);
   const [currentMagazine, setCurrentMagazine] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);

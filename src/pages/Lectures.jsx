@@ -4,7 +4,8 @@ import { useData } from '../context/DataContext';
 import Pagination from '../components/UI/Pagination';
 
 const Lectures = () => {
-  const { videos } = useData();
+  const { videos, ensureVideosLoaded } = useData();
+  useEffect(() => { ensureVideosLoaded(); }, []);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedExam, setSelectedExam] = useState('all');
   const [selectedPlaylist, setSelectedPlaylist] = useState('all');

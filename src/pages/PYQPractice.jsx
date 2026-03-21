@@ -22,6 +22,7 @@ const PYQPractice = () => {
     const [selectedAnswers, setSelectedAnswers] = useState({}); // { [qId]: option }
     const [submittedAnswers, setSubmittedAnswers] = useState({}); // { [qId]: isCorrect }
     const [showSolution, setShowSolution] = useState({}); // { [qId]: boolean }
+    const [showHint, setShowHint] = useState({}); // { [qId]: boolean }
     const [userAnswers, setUserAnswers] = useState({}); // { [qId]: string } (for numerical)
 
     // Error Report State
@@ -113,27 +114,53 @@ const PYQPractice = () => {
         setUserAnswers(prev => ({ ...prev, [qId]: value }));
     };
 
-    const handleSubmitAnswer = (qId, correctAnswer, type) => {
+    const handleSubmitAnswer = async (qId, correctAnswer, type) => {
         let isCorrect = false;
+        let userAnswer = '';
         if (type === 'Numerical') {
-            const userVal = userAnswers[qId]?.trim().toLowerCase();
+            userAnswer = userAnswers[qId]?.trim() || '';
             const correctVal = correctAnswer?.trim().toLowerCase();
-            if (userVal === correctVal) isCorrect = true;
+            if (userAnswer.toLowerCase() === correctVal) isCorrect = true;
         } else {
             // MCQ
-            const selected = selectedAnswers[qId];
-            if (!selected) return;
-            if (selected === correctAnswer) isCorrect = true;
+            userAnswer = selectedAnswers[qId] || '';
+            if (!userAnswer) return;
+            if (userAnswer === correctAnswer) isCorrect = true;
         }
 
         setSubmittedAnswers(prev => ({ ...prev, [qId]: isCorrect }));
+
+        // Save progress to backend
+        try {
+            const userId = localStorage.getItem('userId');
+            if (userId) {
+                const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                await axios.post(`${API_BASE_URL}/pyq/progress`, {
+                    userId,
+                    questionId: qId,
+                    chapterId,
+                    topicId,
+                    status: isCorrect ? 'Correct' : 'Incorrect',
+                    userAnswer,
+                    timeSpent: 0
+                });
+            }
+        } catch (err) {
+            // Silent fail - progress tracking shouldn't block question flow
+            console.warn('Progress save failed:', err.message);
+        }
+
         if (!isCorrect) {
-            // Optional: aut-show solution? 
+            // Optional: auto-show solution?
         }
     };
 
     const toggleSolution = (qId) => {
         setShowSolution(prev => ({ ...prev, [qId]: !prev[qId] }));
+    };
+
+    const toggleHint = (qId) => {
+        setShowHint(prev => ({ ...prev, [qId]: !prev[qId] }));
     };
 
     const handleRetry = (qId) => {
@@ -471,18 +498,54 @@ const PYQPractice = () => {
                             </div>
                         )}
 
-                        {/* Solution Toggle and Report Error Buttons - Always Visible */}
-                        <div className="mt-4 flex gap-3">
-                            <button onClick={() => toggleSolution(currentQuestion._id)} className="text-cyan-400 hover:text-cyan-300 text-sm">
-                                <i className="fas fa-check-double mr-1"></i> {showSolution[currentQuestion._id] ? 'Hide Solution' : 'Show Solution'}
-                            </button>
-                            <button
-                                onClick={() => handleOpenErrorReport(currentQuestion._id)}
-                                className="text-orange-400 hover:text-orange-300 text-sm"
-                            >
-                                <i className="fas fa-flag mr-1"></i> Report Error
-                            </button>
-                        </div>
+                        {/* Hint Button - Always visible */}
+                        {currentQuestion.hint && (
+                            <div className="mt-4">
+                                <button
+                                    onClick={() => toggleHint(currentQuestion._id)}
+                                    className="text-yellow-400 hover:text-yellow-300 text-sm flex items-center gap-1"
+                                >
+                                    <i className="fas fa-lightbulb"></i>
+                                    {showHint[currentQuestion._id] ? 'Hide Hint' : 'Show Hint'}
+                                </button>
+                                {showHint[currentQuestion._id] && (
+                                    <div className="mt-2 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                                        <div className="text-yellow-400 font-bold text-xs mb-1 uppercase tracking-wide">💡 Hint</div>
+                                        <div
+                                            className="text-yellow-200 text-sm leading-relaxed"
+                                            dangerouslySetInnerHTML={{ __html: currentQuestion.hint }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Solution + Report Error — only shown after submitting */}
+                        {isSubmitted && (
+                            <div className="mt-4 flex gap-3">
+                                <button onClick={() => toggleSolution(currentQuestion._id)} className="text-cyan-400 hover:text-cyan-300 text-sm">
+                                    <i className="fas fa-check-double mr-1"></i> {showSolution[currentQuestion._id] ? 'Hide Solution' : 'Show Solution'}
+                                </button>
+                                <button
+                                    onClick={() => handleOpenErrorReport(currentQuestion._id)}
+                                    className="text-orange-400 hover:text-orange-300 text-sm"
+                                >
+                                    <i className="fas fa-flag mr-1"></i> Report Error
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Report Error button for unanswered questions too */}
+                        {!isSubmitted && (
+                            <div className="mt-4">
+                                <button
+                                    onClick={() => handleOpenErrorReport(currentQuestion._id)}
+                                    className="text-orange-400 hover:text-orange-300 text-sm"
+                                >
+                                    <i className="fas fa-flag mr-1"></i> Report Error
+                                </button>
+                            </div>
+                        )}
 
                         {/* Solution */}
                         {showSolution[currentQuestion._id] && (
@@ -494,7 +557,7 @@ const PYQPractice = () => {
                                     </div>
                                 )}
                                 <div className="text-gray-300 text-sm whitespace-pre-line leading-relaxed">
-                                    <div dangerouslySetInnerHTML={{ __html: stripHtml(currentQuestion.solution) }} />
+                                    <div dangerouslySetInnerHTML={{ __html: currentQuestion.solution }} />
                                 </div>
                                 {currentQuestion.solutionImage && (
                                     <img

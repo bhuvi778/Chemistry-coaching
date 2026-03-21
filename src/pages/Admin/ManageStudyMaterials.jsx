@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData } from '../../context/DataContext';
 import Pagination from '../../components/UI/Pagination';
 
 const ManageStudyMaterials = () => {
-  const { studyMaterials, addStudyMaterial, updateStudyMaterial, deleteStudyMaterial } = useData();
+  const { studyMaterials, ensureStudyMaterialsLoaded, addStudyMaterial, updateStudyMaterial, deleteStudyMaterial } = useData();
+  useEffect(() => { ensureStudyMaterialsLoaded(); }, []);
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const [isEditing, setIsEditing] = useState(false);
   const [currentMaterial, setCurrentMaterial] = useState(null);

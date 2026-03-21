@@ -90,7 +90,20 @@ app.use(cors({
 // Middleware - Increase payload size limit for large file uploads (base64 encoded files are ~33% larger)
 app.use(express.json({ limit: '200mb' }));
 app.use(express.urlencoded({ limit: '200mb', extended: true, parameterLimit: 100000 }));
-app.use(compression());
+
+// Compression — only compress responses > 1KB, skip images/videos (already compressed)
+app.use(compression({
+  level: 6,
+  threshold: 1024,
+  filter: (req, res) => {
+    const contentType = res.getHeader('Content-Type') || '';
+    if (/image|video|audio/.test(contentType)) return false;
+    return compression.filter(req, res);
+  }
+}));
+
+// Enable ETag for efficient conditional requests (304 Not Modified)
+app.set('etag', 'strong');
 
 // Configure Multer for file uploads
 const storage = multer.diskStorage({

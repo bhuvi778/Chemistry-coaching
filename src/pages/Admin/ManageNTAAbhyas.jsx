@@ -1,10 +1,37 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const ManageNTAAbhyas = () => {
     const [activeExamCategory, setActiveExamCategory] = useState('JEE');
     const [loading, setLoading] = useState(false);
+
+    // ReactQuill configuration
+    const quillModules = {
+        toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'align': [] }],
+            ['link', 'image'],
+            ['clean']
+        ]
+    };
+
+    const quillFormats = [
+        'header', 'size',
+        'bold', 'italic', 'underline', 'strike',
+        'script',
+        'color', 'background',
+        'list', 'bullet',
+        'align',
+        'link', 'image'
+    ];
 
     // Data
     const [questions, setQuestions] = useState([]);
@@ -358,7 +385,7 @@ const ManageNTAAbhyas = () => {
                                 </div>
 
                                 {/* Question Text */}
-                                <p className="text-white mb-3 font-medium">{q.question}</p>
+                                <p className="text-white mb-3 font-medium ql-editor-content" dangerouslySetInnerHTML={{ __html: q.question }}></p>
 
                                 {/* Image */}
                                 {q.imageUrl && (
@@ -381,7 +408,7 @@ const ManageNTAAbhyas = () => {
                                                     }`}
                                             >
                                                 <span className="font-bold mr-2">{String.fromCharCode(65 + i)}.</span>
-                                                {opt}
+                                                <span className="ql-editor-content" dangerouslySetInnerHTML={{ __html: opt }} />
                                                 {opt === q.correctAnswer && (
                                                     <i className="fas fa-check-circle ml-2"></i>
                                                 )}
@@ -405,7 +432,7 @@ const ManageNTAAbhyas = () => {
 
             {/* Question Form Modal */}
             {showQuestionForm && (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 p-4 overflow-y-auto">
                     <div className="bg-gray-900 rounded-xl w-full max-w-3xl border border-gray-700 p-6 my-8">
                         <h3 className="text-2xl font-bold text-white mb-6">
                             {editingQuestion ? 'Edit' : 'Add'} Question
@@ -481,13 +508,17 @@ const ManageNTAAbhyas = () => {
                             {/* Question Text */}
                             <div>
                                 <label className="block text-gray-400 mb-2">Question *</label>
-                                <textarea
-                                    required
-                                    value={formData.question}
-                                    onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white h-24"
-                                    placeholder="Enter the question text..."
-                                ></textarea>
+                                <div className="nta-question-editor">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={formData.question}
+                                        onChange={(content) => setFormData({ ...formData, question: content })}
+                                        modules={quillModules}
+                                        formats={quillFormats}
+                                        placeholder="Enter the question text..."
+                                        className="bg-gray-900 text-white rounded-lg"
+                                    />
+                                </div>
                             </div>
 
                             {/* Question Image */}
@@ -510,18 +541,21 @@ const ManageNTAAbhyas = () => {
                                                 <label className="block text-gray-400 mb-2">
                                                     Option {String.fromCharCode(65 + i)} *
                                                 </label>
-                                                <input
-                                                    type="text"
-                                                    required
-                                                    value={opt}
-                                                    onChange={(e) => {
-                                                        const newOptions = [...formData.options];
-                                                        newOptions[i] = e.target.value;
-                                                        setFormData({ ...formData, options: newOptions });
-                                                    }}
-                                                    className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white"
-                                                    placeholder={`Option ${String.fromCharCode(65 + i)}`}
-                                                />
+                                                <div className="nta-option-editor">
+                                                    <ReactQuill
+                                                        theme="snow"
+                                                        value={opt}
+                                                        onChange={(content) => {
+                                                            const newOptions = [...formData.options];
+                                                            newOptions[i] = content;
+                                                            setFormData({ ...formData, options: newOptions });
+                                                        }}
+                                                        modules={quillModules}
+                                                        formats={quillFormats}
+                                                        placeholder={`Option ${String.fromCharCode(65 + i)}`}
+                                                        className="bg-gray-900 text-white rounded-lg"
+                                                    />
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -535,9 +569,13 @@ const ManageNTAAbhyas = () => {
                                             className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white"
                                         >
                                             <option value="">Select Correct Answer</option>
-                                            {formData.options.map((opt, i) =>
-                                                opt && <option key={i} value={opt}>{String.fromCharCode(65 + i)}. {opt}</option>
-                                            )}
+                                            {formData.options.map((opt, i) => {
+                                                const tmp = document.createElement('div');
+                                                tmp.innerHTML = opt;
+                                                const text = tmp.textContent || tmp.innerText || '';
+                                                const letter = String.fromCharCode(65 + i); // 'A', 'B', 'C', 'D'
+                                                return opt && <option key={i} value={letter}>{letter}. {text}</option>;
+                                            })}
                                         </select>
                                     </div>
                                 </>
@@ -561,12 +599,17 @@ const ManageNTAAbhyas = () => {
                             {/* Solution */}
                             <div>
                                 <label className="block text-gray-400 mb-2">Solution</label>
-                                <textarea
-                                    value={formData.solution}
-                                    onChange={(e) => setFormData({ ...formData, solution: e.target.value })}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white h-24"
-                                    placeholder="Enter detailed solution..."
-                                ></textarea>
+                                <div className="nta-solution-editor">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={formData.solution}
+                                        onChange={(content) => setFormData({ ...formData, solution: content })}
+                                        modules={quillModules}
+                                        formats={quillFormats}
+                                        placeholder="Enter detailed solution..."
+                                        className="bg-gray-900 text-white rounded-lg"
+                                    />
+                                </div>
                             </div>
 
                             {/* Solution Image */}
@@ -675,5 +718,68 @@ const ManageNTAAbhyas = () => {
         </div>
     );
 };
+
+// Inject NTA Abhyas Quill editor styles
+const ntaStyleSheet = document.createElement('style');
+ntaStyleSheet.id = 'nta-quill-styles';
+ntaStyleSheet.textContent = `
+    .nta-question-editor .ql-toolbar,
+    .nta-option-editor .ql-toolbar,
+    .nta-solution-editor .ql-toolbar {
+        display: block !important;
+        background-color: rgb(31, 41, 55);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .nta-question-editor .ql-container,
+    .nta-solution-editor .ql-container {
+        background-color: rgb(17, 24, 39);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0 0 0.5rem 0.5rem;
+        min-height: 100px;
+    }
+    .nta-option-editor .ql-container {
+        background-color: rgb(17, 24, 39);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 0 0 0.5rem 0.5rem;
+        min-height: 70px;
+    }
+    .nta-question-editor .ql-editor,
+    .nta-option-editor .ql-editor,
+    .nta-solution-editor .ql-editor {
+        color: white;
+        font-size: 14px;
+    }
+    .nta-question-editor .ql-editor.ql-blank::before,
+    .nta-option-editor .ql-editor.ql-blank::before,
+    .nta-solution-editor .ql-editor.ql-blank::before {
+        color: rgb(156, 163, 175);
+    }
+    .nta-question-editor .ql-toolbar button,
+    .nta-option-editor .ql-toolbar button,
+    .nta-solution-editor .ql-toolbar button { color: rgb(209, 213, 219); }
+    .nta-question-editor .ql-toolbar button:hover,
+    .nta-option-editor .ql-toolbar button:hover,
+    .nta-solution-editor .ql-toolbar button:hover { color: rgb(96, 165, 250); }
+    .nta-question-editor .ql-toolbar .ql-stroke,
+    .nta-option-editor .ql-toolbar .ql-stroke,
+    .nta-solution-editor .ql-toolbar .ql-stroke { stroke: rgb(209, 213, 219); }
+    .nta-question-editor .ql-toolbar .ql-fill,
+    .nta-option-editor .ql-toolbar .ql-fill,
+    .nta-solution-editor .ql-toolbar .ql-fill { fill: rgb(209, 213, 219); }
+    .nta-question-editor .ql-toolbar .ql-picker-label,
+    .nta-option-editor .ql-toolbar .ql-picker-label,
+    .nta-solution-editor .ql-toolbar .ql-picker-label { color: rgb(209, 213, 219); }
+    .nta-question-editor .ql-picker-options,
+    .nta-option-editor .ql-picker-options,
+    .nta-solution-editor .ql-picker-options {
+        background-color: rgb(31, 41, 55);
+        border-color: rgb(55, 65, 81);
+        color: rgb(209, 213, 219);
+    }
+`;
+if (!document.head.querySelector('#nta-quill-styles')) {
+    document.head.appendChild(ntaStyleSheet);
+}
 
 export default ManageNTAAbhyas;

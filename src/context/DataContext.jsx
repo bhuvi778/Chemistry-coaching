@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext, useRef } from 'react';
 
 const DataContext = createContext();
 
@@ -42,85 +42,114 @@ export const DataProvider = ({ children }) => {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-  // Clear all cache on mount
-  useEffect(() => {
-    const clearAllCache = () => {
-      const cacheKeys = ['cache_version', 'cache_courses', 'cache_videos', 'cache_audiobooks', 'cache_study-materials', 'cache_magazines', 'cache_scoreMatchBatches', 'cache_freeQuizzes'];
-      cacheKeys.forEach(key => localStorage.removeItem(key));
-      console.log('✅ All cache cleared - fetching fresh data from API');
-    };
-    clearAllCache();
-  }, []);
+  // In-flight request deduplication — prevents double-fetching when two components
+  // call the same ensure* before state is set from the first call
+  const pendingFetches = useRef(new Map());
 
-  // Fetch with timeout
-  const fetchWithTimeout = (url, timeout = 10000) => {
-    return Promise.race([
-      fetch(url),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), timeout)
-      )
-    ]);
+  const SESSION_TTL = 30 * 60 * 1000; // 30 min — data doesn't change that often
+
+  const sessionGet = (key) => {
+    try {
+      const item = sessionStorage.getItem(key);
+      if (!item) return null;
+      const { data, ts } = JSON.parse(item);
+      if (Date.now() - ts > SESSION_TTL) { sessionStorage.removeItem(key); return null; }
+      return data;
+    } catch { return null; }
+  };
+  const sessionSet = (key, data) => {
+    try { sessionStorage.setItem(key, JSON.stringify({ data, ts: Date.now() })); } catch { }
   };
 
-  // Fetch data from backend
+  // Generic fetch — deduplicates simultaneous calls for the same resource
+  const fetchResource = (url, cacheKey) => {
+    // 1. Hit sessionStorage first (instant, no network)
+    const cached = sessionGet(cacheKey);
+    if (cached) return Promise.resolve(cached);
+
+    // 2. If same resource is already being fetched, return same promise (no double fetch)
+    if (pendingFetches.current.has(cacheKey)) {
+      return pendingFetches.current.get(cacheKey);
+    }
+
+    // 3. New fetch
+    const promise = fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        const arr = Array.isArray(data) ? data : (data.audioBooks || data || []);
+        sessionSet(cacheKey, arr);
+        pendingFetches.current.delete(cacheKey);
+        return arr;
+      })
+      .catch(err => {
+        console.error(`Fetch failed for ${cacheKey}:`, err);
+        pendingFetches.current.delete(cacheKey);
+        return [];
+      });
+
+    pendingFetches.current.set(cacheKey, promise);
+    return promise;
+  };
+
+  // Prefetch homepage-critical data as soon as browser is idle
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Add cache-busting timestamp to force fresh data
-        const cacheBuster = `?_t=${Date.now()}`;
-        
-        // Get current admin username for permissions
-        const adminUsername = localStorage.getItem('admin_username') || 'admin';
-
-        // Fetch all data in parallel with timeout
-        const [coursesData, videosData, audioBooksResponse, studyMaterialsData, chemSnapsData, magazinesData, scoreMatchBatchesData, freeQuizzesData, enquiriesData, contactsData] = await Promise.all([
-          fetchWithTimeout(`${API_URL}/courses${cacheBuster}`).then(r => r.json()).catch(err => {
-            console.error('❌ Courses fetch error:', err);
-            return [];
-          }),
-          fetchWithTimeout(`${API_URL}/videos${isAdmin ? '?all=true&' : '?'}_t=${Date.now()}`).then(r => r.json()).catch(err => {
-            console.error('❌ Videos fetch error:', err);
-            return [];
-          }),
-          fetchWithTimeout(`${API_URL}/audiobooks?limit=100&_t=${Date.now()}`).then(r => r.json()).catch(err => {
-            console.error('❌ Audiobooks fetch error:', err);
-            return { audioBooks: [] };
-          }),
-          fetchWithTimeout(`${API_URL}/study-materials${cacheBuster}`).then(r => r.json()).catch(() => []),
-          fetchWithTimeout(`${API_URL}/chemsnaps${cacheBuster}`).then(r => r.json()).catch(() => []),
-          fetchWithTimeout(`${API_URL}/magazines${cacheBuster}`).then(r => r.json()).catch(() => []),
-          fetchWithTimeout(`${API_URL}/score-match-batches${cacheBuster}`).then(r => r.json()).catch(() => []),
-          fetchWithTimeout(`${API_URL}/free-quizzes${cacheBuster}`).then(r => r.json()).catch(() => []),
-          isAdmin ? fetchWithTimeout(`${API_URL}/enquiries?username=${encodeURIComponent(adminUsername)}&_t=${Date.now()}`).then(r => r.json()).catch(() => []) : Promise.resolve([]),
-          isAdmin ? fetchWithTimeout(`${API_URL}/contacts?username=${encodeURIComponent(adminUsername)}&_t=${Date.now()}`).then(r => r.json()).catch(() => []) : Promise.resolve([])
-        ]);
-
-        // Ensure array helper
-        const ensureArray = (data) => Array.isArray(data) ? data : [];
-
-        // Handle audiobooks response (might be paginated)
-        const audioBooksData = audioBooksResponse.audioBooks || audioBooksResponse;
-
-        // Update state - ensure all are arrays
-        setCourses(ensureArray(coursesData));
-        setVideos(ensureArray(videosData));
-        setAudioBooks(ensureArray(audioBooksData));
-        setStudyMaterials(ensureArray(studyMaterialsData));
-        setChemSnaps(ensureArray(chemSnapsData));
-        setMagazines(ensureArray(magazinesData));
-        setScoreMatchBatches(ensureArray(scoreMatchBatchesData));
-        setFreeQuizzes(ensureArray(freeQuizzesData));
-
-        if (isAdmin) {
-          setEnquiries(ensureArray(enquiriesData));
-          setContacts(ensureArray(contactsData));
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+    const prefetch = () => {
+      fetchResource(`${API_URL}/courses`, 'courses').then(data => { if (data.length > 0) setCourses(data); });
+      fetchResource(`${API_URL}/score-match-batches`, 'score-match-batches').then(data => { if (data.length > 0) setScoreMatchBatches(data); });
     };
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(prefetch, { timeout: 3000 });
+    } else {
+      setTimeout(prefetch, 800);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    fetchData();
+  // Lazy loaders — each page calls only what it needs
+  const ensureCoursesLoaded = async () => {
+    if (courses.length > 0) return;
+    const data = await fetchResource(`${API_URL}/courses`, 'courses');
+    if (data.length > 0) setCourses(data);
+  };
+  const ensureVideosLoaded = async () => {
+    if (videos.length > 0) return;
+    const data = await fetchResource(`${API_URL}/videos`, 'videos');
+    if (data.length > 0) setVideos(data);
+  };
+  const ensureAudioBooksLoaded = async () => {
+    if (audioBooks.length > 0) return;
+    const data = await fetchResource(`${API_URL}/audiobooks?limit=20`, 'audiobooks');
+    if (data.length > 0) setAudioBooks(data);
+  };
+  const ensureStudyMaterialsLoaded = async () => {
+    if (studyMaterials.length > 0) return;
+    const data = await fetchResource(`${API_URL}/study-materials`, 'study-materials');
+    if (data.length > 0) setStudyMaterials(data);
+  };
+  const ensureChemSnapsLoaded = async () => {
+    if (chemSnaps.length > 0) return;
+    const data = await fetchResource(`${API_URL}/chemsnaps`, 'chemsnaps');
+    if (data.length > 0) setChemSnaps(data);
+  };
+  const ensureMagazinesLoaded = async () => {
+    if (magazines.length > 0) return;
+    const data = await fetchResource(`${API_URL}/magazines`, 'magazines');
+    if (data.length > 0) setMagazines(data);
+  };
+  const ensureScoreMatchBatchesLoaded = async () => {
+    if (scoreMatchBatches.length > 0) return;
+    const data = await fetchResource(`${API_URL}/score-match-batches`, 'score-match-batches');
+    if (data.length > 0) setScoreMatchBatches(data);
+  };
+  const ensureFreeQuizzesLoaded = async () => {
+    if (freeQuizzes.length > 0) return;
+    const data = await fetchResource(`${API_URL}/free-quizzes`, 'free-quizzes');
+    if (data.length > 0) setFreeQuizzes(data);
+  };
+
+  // Fetch admin data (enquiries + contacts) only after login
+  useEffect(() => {
+    if (!isAdmin) return;
+    fetchEnquiriesAndContacts();
   }, [isAdmin]);
 
   useEffect(() => {
@@ -669,6 +698,15 @@ export const DataProvider = ({ children }) => {
       magazines,
       scoreMatchBatches,
       isAdmin,
+      // Lazy loaders — call these from pages to load data on demand
+      ensureCoursesLoaded,
+      ensureVideosLoaded,
+      ensureAudioBooksLoaded,
+      ensureStudyMaterialsLoaded,
+      ensureChemSnapsLoaded,
+      ensureMagazinesLoaded,
+      ensureScoreMatchBatchesLoaded,
+      ensureFreeQuizzesLoaded,
       addEnquiry,
       deleteEnquiry,
       addContact,

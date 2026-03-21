@@ -14,15 +14,10 @@ const freeQuizSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: [
-            // UG Entrance Exams
             'NEET', 'JEE', 'IAT', 'NEST', 'CUET UG', 'BITSAT',
-            // PG Entrance Exams
             'IIT JAM', 'CUET PG',
-            // Research Level Exams
             'CSIR NET', 'GATE', 'TIFR',
-            // Competitive Exams (Govt. Job)
             'PSTET', 'Master Cadre', 'UPSC - Mains (Chemistry)',
-            // Legacy/Other
             'BOARDS', 'KVPY', 'OLYMPIAD', 'FOUNDATION', 'OTHER'
         ],
         default: 'JEE'
@@ -33,10 +28,12 @@ const freeQuizSchema = new mongoose.Schema({
     },
     chapter: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     topic: {
-        type: String
+        type: String,
+        trim: true
     },
     difficulty: {
         type: String,
@@ -48,20 +45,21 @@ const freeQuizSchema = new mongoose.Schema({
         enum: ['Quiz', 'Mock Test', 'PYPs'],
         default: 'Quiz'
     },
-    quizType: {
-        type: String,
-        enum: ['LINK', 'PDF'],
-        required: true,
-        default: 'LINK'
+    marks: {
+        type: Number,
+        default: 4
     },
-    quizLink: {
-        type: String,
-        trim: true
+    negativeMarks: {
+        type: Number,
+        default: 1
     },
-    quizPdf: {
-        data: String, // Base64 encoded string
-        contentType: String,
-        filename: String
+    timeLimit: {
+        type: Number,
+        default: 30 // in minutes
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     },
     createdAt: {
         type: Date,

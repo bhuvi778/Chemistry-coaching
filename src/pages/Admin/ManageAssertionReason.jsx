@@ -641,7 +641,6 @@ const ManageAssertionReason = () => {
                                         value={questionForm.assertion}
                                         onChange={(content) => setQuestionForm({ ...questionForm, assertion: content })}
                                         className="bg-white rounded-lg"
-                                        style={{ minHeight: '150px' }}
                                         modules={{
                                             toolbar: [
                                                 ['bold', 'italic', 'underline', 'strike'],
@@ -663,7 +662,6 @@ const ManageAssertionReason = () => {
                                         value={questionForm.reason}
                                         onChange={(content) => setQuestionForm({ ...questionForm, reason: content })}
                                         className="bg-white rounded-lg"
-                                        style={{ minHeight: '150px' }}
                                         modules={{
                                             toolbar: [
                                                 ['bold', 'italic', 'underline', 'strike'],
@@ -745,7 +743,6 @@ const ManageAssertionReason = () => {
                                         value={questionForm.explanation}
                                         onChange={(content) => setQuestionForm({ ...questionForm, explanation: content })}
                                         className="bg-white rounded-lg"
-                                        style={{ minHeight: '200px' }}
                                         modules={{
                                             toolbar: [
                                                 [{ 'header': [1, 2, 3, false] }],

@@ -175,7 +175,18 @@ const NTAAbhyasQuestions = () => {
 
     const isCorrect = (questionId) => {
         const question = questions.find(q => q._id === questionId);
-        return question && userAnswers[questionId] === question.correctAnswer;
+        if (!question) return false;
+        const userAns = userAnswers[questionId];
+        if (!userAns) return false;
+        // Direct match (old format: correctAnswer = full HTML option, or new format: both letters)
+        if (userAns === question.correctAnswer) return true;
+        // New format: correctAnswer is 'A','B','C','D'; userAns is full option HTML
+        const optIndex = question.options?.indexOf(userAns);
+        if (optIndex >= 0) {
+            const letter = String.fromCharCode(65 + optIndex);
+            return letter === question.correctAnswer;
+        }
+        return false;
     };
 
     const getScore = () => {
@@ -354,6 +365,11 @@ const NTAAbhyasQuestions = () => {
                                                         <span className="px-2 py-1 rounded text-xs font-medium text-purple-400 bg-purple-500/20">
                                                             {isMCQ ? 'MCQ' : 'Subjective'}
                                                         </span>
+                                                        {/* NTA Abhyas Paper Badge */}
+                                                        <span className="px-2 py-1 rounded text-xs font-bold text-white bg-gradient-to-r from-green-500 to-emerald-500 shadow-sm shadow-green-500/30 flex items-center gap-1">
+                                                            <i className="fas fa-atom text-[10px]"></i>
+                                                            NTA Abhyas Paper 109
+                                                        </span>
                                                         {isSubmitted && (
                                                             <span className={`px-2 py-1 rounded text-xs font-medium ${correct ? 'text-green-400 bg-green-500/20' : 'text-red-400 bg-red-500/20'}`}>
                                                                 <i className={`fas fa-${correct ? 'check' : 'times'} mr-1`}></i>
@@ -377,9 +393,10 @@ const NTAAbhyasQuestions = () => {
 
                                         {/* Question Text */}
                                         <div className="mb-4">
-                                            <h3 className="text-lg text-white font-medium leading-relaxed">
-                                                {question.question}
-                                            </h3>
+                                            <div
+                                                className="text-lg text-white font-medium leading-relaxed"
+                                                dangerouslySetInnerHTML={{ __html: question.question }}
+                                            />
                                         </div>
 
                                         {/* Question Image */}
@@ -397,8 +414,10 @@ const NTAAbhyasQuestions = () => {
                                         {isMCQ && (
                                             <div className="mb-4 space-y-2">
                                                 {question.options.map((option, optIndex) => {
-                                                    const isSelected = userAnswer === option;
-                                                    const isCorrectOption = option === question.correctAnswer;
+                                                    const letter = String.fromCharCode(65 + optIndex); // 'A','B','C','D'
+                                                    // Support both old format (option HTML as correctAnswer) and new format ('A','B','C','D')
+                                                    const isCorrectOption = question.correctAnswer === letter || option === question.correctAnswer;
+                                                    const isSelected = userAnswer === option || userAnswer === letter;
                                                     const showCorrect = isSubmitted && isCorrectOption;
                                                     const showWrong = isSubmitted && isSelected && !isCorrectOption;
 
@@ -438,7 +457,7 @@ const NTAAbhyasQuestions = () => {
                                                                     : (isSelected ? 'text-cyan-400' : 'text-gray-300')
                                                                     }`}>
                                                                     <span className="font-semibold mr-2">{String.fromCharCode(65 + optIndex)}.</span>
-                                                                    {option}
+                                                                    <span className="ql-editor-content" dangerouslySetInnerHTML={{ __html: option }} />
                                                                 </span>
                                                                 {showCorrect && (
                                                                     <i className="fas fa-check-circle text-green-400"></i>
@@ -505,7 +524,7 @@ const NTAAbhyasQuestions = () => {
                                         {showHint[question._id] && (
                                             <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                                                 <div className="text-yellow-400 font-bold text-xs mb-1">HINT</div>
-                                                <p className="text-gray-300 text-sm">{question.hint || 'No hint available for this question.'}</p>
+                                                <div className="text-gray-300 text-sm ql-editor-content" dangerouslySetInnerHTML={{ __html: question.hint || 'No hint available for this question.' }} />
                                             </div>
                                         )}
 
@@ -513,8 +532,12 @@ const NTAAbhyasQuestions = () => {
                                         {showSolution[question._id] && (
                                             <div className="mt-4 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
                                                 <div className="text-cyan-400 font-bold text-xs mb-2">SOLUTION</div>
-                                                {question.correctAnswer && <div className="mb-2 inline-block px-2 py-1 bg-cyan-900/50 rounded border border-cyan-500/30 text-xs text-cyan-200 font-bold">Answer: {question.correctAnswer}</div>}
-                                                <p className="text-gray-300 text-sm whitespace-pre-line">{question.solution}</p>
+                                                {question.correctAnswer && (
+                                                    <div className="mb-2 inline-block px-2 py-1 bg-cyan-900/50 rounded border border-cyan-500/30 text-xs text-cyan-200 font-bold"
+                                                        dangerouslySetInnerHTML={{ __html: 'Answer: ' + question.correctAnswer }}
+                                                    />
+                                                )}
+                                                <div className="text-gray-300 text-sm ql-editor-content" dangerouslySetInnerHTML={{ __html: question.solution }} />
                                                 {question.solutionImageUrl && (
                                                     <img
                                                         src={question.solutionImageUrl}

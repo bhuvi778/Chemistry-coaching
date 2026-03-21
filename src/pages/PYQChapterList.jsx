@@ -222,7 +222,7 @@ const PYQChapterList = () => {
                                                     className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shadow-lg shadow-black/20"
                                                     style={{ backgroundColor: `${iconColor}20`, color: iconColor }}
                                                 >
-                                                    <i className={chapter.icon || 'fas fa-book'}></i>
+                                                    <i className={`fas ${chapter.icon || 'fa-book'}`}></i>
                                                 </div>
                                                 {(chapter.unattemptedCount || 0) > 0 && (
                                                     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20">
@@ -271,21 +271,21 @@ const PYQChapterList = () => {
                                                 </span>
                                             </div>
 
-                                            {/* Progress Bar */}
-                                            {(chapter.progress || 0) > 0 && (
-                                                <div className="mt-2">
-                                                    <div className="flex items-center justify-between mb-1.5">
-                                                        <span className="text-xs text-gray-400">Progress</span>
-                                                        <span className="text-xs font-bold text-cyan-400">{chapter.progress}%</span>
-                                                    </div>
-                                                    <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                                        <div
-                                                            className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-500"
-                                                            style={{ width: `${chapter.progress}%` }}
-                                                        ></div>
-                                                    </div>
+                                            {/* Progress Bar - always visible */}
+                                            <div className="mt-2">
+                                                <div className="flex items-center justify-between mb-1.5">
+                                                    <span className="text-xs text-gray-400">Progress</span>
+                                                    <span className={`text-xs font-bold ${(chapter.progress || 0) > 0 ? 'text-cyan-400' : 'text-gray-500'}`}>
+                                                        {chapter.progress || 0}%
+                                                    </span>
                                                 </div>
-                                            )}
+                                                <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                                                    <div
+                                                        className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-500"
+                                                        style={{ width: `${chapter.progress || 0}%` }}
+                                                    ></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 );

@@ -4,11 +4,13 @@ import { useData } from '../context/DataContext';
 import Pagination from '../components/UI/Pagination';
 
 const StudyMaterials = () => {
-  const { studyMaterials } = useData();
+  const { studyMaterials, ensureStudyMaterialsLoaded } = useData();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedExam, setSelectedExam] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const materialsPerPage = 15; // 3 rows × 5 columns
+
+  useEffect(() => { ensureStudyMaterialsLoaded(); }, []);
 
   // Reset to page 1 when filters change
   useEffect(() => {

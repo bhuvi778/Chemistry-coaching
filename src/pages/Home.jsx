@@ -77,8 +77,15 @@ const Home = () => {
         </div>
 
         <div className="lg:w-1/2 mt-12 lg:mt-0 relative flex justify-center items-center">
-          <div className="relative w-64 h-64 glass-panel rounded-full flex items-center justify-center animate-pulse border-2 border-cyan-400 shadow-[0_0_50px_rgba(0,243,255,0.3)]">
-            <i className="fas fa-atom text-9xl text-cyan-400 opacity-80"></i>
+          <div className="relative flex-shrink-0">
+            {/* Educator Photo */}
+            <div className="relative w-80 h-96 md:w-96 md:h-[500px] rounded-3xl overflow-hidden border-2 border-cyan-400 shadow-[0_0_50px_rgba(0,243,255,0.3)]">
+              <img
+                src={`/hero-section-image.png?v=3`}
+                alt="Mr. Naveen Kumar - Chemistry Educator"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
           <div className="absolute top-0 right-10 p-3 glass-panel rounded-lg animate-bounce" style={{ animationDuration: '3s' }}>
             <span className="text-pink-500 font-bold text-sm">JEE</span>

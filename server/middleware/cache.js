@@ -2,6 +2,9 @@
 const cache = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour for public data
 
+// Separate short TTL for frequently updated resources
+const SHORT_TTL = 5 * 60 * 1000; // 5 minutes
+
 // Cache middleware - DISABLED for videos to prevent caching issues
 const cacheMiddleware = (key, ttl = CACHE_TTL) => {
   return (req, res, next) => {
@@ -35,8 +38,9 @@ const cacheMiddleware = (key, ttl = CACHE_TTL) => {
     if (!bypassCache && !hasCacheBuster) {
       const cached = cache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < ttl) {
-        res.set('Cache-Control', 'public, max-age=3600');
+        res.set('Cache-Control', 'public, max-age=3600, s-maxage=1800');
         res.set('ETag', `"${cached.timestamp}"`);
+        res.set('X-Cache', 'HIT');
         return res.json(cached.data);
       }
     }
@@ -44,8 +48,9 @@ const cacheMiddleware = (key, ttl = CACHE_TTL) => {
     res.sendResponse = res.json;
     res.json = (data) => {
       cache.set(cacheKey, { data, timestamp: Date.now() });
-      res.set('Cache-Control', 'public, max-age=3600');
+      res.set('Cache-Control', 'public, max-age=3600, s-maxage=1800');
       res.set('ETag', `"${Date.now()}"`);
+      res.set('X-Cache', 'MISS');
       res.sendResponse(data);
     };
     next();

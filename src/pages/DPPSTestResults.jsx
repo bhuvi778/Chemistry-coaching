@@ -170,8 +170,14 @@ const DPPSTestResults = () => {
                     {/* Additional Stats */}
                     <div className="mt-8 pt-8 border-t border-gray-700 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                         <div>
-                            <p className="text-gray-400 text-sm mb-1">Time Limit</p>
-                            <p className="text-white font-semibold text-lg">{results.timeLimit} minutes</p>
+                            <p className="text-gray-400 text-sm mb-1">Marks Scored</p>
+                            <p className="text-white font-semibold text-lg">
+                                <span className="text-green-400">{results.score ?? results.correctAnswers}</span>
+                                {results.totalMarks > 0 && <span className="text-gray-500"> / {results.totalMarks}</span>}
+                            </p>
+                            {(results.negativeScore ?? 0) > 0 && (
+                                <p className="text-red-400 text-xs mt-1">-{results.negativeScore} negative marks</p>
+                            )}
                         </div>
                         <div>
                             <p className="text-gray-400 text-sm mb-1">Time Taken</p>

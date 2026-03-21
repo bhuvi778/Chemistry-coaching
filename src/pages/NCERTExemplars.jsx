@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import NCERTTabs from '../components/NCERT/NCERTTabs';
-import { fetchNCERTBadges } from '../services/ncertApi';
+import { fetchNCERTBadges, fetchNCERTStats } from '../services/ncertApi';
 import Pagination from '../components/UI/Pagination';
 
 const NCERTExemplars = () => {
   const navigate = useNavigate();
   const [badges, setBadges] = useState([]);
+  const [ncertStats, setNcertStats] = useState({ chapters: 0, topics: 0, questions: 0 });
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,8 +20,12 @@ const NCERTExemplars = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const badgesData = await fetchNCERTBadges('exemplars');
+      const [badgesData, statsData] = await Promise.all([
+        fetchNCERTBadges('exemplars'),
+        fetchNCERTStats('exemplars').catch(() => ({ chapters: 0, topics: 0, questions: 0 }))
+      ]);
       setBadges(badgesData);
+      setNcertStats(statsData);
     } catch (error) {
       console.error(error);
     } finally {
@@ -48,8 +53,8 @@ const NCERTExemplars = () => {
   // Calculate stats for tabs
   const tabStats = {
     'exemplars': {
-      chapters: badges.length,
-      questions: 0
+      chapters: ncertStats.chapters,
+      questions: ncertStats.questions
     }
   };
 
@@ -82,16 +87,12 @@ const NCERTExemplars = () => {
           {/* Statistics Badges */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             <div className="px-5 py-2.5 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center gap-2">
-              <i className="fas fa-layer-group text-purple-400"></i>
-              <span className="text-white font-semibold">
-                {badges.length} Question Types
-              </span>
+              <i className="fas fa-book text-purple-400"></i>
+              <span className="text-white font-semibold">{ncertStats.chapters} Chapters</span>
             </div>
             <div className="px-5 py-2.5 rounded-lg bg-pink-500/10 border border-pink-500/30 flex items-center gap-2">
-              <i className="fas fa-graduation-cap text-pink-400"></i>
-              <span className="text-white font-semibold">
-                JEE/NEET Level
-              </span>
+              <i className="fas fa-question-circle text-pink-400"></i>
+              <span className="text-white font-semibold">{ncertStats.questions} Questions</span>
             </div>
           </div>
 

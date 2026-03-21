@@ -3,24 +3,165 @@
 
 <head>
   <meta charset="UTF-8" />
-  <!-- FORCE CACHE BUST - v20260216-0600 -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <meta name="cache-killer" content="20260216060000" />
   <link rel="icon" type="image/png" href="/Ace2exam_Wa.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
     content="Ace2Examz - Your Path To Success! Premier Chemistry Coaching for NEET, JEE, IAT, NEST, CSIR NET, GATE, IIT JAM & TIFR" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap"
-    rel="stylesheet">
+
+  <!-- DNS prefetch & preconnect for external resources — speeds up CDN lookups -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+  <!-- Global Quill toolbar SVG fix: Tailwind preflight sets svg{display:block}
+       which causes Quill toolbar icons to render as large shapes.
+       This inline style overrides that globally, before any JS loads. -->
+  <style>
+    /* ---- Quill toolbar SVG icon fix (Tailwind sets svg{display:block}) ---- */
+    .ql-snow.ql-toolbar button,
+    .ql-snow .ql-toolbar button {
+      height: 24px !important;
+      width: 28px !important;
+      padding: 3px 5px !important;
+      overflow: hidden !important;
+      display: inline-block !important;
+      float: left !important;
+      box-sizing: content-box !important;
+      line-height: normal !important;
+    }
+    .ql-snow.ql-toolbar button svg,
+    .ql-snow .ql-toolbar button svg {
+      display: inline !important;
+      float: left !important;
+      height: 18px !important;
+      width: 18px !important;
+      max-height: 18px !important;
+      max-width: 18px !important;
+      vertical-align: middle !important;
+    }
+    .ql-snow .ql-picker {
+      display: inline-block !important;
+      float: left !important;
+      height: 24px !important;
+    }
+    .ql-snow .ql-picker-label {
+      display: inline-block !important;
+      height: 24px !important;
+      line-height: 22px !important;
+    }
+    .ql-snow .ql-picker-label svg {
+      display: inline !important;
+      float: right !important;
+      width: 18px !important;
+      height: 18px !important;
+      max-width: 18px !important;
+      max-height: 18px !important;
+      margin-top: 3px !important;
+    }
+    .ql-toolbar.ql-snow {
+      overflow: visible !important;
+    }
+    .ql-toolbar.ql-snow .ql-formats {
+      display: inline-block !important;
+      vertical-align: middle !important;
+      margin-right: 15px !important;
+    }
+
+    /* ---- Quill editor height fix (override Quill's height:100%) ---- */
+    /* Scoped to wrapper classes only — prevents conflicting with inline height styles */
+
+    /* Force the ReactQuill root .quill div to expand to content */
+    .quill-editor-black-text > .quill,
+    .quill-dark-text > .quill,
+    .quill-wrapper > .quill,
+    .quill-editor-black-text > div,
+    .quill-dark-text > div,
+    .quill-wrapper > div {
+      height: auto !important;
+      display: block !important;
+      position: relative !important;
+    }
+
+    .quill-editor-black-text .ql-container,
+    .quill-dark-text .ql-container,
+    .quill-wrapper .ql-container {
+      height: auto !important;
+      position: relative !important;
+    }
+    .quill-editor-black-text .ql-editor,
+    .quill-dark-text .ql-editor,
+    .quill-wrapper .ql-editor {
+      height: auto !important;
+      min-height: 150px !important;
+      padding: 12px 15px !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Ensure wrapper divs have proper block flow and spacing */
+    .quill-wrapper,
+    .quill-editor-black-text,
+    .quill-dark-text {
+      display: block !important;
+      overflow: visible !important;
+      position: relative !important;
+      min-height: 220px !important;
+    }
+
+    /* Cursor fix — ensure clicking shows a text caret */
+    .quill-wrapper .ql-editor,
+    .quill-editor-black-text .ql-editor,
+    .quill-dark-text .ql-editor {
+      cursor: text !important;
+      caret-color: currentColor !important;
+    }
+    .quill-wrapper .ql-editor {
+      caret-color: #ffffff !important;
+    }
+    .quill-editor-black-text .ql-editor,
+    .quill-dark-text .ql-editor {
+      caret-color: #000000 !important;
+    }
+    /* White bg for light editors (quill-editor-black-text, quill-dark-text) */
+    .quill-editor-black-text .ql-container,
+    .quill-dark-text .ql-container {
+      background-color: #ffffff !important;
+    }
+    .quill-editor-black-text .ql-editor,
+    .quill-dark-text .ql-editor {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+    /* Dark bg for dark-theme editors (quill-wrapper) */
+    .quill-wrapper .ql-container {
+      background-color: #111827 !important;
+    }
+    .quill-wrapper .ql-editor {
+      background-color: #111827 !important;
+      color: #ffffff !important;
+    }
+    /* Ensure placeholder is positioned correctly */
+    .quill-editor-black-text .ql-editor.ql-blank::before,
+    .quill-dark-text .ql-editor.ql-blank::before,
+    .quill-wrapper .ql-editor.ql-blank::before {
+      top: 12px !important;
+      left: 15px !important;
+    }
+  </style>
+
+  <!-- Font Awesome — non-render-blocking async load (eliminates CDN render block) -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+
+  <!-- Google Fonts — non-render-blocking async load -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap"></noscript>
 
   <!-- Zoho Campaigns Newsletter Scripts -->
   <script type="text/javascript">
-    // Wrap Zoho setup to prevent errors
-    window.addEventListener('DOMContentLoaded', function () {
+    // Load Zoho newsletter script lazily — don't block page load
+    window.addEventListener('load', function () {
       var script = document.createElement('script');
       script.src = 'https://exmz-zc1.maillist-manage.in/js/optin.min.js';
       script.onload = function () {
@@ -35,7 +176,7 @@
     };
   </script>
 
-  <!-- OneSignal Push Notifications -->
+  <!-- OneSignal Push Notifications — deferred, never blocks render -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -56,22 +197,22 @@
   </script>
 
   <title>Ace2Examz | Your Path To Success - Premier Chemistry Coaching</title>
-  <script type="module" src="/src/main.jsx"></script>
 </head>
 
 <body>
   <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 
-  <!-- Frillbot Chatbot Widget -->
+  <!-- Frillbot Chatbot Widget — deferred so it never blocks page interactive -->
   <script>
     window.chatpilotIframeConfig = {
       chatbotId: "09ab53ae7eec4078b03364a594c688af",
       domain: "https://bot.frillbot.com"
     }
   </script>
-  <script src="https://bot.frillbot.com/embed.iframe.js" charset="utf-8"></script>
+  <script src="https://bot.frillbot.com/embed.iframe.js" charset="utf-8" defer></script>
 
-  <!-- Zoho SalesIQ Chat Widget -->
+  <!-- Zoho SalesIQ Chat Widget — deferred -->
   <script>window.$zoho = window.$zoho || {}; $zoho.salesiq = $zoho.salesiq || { ready: function () { } }</script>
   <script id="zsiqscript"
     src="https://salesiq.zohopublic.in/widget?wc=siqdbcc2b03c10f8abbc3df039feed66993c517bd0e377a23ce7755db070ef77509"

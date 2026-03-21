@@ -10,9 +10,11 @@ const Navbar = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   // Mobile dropdown states
   const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
+  const [isMobileExamsOpen, setIsMobileExamsOpen] = useState(false);
   const [isMobileStudyMaterialOpen, setIsMobileStudyMaterialOpen] = useState(false);
   const [isMobileMoreOpen, setIsMobileMoreOpen] = useState(false);
   const [isPrepArenaOpen, setIsPrepArenaOpen] = useState(false);
+  const [isExamsOpen, setIsExamsOpen] = useState(false);
   const [isMobilePrepArenaOpen, setIsMobilePrepArenaOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
@@ -46,7 +48,36 @@ const Navbar = () => {
 
             <div className="hidden md:flex items-center gap-3">
               <div className="flex items-baseline space-x-3 text-lg">
-                <Link to="/" className={getNavLinkClass('/')}>Home</Link>
+
+                {/* Exams Dropdown */}
+                <div
+                  className="relative group"
+                  onMouseEnter={() => setIsExamsOpen(true)}
+                  onMouseLeave={() => setIsExamsOpen(false)}
+                >
+                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/exams')
+                    ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
+                    }`}>
+                    <span className="flex items-center gap-1.5">
+                      <i className="fas fa-file-alt"></i>
+                      Exams
+                      <i className={`fas fa-chevron-down text-xs transition-transform ${isExamsOpen ? 'rotate-180' : ''}`}></i>
+                    </span>
+                  </button>
+
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg transition-all duration-300 ${isExamsOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                    }`}>
+                    <Link
+                      to="/exams/neet"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsExamsOpen(false)}
+                    >
+                      <i className="fas fa-stethoscope text-cyan-400"></i>
+                      <span>NEET</span>
+                    </Link>
+                  </div>
+                </div>
+
                 {/* Courses Dropdown */}
                 <div
                   className="relative group"
@@ -217,6 +248,7 @@ const Navbar = () => {
                   <button className={`px-2 py-2 transition relative ${location.pathname.includes('/ncert-toolbox') ||
                     location.pathname.includes('/dpps') ||
                     location.pathname.includes('/book-meeting') ||
+                    location.pathname.includes('/book-your-session') ||
                     location.pathname.includes('/self-learn')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
@@ -270,12 +302,12 @@ const Navbar = () => {
                       <span>Self Learn</span>
                     </Link>
                     <Link
-                      to="/book-meeting"
+                      to="/book-your-session"
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                       onClick={() => setIsPrepArenaOpen(false)}
                     >
                       <i className="fas fa-calendar-alt text-green-500"></i>
-                      <span>Book Your Meet</span>
+                      <span>Book Your Session</span>
                     </Link>
                   </div>
                 </div>
@@ -461,9 +493,26 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden glass-panel border-t border-gray-700">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700 rounded-md transition">
-                <i className="fas fa-home mr-2"></i>Home
-              </Link>
+
+              {/* Exams Dropdown */}
+              <div className="border-b border-gray-700 pb-2">
+                <button
+                  onClick={() => setIsMobileExamsOpen(!isMobileExamsOpen)}
+                  className="w-full flex items-center justify-between px-3 py-2 text-white hover:bg-gray-700 rounded-md transition"
+                >
+                  <span>
+                    <i className="fas fa-file-alt mr-2"></i>Exams
+                  </span>
+                  <i className={`fas fa-chevron-down text-xs transition-transform ${isMobileExamsOpen ? 'rotate-180' : ''}`}></i>
+                </button>
+                {isMobileExamsOpen && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    <Link to="/exams/neet" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-stethoscope text-cyan-400 mr-2"></i>NEET
+                    </Link>
+                  </div>
+                )}
+              </div>
 
               {/* Ace Program Dropdown */}
               <div className="border-b border-gray-700 pb-2">
@@ -573,8 +622,8 @@ const Navbar = () => {
                     <Link to="/self-learn" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-graduation-cap text-orange-500 mr-2"></i>Self Learn
                     </Link>
-                    <Link to="/book-meeting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
-                      <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book Your Meet
+                    <Link to="/book-your-session" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book Your Session
                     </Link>
                   </div>
                 )}

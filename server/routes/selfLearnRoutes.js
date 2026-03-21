@@ -194,7 +194,10 @@ router.get('/chapters/:chapterId/topics', async (req, res) => {
             const t = topic.toObject();
             t.videoCount = t.learn?.videos?.length || 0;
             t.sheetCount = t.learn?.sheets?.length || 0;
+            // Total questions across all exercise sets
             t.exerciseCount = (t.learn?.exercises || []).reduce((sum, ex) => sum + (ex.questions?.length || 0), 0);
+            // Legacy questions array count
+            t.questionCount = t.questions?.length || 0;
             return t;
         });
 

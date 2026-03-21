@@ -354,6 +354,12 @@ canvas[class*="pointer-events-none"] {
   color: #000000 !important;
   font-size: 16px;
   line-height: 1.6;
+  /* Override Quill's height:100% so editor auto-expands from top */
+  height: auto !important;
+  min-height: 150px !important;
+  padding: 12px 15px !important;
+  background-color: #ffffff;
+  box-sizing: border-box !important;
 }
 
 .quill-editor-black-text .ql-editor p,
@@ -368,16 +374,22 @@ canvas[class*="pointer-events-none"] {
 .quill-editor-black-text .ql-editor h5,
 .quill-editor-black-text .ql-editor h6 {
   color: #000000 !important;
+  margin-bottom: 0 !important;
 }
 
 .quill-editor-black-text .ql-editor.ql-blank::before {
   color: #6b7280 !important;
+  top: 12px !important;
+  left: 15px !important;
 }
 
-/* Fix border showing over buttons */
+/* Fix container */
 .quill-editor-black-text .ql-container {
   border-bottom: none !important;
   font-family: 'Rajdhani', sans-serif;
+  height: auto !important;
+  min-height: 150px !important;
+  background-color: #ffffff;
 }
 
 .quill-editor-black-text .ql-toolbar {
@@ -389,6 +401,36 @@ canvas[class*="pointer-events-none"] {
 .quill-editor-black-text .ql-container.ql-snow {
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
+}
+
+/* Fix SVG toolbar icon colors for quill-editor-black-text */
+.quill-editor-black-text .ql-snow .ql-stroke,
+.quill-editor-black-text .ql-toolbar .ql-stroke {
+  stroke: #444444;
+}
+
+.quill-editor-black-text .ql-snow .ql-fill,
+.quill-editor-black-text .ql-toolbar .ql-fill {
+  fill: #444444;
+}
+
+.quill-editor-black-text .ql-snow.ql-toolbar button:hover .ql-stroke,
+.quill-editor-black-text .ql-toolbar button:hover .ql-stroke {
+  stroke: #06c;
+}
+
+.quill-editor-black-text .ql-snow.ql-toolbar button:hover .ql-fill,
+.quill-editor-black-text .ql-toolbar button:hover .ql-fill {
+  fill: #06c;
+}
+
+.quill-editor-black-text .ql-picker-label svg .ql-stroke {
+  stroke: #444444;
+}
+
+.quill-editor-black-text .ql-toolbar button svg {
+  float: left;
+  height: 100%;
 }
 
 /* Dark text for ReactQuill in DPPS Admin */
@@ -419,6 +461,23 @@ canvas[class*="pointer-events-none"] {
 .quill-dark-text .ql-container {
   border-bottom: none !important;
   font-family: 'Rajdhani', sans-serif;
+  height: auto !important;
+  min-height: 150px !important;
+  background-color: #ffffff;
+}
+
+.quill-dark-text .ql-editor {
+  color: #000000 !important;
+  height: auto !important;
+  min-height: 150px !important;
+  padding: 12px 15px !important;
+  background-color: #ffffff;
+  box-sizing: border-box !important;
+}
+
+.quill-dark-text .ql-editor.ql-blank::before {
+  top: 12px !important;
+  left: 15px !important;
 }
 
 .quill-dark-text .ql-toolbar {
@@ -435,12 +494,10 @@ canvas[class*="pointer-events-none"] {
 /* Dynamic ReactQuill editor height in admin panel */
 .ql-container {
   overflow-y: auto;
-  transition: height 0.3s ease;
 }
 
 .ql-editor {
   overflow-y: auto;
-  transition: min-height 0.3s ease, max-height 0.3s ease;
 }
 
 /* Smooth transitions for editor expansion */
@@ -473,6 +530,7 @@ canvas[class*="pointer-events-none"] {
   border-top: none;
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
+  height: auto !important;
   min-height: 150px;
 }
 
@@ -480,7 +538,10 @@ canvas[class*="pointer-events-none"] {
   color: #ffffff;
   font-size: 16px;
   line-height: 1.6;
+  height: auto !important;
   min-height: 150px;
+  padding: 12px 15px !important;
+  box-sizing: border-box !important;
 }
 
 .quill-wrapper .ql-editor.ql-blank::before {
@@ -653,6 +714,11 @@ canvas[class*="pointer-events-none"] {
   font-family: 'Rajdhani', sans-serif;
 }
 
+/* Force all inline Quill HTML to inherit color from parent — prevents black text on dark backgrounds */
+.ql-editor-content *:not(a) {
+  color: inherit !important;
+}
+
 .ql-editor-content p {
   margin-bottom: 0.5rem;
 }
@@ -740,4 +806,29 @@ canvas[class*="pointer-events-none"] {
   max-width: 100%;
   height: auto;
   margin: 0.5rem 0;
+}
+
+/* Compact quill wrapper for option fields */
+.quill-wrapper-sm .ql-container {
+  min-height: 60px !important;
+}
+
+.quill-wrapper-sm .ql-editor {
+  min-height: 60px !important;
+  font-size: 14px;
+  padding: 8px 12px;
+}
+
+.quill-wrapper-sm .ql-toolbar {
+  padding: 6px 8px !important;
+}
+
+.quill-wrapper-sm .ql-toolbar .ql-formats {
+  margin-right: 8px !important;
+}
+
+.quill-wrapper-sm .ql-toolbar button {
+  width: 24px !important;
+  height: 24px !important;
+  padding: 2px !important;
 }
