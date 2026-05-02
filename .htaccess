@@ -29,11 +29,11 @@
 # 2) Vite-hashed JS/CSS assets — cache for 1 year (immutable)
 #    Vite embeds a content-hash in every filename, so stale
 #    files are never accidentally served after a deploy.
-<LocationMatch "^/assets/.*\.(js|css|mjs)$">
+<FilesMatch "\.(js|css|mjs)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
     Header unset Pragma
     Header unset Expires
-</LocationMatch>
+</FilesMatch>
 
 # 3) Fonts — cache 1 year
 <FilesMatch "\.(woff2|woff|ttf|eot|otf)$">
