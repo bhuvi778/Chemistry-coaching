@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const InfinitePracticeQuestion = require('../models/InfinitePracticeQuestion');
 const InfinitePracticeSession = require('../models/InfinitePracticeSession');
+
+// Helper — validate MongoDB ObjectId before hitting DB
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id) && /^[a-fA-F0-9]{24}$/.test(id);
 
 // ==================== ADMIN ROUTES ====================
 
@@ -392,6 +396,9 @@ router.post('/session/start', async (req, res) => {
 // Get active session
 router.get('/session/:sessionId', async (req, res) => {
     try {
+        if (!isValidObjectId(req.params.sessionId)) {
+            return res.status(400).json({ message: 'Invalid session ID' });
+        }
         const session = await InfinitePracticeSession.findById(req.params.sessionId)
             .populate('questions.questionId');
 
@@ -410,7 +417,9 @@ router.get('/session/:sessionId', async (req, res) => {
 router.post('/session/:sessionId/answer', async (req, res) => {
     try {
         const { sessionId } = req.params;
-        const { questionIndex, userAnswer, timeTaken } = req.body;
+        if (!isValidObjectId(sessionId)) {
+            return res.status(400).json({ message: 'Invalid session ID' });
+        }
 
         const session = await InfinitePracticeSession.findById(sessionId)
             .populate('questions.questionId');
@@ -485,6 +494,9 @@ router.post('/session/:sessionId/answer', async (req, res) => {
 router.post('/session/:sessionId/mark-review', async (req, res) => {
     try {
         const { sessionId } = req.params;
+        if (!isValidObjectId(sessionId)) {
+            return res.status(400).json({ message: 'Invalid session ID' });
+        }
         const { questionIndex, marked } = req.body;
 
         const session = await InfinitePracticeSession.findById(sessionId);
@@ -507,6 +519,9 @@ router.post('/session/:sessionId/mark-review', async (req, res) => {
 router.post('/session/:sessionId/complete', async (req, res) => {
     try {
         const { sessionId } = req.params;
+        if (!isValidObjectId(sessionId)) {
+            return res.status(400).json({ message: 'Invalid session ID' });
+        }
         const { totalTimeTaken } = req.body;
 
         const session = await InfinitePracticeSession.findById(sessionId)
