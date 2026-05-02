@@ -100,6 +100,30 @@ const ManageConceptNotes = () => {
         ],
     };
 
+    const quillModulesQuestion = {
+        toolbar: [
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'align': [] }],
+            ['link', 'formula'],
+            ['clean']
+        ],
+    };
+
+    const quillModulesOption = {
+        toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'color': [] }],
+            ['formula'],
+            ['clean']
+        ],
+    };
+
     useEffect(() => {
         fetchChapters();
     }, []);
@@ -314,12 +338,14 @@ const ManageConceptNotes = () => {
 
     // Practice Question Management
     const handleAddQuestion = () => {
-        if (!currentQuestion.question || !currentQuestion.question.trim()) {
+        const isQuillEmpty = (val) => !val || val === '<p><br></p>' || !val.replace(/<[^>]*>/g, '').trim();
+
+        if (isQuillEmpty(currentQuestion.question)) {
             alert('Please provide a question');
             return;
         }
 
-        if (currentQuestion.options.some(opt => !opt.trim())) {
+        if (currentQuestion.options.some(opt => isQuillEmpty(opt))) {
             alert('Please fill all options');
             return;
         }
@@ -800,12 +826,16 @@ const ManageConceptNotes = () => {
                                                 {editingQuestionIndex !== null ? 'Edit Question' : 'Add New Question'}
                                             </h6>
 
-                                            <textarea
-                                                placeholder="Question"
-                                                value={currentQuestion.question}
-                                                onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
-                                                className="bg-gray-700 border border-gray-600 rounded p-2 text-white w-full h-20 text-sm"
-                                            />
+                                            <div className="concept-question-editor">
+                                                <ReactQuill
+                                                    theme="snow"
+                                                    value={currentQuestion.question}
+                                                    onChange={(content) => setCurrentQuestion({ ...currentQuestion, question: content })}
+                                                    modules={quillModulesQuestion}
+                                                    placeholder="Question"
+                                                    className="bg-gray-900 text-white rounded-lg"
+                                                />
+                                            </div>
 
                                             {/* PDF Upload for Question */}
                                             <div className="space-y-2">
@@ -854,35 +884,42 @@ const ManageConceptNotes = () => {
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                                 {currentQuestion.options.map((option, idx) => (
-                                                    <div key={idx} className="flex items-center gap-2">
+                                                    <div key={idx} className="flex items-start gap-2">
                                                         <input
                                                             type="radio"
                                                             name="correctAnswer"
                                                             checked={currentQuestion.correctAnswer === idx}
                                                             onChange={() => setCurrentQuestion({ ...currentQuestion, correctAnswer: idx })}
-                                                            className="w-4 h-4"
+                                                            className="w-4 h-4 mt-3 flex-shrink-0"
                                                         />
-                                                        <input
-                                                            type="text"
-                                                            placeholder={`Option ${idx + 1}`}
-                                                            value={option}
-                                                            onChange={(e) => {
-                                                                const newOptions = [...currentQuestion.options];
-                                                                newOptions[idx] = e.target.value;
-                                                                setCurrentQuestion({ ...currentQuestion, options: newOptions });
-                                                            }}
-                                                            className="bg-gray-700 border border-gray-600 rounded p-2 text-white flex-1 text-sm"
-                                                        />
+                                                        <div className="flex-1 concept-option-editor">
+                                                            <ReactQuill
+                                                                theme="snow"
+                                                                value={option}
+                                                                onChange={(content) => {
+                                                                    const newOptions = [...currentQuestion.options];
+                                                                    newOptions[idx] = content;
+                                                                    setCurrentQuestion({ ...currentQuestion, options: newOptions });
+                                                                }}
+                                                                modules={quillModulesOption}
+                                                                placeholder={`Option ${idx + 1}`}
+                                                                className="bg-gray-900 text-white rounded-lg"
+                                                            />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
 
-                                            <textarea
-                                                placeholder="Explanation (optional)"
-                                                value={currentQuestion.explanation}
-                                                onChange={(e) => setCurrentQuestion({ ...currentQuestion, explanation: e.target.value })}
-                                                className="bg-gray-700 border border-gray-600 rounded p-2 text-white w-full h-16 text-sm"
-                                            />
+                                            <div className="concept-explanation-editor">
+                                                <ReactQuill
+                                                    theme="snow"
+                                                    value={currentQuestion.explanation}
+                                                    onChange={(content) => setCurrentQuestion({ ...currentQuestion, explanation: content })}
+                                                    modules={quillModulesQuestion}
+                                                    placeholder="Explanation (optional)"
+                                                    className="bg-gray-900 text-white rounded-lg"
+                                                />
+                                            </div>
 
                                             <select
                                                 value={currentQuestion.difficulty}
@@ -1172,6 +1209,97 @@ style.innerHTML = `
 if (!document.head.querySelector('#quill-custom-fonts')) {
     style.id = 'quill-custom-fonts';
     document.head.appendChild(style);
+}
+
+// Styles for Practice Question rich text editors
+const practiceQuestionStyle = document.createElement('style');
+practiceQuestionStyle.innerHTML = `
+    .concept-question-editor .ql-toolbar {
+        display: block !important;
+        background-color: rgb(31, 41, 55);
+        border: 1px solid rgb(75, 85, 99);
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .concept-question-editor .ql-container {
+        background-color: rgb(55, 65, 81);
+        border: 1px solid rgb(75, 85, 99);
+        border-radius: 0 0 0.5rem 0.5rem;
+        min-height: 80px;
+    }
+    .concept-question-editor .ql-editor {
+        color: white;
+        min-height: 80px;
+    }
+    .concept-question-editor .ql-editor.ql-blank::before {
+        color: rgb(156, 163, 175);
+    }
+    .concept-option-editor .ql-toolbar {
+        display: block !important;
+        background-color: rgb(31, 41, 55);
+        border: 1px solid rgb(75, 85, 99);
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .concept-option-editor .ql-container {
+        background-color: rgb(55, 65, 81);
+        border: 1px solid rgb(75, 85, 99);
+        border-radius: 0 0 0.5rem 0.5rem;
+        min-height: 50px;
+    }
+    .concept-option-editor .ql-editor {
+        color: white;
+        min-height: 50px;
+    }
+    .concept-option-editor .ql-editor.ql-blank::before {
+        color: rgb(156, 163, 175);
+    }
+    .concept-explanation-editor .ql-toolbar {
+        display: block !important;
+        background-color: rgb(31, 41, 55);
+        border: 1px solid rgb(75, 85, 99);
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .concept-explanation-editor .ql-container {
+        background-color: rgb(55, 65, 81);
+        border: 1px solid rgb(75, 85, 99);
+        border-radius: 0 0 0.5rem 0.5rem;
+        min-height: 60px;
+    }
+    .concept-explanation-editor .ql-editor {
+        color: white;
+        min-height: 60px;
+    }
+    .concept-explanation-editor .ql-editor.ql-blank::before {
+        color: rgb(156, 163, 175);
+    }
+    .concept-question-editor .ql-toolbar .ql-stroke,
+    .concept-option-editor .ql-toolbar .ql-stroke,
+    .concept-explanation-editor .ql-toolbar .ql-stroke {
+        stroke: rgb(156, 163, 175);
+    }
+    .concept-question-editor .ql-toolbar .ql-fill,
+    .concept-option-editor .ql-toolbar .ql-fill,
+    .concept-explanation-editor .ql-toolbar .ql-fill {
+        fill: rgb(156, 163, 175);
+    }
+    .concept-question-editor .ql-toolbar .ql-picker,
+    .concept-option-editor .ql-toolbar .ql-picker,
+    .concept-explanation-editor .ql-toolbar .ql-picker {
+        color: rgb(156, 163, 175);
+    }
+    .concept-question-editor .ql-toolbar button:hover .ql-stroke,
+    .concept-option-editor .ql-toolbar button:hover .ql-stroke,
+    .concept-explanation-editor .ql-toolbar button:hover .ql-stroke {
+        stroke: white;
+    }
+    .concept-question-editor .ql-toolbar button:hover .ql-fill,
+    .concept-option-editor .ql-toolbar button:hover .ql-fill,
+    .concept-explanation-editor .ql-toolbar button:hover .ql-fill {
+        fill: white;
+    }
+`;
+if (!document.head.querySelector('#concept-practice-question-editors')) {
+    practiceQuestionStyle.id = 'concept-practice-question-editors';
+    document.head.appendChild(practiceQuestionStyle);
 }
 
 export default ManageConceptNotes;

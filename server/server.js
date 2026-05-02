@@ -38,6 +38,7 @@ const practiceTestRoutes = require('./routes/practiceTest');
 const globalCourseRoutes = require('./routes/globalCourseRoutes');
 const assertionReasonRoutes = require('./routes/assertionReason');
 const communityRoutes = require('./routes/communityRoutes');
+const leadCaptureRoutes = require('./routes/leadCaptureRoutes');
 
 const app = express();
 
@@ -236,6 +237,8 @@ app.use('/api/global-courses', globalCourseRoutes);
 app.use('/api/assertion-reason', assertionReasonRoutes);
 // Community routes — cached 5 min (user-generated content)
 app.use('/api/community', cacheMiddleware('community', 5 * 60 * 1000), communityRoutes);
+// Lead Capture routes
+app.use('/api/lead-capture', leadCaptureRoutes);
 
 // Courses
 app.get('/api/courses', cacheMiddleware('courses', 30 * 60 * 1000), async (req, res) => {

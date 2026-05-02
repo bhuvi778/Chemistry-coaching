@@ -13,6 +13,9 @@ const ManageInfinitePractice = () => {
     const [showForm, setShowForm] = useState(false);
     const [editingQuestion, setEditingQuestion] = useState(null);
     const [filters, setFilters] = useState({ examName: '', subject: '', chapterName: '', difficulty: '' });
+    const [allChapters, setAllChapters] = useState([]);
+    const [showChapterDropdown, setShowChapterDropdown] = useState(false);
+    const [chapterSuggestions, setChapterSuggestions] = useState([]);
 
     const [questionForm, setQuestionForm] = useState({
         examName: 'JEE Main',
@@ -71,6 +74,7 @@ const ManageInfinitePractice = () => {
     const quillFormats = ['header', 'bold', 'italic', 'underline', 'strike', 'script', 'list', 'bullet', 'color', 'background', 'link', 'image', 'formula'];
 
     useEffect(() => { fetchQuestions(); }, [filters]);
+    useEffect(() => { fetchAllChapters(); }, []);
     useEffect(() => {
         if (activeTab === 'attempts') {
             fetchSessions();
@@ -98,6 +102,24 @@ const ManageInfinitePractice = () => {
         }
     };
 
+    const fetchAllChapters = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/admin/questions`);
+            const seen = new Set();
+            const chapters = [];
+            response.data.forEach(q => {
+                const key = `${q.examName}|${q.subject}|${q.chapterName.toLowerCase()}`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    chapters.push({ examName: q.examName, subject: q.subject, chapterName: q.chapterName });
+                }
+            });
+            setAllChapters(chapters);
+        } catch (error) {
+            console.error('Error fetching chapters:', error);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -113,6 +135,7 @@ const ManageInfinitePractice = () => {
             setEditingQuestion(null);
             resetForm();
             fetchQuestions();
+            fetchAllChapters();
         } catch (error) {
             console.error('Error saving question:', error);
             toast.error('Failed to save question');
@@ -177,6 +200,52 @@ const ManageInfinitePractice = () => {
         const newOptions = [...questionForm.options];
         newOptions[index] = value;
         setQuestionForm({ ...questionForm, options: newOptions });
+    };
+
+    const getChapterSuggestions = (inputValue, examName, subject) => {
+        const relevant = allChapters.filter(ch =>
+            ch.examName === examName && ch.subject === subject
+        );
+        if (!inputValue) return relevant.map(ch => ch.chapterName);
+        return relevant
+            .filter(ch => ch.chapterName.toLowerCase().includes(inputValue.toLowerCase()))
+            .map(ch => ch.chapterName);
+    };
+
+    const handleChapterInputChange = (e) => {
+        const value = e.target.value;
+        setQuestionForm(prev => ({ ...prev, chapterName: value }));
+        const suggestions = getChapterSuggestions(value, questionForm.examName, questionForm.subject);
+        setChapterSuggestions(suggestions);
+        setShowChapterDropdown(suggestions.length > 0);
+    };
+
+    const handleChapterInputFocus = () => {
+        const suggestions = getChapterSuggestions(questionForm.chapterName, questionForm.examName, questionForm.subject);
+        setChapterSuggestions(suggestions);
+        setShowChapterDropdown(suggestions.length > 0);
+    };
+
+    const handleChapterInputBlur = () => {
+        setTimeout(() => {
+            setShowChapterDropdown(false);
+            if (questionForm.chapterName) {
+                const exactMatch = allChapters.find(
+                    ch => ch.chapterName.toLowerCase() === questionForm.chapterName.toLowerCase() &&
+                          ch.examName === questionForm.examName &&
+                          ch.subject === questionForm.subject
+                );
+                if (exactMatch && exactMatch.chapterName !== questionForm.chapterName) {
+                    setQuestionForm(prev => ({ ...prev, chapterName: exactMatch.chapterName }));
+                    toast.success(`Chapter name corrected to: "${exactMatch.chapterName}"`);
+                }
+            }
+        }, 200);
+    };
+
+    const selectChapter = (chapterName) => {
+        setQuestionForm(prev => ({ ...prev, chapterName }));
+        setShowChapterDropdown(false);
     };
 
     // ===================== ATTEMPTS LOGIC =====================
@@ -397,7 +466,32 @@ const ManageInfinitePractice = () => {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <label className="block text-gray-400 mb-2">Chapter Name *</label>
-                                                <input type="text" value={questionForm.chapterName} onChange={(e) => setQuestionForm({ ...questionForm, chapterName: e.target.value })} className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none" required />
+                                                <div className="relative">
+                                                    <input
+                                                        type="text"
+                                                        value={questionForm.chapterName}
+                                                        onChange={handleChapterInputChange}
+                                                        onFocus={handleChapterInputFocus}
+                                                        onBlur={handleChapterInputBlur}
+                                                        placeholder="Type or select chapter..."
+                                                        className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none"
+                                                        required
+                                                    />
+                                                    {showChapterDropdown && chapterSuggestions.length > 0 && (
+                                                        <ul className="absolute z-50 w-full mt-1 bg-gray-800 border border-cyan-500/40 rounded-lg shadow-xl max-h-48 overflow-y-auto">
+                                                            {chapterSuggestions.map((ch, idx) => (
+                                                                <li
+                                                                    key={idx}
+                                                                    onMouseDown={() => selectChapter(ch)}
+                                                                    className="px-4 py-2 text-white hover:bg-cyan-500/20 cursor-pointer text-sm border-b border-gray-700/50 last:border-0"
+                                                                >
+                                                                    <i className="fas fa-book-open mr-2 text-cyan-400 text-xs"></i>
+                                                                    {ch}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    )}
+                                                </div>
                                             </div>
                                             <div>
                                                 <label className="block text-gray-400 mb-2">Difficulty *</label>

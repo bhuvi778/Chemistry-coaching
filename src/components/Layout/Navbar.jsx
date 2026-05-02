@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [regionChoice, setRegionChoice] = useState('');
   const [isStudyMaterialOpen, setIsStudyMaterialOpen] = useState(false);
   const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -19,6 +20,20 @@ const Navbar = () => {
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
 
+  // Read saved region from cookie on mount
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )regionChoice=([^;]*)/);
+    if (match) setRegionChoice(decodeURIComponent(match[1]));
+  }, []);
+
+  const handleRegionClick = (region, url) => {
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 1);
+    document.cookie = `regionChoice=${encodeURIComponent(region)}; expires=${expires.toUTCString()}; path=/`;
+    setRegionChoice(region);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   const getNavLinkClass = (path) => {
     const isActive = location.pathname === path;
     return `nav-link px-3 py-2 transition relative ${isActive ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
@@ -27,15 +42,42 @@ const Navbar = () => {
 
   return (
     <>
-      {/* 3D Coming Soon Banner */}
-      <div className="fixed w-full z-[60] top-0 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white py-2 px-4 text-center animate-pulse">
-        <p className="text-sm md:text-base font-bold flex items-center justify-center gap-2">
-          <i className="fas fa-cube"></i>
-          <span>🚀 Coming Soon: 3D Interactive Chemistry Models!</span>
-          <i className="fas fa-cube"></i>
-        </p>
+      {/* Region Selector Bar — pinned to very top */}
+      <div className="fixed w-full z-[60] top-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700/60 py-1.5 sm:py-2 px-4">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+          <span className="flex items-center text-gray-300 text-xs sm:text-sm font-medium">
+            <i className="fas fa-globe-asia mr-1.5 text-cyan-400"></i>
+            Access our Chemistry Programs based on your region:
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleRegionClick('india', 'https://www.ace2examz.in')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
+                regionChoice === 'india'
+                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-2 ring-blue-300 scale-105'
+                  : 'bg-blue-600/70 text-blue-100 hover:bg-blue-500 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/30'
+              }`}
+            >
+              <span>🇮🇳</span>
+              India Programs
+              {regionChoice === 'india' && <i className="fas fa-check-circle text-xs"></i>}
+            </button>
+            <button
+              onClick={() => handleRegionClick('uae', 'https://uae.ace2examz.com')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
+                regionChoice === 'uae'
+                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/40 ring-2 ring-green-300 scale-105'
+                  : 'bg-green-600/70 text-green-100 hover:bg-green-500 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30'
+              }`}
+            >
+              <span>🇦🇪</span>
+              UAE Programs
+              {regionChoice === 'uae' && <i className="fas fa-check-circle text-xs"></i>}
+            </button>
+          </div>
+        </div>
       </div>
-      <nav className="glass-panel fixed w-full z-50 top-10 border-b border-gray-800">
+      <nav className="glass-panel fixed w-full z-50 top-[64px] sm:top-10 border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <Link to="/" className="flex items-center cursor-pointer">
@@ -65,7 +107,7 @@ const Navbar = () => {
                     </span>
                   </button>
 
-                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg transition-all duration-300 ${isExamsOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg transition-all duration-300 z-[100] ${isExamsOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                     }`}>
                     <Link
                       to="/exams/neet"
@@ -74,6 +116,14 @@ const Navbar = () => {
                     >
                       <i className="fas fa-stethoscope text-cyan-400"></i>
                       <span>NEET</span>
+                    </Link>
+                    <Link
+                      to="/exams/jee"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-orange-500/20 hover:text-orange-400 transition"
+                      onClick={() => setIsExamsOpen(false)}
+                    >
+                      <i className="fas fa-calculator text-orange-400"></i>
+                      <span>JEE</span>
                     </Link>
                   </div>
                 </div>
@@ -89,12 +139,12 @@ const Navbar = () => {
                     }`}>
                     <span className="flex items-center gap-1.5">
                       <i className="fas fa-graduation-cap"></i>
-                      Ace Program
+                      Ace Batches
                       <i className={`fas fa-chevron-down text-xs transition-transform ${isCoursesOpen ? 'rotate-180' : ''}`}></i>
                     </span>
                   </button>
 
-                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg transition-all duration-300 ${isCoursesOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg transition-all duration-300 z-[100] ${isCoursesOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                     }`}>
                     <Link
                       to="/courses"
@@ -128,6 +178,16 @@ const Navbar = () => {
                       <i className="fas fa-globe text-purple-500"></i>
                       <span>UAE Courses</span>
                     </Link>
+                    <a
+                      href="https://learn.ace2examz.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
+                      onClick={() => setIsCoursesOpen(false)}
+                    >
+                      <i className="fas fa-laptop-code text-yellow-400"></i>
+                      <span>Learn Skill</span>
+                    </a>
 
 
                   </div>
@@ -153,7 +213,7 @@ const Navbar = () => {
                   </button>
 
                   {/* Dropdown Menu */}
-                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isStudyMaterialOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 z-[100] ${isStudyMaterialOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                     }`}>
                     <Link
                       to="/lectures"
@@ -259,7 +319,7 @@ const Navbar = () => {
                     </span>
                   </button>
 
-                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isPrepArenaOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 z-[100] ${isPrepArenaOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                     }`}>
                     <Link
                       to="/ncert-toolbox"
@@ -334,7 +394,7 @@ const Navbar = () => {
                     </span>
                   </button>
 
-                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 ${isMoreOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                  <div className={`absolute top-full left-0 mt-2 w-56 glass-panel rounded-lg border border-gray-700 shadow-lg overflow-hidden transition-all duration-300 z-[100] ${isMoreOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                     }`}>
                     <Link
                       to="/about"
@@ -352,16 +412,6 @@ const Navbar = () => {
                       <i className="fas fa-blog text-blue-500"></i>
                       <span>Blogs</span>
                     </Link>
-                    <a
-                      href="https://stories.ace2examz.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
-                      onClick={() => setIsMoreOpen(false)}
-                    >
-                      <i className="fas fa-book-reader text-purple-500"></i>
-                      <span>Web Stories</span>
-                    </a>
                     <Link
                       to="/community"
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
@@ -510,6 +560,9 @@ const Navbar = () => {
                     <Link to="/exams/neet" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-stethoscope text-cyan-400 mr-2"></i>NEET
                     </Link>
+                    <Link to="/exams/jee" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-calculator text-orange-400 mr-2"></i>JEE
+                    </Link>
                   </div>
                 )}
               </div>
@@ -539,6 +592,9 @@ const Navbar = () => {
                     <Link to="/uae-courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-globe text-purple-500 mr-2"></i>UAE Courses
                     </Link>
+                    <a href="https://learn.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
+                      <i className="fas fa-laptop-code text-yellow-400 mr-2"></i>Learn Skill
+                    </a>
 
 
                   </div>
@@ -651,9 +707,6 @@ const Navbar = () => {
                     <Link to="/blogs" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-blog text-blue-500 mr-2"></i>Blog
                     </Link>
-                    <a href="https://stories.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
-                      <i className="fas fa-book-reader text-purple-500 mr-2"></i>Web Stories
-                    </a>
                     <Link to="/community" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-users text-orange-500 mr-2"></i>Community
                     </Link>

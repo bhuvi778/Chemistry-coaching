@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { fetchNCERTChapter, fetchNCERTQuestions, submitErrorReport } from '../services/ncertApi';
+import { fetchNCERTBadges } from '../services/ncertApi';
 import { toast } from 'react-hot-toast';
 
 const NCERTQuestionViewer = () => {
@@ -9,6 +10,7 @@ const NCERTQuestionViewer = () => {
     const location = useLocation();
 
     const [chapter, setChapter] = useState(null);
+    const [badgeName, setBadgeName] = useState('');
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -48,10 +50,17 @@ const NCERTQuestionViewer = () => {
 
             const questionsRes = await fetchNCERTQuestions(filters);
 
-            // Also fetch chapter details if available
+            // Fetch chapter details if chapterId is present, otherwise fetch badge name
             if (chapterId) {
                 const chapterData = await fetchNCERTChapter(chapterId);
                 setChapter(chapterData);
+            } else {
+                // Fetch badge name to use as page title
+                try {
+                    const badges = await fetchNCERTBadges(category);
+                    const badge = badges.find(b => b.badgeType === typeId);
+                    if (badge) setBadgeName(badge.name);
+                } catch { /* ignore */ }
             }
 
             setQuestions(questionsRes || []);
@@ -303,7 +312,7 @@ const NCERTQuestionViewer = () => {
                         <div className="flex-1">
                             {chapter && <div className="text-sm text-gray-400 mb-2">{chapter.chapterNumber}</div>}
                             <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                                {chapter ? chapter.name : 'Practice Questions'}
+                                {chapter ? chapter.name : (badgeName || 'Practice Questions')}
                             </h1>
                             <p className="text-gray-300 mb-4 text-lg">
                                 {isExemplar ? 'Exemplar Questions & Solutions' : (isDiagrams ? 'Diagram Based Questions & Analysis' : 'Complete Chapter Questions & Solutions')}

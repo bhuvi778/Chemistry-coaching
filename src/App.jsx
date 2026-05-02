@@ -77,7 +77,9 @@ const SelfLearnChapters = lazy(() => import('./pages/SelfLearn/SelfLearnChapters
 const SelfLearnChapterDetail = lazy(() => import('./pages/SelfLearn/SelfLearnChapterDetail'));
 const TopicDetail = lazy(() => import('./pages/SelfLearn/TopicDetail'));
 const NeetExam = lazy(() => import('./pages/Exams/NeetExam'));
+const JeeExam = lazy(() => import('./pages/Exams/JeeExam'));
 import ExamCountdown from './components/ExamCountdown';
+import LeadCapturePopup from './components/LeadCapturePopup';
 
 const ProtectedRoute = ({ children }) => {
   const { isAdmin } = useData();
@@ -164,6 +166,7 @@ function AppContent() {
       <ParticleCanvas />
       <Navbar />
       {!isAdminRoute && <ExamCountdown />}
+      {!isAdminRoute && <LeadCapturePopup />}
 
       <div className="pt-20 flex-grow">
         <Suspense fallback={<LoadingFallback />}>
@@ -242,6 +245,8 @@ function AppContent() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/exams/neet" element={<NeetExam />} />
             <Route path="/exams/neet/:sectionId" element={<NeetExam />} />
+            <Route path="/exams/jee" element={<JeeExam />} />
+            <Route path="/exams/jee/:sectionId" element={<JeeExam />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />

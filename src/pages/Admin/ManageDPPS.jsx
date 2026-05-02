@@ -67,6 +67,7 @@ const ManageDPPS = () => {
         question: '',
         options: ['', '', '', ''],
         correctAnswer: '',
+        correctAnswerIdx: -1,
         solution: '',
         hint: '',
         classLevel: '11',
@@ -80,6 +81,12 @@ const ManageDPPS = () => {
     });
 
     const API_URL = '/api/dpps';
+
+    // Strip HTML tags for comparison
+    const stripHtml = (html) => {
+        if (!html) return '';
+        return html.replace(/<[^>]+>/g, '').trim();
+    };
 
     // Fetch Data
     useEffect(() => {
@@ -244,10 +251,12 @@ const ManageDPPS = () => {
 
     const openEditQuestion = (question) => {
         setEditingItem(question);
+        const correctAnswerIdx = question.options ? question.options.findIndex(o => o === question.correctAnswer) : -1;
         setQuestionForm({
             question: question.question,
             options: question.options,
             correctAnswer: question.correctAnswer,
+            correctAnswerIdx,
             solution: question.solution,
             hint: question.hint,
             classLevel: question.classLevel || '11',
@@ -286,6 +295,7 @@ const ManageDPPS = () => {
             question: '',
             options: ['', '', '', ''],
             correctAnswer: '',
+            correctAnswerIdx: -1,
             solution: '',
             hint: '',
             classLevel: '11',
@@ -651,22 +661,31 @@ const ManageDPPS = () => {
                                                 <span className="text-xs text-red-400">-{question.negativeMarks} neg</span>
                                             )}
                                         </div>
-                                        <div
-                                            className="text-white mb-3"
+                                                        <div
+                                            className="text-white mb-3 [&_*]:!text-white [&_p]:my-0.5 [&_p]:leading-normal [&_sub]:text-xs [&_sup]:text-xs"
                                             dangerouslySetInnerHTML={{ __html: question.question }}
                                         />
                                         {question.options && question.options.length > 0 && (
                                             <div className="grid grid-cols-2 gap-2 mt-3">
-                                                {question.options.map((option, idx) => (
+                                                {question.options.map((option, idx) => {
+                                                    const isCorrect = option === question.correctAnswer ||
+                                                        stripHtml(option) === stripHtml(question.correctAnswer);
+                                                    return (
                                                     <div
                                                         key={idx}
-                                                        className={`text-sm p-2 rounded border ${option === question.correctAnswer
-                                                            ? 'border-green-500 bg-green-500/10 text-green-400 [&_*]:!text-green-400'
-                                                            : 'border-gray-700 bg-gray-800/30 text-white [&_*]:!text-white'
+                                                        className={`text-sm p-2 rounded border flex items-start gap-1.5 ${isCorrect
+                                                            ? 'border-green-500 bg-green-500/15 [&_*]:!text-green-400 [&_p]:my-0'
+                                                            : 'border-gray-700 bg-gray-800/30 [&_*]:!text-white [&_p]:my-0'
                                                             }`}
-                                                        dangerouslySetInnerHTML={{ __html: option }}
-                                                    />
-                                                ))}
+                                                    >
+                                                        <span className={`font-bold text-xs mt-1 flex-shrink-0 ${isCorrect ? 'text-green-400' : 'text-gray-400'}`}>
+                                                            {String.fromCharCode(65 + idx)}.
+                                                        </span>
+                                                        <div className={isCorrect ? 'text-green-400' : 'text-white'} dangerouslySetInnerHTML={{ __html: option }} />
+                                                        {isCorrect && <i className="fas fa-check-circle text-green-400 text-xs mt-1 ml-auto flex-shrink-0"></i>}
+                                                    </div>
+                                                    );
+                                                })}
                                             </div>
                                         )}
                                     </div>
@@ -729,19 +748,21 @@ const ManageDPPS = () => {
                             <div>
                                 <label className="block text-gray-400 mb-2">Options (for MCQ)</label>
                                 {questionForm.options.map((option, idx) => (
-                                    <div key={idx} className="mb-2">
+                                    <div key={idx} className="mb-3">
+                                        <p className="text-gray-500 text-xs mb-1 font-semibold">Option {String.fromCharCode(65 + idx)}</p>
                                         <div className="quill-dark-text">
                                             <ReactQuill
                                                 value={option}
                                                 onChange={(value) => {
                                                     const newOptions = [...questionForm.options];
                                                     newOptions[idx] = value;
-                                                    setQuestionForm({ ...questionForm, options: newOptions });
+                                                    const newCorrectAnswer = questionForm.correctAnswerIdx === idx ? value : questionForm.correctAnswer;
+                                                    setQuestionForm({ ...questionForm, options: newOptions, correctAnswer: newCorrectAnswer });
                                                 }}
                                                 modules={quillModules}
                                                 formats={quillFormats}
                                                 className="bg-white rounded"
-                                                placeholder={`Option ${idx + 1}`}
+                                                placeholder={`Option ${String.fromCharCode(65 + idx)}`}
                                             />
                                         </div>
                                     </div>
@@ -749,14 +770,41 @@ const ManageDPPS = () => {
                             </div>
 
                             <div>
-                                <label className="block text-gray-400 mb-2">Correct Answer *</label>
-                                <input
-                                    type="text"
-                                    value={questionForm.correctAnswer}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, correctAnswer: e.target.value })}
-                                    className="w-full bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:border-cyan-500 outline-none"
-                                    required
-                                />
+                                <label className="block text-gray-400 mb-2">Correct Answer * <span className="text-gray-500 text-xs font-normal">(Select which option is correct)</span></label>
+                                <div className="space-y-2">
+                                    {questionForm.options.map((option, idx) => (
+                                        <label
+                                            key={idx}
+                                            className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${
+                                                questionForm.correctAnswerIdx === idx
+                                                    ? 'border-green-500 bg-green-500/10'
+                                                    : 'border-gray-700 bg-gray-800/30 hover:border-gray-500'
+                                            }`}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="correctAnswer"
+                                                checked={questionForm.correctAnswerIdx === idx}
+                                                onChange={() => setQuestionForm({ ...questionForm, correctAnswerIdx: idx, correctAnswer: questionForm.options[idx] })}
+                                                className="w-4 h-4 accent-green-500"
+                                            />
+                                            <span className={`font-bold text-sm min-w-[20px] ${
+                                                questionForm.correctAnswerIdx === idx ? 'text-green-400' : 'text-gray-400'
+                                            }`}>
+                                                {String.fromCharCode(65 + idx)}.
+                                            </span>
+                                            <div
+                                                className={`flex-1 text-sm [&_p]:my-0 [&_sub]:text-xs [&_sup]:text-xs ${
+                                                    questionForm.correctAnswerIdx === idx ? '[&_*]:!text-green-400 text-green-400' : '[&_*]:!text-gray-300 text-gray-300'
+                                                }`}
+                                                dangerouslySetInnerHTML={{ __html: option || `<span style="color:#6b7280">Option ${String.fromCharCode(65 + idx)} (empty)</span>` }}
+                                            />
+                                        </label>
+                                    ))}
+                                </div>
+                                {questionForm.correctAnswerIdx === -1 && (
+                                    <p className="text-amber-400 text-xs mt-1"><i className="fas fa-exclamation-triangle mr-1"></i>Please select the correct option above</p>
+                                )}
                             </div>
 
                             <div>

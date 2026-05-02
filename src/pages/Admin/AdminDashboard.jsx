@@ -31,6 +31,7 @@ import ManagePYQ from './ManagePYQ';
 import ManageInfinitePractice from './ManageInfinitePractice';
 import ManageSelfLearn from './ManageSelfLearn';
 import AdminSettings from './AdminSettings';
+import ManageLeadCaptures from './ManageLeadCaptures';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('courses');
@@ -218,6 +219,13 @@ const AdminDashboard = () => {
               <i className="fas fa-blog mr-2"></i> Manage Blogs
             </button>
 
+            <button
+              onClick={() => setActiveTab('leadcaptures')}
+              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'leadcaptures' ? 'bg-green-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+            >
+              <i className="fas fa-user-graduate mr-2"></i> Student Information
+            </button>
+
             <div className="border-t border-gray-700 my-2"></div>
             <button
               onClick={() => setActiveTab('settings')}
@@ -257,6 +265,7 @@ const AdminDashboard = () => {
           {activeTab === 'registrations' && <ManageTestRegistrations />}
           {activeTab === 'enquiries' && <Enquiries />}
           {activeTab === 'blogs' && <ManageBlogs />}
+          {activeTab === 'leadcaptures' && <ManageLeadCaptures />}
           {activeTab === 'settings' && <AdminSettings />}
         </div>
       </div>

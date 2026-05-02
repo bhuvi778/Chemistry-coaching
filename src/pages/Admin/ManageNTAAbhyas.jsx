@@ -63,6 +63,7 @@ const ManageNTAAbhyas = () => {
         imageFile: null,
         year: new Date().getFullYear(),
         topic: '',
+        paperNumber: '',
         isActive: true,
         classLevel: '11'
     });
@@ -122,6 +123,7 @@ const ManageNTAAbhyas = () => {
             submitData.append('marks', formData.marks);
             submitData.append('year', formData.year);
             if (formData.topic) submitData.append('topic', formData.topic);
+            if (formData.paperNumber) submitData.append('paperNumber', formData.paperNumber);
             submitData.append('isActive', formData.isActive);
             submitData.append('classLevel', formData.classLevel);
 
@@ -192,6 +194,7 @@ const ManageNTAAbhyas = () => {
             imageFile: null,
             year: question.year || new Date().getFullYear(),
             topic: question.topic || '',
+            paperNumber: question.paperNumber || '',
             isActive: question.isActive !== false,
             classLevel: question.classLevel || '11'
         });
@@ -217,6 +220,7 @@ const ManageNTAAbhyas = () => {
             imageFile: null,
             year: new Date().getFullYear(),
             topic: '',
+            paperNumber: '',
             isActive: true,
             classLevel: '11'
         });
@@ -365,6 +369,11 @@ const ManageNTAAbhyas = () => {
                                         {q.marks && (
                                             <span className="bg-cyan-500/20 text-cyan-400 text-xs px-2 py-1 rounded">
                                                 {q.marks} marks
+                                            </span>
+                                        )}
+                                        {q.paperNumber && (
+                                            <span className="bg-orange-500/20 text-orange-400 text-xs px-2 py-1 rounded border border-orange-500/50">
+                                                <i className="fas fa-atom mr-1"></i>Paper {q.paperNumber}
                                             </span>
                                         )}
                                     </div>
@@ -680,6 +689,18 @@ const ManageNTAAbhyas = () => {
                                         placeholder="Optional"
                                     />
                                 </div>
+                            </div>
+
+                            {/* Paper Number */}
+                            <div>
+                                <label className="block text-gray-400 mb-2">NTA Abhyas Paper Number <span className="text-gray-500 text-xs">(e.g. 109, 110)</span></label>
+                                <input
+                                    type="text"
+                                    value={formData.paperNumber}
+                                    onChange={(e) => setFormData({ ...formData, paperNumber: e.target.value })}
+                                    className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white"
+                                    placeholder="e.g. 109 (leave blank if not applicable)"
+                                />
                             </div>
 
                             {/* Active Status */}

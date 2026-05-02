@@ -57,6 +57,7 @@ const ntaAbhyasRoutes = require('./routes/ntaAbhyasRoutes');
 const dppsRoutes = require('./routes/dppsRoutes');
 const pyqRoutes = require('./routes/pyqRoutes');
 const selfLearnRoutes = require('./routes/selfLearnRoutes');
+const leadCaptureRoutes = require('./routes/leadCaptureRoutes');
 
 const app = express();
 
@@ -213,6 +214,7 @@ app.use('/api/nta-abhyas', ntaAbhyasRoutes);
 app.use('/api/dpps', dppsRoutes);
 app.use('/api/pyq', cacheMiddleware('pyq', 30 * 60 * 1000), pyqRoutes);
 app.use('/api/self-learn', cacheMiddleware('self-learn', 30 * 60 * 1000), selfLearnRoutes);
+app.use('/api/lead-capture', leadCaptureRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

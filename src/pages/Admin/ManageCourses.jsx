@@ -211,8 +211,13 @@ const ManageCourses = () => {
               <i className="fas fa-filter mr-2 text-cyan-400"></i>
               Program Type Categories (Select all that apply):
             </label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {['live-batch', 'recorded', '1-1-tutoring', 'mentorship', 'doubt-solver', 'test-series', 'focus-test-series'].map(cat => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { value: 'live-batch', label: '🎥 Live Batch' },
+                { value: 'recorded', label: '▶️ Recorded Courses' },
+                { value: 'test-series', label: '📝 Test Series' },
+                { value: 'focus-test-series', label: '🎯 Focus Test Series' },
+              ].map(({ value: cat, label }) => (
                 <label key={cat} className="flex items-center gap-2 text-white cursor-pointer hover:text-cyan-400 transition">
                   <input
                     type="checkbox"
@@ -220,15 +225,7 @@ const ManageCourses = () => {
                     onChange={() => toggleCategory(cat)}
                     className="w-4 h-4 rounded border-gray-700 bg-gray-900 text-cyan-500 focus:ring-cyan-400"
                   />
-                  <span className="text-sm">
-                    {cat === 'live-batch' && 'Live Batch'}
-                    {cat === 'recorded' && 'Recorded'}
-                    {cat === '1-1-tutoring' && '1-1 Tutoring'}
-                    {cat === 'mentorship' && 'Mentorship'}
-                    {cat === 'doubt-solver' && 'Doubt Solver'}
-                    {cat === 'test-series' && 'Test Series'}
-                    {cat === 'focus-test-series' && 'Focus Test Series'}
-                  </span>
+                  <span className="text-sm">{label}</span>
                 </label>
               ))}
             </div>

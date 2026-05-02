@@ -366,10 +366,12 @@ const NTAAbhyasQuestions = () => {
                                                             {isMCQ ? 'MCQ' : 'Subjective'}
                                                         </span>
                                                         {/* NTA Abhyas Paper Badge */}
-                                                        <span className="px-2 py-1 rounded text-xs font-bold text-white bg-gradient-to-r from-green-500 to-emerald-500 shadow-sm shadow-green-500/30 flex items-center gap-1">
-                                                            <i className="fas fa-atom text-[10px]"></i>
-                                                            NTA Abhyas Paper 109
-                                                        </span>
+                                                        {question.paperNumber && (
+                                                            <span className="px-2 py-1 rounded text-xs font-medium text-orange-400 bg-orange-500/20 border border-orange-500/50 flex items-center gap-1">
+                                                                <i className="fas fa-atom text-[10px]"></i>
+                                                                NTA Abhyas Paper {question.paperNumber}
+                                                            </span>
+                                                        )}
                                                         {isSubmitted && (
                                                             <span className={`px-2 py-1 rounded text-xs font-medium ${correct ? 'text-green-400 bg-green-500/20' : 'text-red-400 bg-red-500/20'}`}>
                                                                 <i className={`fas fa-${correct ? 'check' : 'times'} mr-1`}></i>

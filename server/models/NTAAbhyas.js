@@ -70,6 +70,10 @@ const ntaAbhyasSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    paperNumber: {
+        type: String,
+        default: ''
+    },
     isActive: {
         type: Boolean,
         default: true
