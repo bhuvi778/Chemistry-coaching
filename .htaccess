@@ -2,34 +2,71 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
-    
+
     # Don't rewrite files or directories
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    
+
     # Don't rewrite API calls
     RewriteCond %{REQUEST_URI} !^/api/
-    
-    # Don't rewrite asset files (let them 404 if missing)
-    RewriteCond %{REQUEST_URI} !^/assets/
-    
+
     # Rewrite everything else to index.html
     RewriteRule ^ index.html [L]
 </IfModule>
 
-# Force browser to reload ALL files including HTML
-<FilesMatch "\.(html|css|js)$">
-    Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+# -------------------------------------------------------
+# CACHING STRATEGY
+# -------------------------------------------------------
+
+# 1) HTML — never cache (must re-check on every visit so
+#    new deployments are picked up immediately)
+<FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
     Header set Expires "0"
 </FilesMatch>
 
-# Enable gzip compression
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
+# 2) Vite-hashed JS/CSS assets — cache for 1 year (immutable)
+#    Vite embeds a content-hash in every filename, so stale
+#    files are never accidentally served after a deploy.
+<LocationMatch "^/assets/.*\.(js|css|mjs)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+    Header unset Pragma
+    Header unset Expires
+</LocationMatch>
+
+# 3) Fonts — cache 1 year
+<FilesMatch "\.(woff2|woff|ttf|eot|otf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+
+# 4) Images — cache 30 days (not hashed, so shorter TTL)
+<FilesMatch "\.(png|jpg|jpeg|gif|svg|webp|ico)$">
+    Header set Cache-Control "public, max-age=2592000, must-revalidate"
+</FilesMatch>
+
+# -------------------------------------------------------
+# COMPRESSION
+# -------------------------------------------------------
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css
+    AddOutputFilterByType BROTLI_COMPRESS application/javascript application/json
+    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml application/font-woff2
 </IfModule>
 
-# MIME types
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml application/font-woff2
+    # Skip already-compressed formats
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|gz|zip|bz2)$ no-gzip dont-vary
+</IfModule>
+
+# -------------------------------------------------------
+# MIME TYPES
+# -------------------------------------------------------
 AddType application/javascript .js .mjs
 AddType text/css .css
 AddType application/json .json
+AddType font/woff2 .woff2
+AddType font/woff .woff

@@ -16,6 +16,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // React core — rarely changes, cached longest
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/scheduler/')) {
+            return 'react-core';
+          }
           // React Router — needed on every page, standalone chunk for fast caching
           if (id.includes('node_modules/react-router') || id.includes('node_modules/react-router-dom')) {
             return 'router';
@@ -36,7 +41,7 @@ export default defineConfig({
           if (id.includes('node_modules/mammoth')) {
             return 'mammoth-vendor';
           }
-          // Everything else (React, axios, hot-toast, etc.) in vendor
+          // Everything else (axios, hot-toast, etc.) in vendor
           if (id.includes('node_modules/')) {
             return 'vendor';
           }

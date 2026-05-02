@@ -129,10 +129,10 @@ const AppDownload = () => {
           <div className="flex justify-center lg:justify-end">
             <div className="relative w-full max-w-md h-[500px]">
               <div className="absolute left-0 top-0 w-3/5 h-full">
-                <img src="/07.png" alt="App Download" className="w-full h-full object-contain drop-shadow-2xl" />
+                <img src="/07.png" alt="App Download" className="w-full h-full object-contain drop-shadow-2xl" loading="lazy" decoding="async" />
               </div>
               <div className="absolute right-0 top-0 w-3/5 h-full">
-                <img src="/09.png" alt="App Features" className="w-full h-full object-contain drop-shadow-2xl" />
+                <img src="/09.png" alt="App Features" className="w-full h-full object-contain drop-shadow-2xl" loading="lazy" decoding="async" />
               </div>
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-cyan-500/20 rounded-full blur-2xl"></div>
               <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl"></div>

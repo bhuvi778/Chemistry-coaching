@@ -83,6 +83,8 @@ const Home = () => {
                 src="/hero-section-image.png"
                 alt="Mr. Naveen Kumar - Chemistry Educator"
                 className="w-full h-full object-cover object-top"
+                fetchpriority="high"
+                decoding="async"
               />
             </div>
           </div>
