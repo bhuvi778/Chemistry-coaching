@@ -42,42 +42,7 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Region Selector Bar — pinned to very top */}
-      <div className="fixed w-full z-[60] top-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700/60 py-1.5 sm:py-2 px-4">
-        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-          <span className="flex items-center text-gray-300 text-xs sm:text-sm font-medium">
-            <i className="fas fa-globe-asia mr-1.5 text-cyan-400"></i>
-            Access our Chemistry Programs based on your region:
-          </span>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleRegionClick('india', 'https://www.ace2examz.in')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
-                regionChoice === 'india'
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-2 ring-blue-300 scale-105'
-                  : 'bg-blue-600/70 text-blue-100 hover:bg-blue-500 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/30'
-              }`}
-            >
-              <span>🇮🇳</span>
-              India Programs
-              {regionChoice === 'india' && <i className="fas fa-check-circle text-xs"></i>}
-            </button>
-            <button
-              onClick={() => handleRegionClick('uae', 'https://uae.ace2examz.com')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
-                regionChoice === 'uae'
-                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/40 ring-2 ring-green-300 scale-105'
-                  : 'bg-green-600/70 text-green-100 hover:bg-green-500 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30'
-              }`}
-            >
-              <span>🇦🇪</span>
-              UAE Programs
-              {regionChoice === 'uae' && <i className="fas fa-check-circle text-xs"></i>}
-            </button>
-          </div>
-        </div>
-      </div>
-      <nav className="glass-panel fixed w-full z-50 top-[64px] sm:top-10 border-b border-gray-800">
+      <nav className="glass-panel fixed w-full z-50 top-0 border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <Link to="/" className="flex items-center cursor-pointer">

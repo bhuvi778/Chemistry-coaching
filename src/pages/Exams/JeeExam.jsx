@@ -173,7 +173,7 @@ const JeeExam = () => {
     const scrollTo = (id) => {
         const el = sectionRefs.current[id];
         if (el) {
-            const offset = 155;
+            const offset = 135;
             const top = el.getBoundingClientRect().top + window.scrollY - offset;
             window.scrollTo({ top, behavior: 'smooth' });
         }
@@ -622,7 +622,7 @@ const JeeExam = () => {
             </div>
 
             {/* ── Filter Tab Bar ── */}
-            <div className="sticky top-[72px] z-30 bg-gray-950/95 backdrop-blur-md border-b border-gray-800 shadow-md">
+            <div className="sticky top-20 z-30 bg-gray-950/95 backdrop-blur-md border-b border-gray-800 shadow-md">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center gap-2 py-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                         <a href="https://jeemain.nta.nic.in" target="_blank" rel="noreferrer"
@@ -675,7 +675,7 @@ const JeeExam = () => {
 
                     {/* Sticky Sidebar */}
                     <div className="w-full lg:w-1/4 order-1 lg:order-2">
-                        <div className="sticky top-[140px]">
+                        <div className="sticky top-[136px]">
                             <div className="rounded-2xl border border-gray-700 overflow-hidden shadow-xl bg-gray-900">
                                 <div className="bg-gradient-to-r from-orange-900/70 to-amber-900/70 px-5 py-4 border-b border-gray-700">
                                     <h3 className="font-bold text-white flex items-center gap-2 text-sm">
