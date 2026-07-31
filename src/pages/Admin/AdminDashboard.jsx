@@ -12,8 +12,6 @@ import ManageCrosswords from './ManageCrosswords';
 import ManageCommunity from './ManageCommunity';
 import ManageWebinarCards from './ManageWebinarCards';
 import ManageFeedback from './ManageFeedback';
-import ManageScoreMatchBatches from './ManageScoreMatchBatches';
-import ManageGlobalCourses from './ManageGlobalCourses';
 import ManageFreeQuizzes from './ManageFreeQuizzes';
 import ManageExamCountdown from './ManageExamCountdown';
 import ManageConceptNotes from './ManageConceptNotes';
@@ -122,18 +120,7 @@ const AdminDashboard = () => {
             >
               <i className="fas fa-comment mr-2"></i> Manage Feedback
             </button>
-            <button
-              onClick={() => setActiveTab('scorematch')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'scorematch' ? 'bg-amber-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-trophy mr-2"></i> Score Max Batches
-            </button>
-            <button
-              onClick={() => setActiveTab('globalcourses')}
-              className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'globalcourses' ? 'bg-purple-500 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
-            >
-              <i className="fas fa-globe mr-2"></i> UAE Courses
-            </button>
+
             <button
               onClick={() => setActiveTab('freequizzes')}
               className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'freequizzes' ? 'bg-cyan-500 text-black font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
@@ -249,8 +236,6 @@ const AdminDashboard = () => {
           {activeTab === 'community' && <ManageCommunity />}
           {activeTab === 'webinars' && <ManageWebinarCards />}
           {activeTab === 'feedback' && <ManageFeedback />}
-          {activeTab === 'scorematch' && <ManageScoreMatchBatches />}
-          {activeTab === 'globalcourses' && <ManageGlobalCourses />}
           {activeTab === 'freequizzes' && <ManageFreeQuizzes />}
           {activeTab === 'examcountdown' && <ManageExamCountdown />}
           {activeTab === 'conceptnotes' && <ManageConceptNotes />}

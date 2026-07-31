@@ -5,23 +5,77 @@ import Pagination from '../components/UI/Pagination';
 
 const StudyMaterials = () => {
   const { studyMaterials, ensureStudyMaterialsLoaded } = useData();
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedExam, setSelectedExam] = useState('all');
+  const [selectedClass, setSelectedClass] = useState('all');
+  const [selectedSubject, setSelectedSubject] = useState('all');
+  const [selectedType, setSelectedType] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const materialsPerPage = 15; // 3 rows × 5 columns
+  const materialsPerPage = 20; // 4 rows × 5 columns
 
   useEffect(() => { ensureStudyMaterialsLoaded(); }, []);
 
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, selectedExam]);
+  }, [selectedClass, selectedSubject, selectedType, searchQuery]);
 
   const safeMaterials = Array.isArray(studyMaterials) ? studyMaterials : [];
   const filteredMaterials = safeMaterials.filter(material => {
-    const categoryMatch = selectedCategory === 'all' || material.category === selectedCategory;
-    const examMatch = selectedExam === 'all' || material.examType === selectedExam;
-    return categoryMatch && examMatch;
+    // 1. Class filter matching logic
+    let classMatch = true;
+    if (selectedClass !== 'all') {
+      const digit = selectedClass.match(/\d+/)?.[0];
+      if (digit) {
+        const romanMap = { '6': 'vi', '7': 'vii', '8': 'viii', '9': 'ix', '10': 'x', '11': 'xi', '12': 'xii' };
+        const roman = romanMap[digit];
+        const searchTerms = [
+          `class ${digit}`, `class-${digit}`, `grade ${digit}`, `grade-${digit}`,
+          `class ${roman}`, `class-${roman}`, `grade ${roman}`, `grade-${roman}`
+        ];
+        const textToSearch = `${material.title} ${material.description || ''} ${material.category || ''}`.toLowerCase();
+        classMatch = searchTerms.some(term => {
+          const regex = new RegExp(`\\b${term}\\b`, 'i');
+          return regex.test(textToSearch);
+        });
+      }
+    }
+
+    // 2. Subject filter matching logic
+    let subjectMatch = true;
+    if (selectedSubject !== 'all') {
+      const subjLower = selectedSubject.toLowerCase();
+      const textToSearch = `${material.title} ${material.description || ''} ${material.category || ''}`.toLowerCase();
+      let searchTerms = [subjLower];
+      if (subjLower === 'mathematics') searchTerms.push('math', 'maths');
+      if (subjLower === 'biology') searchTerms.push('bio');
+      subjectMatch = searchTerms.some(term => {
+        const regex = new RegExp(`\\b${term}\\b`, 'i');
+        return regex.test(textToSearch);
+      });
+    }
+
+    // 3. Type filter matching logic
+    let typeMatch = true;
+    if (selectedType !== 'all') {
+      const textToSearch = `${material.title} ${material.description || ''} ${material.category || ''}`.toLowerCase();
+      if (selectedType === 'Notes') {
+        typeMatch = textToSearch.includes('notes');
+      } else if (selectedType === 'NCERT Books') {
+        typeMatch = textToSearch.includes('ncert') || textToSearch.includes('textbook') || textToSearch.includes('exemplar');
+      } else if (selectedType === 'PYPs') {
+        typeMatch = textToSearch.includes('pyp') || textToSearch.includes('previous year') || textToSearch.includes('pyq') || textToSearch.includes('paper') || textToSearch.includes('pstet');
+      }
+    }
+
+    // 4. Typing (Search) filter matching logic
+    let searchMatch = true;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const textToSearch = `${material.title} ${material.description || ''}`.toLowerCase();
+      searchMatch = textToSearch.includes(q);
+    }
+
+    return classMatch && subjectMatch && typeMatch && searchMatch;
   });
 
   // Pagination calculations
@@ -56,106 +110,121 @@ const StudyMaterials = () => {
             Filter Study Materials
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Exam Type Dropdown */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* By Class Dropdown */}
             <div>
               <label className="block text-sm font-semibold text-gray-400 mb-3">
                 <i className="fas fa-graduation-cap mr-2 text-green-400"></i>
-                Filter by Exam
+                By Class
               </label>
               <select
-                value={selectedExam}
-                onChange={(e) => setSelectedExam(e.target.value)}
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
                 className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-green-400 transition"
               >
-                <option value="all">All Exams</option>
-                <optgroup label="UG Entrance Exams">
-                  <option value="NEET">NEET</option>
-                  <option value="JEE">JEE (Main & Advanced)</option>
-                  <option value="IAT">IAT (IISER Aptitude Test)</option>
-                  <option value="NEST">NEST (National Entrance Screening Test)</option>
-                  <option value="CUET UG">CUET UG</option>
-                  <option value="BITSAT">BITSAT</option>
-                </optgroup>
-                <optgroup label="PG Entrance Exams">
-                  <option value="IIT JAM">IIT JAM</option>
-                  <option value="CUET PG">CUET PG</option>
-                </optgroup>
-                <optgroup label="Research Level Exams">
-                  <option value="CSIR NET">CSIR NET</option>
-                  <option value="GATE">GATE</option>
-                  <option value="TIFR">TIFR (Tata Institute)</option>
-                </optgroup>
-                <optgroup label="Competitive Exams (Govt. Job)">
-                  <option value="PSTET">PSTET</option>
-                  <option value="Master Cadre">Master Cadre</option>
-                  <option value="UPSC - Mains (Chemistry)">UPSC - Mains (Chemistry)</option>
-                </optgroup>
+                <option value="all">All Classes</option>
+                {Array.from({ length: 7 }, (_, i) => 6 + i).map(num => (
+                  <option key={num} value={`Class ${num}`}>{`Class ${num}`}</option>
+                ))}
               </select>
             </div>
 
-            {/* Material Type Dropdown */}
+            {/* By Subject Dropdown */}
             <div>
               <label className="block text-sm font-semibold text-gray-400 mb-3">
-                <i className="fas fa-book mr-2 text-blue-400"></i>
-                Filter by Type
+                <i className="fas fa-atom mr-2 text-blue-400"></i>
+                By Subject
               </label>
               <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
                 className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-blue-400 transition"
               >
-                <option value="all">All Types</option>
-                <optgroup label="General Categories">
-                  <option value="Notes">Notes</option>
-                  <option value="Handwritten Notes">Handwritten Notes</option>
-                  <option value="Formula Sheets">Formula Sheets</option>
-                  <option value="Revision Notes">Revision Notes</option>
-                  <option value="Question Banks">Question Banks</option>
-                  <option value="Practice Problems">Practice Problems</option>
-                  <option value="Solutions">Solutions</option>
-                  <option value="Previous Year Papers">Previous Year Papers</option>
-                  <option value="Sample Papers">Sample Papers</option>
-                  <option value="Mock Tests">Mock Tests</option>
-                  <option value="Study Guides">Study Guides</option>
-                  <option value="Reference Materials">Reference Materials</option>
-                  <option value="Puzzle">Puzzle</option>
-                </optgroup>
-                <optgroup label="Chemistry Topics">
-                  <option value="Physical Chemistry">Physical Chemistry</option>
-                  <option value="Organic Chemistry">Organic Chemistry</option>
-                  <option value="Inorganic Chemistry">Inorganic Chemistry</option>
-                  <option value="Analytical Chemistry">Analytical Chemistry</option>
-                  <option value="Biochemistry">Biochemistry</option>
-                </optgroup>
+                <option value="all">All Subjects</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Science">Science</option>
               </select>
+            </div>
+
+            {/* By Type Dropdown */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-3">
+                <i className="fas fa-book mr-2 text-purple-400"></i>
+                By Type
+              </label>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-purple-400 transition"
+              >
+                <option value="all">All Types</option>
+                <option value="Notes">Notes</option>
+                <option value="NCERT Books">NCERT Books</option>
+                <option value="PYPs">PYPs</option>
+              </select>
+            </div>
+
+            {/* By Typing Search */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-3">
+                <i className="fas fa-search mr-2 text-amber-400"></i>
+                By Typing
+              </label>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search notes, books..."
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:border-amber-400 transition"
+              />
             </div>
           </div>
 
           {/* Active Filters Display */}
-          {(selectedExam !== 'all' || selectedCategory !== 'all') && (
+          {(selectedClass !== 'all' || selectedSubject !== 'all' || selectedType !== 'all' || searchQuery !== '') && (
             <div className="mt-4 flex items-center gap-3 flex-wrap">
               <span className="text-sm text-gray-400">Active filters:</span>
-              {selectedExam !== 'all' && (
+              {selectedClass !== 'all' && (
                 <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-2">
-                  {selectedExam}
-                  <button onClick={() => setSelectedExam('all')} className="hover:text-white">
+                  {selectedClass}
+                  <button onClick={() => setSelectedClass('all')} className="hover:text-white">
                     <i className="fas fa-times"></i>
                   </button>
                 </span>
               )}
-              {selectedCategory !== 'all' && (
+              {selectedSubject !== 'all' && (
                 <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm flex items-center gap-2">
-                  {selectedCategory}
-                  <button onClick={() => setSelectedCategory('all')} className="hover:text-white">
+                  {selectedSubject}
+                  <button onClick={() => setSelectedSubject('all')} className="hover:text-white">
+                    <i className="fas fa-times"></i>
+                  </button>
+                </span>
+              )}
+              {selectedType !== 'all' && (
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm flex items-center gap-2">
+                  {selectedType}
+                  <button onClick={() => setSelectedType('all')} className="hover:text-white">
+                    <i className="fas fa-times"></i>
+                  </button>
+                </span>
+              )}
+              {searchQuery && (
+                <span className="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-full text-sm flex items-center gap-2">
+                  Search: "{searchQuery}"
+                  <button onClick={() => setSearchQuery('')} className="hover:text-white">
                     <i className="fas fa-times"></i>
                   </button>
                 </span>
               )}
               <button
                 onClick={() => {
-                  setSelectedExam('all');
-                  setSelectedCategory('all');
+                  setSelectedClass('all');
+                  setSelectedSubject('all');
+                  setSelectedType('all');
+                  setSearchQuery('');
                 }}
                 className="text-sm text-gray-400 hover:text-white underline"
               >

@@ -16,7 +16,6 @@ const SECTIONS = [
     { id: 'admit-card', label: 'JEE Admit Card', icon: 'fa-id-card' },
     { id: 'exam-centre', label: 'JEE Exam Centre', icon: 'fa-map-marker-alt' },
     { id: 'videos', label: 'JEE Videos', icon: 'fa-play-circle' },
-    { id: 'courses', label: 'Courses', icon: 'fa-graduation-cap' },
     { id: 'study-material', label: 'Study Material', icon: 'fa-book' },
     { id: 'practice-tools', label: 'Practice Tools', icon: 'fa-dumbbell' },
     { id: 'ncert-resources', label: 'NCERT Resources', icon: 'fa-tools' },
@@ -28,7 +27,6 @@ const FILTER_TABS = [
     { id: 'jee-syllabus', label: 'JEE Syllabus', icon: 'fa-list-alt' },
     { id: 'study-material', label: 'Study Material', icon: 'fa-book' },
     { id: 'practice-tools', label: 'Question Papers', icon: 'fa-file-alt' },
-    { id: 'courses', label: 'Courses', icon: 'fa-graduation-cap' },
     { id: 'videos', label: 'Videos', icon: 'fa-play-circle' },
     { id: 'ncert-resources', label: 'NCERT Tools', icon: 'fa-tools' },
 ];
@@ -45,18 +43,6 @@ const JEE_VIDEOS = [
 
 // ── Resource groups ─────────────────────────────────────────────────────────
 const RESOURCE_GROUPS = [
-    {
-        section: 'courses',
-        title: 'Courses',
-        subtitle: 'JEE-specific courses and batch programs',
-        icon: 'fa-graduation-cap',
-        color: 'text-orange-400',
-        links: [
-            { label: 'JEE Courses', href: '/courses?exam=jee', desc: 'Enroll in structured JEE Main & Advanced preparation courses', icon: 'fa-graduation-cap', color: 'text-orange-400' },
-            { label: 'Score Max Batches', href: '/score-max-batches?exam=jee', desc: 'Intensive batches designed for JEE score maximisation', icon: 'fa-trophy', color: 'text-amber-400' },
-            { label: 'Book Your Session', href: '/book-your-session?exam=jee', desc: 'One-on-one doubt-clearing sessions for JEE', icon: 'fa-calendar-alt', color: 'text-green-400' },
-        ],
-    },
     {
         section: 'study-material',
         title: 'Study Material',
@@ -550,10 +536,9 @@ const JeeExam = () => {
         'admit-card': renderAdmitCard,
         'exam-centre': renderExamCentre,
         'videos': renderVideos,
-        'courses': () => renderResourceGroup(RESOURCE_GROUPS[0]),
-        'study-material': () => renderResourceGroup(RESOURCE_GROUPS[1]),
-        'practice-tools': () => renderResourceGroup(RESOURCE_GROUPS[2]),
-        'ncert-resources': () => renderResourceGroup(RESOURCE_GROUPS[3]),
+        'study-material': () => renderResourceGroup(RESOURCE_GROUPS[0]),
+        'practice-tools': () => renderResourceGroup(RESOURCE_GROUPS[1]),
+        'ncert-resources': () => renderResourceGroup(RESOURCE_GROUPS[2]),
     };
 
     // ── Render ────────────────────────────────────────────────────────────────

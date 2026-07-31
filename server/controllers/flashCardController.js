@@ -561,6 +561,45 @@ const getChapterStats = async (req, res) => {
     }
 };
 
+// Export all flashcards data for external integration
+const exportFlashCards = async (req, res) => {
+    try {
+        const { format, chapterId, topicId } = req.query;
+
+        // If a flat format is requested, or filtering by chapter/topic is requested
+        if (format === 'flat' || chapterId || topicId) {
+            const query = {};
+            if (chapterId) query.chapterId = chapterId;
+            if (topicId) query.topicId = topicId;
+
+            const cards = await FlashCard.find(query)
+                .populate('chapterId', 'name description icon iconColor subject category')
+                .populate('topicId', 'name description')
+                .sort({ order: 1, createdAt: 1 });
+
+            return res.json({
+                success: true,
+                count: cards.length,
+                cards
+            });
+        }
+
+        // Default: export all structured data
+        const chapters = await FlashCardChapter.find().sort({ order: 1, createdAt: 1 });
+        const topics = await FlashCardTopic.find().sort({ order: 1, createdAt: 1 });
+        const cards = await FlashCard.find().sort({ order: 1, createdAt: 1 });
+
+        res.json({
+            success: true,
+            chapters,
+            topics,
+            cards
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 module.exports = {
     setClearCacheFunction,
     // Chapter operations
@@ -586,5 +625,6 @@ module.exports = {
     updateCardProgress,
     getChaptersWithProgress,
     getTopicsByChapterWithProgress,
-    getChapterStats
+    getChapterStats,
+    exportFlashCards
 };

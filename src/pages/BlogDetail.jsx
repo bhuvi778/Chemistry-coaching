@@ -6,6 +6,13 @@ import ShareButtons from '../components/Blog/ShareButtons';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+const sortFaqsByPosition = (faqs = []) => (
+    Array.isArray(faqs) ? faqs : []
+).map((faq, index) => ({
+    ...faq,
+    order: Number.isFinite(Number(faq?.order)) ? Number(faq.order) : index
+})).sort((first, second) => first.order - second.order);
+
 const BlogDetail = () => {
     const { slug } = useParams();
     const [blog, setBlog] = useState(null);
@@ -31,7 +38,7 @@ const BlogDetail = () => {
             setBlog(blogData);
 
             // Set blog-specific FAQs
-            setFaqs(blogData.faqs || []);
+            setFaqs(sortFaqsByPosition(blogData.faqs));
 
             // Fetch related blogs
             const relatedResponse = await axios.get(`${API_URL}/blogs/related/${slug}?limit=4&_=${timestamp}`);

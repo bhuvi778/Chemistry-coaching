@@ -78,20 +78,13 @@ const PracticeTestResults = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-4 mb-8">
+                <div className="flex mb-8">
                     <button
                         onClick={() => navigate('/my-daily-target')}
-                        className="flex-1 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold hover:shadow-lg transition flex items-center justify-center gap-2"
+                        className="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold hover:shadow-lg transition flex items-center justify-center gap-2"
                     >
                         <i className="fas fa-home"></i>
                         Back to Tests
-                    </button>
-                    <button
-                        onClick={() => navigate(`/practice-test/${testId}`)}
-                        className="flex-1 py-3 rounded-lg bg-gradient-to-r from-green-500 to-cyan-500 text-white font-semibold hover:shadow-lg transition flex items-center justify-center gap-2"
-                    >
-                        <i className="fas fa-redo"></i>
-                        Retake Test
                     </button>
                 </div>
 

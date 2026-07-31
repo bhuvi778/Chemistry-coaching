@@ -99,7 +99,7 @@ const Navbar = () => {
                   onMouseEnter={() => setIsCoursesOpen(true)}
                   onMouseLeave={() => setIsCoursesOpen(false)}
                 >
-                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/courses') || location.pathname.includes('/score-max-batches') || location.pathname.includes('/uae-courses') || location.pathname.includes('/ncert-toolbox') || location.pathname.includes('/dpps')
+                  <button className={`px-2 py-2 transition relative ${location.pathname.includes('/courses') || location.pathname.includes('/my-daily-target')
                     ? 'text-cyan-400 active' : 'text-gray-300 hover:text-cyan-400'
                     }`}>
                     <span className="flex items-center gap-1.5">
@@ -120,28 +120,12 @@ const Navbar = () => {
                       <span>Courses</span>
                     </Link>
                     <Link
-                      to="/score-max-batches"
-                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
-                      onClick={() => setIsCoursesOpen(false)}
-                    >
-                      <i className="fas fa-trophy text-amber-500"></i>
-                      <span>Score Max Batches</span>
-                    </Link>
-                    <Link
                       to="/my-daily-target"
                       className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
                       onClick={() => setIsCoursesOpen(false)}
                     >
                       <i className="fas fa-bullseye text-green-500"></i>
                       <span>My Daily Target</span>
-                    </Link>
-                    <Link
-                      to="/uae-courses"
-                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
-                      onClick={() => setIsCoursesOpen(false)}
-                    >
-                      <i className="fas fa-globe text-purple-500"></i>
-                      <span>UAE Courses</span>
                     </Link>
                     <a
                       href="https://learn.ace2examz.com"
@@ -151,7 +135,7 @@ const Navbar = () => {
                       onClick={() => setIsCoursesOpen(false)}
                     >
                       <i className="fas fa-laptop-code text-yellow-400"></i>
-                      <span>Learn Skill</span>
+                      <span>Class 9-10</span>
                     </a>
 
 
@@ -326,22 +310,8 @@ const Navbar = () => {
                       <i className="fas fa-graduation-cap text-orange-500"></i>
                       <span>Self Learn</span>
                     </Link>
-                    <Link
-                      to="/book-your-session"
-                      className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-400 transition"
-                      onClick={() => setIsPrepArenaOpen(false)}
-                    >
-                      <i className="fas fa-calendar-alt text-green-500"></i>
-                      <span>Book Your Session</span>
-                    </Link>
                   </div>
                 </div>
-                <Link to="/ai-assistant" className={getNavLinkClass('/ai-assistant')}>
-                  <span className="flex items-center gap-1.5">
-                    <i className="fas fa-robot text-cyan-400"></i>
-                    Ask Prepiify
-                  </span>
-                </Link>
 
                 {/* More Dropdown */}
                 <div
@@ -457,6 +427,17 @@ const Navbar = () => {
                 )}
               </div>
 
+              {/* Login/Signup Button */}
+              <a
+                href="https://app.ace2examz.com/login"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold rounded-lg text-sm transition-all duration-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transform hover:-translate-y-0.5 flex items-center gap-1.5"
+              >
+                <i className="fas fa-sign-in-alt"></i>
+                Login/Signup
+              </a>
+
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
@@ -508,6 +489,19 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden glass-panel border-t border-gray-700">
             <div className="px-2 pt-2 pb-3 space-y-1">
+              {/* Mobile Login/Signup Button */}
+              <div className="px-3 py-2 border-b border-gray-800/50 mb-2">
+                <a
+                  href="https://app.ace2examz.com/login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-xl text-sm shadow-lg hover:from-cyan-600 hover:to-blue-700 transition-all duration-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)]"
+                >
+                  <i className="fas fa-sign-in-alt"></i>
+                  Login / Signup
+                </a>
+              </div>
 
               {/* Exams Dropdown */}
               <div className="border-b border-gray-700 pb-2">
@@ -548,20 +542,18 @@ const Navbar = () => {
                     <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-graduation-cap text-cyan-400 mr-2"></i>Courses
                     </Link>
-                    <Link to="/score-max-batches" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
-                      <i className="fas fa-trophy text-amber-500 mr-2"></i>Score Max Batches
-                    </Link>
                     <Link to="/my-daily-target" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-bullseye text-green-500 mr-2"></i>My Daily Target
                     </Link>
-                    <Link to="/uae-courses" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
-                      <i className="fas fa-globe text-purple-500 mr-2"></i>UAE Courses
-                    </Link>
-                    <a href="https://learn.ace2examz.com" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
-                      <i className="fas fa-laptop-code text-yellow-400 mr-2"></i>Learn Skill
+                    <a
+                      href="https://learn.ace2examz.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition"
+                    >
+                      <i className="fas fa-laptop-code text-yellow-400 mr-2"></i>Class 9-10
                     </a>
-
-
                   </div>
                 )}
               </div>
@@ -643,15 +635,9 @@ const Navbar = () => {
                     <Link to="/self-learn" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
                       <i className="fas fa-graduation-cap text-orange-500 mr-2"></i>Self Learn
                     </Link>
-                    <Link to="/book-your-session" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition">
-                      <i className="fas fa-calendar-alt text-green-500 mr-2"></i>Book Your Session
-                    </Link>
                   </div>
                 )}
               </div>
-              <Link to="/ai-assistant" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-white hover:bg-gray-700 rounded-md transition">
-                <i className="fas fa-robot text-cyan-400 mr-2"></i>Ask Prepiify
-              </Link>
 
               {/* More Dropdown */}
               <div className="border-t border-gray-700 pt-2">

@@ -7,6 +7,18 @@ import ManageFAQs from './ManageFAQs';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+// Keep FAQ order stable while editing, saving, and displaying a blog. Older
+// blogs may not have an order value, so their existing array position is used.
+const normalizeFaqs = (faqs = []) => (
+    Array.isArray(faqs) ? faqs : []
+).map((faq, index) => ({
+    ...(faq || {}),
+    order: Number.isFinite(Number(faq?.order)) ? Number(faq.order) : index
+})).sort((first, second) => first.order - second.order).map((faq, index) => ({
+    ...faq,
+    order: index
+}));
+
 const ManageBlogs = () => {
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -71,8 +83,13 @@ const ManageBlogs = () => {
         e.preventDefault();
 
         try {
+            const blogPayload = {
+                ...formData,
+                faqs: normalizeFaqs(formData.faqs)
+            };
+
             if (editingBlog) {
-                const response = await axios.put(`${API_URL}/blogs/admin/${editingBlog._id}`, formData);
+                const response = await axios.put(`${API_URL}/blogs/admin/${editingBlog._id}`, blogPayload);
                 alert('Blog updated successfully!');
 
                 // Update the blog in the local state immediately
@@ -82,7 +99,7 @@ const ManageBlogs = () => {
                     )
                 );
             } else {
-                const response = await axios.post(`${API_URL}/blogs/admin`, formData);
+                const response = await axios.post(`${API_URL}/blogs/admin`, blogPayload);
                 alert('Blog created successfully!');
 
                 // Add the new blog to the local state immediately
@@ -103,6 +120,7 @@ const ManageBlogs = () => {
 
     const handleEdit = (blog) => {
         setEditingBlog(blog);
+        setExpandedEditor(false);
         setFormData({
             title: blog.title,
             slug: blog.slug,
@@ -119,7 +137,7 @@ const ManageBlogs = () => {
             metaTitle: blog.metaTitle || '',
             metaDescription: blog.metaDescription || '',
             metaKeywords: blog.metaKeywords || [],
-            faqs: blog.faqs || []
+            faqs: normalizeFaqs(blog.faqs)
         });
         setShowModal(true);
     };
@@ -181,6 +199,7 @@ const ManageBlogs = () => {
     };
 
     const resetForm = () => {
+        setExpandedEditor(false);
         setFormData({
             title: '',
             slug: '',
@@ -329,41 +348,49 @@ const ManageBlogs = () => {
     const addFaq = () => {
         setFormData(prev => ({
             ...prev,
-            faqs: [...prev.faqs, { question: '', answer: '', order: prev.faqs.length }]
+            faqs: normalizeFaqs([
+                ...prev.faqs,
+                {
+                    question: '',
+                    answer: '',
+                    order: prev.faqs.length,
+                    _clientId: `faq-${Date.now()}-${Math.random().toString(36).slice(2)}`
+                }
+            ])
         }));
     };
 
     const updateFaq = (index, field, value) => {
         setFormData(prev => ({
             ...prev,
-            faqs: prev.faqs.map((faq, i) => 
+            faqs: normalizeFaqs(prev.faqs.map((faq, i) =>
                 i === index ? { ...faq, [field]: value } : faq
-            )
+            ))
         }));
     };
 
     const removeFaq = (index) => {
         setFormData(prev => ({
             ...prev,
-            faqs: prev.faqs.filter((_, i) => i !== index)
+            faqs: normalizeFaqs(prev.faqs.filter((_, i) => i !== index))
         }));
     };
 
     const moveFaqUp = (index) => {
-        if (index === 0) return;
         setFormData(prev => {
+            if (index <= 0 || index >= prev.faqs.length) return prev;
             const newFaqs = [...prev.faqs];
             [newFaqs[index - 1], newFaqs[index]] = [newFaqs[index], newFaqs[index - 1]];
-            return { ...prev, faqs: newFaqs.map((faq, i) => ({ ...faq, order: i })) };
+            return { ...prev, faqs: normalizeFaqs(newFaqs) };
         });
     };
 
     const moveFaqDown = (index) => {
-        if (index === formData.faqs.length - 1) return;
         setFormData(prev => {
+            if (index < 0 || index >= prev.faqs.length - 1) return prev;
             const newFaqs = [...prev.faqs];
             [newFaqs[index], newFaqs[index + 1]] = [newFaqs[index + 1], newFaqs[index]];
-            return { ...prev, faqs: newFaqs.map((faq, i) => ({ ...faq, order: i })) };
+            return { ...prev, faqs: normalizeFaqs(newFaqs) };
         });
     };
 
@@ -626,10 +653,10 @@ const ManageBlogs = () => {
 
                     {/* Modal */}
                     {showModal && (
-                        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 overflow-y-auto py-8">
-                            <div className={`bg-gray-900 rounded-xl border border-gray-700 w-full transition-all duration-300 ${expandedEditor ? 'max-w-7xl mx-4' : 'max-w-4xl mx-4'
+                        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 overflow-y-auto p-4 sm:py-8">
+                            <div className={`bg-gray-900 rounded-xl border border-gray-700 w-full max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] flex flex-col transition-all duration-300 ${expandedEditor ? 'max-w-7xl' : 'max-w-4xl'
                                 }`}>
-                                <div className="p-6 border-b border-gray-700 flex justify-between items-center sticky top-0 bg-gray-900 z-10">
+                                <div className="p-6 border-b border-gray-700 flex justify-between items-center shrink-0 bg-gray-900">
                                     <h2 className="text-2xl font-bold text-white">
                                         {editingBlog ? 'Edit Blog' : 'Create New Blog'}
                                     </h2>
@@ -653,7 +680,7 @@ const ManageBlogs = () => {
                                     </div>
                                 </div>
 
-                                <form onSubmit={handleSubmit} className="p-6 max-h-[80vh] overflow-y-auto">
+                                <form onSubmit={handleSubmit} className="p-6 flex-1 min-h-0 overflow-y-auto">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {/* Left Column */}
                                         <div className="space-y-4">
@@ -980,7 +1007,7 @@ const ManageBlogs = () => {
 
                                     {/* FAQs Section */}
                                     <div className="mt-6 p-6 bg-gray-800/50 rounded-xl border border-gray-700">
-                                        <div className="flex justify-between items-center mb-4">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                                             <h3 className="text-xl font-bold text-white flex items-center gap-2">
                                                 <i className="fas fa-question-circle text-cyan-400"></i>
                                                 Frequently Asked Questions
@@ -1004,7 +1031,7 @@ const ManageBlogs = () => {
                                             <div className="space-y-4">
                                                 {formData.faqs.map((faq, index) => (
                                                     <div
-                                                        key={index}
+                                                        key={faq._id || faq._clientId || `faq-${index}`}
                                                         className="glass-panel p-4 rounded-xl border border-gray-700 hover:border-cyan-500/50 transition"
                                                     >
                                                         <div className="flex items-start justify-between gap-3 mb-3">

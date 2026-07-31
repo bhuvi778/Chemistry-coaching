@@ -6,7 +6,6 @@ import WhyChooseUs from '../components/Home/WhyChooseUs';
 import TeacherVideos from '../components/Home/TeacherVideos';
 import Resources from '../components/Home/Resources';
 import Testimonials from '../components/Home/Testimonials';
-import AIComparison from '../components/Home/AIComparison';
 import FAQ from '../components/Home/FAQ';
 import AppDownload from '../components/Home/AppDownload';
 import JoinCommunity from '../components/Home/JoinCommunity';
@@ -69,10 +68,6 @@ const Home = () => {
             <Link to="/courses" className="px-8 py-4 rounded bg-cyan-500 text-black font-bold text-lg hover:shadow-[0_0_20px_#00f3ff] transition transform hover:scale-105 text-center">
               View Featured Batches
             </Link>
-            <Link to="/ai-assistant" className="px-8 py-4 rounded border-2 border-cyan-400 text-cyan-400 font-bold text-lg hover:bg-cyan-400 hover:text-black transition text-center">
-              <i className="fas fa-robot mr-2"></i>
-              Try Prepiify
-            </Link>
           </div>
         </div>
 
@@ -110,14 +105,17 @@ const Home = () => {
       <Resources />
 
       {/* Courses Section */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
+      <section id="featured-batches" className="max-w-7xl mx-auto px-4 py-16">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
             <h2 className="text-4xl font-bold text-white mb-2">Featured Batches</h2>
             <p className="text-gray-400">Most popular programs for the upcoming academic session.</p>
           </div>
-          <Link to="/courses" className="mt-4 md:mt-0 px-6 py-2 border border-cyan-400 text-cyan-400 rounded-full hover:bg-cyan-400 hover:text-black transition font-bold flex items-center gap-2">
-            Explore All Batches <i className="fas fa-arrow-right"></i>
+          <Link
+            to="/courses"
+            className="mt-4 md:mt-0 px-6 py-3 border border-cyan-400/50 text-cyan-400 rounded-lg hover:bg-cyan-500 hover:text-black hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all font-semibold text-sm animate-pulse"
+          >
+            Explore All Batches <i className="fas fa-arrow-right ml-2 text-xs"></i>
           </Link>
         </div>
 
@@ -137,8 +135,7 @@ const Home = () => {
       {/* Teacher Videos Section */}
       <TeacherVideos />
 
-      {/* AI Comparison Section */}
-      <AIComparison />
+
 
       {/* FAQ Section */}
       <FAQ />

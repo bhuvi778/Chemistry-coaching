@@ -10,12 +10,12 @@ import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import ParticleCanvas from './components/UI/ParticleCanvas';
 import LoadingFallback from './components/UI/LoadingFallback';
+import SeoHead from './components/SeoHead';
 
 // Lazy load pages (with retry logic for deployment updates)
 const Homepage = lazy(() => import('./pages/Homepage'));
 const Contact = lazy(() => import('./pages/Contact'));
 const About = lazy(() => import('./pages/About'));
-const AllCourses = lazy(() => import('./pages/AllCourses'));
 const Lectures = lazy(() => import('./pages/Lectures'));
 const AudioBooks = lazy(() => import('./pages/AudioBooks'));
 const StudyMaterials = lazy(() => import('./pages/StudyMaterials'));
@@ -24,12 +24,8 @@ const Puzzle = lazy(() => import('./pages/Puzzle'));
 const Community = lazy(() => import('./pages/Community'));
 const ChemSnaps = lazy(() => import('./pages/ChemSnaps'));
 const ConceptWiseNotes = lazy(() => import('./pages/ConceptWiseNotes'));
-const ScoreMatchBatches = lazy(() => import('./pages/ScoreMatchBatches'));
-const GlobalCourses = lazy(() => import('./pages/GlobalCourses'));
 const FreeQuiz = lazy(() => import('./pages/FreeQuiz'));
 const FreeQuizSession = lazy(() => import('./pages/FreeQuizSession'));
-const BookMeeting = lazy(() => import('./pages/BookMeeting'));
-const AIAssistantPage = lazy(() => import('./pages/AIAssistantPage'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
 const RefundPolicy = lazy(() => import('./pages/RefundPolicy'));
@@ -48,6 +44,7 @@ const Blogs = lazy(() => import('./pages/Blogs'));
 const BlogDetail = lazy(() => import('./pages/BlogDetail'));
 const FAQ = lazy(() => import('./pages/FAQ'));
 const ConceptCardDemo = lazy(() => import('./pages/ConceptCardDemo'));
+const AllCourses = lazy(() => import('./pages/AllCourses'));
 const NCERTToolbox = lazy(() => import('./pages/NCERTToolbox'));
 const NCERTLineByLine = lazy(() => import('./pages/NCERTLineByLine'));
 const NCERTLineByLineTopics = lazy(() => import('./pages/NCERTLineByLineTopics'));
@@ -161,6 +158,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SeoHead />
       <Toaster position="top-right" />
       <ScrollToTop />
       <ParticleCanvas />
@@ -173,8 +171,8 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/home" element={<Navigate to="/" replace />} />
-            <Route path="/about" element={<About />} />
             <Route path="/courses" element={<AllCourses />} />
+            <Route path="/about" element={<About />} />
             <Route path="/lectures" element={<Lectures />} />
             <Route path="/audiobooks" element={<AudioBooks />} />
             <Route path="/study-materials" element={<StudyMaterials />} />
@@ -234,14 +232,8 @@ function AppContent() {
             <Route path="/blog/:slug" element={<BlogDetail />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/community" element={<Community />} />
-            <Route path="/score-max-batches" element={<ScoreMatchBatches />} />
-            <Route path="/uae-courses" element={<GlobalCourses />} />
-            <Route path="/international-courses" element={<GlobalCourses />} />
             <Route path="/free-quiz" element={<FreeQuiz />} />
             <Route path="/free-quiz/:quizId" element={<FreeQuizSession />} />
-            <Route path="/book-meeting" element={<BookMeeting />} />
-            <Route path="/book-your-session" element={<BookMeeting />} />
-            <Route path="/ai-assistant" element={<AIAssistantPage />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/exams/neet" element={<NeetExam />} />
             <Route path="/exams/neet/:sectionId" element={<NeetExam />} />

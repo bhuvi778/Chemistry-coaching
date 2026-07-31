@@ -1,6 +1,17 @@
 const Blog = require('../models/Blog');
 const { clearCache } = require('../middleware/cache');
 
+// Normalize embedded blog FAQ positions so every API path uses the same order.
+const normalizeFaqs = (faqs = []) => (
+    Array.isArray(faqs) ? faqs : []
+).map((faq, index) => ({
+    ...(faq || {}),
+    order: Number.isFinite(Number(faq?.order)) ? Number(faq.order) : index
+})).sort((first, second) => first.order - second.order).map((faq, index) => ({
+    ...faq,
+    order: index
+}));
+
 // Helper function to generate slug from title
 const generateSlug = (title) => {
     return title
@@ -64,7 +75,9 @@ exports.getBlogBySlug = async (req, res) => {
         blog.views += 1;
         await blog.save();
 
-        res.json(blog);
+        const responseBlog = blog.toObject();
+        responseBlog.faqs = normalizeFaqs(responseBlog.faqs);
+        res.json(responseBlog);
     } catch (error) {
         console.error('Error fetching blog:', error);
         res.status(500).json({ message: 'Error fetching blog', error: error.message });
@@ -138,7 +151,10 @@ exports.getBlogById = async (req, res) => {
 // Create new blog
 exports.createBlog = async (req, res) => {
     try {
-        const blogData = req.body;
+        const blogData = {
+            ...req.body,
+            faqs: normalizeFaqs(req.body.faqs)
+        };
 
         // Generate slug if not provided
         if (!blogData.slug) {
@@ -172,7 +188,11 @@ exports.createBlog = async (req, res) => {
 exports.updateBlog = async (req, res) => {
     try {
         const { id } = req.params;
-        const updateData = req.body;
+        const updateData = { ...req.body };
+
+        if (Object.prototype.hasOwnProperty.call(updateData, 'faqs')) {
+            updateData.faqs = normalizeFaqs(updateData.faqs);
+        }
 
         // If title is changed, regenerate slug
         if (updateData.title) {

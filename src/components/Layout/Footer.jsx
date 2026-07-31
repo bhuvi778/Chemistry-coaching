@@ -73,9 +73,8 @@ const Footer = () => {
                         <ul className="space-y-3 text-gray-400 text-sm">
                             <li><Link to="/" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> Home</Link></li>
                             <li><Link to="/about" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> About Us</Link></li>
-                            <li><Link to="/courses" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> All Courses</Link></li>
+                            <li><Link to="/courses" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-graduation-cap text-xs text-cyan-400"></i> All Courses</Link></li>
                             <li><Link to="/lectures" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fab fa-youtube text-xs text-red-500"></i> Video Lectures</Link></li>
-                            <li><Link to="/ai-assistant" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-robot text-xs text-cyan-400"></i> Ask Prepiify</Link></li>
                             <li><Link to="/contact" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-chevron-right text-xs text-gray-600"></i> Contact Us</Link></li>
                             <li><a href="https://www.ace2examz.in/careers" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition flex items-center gap-2"><i className="fas fa-users text-xs text-green-500"></i> Join Us</a></li>
                         </ul>
@@ -89,11 +88,10 @@ const Footer = () => {
                         </h4>
                         <ul className="space-y-3 text-gray-400 text-sm">
                             <li><Link to="/study-materials" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-file-alt text-xs"></i> Study Notes</Link></li>
+                            <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-clipboard-list text-xs text-pink-400"></i> Practice Materials</Link></li>
                             <li><Link to="/puzzle" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-puzzle-piece text-xs"></i> Puzzles</Link></li>
-                            <li><Link to="/courses" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-pen text-xs"></i> Practice Materials</Link></li>
                             <li><Link to="/lectures" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-play-circle text-xs"></i> Video Lectures</Link></li>
                             <li><Link to="/community" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-users text-xs"></i> Community</Link></li>
-                            <li><Link to="/book-your-session" className="hover:text-pink-400 transition flex items-center gap-2"><i className="fas fa-calendar-check text-xs"></i> Book Your Meet</Link></li>
                         </ul>
                     </div>
 

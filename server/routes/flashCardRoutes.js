@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const flashCardController = require('../controllers/flashCardController');
 
+// Export route
+router.get('/export', flashCardController.exportFlashCards);
+
 // Chapter routes
 router.get('/chapters', flashCardController.getChaptersWithProgress);
 router.get('/chapters/:id', flashCardController.getChapterById);
